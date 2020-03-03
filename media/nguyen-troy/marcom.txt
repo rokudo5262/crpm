@@ -1,0 +1,8 @@
+DirectAdmin demo.flamestech.com:2222
+
+DirectAdmin: marcom/S9ONitj2a4X6
+
+FTP:
+- Host: marcom.life
+- Username: admin@marcom.life
+- Password: FIB17dUGZ6

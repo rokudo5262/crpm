@@ -1,0 +1,80 @@
+﻿UPDATE WITH WHITE LABELING SUSTAINED
+0. Prerequisite information: 
+Item Purchase Code:
+ef9ef062-c607-4a85-83ce-12f0d321ab9f
+Dev: crpmupdate (change in \application\config\constants.php)
+1. Visit: [crpm url]/admin/settings?group=update&dev=[value for dev see above in 0.]
+2. Enter the Item Purchase Code (if it's not there) and hit update at the bottom.
+3. Search the whole source code again (excep the "uploads" folder) to find items containing the original names and replace it white labeling names (CRPM)
+4. REMOVE or White label the /manual/ folder after updating (see notes From Version 2.4.0)
+
+INSTALLING CRPM CHAT (1.3.3 updated 09.09.2019)
+1. White labeling the source code
+2. Upload to modules folder (can use the online installation tool in Module management)
+3. Set up Pusher account and then enter information to CRPM
+
+BRANDING FOR THE WHOLE PORTAL
+Need to change from Roboto to Helvetica
+
+
+CRPM CHAT
+1. White Label before installation
+aleksandarstojanov.com => remove in header comments
+Perfex CRM => CRPM
+Perfex => CRPM in comments/labels (2 places in css for dard and light themes)
+
+FROM VERSION 2.4.0 (13/10/2019 Updates)
+1. Add a GET variables "dev" and define the constant APP_ENC_DEV value (i.e. crpmupdate) to switch between the real update and the white label server link of FT
+\application\config\constants.php
+Search for "//White Label - For granting right person to do updating" and "//End White Label - For granting right person to do updating"
+2. Use a GET varaiable of "dev" defined in 1. above to show or hide the update links (Two places)
+\application\views\admin\settings\all.php
+Search for "//White Label - For showing the update page with connection to the service provider to update" and "//End White Label - For showing the update page with connection to the service provider to update"
+- On top of the page: for moving the Save button to the top just like other settings page
+- In the middle (2 //White Label - For showing the update page with connection to the service provider to update tags): for hiding/showing the update features as mentioned with the System Info
+3. White label (see guide in item 4) in the following files
+\application\core\AdminController.php
+\application\helpers\deprecated_helper.php
+\application\services\messages\IsCronSetupRequired.php
+\application\services\upgrade\Response.php
+\application\views\admin\includes\setup_menu.php
+\assets\plugins\google-picker\picker.js
+\assets\plugins\internal\google-picker\picker.js
+\assets\plugins\internal\validation\app-form-validation.js
+4. White label the manual folder to replace the following terms
+help.perfexcrm.com -> crpm.flamestech.com
+perfexcrm.com -> flamestech.com
+Perfex - The ... -> CRPM
+Perfex CRM -> CRPM
+Perfex -> CRM (need to do it manually since there are similar words in the code that should not be replaced)
+5. Replace the Video, the favicon.ico, and the logo with the updated ones
+
+FROM VERSION 2.0
+Images to Replace???
+
+\application\views\admin\includes\setup_menu.php - hide help link
+\application\views\admin\settings\all.php - hide update link
+\application\config\constants.php - update link to update server
+\application\migrations\ - white label name to CRPM
+\install\requirements.php - white label name to CRPM
+\install\file_permissions.php - white label name to CRPM
+\application\views\admin\includes\db_update_required.php - white label name to CRPM
+\application\core\Admin_controller.php - white label name to CRPM
+\application\config\config.php - white label name to CRPM
+\application\config\constants.php - white label link
+\application\core\Admin_controller.php - white label link
+\application\helpers\func_helper.php - white label link
+\application\helpers\misc_helper.php - white label link
+\application\helpers\system_messages_helper.php - white label link
+\install\html.php - white label link
+
+Changes
+\application\views\admin\settings\all.php - Change the Save Setting link to top to be compatible with other layout and solve the CSS style when hiding update button
+- Making the project menu visible by default on Project Milestone view
+<div class="panel_s project-menu-panel" style="display: none;">
+
+White Label Process
+1. Search all for Perfexcrm (just remove selected from above with "white label name to CRPM")
+2. Search all for perfexcrm.com
+3. Remove help link in \application\views\admin\includes\setup_menu.php
+4. Rem update link in (need to consider remove lateron - those with "white label link" above) \application\views\admin\settings\all.php

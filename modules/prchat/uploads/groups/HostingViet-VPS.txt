@@ -1,0 +1,12 @@
+IP: 103.81.87.95
+port: 9020
+tài khoản: root
+mật khâu: YzkwMTBi
+Thong tin quan tri DirectAdmin cua ban nhu sau:
+
+Login_link  		: http://103.81.87.95:2222
+User_name   		: admin
+Password    		: YThjMjhmMmFhMGM2
+Login_mysql 		: http://103.81.87.95/phpmyadmin/
+Mysql user  		: da_admin
+Mysql passwd  		: R3SpytFoa2e45NgRqk4
