@@ -27,7 +27,7 @@ trait StrClickable
             $url = substr($url, 0, strlen($url) - 1);
         }
 
-        return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target='_blank'>$url</a>" . $ret;
+        return $matches[1] . "<a href=\"$url\" rel=\"nofollow\" target=\"_blank\">$url</a>" . $ret;
     }
 
     /**
@@ -52,7 +52,7 @@ trait StrClickable
             $dest = substr($dest, 0, strlen($dest) - 1);
         }
 
-        return $matches[1] . "<a href=\"$dest\" rel=\"nofollow\" target='_blank'>$dest</a>" . $ret;
+        return $matches[1] . "<a href=\"$dest\">$dest</a>" . $ret;
     }
 
     /**
@@ -80,6 +80,7 @@ trait StrClickable
         // this one is not in an array because we need it to run last, for cleanup of accidental links within links
         $ret = preg_replace('#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i', '$1$3</a>', $ret);
         $ret = trim($ret);
+        $ret = str_replace('<a', '<a target="_blank"', $ret);
 
         return $ret;
     }
