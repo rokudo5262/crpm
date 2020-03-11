@@ -79,6 +79,7 @@ trait StrClickable
         $ret = preg_replace_callback('#([\s>])([.0-9a-z_+-]+)@(([0-9a-z-]+\.)+[0-9a-z]{2,})#i', 'self::make_email_clickable_cb', $ret);
         // this one is not in an array because we need it to run last, for cleanup of accidental links within links
         $ret = preg_replace('#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i', '$1$3</a>', $ret);
+        $ret = str_replace('">', '" href="_blank">', $ret);
         $ret = trim($ret);
 
         return $ret;
