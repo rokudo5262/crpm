@@ -36,9 +36,7 @@ defined('APP_CHMOD_DIR') or define('APP_CHMOD_DIR', (fileperms(FCPATH) & 0777 | 
 defined('APP_CHMOD_FILE') or define('APP_CHMOD_FILE', (fileperms(FCPATH . 'index.php') & 0777 | 0644));
 
 /* Start RA - Edit Feb 18th */
-if(isset($_GET["dev"] )) {
-    $dev = $_GET["dev"];
-}
+$dev = $_GET["dev"];
 define("APP_ENC_DEV", "ef9ef062-c607-4a85-83ce-12f0d321ab9f");
 /* End RA - Edit Feb 18th */
 
