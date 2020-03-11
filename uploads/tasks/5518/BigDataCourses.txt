@@ -1,0 +1,29 @@
+Introducing Apache Spark
+	https://www.linkedin.com/learning/learning-hadoop/introducing-apache-spark?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Spark: pyspark
+	https://www.linkedin.com/learning/data-science-tools-of-the-trade-first-steps/spark-pyspark?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Introduction to Spark SQL and DataFrames
+	https://www.linkedin.com/learning/introduction-to-spark-sql-and-dataframes?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Apache Spark Deep Learning Essential Training
+	https://www.linkedin.com/learning/apache-spark-deep-learning-essential-training?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Spark for Machine Learning & AI
+	https://www.linkedin.com/learning/spark-for-machine-learning-ai?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Apache Spark Essential Training: Big Data Engineering
+	https://www.linkedin.com/learning/apache-spark-essential-training-big-data-engineering?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Apache Spark Essential Training
+	https://www.linkedin.com/learning/apache-spark-essential-training?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+
+Analyzing Big Data with Hive
+	https://www.linkedin.com/learning/analyzing-big-data-with-hive?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+
+
+Learning Hadoop
+	https://www.linkedin.com/learning/learning-hadoop?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Hadoop: Installation
+	https://www.linkedin.com/learning/data-science-tools-of-the-trade-first-steps/hadoop-installation?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+What is Hadoop?
+	https://www.linkedin.com/learning/nosql-for-sql-professionals/what-is-hadoop?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Integrating Hadoop and Spark
+	https://www.linkedin.com/learning/big-data-analytics-with-hadoop-and-apache-spark/integrating-hadoop-and-spark?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
+Extending Hadoop for Data Science: Streaming, Spark, Storm, and Kafka
+	https://www.linkedin.com/learning/extending-hadoop-for-data-science-streaming-spark-storm-and-kafka?trk=learning-serp_learning_search-card&upsellOrderOrigin=default_guest_learning
