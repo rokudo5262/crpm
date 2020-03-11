@@ -17,7 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 
-define('APP_BASE_URL','https://crpm.reputyze.asia/');
+define('APP_BASE_URL','http://localhost/reputyze-crpm/');
 
 /*
 |--------------------------------------------------------------------------
@@ -40,11 +40,11 @@ define('APP_ENC_KEY','44e08f35be277da38576d916220ddab8');
 /* The hostname of your database server. */
 define('APP_DB_HOSTNAME','localhost');
 /* The username used to connect to the database */
-define('APP_DB_USERNAME','reputyze_crpm');
+define('APP_DB_USERNAME','root');
 /* The password used to connect to the database */
-define('APP_DB_PASSWORD','Pr2UOKRMlPE2f4');
+define('APP_DB_PASSWORD','');
 /* The name of the database you want to connect to */
-define('APP_DB_NAME','reputyze_crpm');
+define('APP_DB_NAME','ra_crpm');
 
 
 /**
