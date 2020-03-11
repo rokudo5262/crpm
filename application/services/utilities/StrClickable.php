@@ -80,13 +80,7 @@ trait StrClickable
         // this one is not in an array because we need it to run last, for cleanup of accidental links within links
         $ret = preg_replace('#(<a( [^>]+?>|>))<a [^>]+?>([^>]+?)</a></a>#i', '$1$3</a>', $ret);
         $ret = trim($ret);
-        $ret = self::add_url_target($ret);
-        return $ret;
-    }
 
-    public static function add_url_target($url) {
-        $url = strip_tags($url);
-        $url = "<a href=\"$url\" target=\"_blank\">$url</a>";
-        return $url;
+        return $ret;
     }
 }
