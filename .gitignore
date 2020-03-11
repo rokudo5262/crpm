@@ -1,0 +1,3 @@
+*.xml
+index.php
+application/config/*.php
