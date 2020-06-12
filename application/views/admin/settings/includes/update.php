@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php
-if(!isset($_GET["udpate"]) || !isset($_GET["dev"])) {
+if(!isset($_GET["group"]) || !isset($_GET["dev"])) {
   header('Location: ' . admin_url('settings?group=info'));
 } else {
   if($_GET["dev"] != APP_LINC) {
