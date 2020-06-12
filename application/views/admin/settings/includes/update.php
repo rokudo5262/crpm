@@ -1,4 +1,13 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<?php
+if(!isset($_GET["udpate"]) || !isset($_GET["dev"])) {
+  header('Location: ' . admin_url('settings?group=info'));
+} else {
+  if($_GET["dev"] != APP_LINC) {
+    header('Location: ' . admin_url('settings?group=info'));
+  }
+}
+?>
 <div class="row">
    <div class="col-md-12">
       <?php echo render_input('settings[purchase_key]', 'purchase_key', get_option('purchase_key'), 'text', array('data-ays-ignore'=>true)); ?>
