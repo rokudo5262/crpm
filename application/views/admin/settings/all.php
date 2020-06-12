@@ -44,7 +44,7 @@
 <!--        </a>-->
         <?php if (is_admin()) {
           ?>
-          <hr class="hr-10" />
+<!--          <hr class="hr-10" />-->
           <a href="<?php echo admin_url('settings?group=info'); ?>" class="<?php if ($this->input->get('group') == 'info') {
               echo 'bold';
           } ?>">
