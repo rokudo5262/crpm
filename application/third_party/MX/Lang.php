@@ -37,6 +37,17 @@
  **/
 class MX_Lang extends CI_Lang
 {
+    /**
+     * Load a language file
+     *
+     * @param   mixed   $langfile   Language file name
+     * @param   string  $idiom      Language name (english, etc.)
+     * @param   bool    $return     Whether to return the loaded array of translations
+     * @param   bool    $add_suffix Whether to add suffix to $langfile
+     * @param   string  $alt_path   Alternative path to look for the language file
+     *
+     * @return  void|string[]   Array containing translations, if $return is set to TRUE
+     */
     public function load($langfile, $lang = '', $return = false, $add_suffix = true, $alt_path = '', $_module = '')
     {
         if (is_array($langfile)) {
@@ -46,10 +57,10 @@ class MX_Lang extends CI_Lang
 
             return $this->language;
         }
-            
+
         $deft_lang = CI::$APP->config->item('language');
         $idiom     = ($lang == '') ? $deft_lang : $lang;
-    
+
         if (in_array($langfile . '_lang' . EXT, $this->is_loaded, true)) {
             return $this->language;
         }
@@ -71,7 +82,7 @@ class MX_Lang extends CI_Lang
                 unset($lang);
             }
         }
-        
+
         return $this->language;
     }
 }

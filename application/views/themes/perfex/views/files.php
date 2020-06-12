@@ -2,6 +2,7 @@
 <div class="panel_s section-heading section-files">
     <div class="panel-body">
         <h4 class="no-margin section-text"><?php echo _l('customer_profile_files'); ?></h4>
+        <?php hooks()->do_action('after_customers_area_files_heading'); ?>
     </div>
 </div>
 <div class="panel_s">
@@ -9,6 +10,7 @@
        <?php echo form_open_multipart(site_url('clients/upload_files'),array('class'=>'dropzone','id'=>'files-upload')); ?>
        <input type="file" name="file" multiple class="hide"/>
        <?php echo form_close(); ?>
+       <?php hooks()->do_action('after_customers_area_files_dropzone'); ?>
        <div class="mtop15 mbot15 text-right">
         <button class="gpicker" data-on-pick="customerFileGoogleDriveSave">
             <i class="fa fa-google" aria-hidden="true"></i>
@@ -84,5 +86,6 @@
 </tbody>
 </table>
 <?php } ?>
+<?php hooks()->do_action('after_customers_area_files'); ?>
 </div>
 </div>

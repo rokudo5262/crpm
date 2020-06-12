@@ -62,8 +62,7 @@ class Sms_twilio extends App_sms
                 ]
             );
 
-            log_activity('SMS sent via Twilio to ' . $number . ', Message: ' . $message);
-
+            $this->logSuccess($number, $message);
         } catch (Exception $e) {
             $this->set_error($e->getMessage());
 

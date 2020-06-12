@@ -58,7 +58,7 @@ class Forms extends ClientsController
                     }
                 }
 
-                if (get_option('recaptcha_secret_key') != '' && get_option('recaptcha_site_key') != '' && $form->recaptcha == 1) {
+                if (show_recaptcha() && $form->recaptcha == 1) {
                     if (!do_recaptcha_validation($post_data['g-recaptcha-response'])) {
                         echo json_encode([
                             'success' => false,
@@ -483,7 +483,7 @@ class Forms extends ClientsController
                 }
             }
 
-            if (get_option('recaptcha_secret_key') != '' && get_option('recaptcha_site_key') != '' && $form->recaptcha == 1) {
+            if (show_recaptcha() && $form->recaptcha == 1) {
                 if (!do_recaptcha_validation($post_data['g-recaptcha-response'])) {
                     echo json_encode([
                             'success' => false,

@@ -30,9 +30,7 @@ class Authentication extends ClientsController
         $this->form_validation->set_rules('password', _l('clients_login_password'), 'required');
         $this->form_validation->set_rules('email', _l('clients_login_email'), 'trim|required|valid_email');
 
-        if (get_option('use_recaptcha_customers_area') == 1
-            && get_option('recaptcha_secret_key') != ''
-            && get_option('recaptcha_site_key') != '') {
+        if (show_recaptcha_in_customers_area()) {
             $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'callback_recaptcha');
         }
         if ($this->form_validation->run() !== false) {
@@ -98,9 +96,7 @@ class Authentication extends ClientsController
         $this->form_validation->set_rules('password', _l('clients_register_password'), 'required');
         $this->form_validation->set_rules('passwordr', _l('clients_register_password_repeat'), 'required|matches[password]');
 
-        if (get_option('use_recaptcha_customers_area') == 1
-            && get_option('recaptcha_secret_key') != ''
-            && get_option('recaptcha_site_key') != '') {
+        if (show_recaptcha_in_customers_area()) {
             $this->form_validation->set_rules('g-recaptcha-response', 'Captcha', 'callback_recaptcha');
         }
 

@@ -323,7 +323,6 @@ function _simple_editor_config() {
             'table advlist codesample autosave' + (!is_mobile() ? ' autoresize ' : ' ') + 'lists link image textcolor media contextmenu paste',
         ],
         toolbar: 'insert formatselect bold forecolor backcolor' + (is_mobile() ? ' | ' : ' ') + 'alignleft aligncenter alignright bullist numlist | restoredraft',
-        contextmenu: "link image imagetools table spellchecker inserttable | cell row column deletetable | paste pastetext",
         insert_button_items: 'image media link codesample',
         toolbar1: ''
     };

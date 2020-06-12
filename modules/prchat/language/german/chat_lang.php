@@ -42,7 +42,7 @@ $lang['chat_files_text'] = 'Daten';
 $lang['chat_shared_photos_text'] = 'Geteilte Fotos';
 $lang['chat_shared_files_text'] = 'Geteilte Dateien';
 $lang['chat_user_is_online'] = ' hat sich gerade eingeloggt!';
-$lang['chat_settings_name'] = 'CRPM Chat Einstellungen';
+$lang['chat_settings_name'] = 'Perfex Chat Einstellungen';
 $lang['chat_allow_delete_messages'] = 'Mitarbeiter dürfen eigene Nachrichten löschen';
 $lang['chat_app_key_not_found'] = 'App-Schlüssel für Pusher nicht gefunden';
 $lang['chat_error_table'] = 'Fehler beim Abrufen der Benutzer, überprüfen Sie, ob Tabelle oder Datenbank vorhanden ist!';
@@ -147,3 +147,24 @@ $lang['chat_header_deleted'] = 'Deleted';
 $lang['chat_header_datetime'] = 'Date / Time';
 $lang['chat_no_departments_found'] = 'No staff departments were found, please add at least one department';
 $lang['chat_announcement_success'] = 'Your announcement was send to selected members successfully';
+#Version 1.4.1
+$lang['chat_status_online'] = 'Online';
+$lang['chat_status_away'] = 'Away';
+$lang['chat_status_busy'] = 'Busy';
+$lang['chat_status_offline'] = 'Offline';
+$lang['chat_header_status'] = 'Chat Status';
+$lang['chat_mentioned_you'] = 'mentioned you in a message';
+$lang['chat_in_group'] = 'In group';
+$lang['chat_type_a_message_mention'] = 'Type a message, @name...';
+
+#Version 1.4.2
+$lang['chat_record_btn_label'] = 'Record';
+$lang['chat_send_btn_label'] = 'Send';
+$lang['chat_new_audio_message'] = ' sent you a new audio message';
+$lang['chat_new_audio_message_sent'] = 'New audio message...';
+$lang['chat_i_sent_new_message'] = 'I have sent you a new audio message...';
+$lang['chat_new_audio_group_message'] = ' send a new audio message to the group';
+$lang['chat_click_to_record'] = 'Send new audio message.';
+$lang['chat_is_recording'] = 'Recording';
+$lang['chat_recording_finished'] = 'Finished... rendering audio file...';
+$lang['chat_send_audio_message'] = 'Send new audio message to selected staff member or group';

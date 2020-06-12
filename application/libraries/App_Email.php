@@ -90,8 +90,6 @@ class App_Email extends App_mailer
             return parent::send();
         }
 
-        $date = date('Y-m-d H:i:s');
-
         if ($this->mailer_engine == 'codeigniter') {
             $to      = is_array($this->_recipients) ? implode(', ', $this->_recipients) : $this->_recipients;
             $cc      = implode(', ', $this->_cc_array);
@@ -152,7 +150,7 @@ class App_Email extends App_mailer
             'headers'     => $headers,
             'attachments' => $attachments,
             'status'      => 'pending',
-            'date'        => $date,
+            'date'        => date('Y-m-d H:i:s'),
         ];
 
         return $this->CI->db->insert($this->email_queue_table, $dbdata);
@@ -222,7 +220,7 @@ class App_Email extends App_mailer
             $this->set_crlf(config_item('crlf'));
 
             $this->to($recipients);
-            $this->cc($cc);
+            $this->$cc(cc);
             $this->bcc($bcc);
 
             $this->message($email->message);

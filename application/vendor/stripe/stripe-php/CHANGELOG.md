@@ -1,5 +1,114 @@
 # Changelog
 
+## 7.36.0 - 2020-05-21
+* [#937](https://github.com/stripe/stripe-php/pull/937) Add support for `ae_trn`, `cl_tin` and `sa_vat` as `type` on `TaxId`
+
+## 7.35.0 - 2020-05-20
+* [#936](https://github.com/stripe/stripe-php/pull/936) Add `anticipation_repayment` as a `type` on `BalanceTransaction`
+
+## 7.34.0 - 2020-05-18
+* [#934](https://github.com/stripe/stripe-php/pull/934) Add support for `issuing_dispute` as a `type` on `BalanceTransaction`
+
+## 7.33.1 - 2020-05-15
+* [#933](https://github.com/stripe/stripe-php/pull/933) Services bugfix: convert nested null params to empty strings
+
+## 7.33.0 - 2020-05-14
+* [#771](https://github.com/stripe/stripe-php/pull/771) Introduce client/services API
+
+## 7.32.1 - 2020-05-13
+* [#932](https://github.com/stripe/stripe-php/pull/932) Fix multiple PHPDoc
+
+## 7.32.0 - 2020-05-11
+* [#931](https://github.com/stripe/stripe-php/pull/931) Add support for the `LineItem` resource and APIs
+
+## 7.31.0 - 2020-05-01
+* [#927](https://github.com/stripe/stripe-php/pull/927) Add support for new tax IDs
+
+## 7.30.0 - 2020-04-29
+* [#924](https://github.com/stripe/stripe-php/pull/924) Add support for the `Price` resource and APIs
+
+## 7.29.0 - 2020-04-22
+* [#920](https://github.com/stripe/stripe-php/pull/920) Add support for the `Session` resource and APIs on the `BillingPortal` namespace
+
+## 7.28.1 - 2020-04-10
+* [#915](https://github.com/stripe/stripe-php/pull/915) Improve PHPdocs for many classes
+
+## 7.28.0 - 2020-04-03
+* [#912](https://github.com/stripe/stripe-php/pull/912) Preserve backwards compatibility for typoed `TYPE_ADJUSTEMENT` enum.
+* [#911](https://github.com/stripe/stripe-php/pull/911) Codegenerated PHPDoc for nested resources
+* [#902](https://github.com/stripe/stripe-php/pull/902) Update docstrings for nested resources
+
+## 7.27.3 - 2020-03-18
+* [#899](https://github.com/stripe/stripe-php/pull/899) Convert keys to strings in `StripeObject::toArray()`
+
+## 7.27.2 - 2020-03-13
+* [#894](https://github.com/stripe/stripe-php/pull/894) Multiple PHPDocs changes
+
+## 7.27.1 - 2020-03-03
+* [#890](https://github.com/stripe/stripe-php/pull/890) Update PHPdoc
+
+## 7.27.0 - 2020-02-28
+* [#889](https://github.com/stripe/stripe-php/pull/889) Add new constants for `type` on `TaxId`
+
+## 7.26.0 - 2020-02-26
+* [#886](https://github.com/stripe/stripe-php/pull/886) Add support for listing Checkout `Session`
+* [#883](https://github.com/stripe/stripe-php/pull/883) Add PHPDoc class descriptions
+
+## 7.25.0 - 2020-02-14
+* [#879](https://github.com/stripe/stripe-php/pull/879) Make `\Stripe\Collection` implement `\Countable`
+* [#875](https://github.com/stripe/stripe-php/pull/875) Last set of PHP-CS-Fixer updates
+* [#874](https://github.com/stripe/stripe-php/pull/874) Enable php_unit_internal_class rule
+* [#873](https://github.com/stripe/stripe-php/pull/873) Add support for phpDocumentor in Makefile
+* [#872](https://github.com/stripe/stripe-php/pull/872) Another batch of PHP-CS-Fixer rule updates
+* [#871](https://github.com/stripe/stripe-php/pull/871) Fix a few PHPDoc comments
+* [#870](https://github.com/stripe/stripe-php/pull/870) More PHP-CS-Fixer tweaks
+
+## 7.24.0 - 2020-02-10
+* [#862](https://github.com/stripe/stripe-php/pull/862) Better PHPDoc
+* [#865](https://github.com/stripe/stripe-php/pull/865) Get closer to `@PhpCsFixer` standard ruleset
+
+## 7.23.0 - 2020-02-05
+* [#860](https://github.com/stripe/stripe-php/pull/860) Add PHPDoc types for expandable fields
+* [#858](https://github.com/stripe/stripe-php/pull/858) Use `native_function_invocation` PHPStan rule
+* [#857](https://github.com/stripe/stripe-php/pull/857) Update PHPDoc on nested resources
+* [#855](https://github.com/stripe/stripe-php/pull/855) PHPDoc: `StripeObject` -> `ErrorObject` where appropriate
+* [#837](https://github.com/stripe/stripe-php/pull/837) Autogen diff
+* [#854](https://github.com/stripe/stripe-php/pull/854) Upgrade PHPStan and fix settings
+* [#850](https://github.com/stripe/stripe-php/pull/850) Yet more PHPDoc updates
+
+## 7.22.0 - 2020-01-31
+* [#849](https://github.com/stripe/stripe-php/pull/849) Add new constants for `type` on `TaxId`
+* [#843](https://github.com/stripe/stripe-php/pull/843) Even more PHPDoc fixes
+* [#841](https://github.com/stripe/stripe-php/pull/841) More PHPDoc fixes
+
+## 7.21.1 - 2020-01-29
+* [#840](https://github.com/stripe/stripe-php/pull/840) Update phpdocs across multiple resources.
+
+## 7.21.0 - 2020-01-28
+* [#839](https://github.com/stripe/stripe-php/pull/839) Add support for `TYPE_ES_CIF` on `TaxId`
+
+## 7.20.0 - 2020-01-23
+* [#836](https://github.com/stripe/stripe-php/pull/836) Add new type values for `TaxId`
+
+## 7.19.1 - 2020-01-14
+* [#831](https://github.com/stripe/stripe-php/pull/831) Fix incorrect `UnexpectedValueException` instantiation
+
+## 7.19.0 - 2020-01-14
+* [#830](https://github.com/stripe/stripe-php/pull/830) Add support for `CreditNoteLineItem`
+
+## 7.18.0 - 2020-01-13
+* [#829](https://github.com/stripe/stripe-php/pull/829) Don't call php_uname function if disabled by php.ini
+
+## 7.17.0 - 2020-01-08
+* [#821](https://github.com/stripe/stripe-php/pull/821) Improve PHPDoc types for `ApiErrorException.get/setJsonBody()` methods
+
+## 7.16.0 - 2020-01-06
+* [#826](https://github.com/stripe/stripe-php/pull/826) Rename remaining `$options` to `$opts`
+* [#825](https://github.com/stripe/stripe-php/pull/825) Update PHPDoc
+
+## 7.15.0 - 2020-01-06
+* [#824](https://github.com/stripe/stripe-php/pull/824) Add constant `TYPE_SG_UEN` to `TaxId`
+
 ## 7.14.2 - 2019-12-04
 * [#816](https://github.com/stripe/stripe-php/pull/816) Disable autoloader when checking for `Throwable`
 

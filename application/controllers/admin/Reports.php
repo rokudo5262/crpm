@@ -1327,6 +1327,7 @@ class Reports extends AdminController
 
         $data['years']                           = $_years;
         $data['chart_expenses_vs_income_values'] = json_encode($this->reports_model->get_expenses_vs_income_report($year));
+        $data['base_currency']                   = get_base_currency();
         $data['title']                           = _l('als_expenses_vs_income');
         $this->load->view('admin/reports/expenses_vs_income', $data);
     }

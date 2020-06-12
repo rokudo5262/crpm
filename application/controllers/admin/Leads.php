@@ -55,6 +55,7 @@ class Leads extends AdminController
             ajax_access_denied();
         }
         $data['statuses'] = $this->leads_model->get_status();
+        $data['base_currency'] = get_base_currency();
         echo $this->load->view('admin/leads/kan-ban', $data, true);
     }
 
@@ -114,6 +115,7 @@ class Leads extends AdminController
         $data['openEdit']    = $this->input->get('edit') ? true : false;
         $data['members']     = $this->staff_model->get('', ['is_not_staff' => 0, 'active' => 1]);
         $data['status_id']   = $this->input->get('status_id') ? $this->input->get('status_id') : get_option('leads_default_status');
+        $data['base_currency'] = get_base_currency();
 
         if (is_numeric($id)) {
             $leadWhere = (has_permission('leads', '', 'view') ? [] : '(assigned = ' . get_staff_user_id() . ' OR addedfrom=' . get_staff_user_id() . ' OR is_public=1)');
@@ -769,6 +771,7 @@ class Leads extends AdminController
             'title',
             'email',
             'phonenumber',
+            'lead_value',
             'company',
             'address',
             'city',
@@ -801,6 +804,9 @@ class Leads extends AdminController
                 $label = _l('lead_add_edit_email');
             } elseif ($f == 'phonenumber') {
                 $label = _l('lead_add_edit_phonenumber');
+            } elseif ($f == 'lead_value') {
+                $label = _l('lead_add_edit_lead_value');
+                $type = 'number';
             } else {
                 $label = _l('lead_' . $f);
             }

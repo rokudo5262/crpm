@@ -304,7 +304,7 @@ class Staff_model extends App_Model
      */
     public function get($id = '', $where = [])
     {
-        $select_str = '*,CONCAT(firstname," ",lastname) as full_name';
+        $select_str = '*,CONCAT(firstname,\' \',lastname) as full_name';
 
         // Used to prevent multiple queries on logged in staff to check the total unread notifications in core/AdminController.php
         if (is_staff_logged_in() && $id != '' && $id == get_staff_user_id()) {
@@ -543,8 +543,6 @@ class Staff_model extends App_Model
         if (isset($data['admin']) && $data['admin'] == 1) {
             $data['is_not_staff'] = 0;
         }
-
-        $data['email_signature'] = nl2br_save_html($data['email_signature']);
 
         $this->load->model('departments_model');
         $staff_departments = $this->departments_model->get_staff_departments($id);

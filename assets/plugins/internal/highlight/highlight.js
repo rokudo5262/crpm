@@ -3,13 +3,17 @@ jQuery.extend({
         if (node.nodeType === 3) {
             var match = node.data.match(re);
             if (match) {
+
                 var highlight = document.createElement(nodeName || 'span');
                 highlight.className = className || 'highlight';
                 var wordNode = node.splitText(match.index);
                 wordNode.splitText(match[0].length);
                 var wordClone = wordNode.cloneNode(true);
-                highlight.appendChild(wordClone);
-                wordNode.parentNode.replaceChild(highlight, wordNode);
+
+                if (wordNode.parentNode.tagName && wordNode.parentNode.tagName.toLowerCase() !== 'textarea') {
+                    highlight.appendChild(wordClone);
+                    wordNode.parentNode.replaceChild(highlight, wordNode);
+                }
                 return 1; //skip added node in parent
             }
         } else if ((node.nodeType === 1 && node.childNodes) && // only element nodes that have children
@@ -56,16 +60,17 @@ jQuery.fn.highlight = function(words, options) {
     });
 };
 
-
 jQuery.fn.unhighlight = function(options) {
     var settings = {
         className: 'highlight',
         element: 'span'
     };
     jQuery.extend(settings, options);
-    return this.find(settings.element + "." + settings.className).each(function() {
-        var parent = this.parentNode;
-        parent.replaceChild(this.firstChild, this);
-        parent.normalize();
-    }).end();
+    return this.find(settings.element + "." + settings.className)
+        .each(function() {
+            var parent = this.parentNode;
+            parent.replaceChild(this.firstChild, this);
+            parent.normalize();
+        })
+        .end();
 };

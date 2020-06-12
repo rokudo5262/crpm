@@ -188,6 +188,15 @@ function privacy_policy_url()
 }
 
 /**
+ * Check whether the recaptcha should be shown in customers area
+ *
+ * @return boolean
+ */
+function show_recaptcha_in_customers_area()
+{
+    return show_recaptcha() && get_option('use_recaptcha_customers_area') == 1;
+}
+/**
  * Current theme view part
  * @param  string $name file name
  * @param  array  $data variables passed to view
@@ -253,9 +262,7 @@ function app_theme_head_hook()
     ob_start();
     echo get_custom_fields_hyperlink_js_function();
 
-    if (get_option('use_recaptcha_customers_area') == 1
-        && get_option('recaptcha_secret_key') != ''
-        && get_option('recaptcha_site_key') != '') {
+    if (show_recaptcha_in_customers_area()) {
         echo "<script src='https://www.google.com/recaptcha/api.js'></script>";
     }
 

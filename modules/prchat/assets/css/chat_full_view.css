@@ -1,11 +1,10 @@
-/* Chat LIGHT theme */
+/* Chat Light theme */
 
 #frame {
-    font-family: Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif !important;
+    font-family: Roboto, Helvetica Neue, Segoe UI, Helvetica, Arial, sans-serif !important;
     width: 100%;
     min-width: 360px;
-    height: 94vh;
-    background: #fff;
+    background: #ffffff;
 }
 
 #frame #sidepanel {
@@ -13,10 +12,10 @@
     min-width: 280px;
     max-width: 340px;
     width: 40%;
-    height: 94vh;
-    background: #fff !important;
+    height: 100vh;
+    background: #ffffff !important;
     color: black;
-    overflow: hidden;
+    /* overflow: hidden; */
     position: relative;
 }
 
@@ -25,7 +24,6 @@
     height: 22px !important;
     background-size: contain !important;
     float: none !important;
-    margin-left: 3px;
     margin-top: -1px;
 }
 
@@ -33,7 +31,7 @@ body #frame #no_messages {
     text-transform: uppercase;
     text-align: center;
     justify-content: center;
-    background: #6986e8;
+    background: #2f3440;
     width: fit-content;
     margin: 0 auto;
     font-size: 11px;
@@ -44,12 +42,6 @@ body #frame #no_messages {
     margin-bottom: 5px;
     padding: 8px;
     padding-top: 5px;
-}
-
-body.Prchat_Controller #wrapper {
-    height: 94vh;
-    height: calc(var(--vh, 1vh) * 94);
-    min-height: unset !important;
 }
 
 #frame #sidepanel #profile {
@@ -76,7 +68,6 @@ body.Prchat_Controller #wrapper {
     height: 45px;
     border-radius: 50%;
     padding: 2px;
-    border: 2px solid #2ecc71;
     float: left;
     -moz-transition: 0.3s border ease;
     -o-transition: 0.3s border ease;
@@ -85,6 +76,7 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame #sidepanel #profile .wrap p {
+    color: #333333;
     float: left;
     margin-left: 9px;
     margin-top: -8px;
@@ -104,20 +96,27 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame .announcement .dropdown button.btn.btn-primary.dropdown-toggle {
-    height: 29px;
-    padding-top: 4px;
+    height: auto;
     background: #6986e8;
+    padding: 4px 6px;
     border: none;
 }
 
 #frame .announcement .dropdown {
     top: -2px;
+    left: -5px;
+}
+
+#frame #bottom-bar .theme_icon {
+    margin-bottom: -6px;
+    margin-right: 2px;
+    margin-top: -1px;
 }
 
 #frame .announcement {
     cursor: pointer;
     float: right;
-    margin-top: -43px;
+    margin-top: -41px;
     margin-right: 8px;
     font-size: 23px;
 }
@@ -129,21 +128,19 @@ body.Prchat_Controller #wrapper {
 
 #frame i.i_settings::before {
     color: #fff;
-    font-size: 19px;
+    font-size: 20px;
 }
 
 #menu .liveUsers {
     margin-left: 8px !important;
     text-transform: capitalize;
     background-color: #546bf2;
-    border-color: #ffffff;
-    border: 1px solid;
+    border: 1px solid #546bf2;
 }
 
 #menu .liveClients {
     background-color: #535fa5;
-    border-color: #ffffff;
-    border: 1px solid;
+    border: 1px solid #535fa5;
 }
 
 #frame #sidepanel #search {
@@ -155,11 +152,12 @@ body.Prchat_Controller #wrapper {
 #frame #sidepanel #search label {
     position: absolute;
     margin: 6px 0 0 20px;
-    color: #929292;
+    color: #333333;
 }
 
 #frame #sidepanel #search input {
-    background-color: #f5f5f5;
+    background-color: #f5f5f5 !important;
+    color: #333333;
     border-radius: 5px;
     border-style: none;
     box-sizing: border-box;
@@ -170,29 +168,25 @@ body.Prchat_Controller #wrapper {
     padding: 0px 0 0px 46px;
 }
 
-#frame #announcement {
-    display: none;
-}
-
 #frame #sidepanel #search input:focus {
     outline: none;
-    background-color: #dce3ec;
+    background-color: #dce3ec !important;
 }
 
 #frame #sidepanel #search input::-webkit-input-placeholder {
-    color: #626262;
+    color: #707070;
 }
 
 #frame #sidepanel #search input::-moz-placeholder {
-    color: #a09696;
+    color: #707070;
 }
 
 #frame #sidepanel #search input:-ms-input-placeholder {
-    color: #a09696;
+    color: #707070;
 }
 
 #frame #sidepanel #search input:-moz-placeholder {
-    color: #a09696;
+    color: #707070;
 }
 
 #frame #profile .dropdown {
@@ -203,7 +197,7 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame .dropbtn {
-    color: #000 !important;
+    color: #333333 !important;
     padding: 1px;
     border: none;
     cursor: pointer;
@@ -211,7 +205,7 @@ body.Prchat_Controller #wrapper {
 
 #frame .dropbtn:hover {
     transition: color 500ms;
-    color: #000 !important;
+    color: #333333 !important;
 }
 
 #frame .dropdown {
@@ -228,7 +222,7 @@ body.Prchat_Controller #wrapper {
     background: #dce3ec;
     top: -53px;
     left: -64px;
-    border-radius: 4px;
+    border-radius: 2px;
     line-height: 24px;
 }
 
@@ -252,13 +246,17 @@ body.Prchat_Controller #wrapper {
     text-align: center;
     text-decoration: none;
     display: block;
-    color: #000 !important;
+    color: #333333 !important;
     z-index: 99999999999;
     padding: 5px 1px 5px 31px;
 }
 
 #shared_user_files {
-    color: #6986e8;
+    fill: #6986e8;
+    width: 27px;
+    height: 27px;
+    margin-top: 1px;
+    margin-right: 0px;
 }
 
 #shared_user_files:hover {
@@ -272,7 +270,6 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame #sidepanel #contacts {
-    height: 73vh;
     overflow-x: hidden;
     -ms-overflow-y: auto;
     overflow-y: auto;
@@ -280,7 +277,7 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame #sidepanel #contacts a {
-    color: #000;
+    color: #ffffff;
     display: block;
 }
 
@@ -308,20 +305,28 @@ body.Prchat_Controller #wrapper {
     margin-top: -14px;
 }
 
+
+/* #frame #sidepanel #groups_container::-webkit-scrollbar,
 #frame #sidepanel #clients_container::-webkit-scrollbar,
 #frame #sidepanel #contacts::-webkit-scrollbar {
     width: 4px;
 }
 
+#frame #sidepanel #groups_container::-webkit-scrollbar,
 #frame #sidepanel #clients_container::-webkit-scrollbar,
 #frame #sidepanel #contacts::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
-}
+} */
 
 #frame #sidepanel #contacts ul li.contact {
     position: relative;
     font-size: 0.9em;
     cursor: pointer;
+}
+
+#frame #sidepanel #groups_container ul li.group_selector:last-child,
+#frame #sidepanel #contacts ul li.contact:last-child a {
+    margin-bottom: 17px;
 }
 
 #frame #sidepanel #contacts ul li.contact a {
@@ -339,11 +344,16 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame #sidepanel #contacts ul li.contact.active span.contact-status {
-    border: 2px solid #32465a !important;
+    border: 2px solid #dce3ec !important;
 }
 
 #frame #sidepanel #contacts ul li.contact.active {
     background: #dce3ec;
+}
+
+#frame #sidepanel #contacts ul li.contact:hover .wrap span {
+    border: 2px solid #dce3ec;
+    transition: 300ms ease;
 }
 
 #frame #sidepanel #contacts ul li.contact .wrap {
@@ -359,7 +369,7 @@ body.Prchat_Controller #wrapper {
     top: 27px;
     width: 12px;
     height: 12px;
-    border: 2px solid white;
+    border: 2px solid #ffffff;
     border-radius: 50%;
     background: #636363;
 }
@@ -376,8 +386,18 @@ body.Prchat_Controller #wrapper {
     margin-right: 10px;
 }
 
-.Prchat_Controller .tooltipster-base.tooltipster-sidetip.tooltipster-left.tooltipster-fade.tooltipster-show {
+#frame #sidepanel #contacts ul li.contact .wrap a[data-lity] img.prchat_convertedImage {
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    float: left;
+    margin-left: 10px;
+    margin-top: -3px;
+}
+
+.Prchat_Controller .tooltipster-base.tooltipster-sidetip.tooltipster-fade.tooltipster-show {
     height: 31px !important;
+    z-index: 99999999999 !important;
 }
 
 .Prchat_Controller .tooltipster-sidetip .tooltipster-box {
@@ -386,21 +406,22 @@ body.Prchat_Controller #wrapper {
     border-radius: 0px !important;
 }
 
-.Prchat_Controller .tooltipster-sidetip.tooltipster-left .tooltipster-arrow-border {
+.Prchat_Controller .tooltipster-sidetip .tooltipster-arrow-border {
     border-left-color: rgba(204, 204, 204, 0.88) !important;
 }
 
-.Prchat_Controller .tooltipster-sidetip.tooltipster-left .tooltipster-arrow-background {
+.Prchat_Controller .tooltipster-sidetip .tooltipster-arrow-background {
     border-left-color: rgba(204, 204, 204, 0.88) !important;
     left: 0px !important;
     top: 0 !important;
 }
 
-.Prchat_Controller .tooltipster-sidetip.tooltipster-left .tooltipster-arrow {
-    right: -2px;
+.Prchat_Controller .tooltipster-sidetip .tooltipster-arrow {
+    right: -2px !important;
 }
 
 #frame #sidepanel #contacts ul li.contact .wrap .meta .name {
+    color: #333333;
     font-weight: 400;
     margin: 0 0 2px;
     font-size: 14px;
@@ -436,7 +457,7 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame #sidepanel #contacts ul li.contact .wrap .meta .preview {
-    color: rgb(95, 95, 95);
+    color: rgb(140, 140, 140);
     font-size: 13px;
     margin: 3px 0 0px 0;
     padding: 0 0 1px;
@@ -463,9 +484,10 @@ body.Prchat_Controller #wrapper {
 #frame .content {
     border-left: 1px solid #eae8e8;
     padding: 0px 0px 25px 0px;
-    height: 94vh;
+    height: -webkit-fill-available;
     overflow: hidden;
     position: relative;
+    height: 100vh;
 }
 
 #frame .content .contact-profile {
@@ -489,6 +511,7 @@ body.Prchat_Controller #wrapper {
 }
 
 #frame .content .contact-profile p {
+    color: #333333;
     float: left;
     font-size: 14px;
     padding-top: 16px;
@@ -502,8 +525,9 @@ body.Prchat_Controller #wrapper {
 
 #frame .content .contact-profile .social-media {
     float: right;
-    font-size: 19px;
-    margin-top: 15px;
+    font-size: 22px;
+    display: flex;
+    margin-top: 16px;
 }
 
 #frame .content .contact-profile .social-media i {
@@ -530,7 +554,8 @@ body.Prchat_Controller #wrapper {
     overflow-x: hidden;
 }
 
-#frame .content .client_messages::-webkit-scrollbar,
+
+/* #frame .content .client_messages::-webkit-scrollbar,
 #frame .content .messages::-webkit-scrollbar {
     width: 4px !important;
     background: transparent;
@@ -544,7 +569,7 @@ body.Prchat_Controller #wrapper {
 #frame .content .client_messages::scrollbarthumb-horizontal,
 #frame .content .messages::scrollbarthumb-horizontal {
     background-color: rgba(0, 0, 0, 0.3) !important;
-}
+} */
 
 #frame .content .chat_client_messages ul li,
 #frame .content .messages ul li {
@@ -583,7 +608,9 @@ body.Prchat_Controller #wrapper {
 
 #frame .content .messages ul li.sent .you a,
 #frame .content .chat_client_messages ul li.sent .you a {
-    color: #fff;
+    color: #424242;
+    text-decoration: underline;
+    font-style: italic;
 }
 
 #frame .content .chat_client_messages ul li.sent img:not(.emoji),
@@ -606,10 +633,10 @@ body.Prchat_Controller #wrapper {
     body.Prchat_Controller .middleDateTime {
         font-size: 10px;
     }
-    #frame {
-        height: 85vh;
-        height: calc(var(--vh, 1vh) * 85);
-    }
+}
+
+#frame #search i.fa-search::before {
+    color: #868686;
 }
 
 #frame .content .messages ul li.sent p,
@@ -629,7 +656,8 @@ body.Prchat_Controller #wrapper {
     max-width: 35vh;
     max-height: 25vh;
     width: -webkit-fill-available;
-    width: auto;
+    width: -moz-available;
+    width: fill-available;
 }
 
 #frame .content .messages ul li img,
@@ -663,15 +691,20 @@ body.Prchat_Controller #wrapper {
     border-bottom-right-radius: 1.3em;
 }
 
+#frame .content .chat_group_messages ul li p,
 #frame .content .chat_client_messages ul li p,
 #frame .content .messages ul li p {
     display: inline-block;
     padding: 6px 15px 7px 15px;
-    max-width: 205px;
+    max-width: 55%;
     line-height: 130%;
+    white-space: pre-wrap;
 }
 
 @media screen and (min-width: 735px) {
+    #frame .contact-profile svg.chat_back_mobile {
+        display: none;
+    }
     #frame .content .chat_client_messages ul li p,
     #frame .content .messages ul li p {
         max-width: 100%;
@@ -704,8 +737,8 @@ body.Prchat_Controller #wrapper {
     float: left;
     overflow: hidden;
     width: calc(100% - 89px);
-    padding: 11px 38px 0px 10px;
-    height: 44px;
+    padding: 13px 71px 8px 8px;
+    height: 45px;
     border: none;
     color: #333 !important;
     outline: none;
@@ -725,26 +758,50 @@ body.Prchat_Controller #wrapper {
     color: #6986e8;
 }
 
-#frame .messages p a[target="_blank"]:hover,
-#frame .group_messages p a[target="_blank"]:hover {
-    color: #daddde !important;
+#frame .client_messages::before,
+#frame .group_messages::before,
+#frame .messages::before {
+    clear: both;
 }
 
+#frame .client_messages p a[target="_blank"]:hover,
+#frame .messages p a[target="_blank"]:hover,
+#frame .group_messages p a[target="_blank"]:hover {
+    color: #151515 !important;
+}
+
+#frame .client_messages p a[target="_blank"],
 #frame .messages p a[target="_blank"],
 #frame .group_messages p a[target="_blank"] {
     text-decoration: underline;
     font-style: italic;
-    color: #fff;
+    color: #3e4146 !important;
+}
+
+#frame .content .attachment::before {
+    font-size: 26px;
 }
 
 #frame .content .message-input .wrap .attachment {
     position: absolute;
     right: 100px;
     z-index: 4;
-    margin-top: 7px;
+    margin-top: 5px;
     font-size: 2.4em;
     color: #6986e8;
     cursor: pointer;
+}
+
+#frame li.staff,
+#frame li.groups,
+#frame li.crm_clients {
+    -webkit-user-select: none;
+    /* Safari */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* IE10+/Edge */
+    user-select: none;
 }
 
 #frame .client_data .contact_lang {
@@ -755,22 +812,23 @@ body.Prchat_Controller #wrapper {
     font-size: 20px;
 }
 
+#frame #sidepanel #groups_container,
 #frame #sidepanel #clients_container,
 #frame #sidepanel #contacts {
     overflow-x: hidden;
     -ms-overflow-y: auto;
     overflow-y: auto;
     scrollbar-width: none;
+    max-height: calc(var(--vh, 1vh) * 78);
 }
 
 body #wrapper #frame #sidepanel #clients_container {
-    height: 69vh;
+    height: auto;
 }
 
 #frame .content .message-input .wrap button {
     float: right;
     border: none;
-    border-top: 1px solid #bfbfbf;
     width: 90px;
     padding: 11px 0;
     cursor: pointer;
@@ -779,7 +837,11 @@ body #wrapper #frame #sidepanel #clients_container {
 }
 
 #frame .content .message-input .wrap button:hover {
-    background: #6986e8;
+    background: #5572d4;
+}
+
+body #frame .group_chatbox {
+    height: 44px !important;
 }
 
 #frame .content .message-input .wrap button:focus {
@@ -860,7 +922,7 @@ body #wrapper #frame #sidepanel #clients_container {
     width: 16px;
     height: 16px;
     text-align: center;
-    line-height: 17px;
+    line-height: 16px;
     -moz-border-radius: 50%;
     -webkit-border-radius: 50%;
     border-radius: 50%;
@@ -875,13 +937,6 @@ body #wrapper #frame #sidepanel #clients_container {
 @keyframes rotate {
     100% {
         transform: rotate(360deg);
-    }
-}
-
-@media screen and (max-width: 360px) {
-    #frame {
-        width: 100%;
-        height: 94vh;
     }
 }
 
@@ -902,7 +957,7 @@ body #wrapper #frame #sidepanel #clients_container {
     border: none;
     width: 50%;
     background: #dce3ec;
-    color: #000;
+    color: #333333;
     cursor: pointer;
     padding-top: 4px;
     font-size: 12px;
@@ -912,18 +967,13 @@ body #wrapper #frame #sidepanel #clients_container {
 
 /* Clients settings button */
 
-body #frame #sidepanel #clients_container #bottom-bar button {
-    width: calc(100% - 51px);
-}
-
 body #frame #sidepanel #clients_container .clients_settings .dropdown-menu {
     left: 170px;
     min-width: 166px;
 }
 
-#frame #clients_container #bottom-bar .clients_settings.dropup button.dropdown-toggle {
-    background: #dce3ec;
-    width: 15% !important;
+body #wrapper #frame #clients_container #bottom-bar .clients_settings.dropup button.dropdown-toggle {
+    background: #dce3ec !important;
     border-radius: 0px;
     -webkit-border-radius: 0px;
     -moz-border-radius: 0px;
@@ -932,7 +982,6 @@ body #frame #sidepanel #clients_container .clients_settings .dropdown-menu {
 }
 
 #frame i.c_settings::before {
-    color: #0e0e0e;
     font-size: 25px;
 }
 
@@ -953,40 +1002,38 @@ body #frame #sidepanel #clients_container .clients_settings .dropdown-menu {
 }
 
 #frame #sidepanel #bottom-bar button:hover {
-    background: #d3dae4 !important;
+    background: #d4dae2 !important;
     transition: background 500ms;
 }
 
 #frame #sidepanel #bottom-bar button i {
     margin-right: 3px;
+    color: #333333;
     font-size: 1.2em;
 }
 
 @media screen and (max-width: 735px) {
-    body.Prchat_Controller #wrapper {
-        height: 85vh;
-        height: calc(var(--vh, 1vh) * 85);
-    }
-    #frame .content {
-        width: calc(100% - 58px);
-        min-width: 300px !important;
-        height: 85vh;
-        /* Fallback for browsers that do not support Custom Properties */
-        height: calc(var(--vh, 1vh) * 85);
-    }
     #frame .content .messages ul li img.prchat_convertedImage {
-        max-width: 25vh;
+        max-width: 50vh;
+    }
+    body #search_messages_modal {
+        z-index: 9999999999999999999;
+    }
+    body #frame .contact-profile .user_sound_icon {
+        left: 43px;
+    }
+    body #frame .content .contact-profile img {
+        margin: 12px 12px 0 50px;
     }
     #frame #sidepanel {
-        width: 60px;
-        height: 85vh;
-        /* Fallback for browsers that do not support Custom Properties */
-        height: calc(var(--vh, 1vh) * 85);
-        min-width: 60px;
-        margin-left: -2px;
+        width: inherit;
+        max-width: initial;
+        height: inherit;
+        overflow: unset;
+        min-width: initial;
     }
     #frame .content .messages ul li img.prchat_convertedImage {
-        max-width: 25vh;
+        max-width: 50vh;
     }
     #frame .content .messages ul li p,
     #frame .content .group_messages .own_group_message {
@@ -996,11 +1043,12 @@ body #frame #sidepanel #clients_container .clients_settings .dropdown-menu {
         width: 100%;
         margin: 0 auto;
         padding: 10px 0 0 0;
-        background: #dce3ec;
+        border-bottom: 1px solid #dce3ec;
     }
     #frame #sidepanel #profile .wrap {
         height: 55px;
         padding: 0px;
+        border-bottom: 0px;
     }
     #frame #sidepanel #profile .wrap img {
         width: 40px;
@@ -1008,47 +1056,47 @@ body #frame #sidepanel #clients_container .clients_settings .dropdown-menu {
         margin-top: 0px;
         margin-left: 11px;
     }
-    #frame #sidepanel #profile .wrap p {
-        display: none;
+    #frame .connection_field {
+        margin-top: 47px;
     }
     #frame #sidepanel #search {
-        display: none;
+        padding: 18px 0px 11px 10px;
     }
+    body #wrapper #frame #sidepanel #clients_container {
+        height: calc(var(--vh, 1vh) * 78);
+    }
+    body #wrapper #frame #sidepanel #clients_container,
     body #wrapper #frame #sidepanel #contacts,
     body #wrapper #frame #sidepanel #groups {
-        height: 56vh;
-        height: calc(var(--vh, 1vh) * 56);
         overflow-y: scroll;
         overflow-x: hidden;
     }
-    #frame #sidepanel #groups::-webkit-scrollbar {
-        display: none;
-    }
-    #frame #sidepanel #contacts::-webkit-scrollbar {
-        display: none;
-    }
     #frame #sidepanel #contacts ul li.contact a {
-        padding: 6px 0 46px 8px;
+        padding: 9px 25px 9px 10px;
     }
     #frame #sidepanel #contacts ul li.contact .wrap {
         width: 100%;
     }
     #frame .content {
-        width: calc(100% - 58px);
-        min-width: 300px !important;
+        min-width: 320px;
+        width: inherit;
+        height: -webkit-fill-available;
+        z-index: 999999999;
+        margin: 0;
+        background: #fff;
     }
     #frame .content .messages {
-        max-height: calc(100% - 105px);
+        margin: 0;
     }
     #frame .content .message-input .wrap textarea {
-        padding: 13px 32px 16px 8px;
+        padding: 13px 71px 8px 8px;
     }
     #frame .content .message-input .wrap .attachment {
-        margin-top: 8px;
+        margin-top: 5px;
         right: 99px;
     }
     #frame #sidepanel #contacts ul li.contact .wrap img {
-        margin-right: 0px;
+        margin-right: 12px;
         margin-left: 3px;
     }
     #frame .content .message-input {
@@ -1073,24 +1121,41 @@ body #frame #sidepanel #clients_container .clients_settings .dropdown-menu {
         border-radius: 50%;
         animation: zoom 3s 3s both infinite;
     }
+    body.Prchat_Controller #wrapper {
+        min-height: intrinsic !important;
+        /* Safari/WebKit uses a non-standard name */
+        min-height: -moz-min-content !important;
+        /* Firefox/Gecko */
+        min-height: -webkit-min-content !important;
+        /* Chrome */
+        min-height: min-content !important;
+    }
+    #frame .content {
+        border-left: 0;
+        display: none;
+        opacity: 0;
+        left: 100%;
+        border-left: 0px;
+        position: fixed;
+        top: -1px;
+        height: -webkit-fill-available;
+    }
     #frame #sidepanel #bottom-bar button {
         float: none;
         width: 100%;
         padding: 15px 0;
-        border-right: 1px solid #eae8e8;
-    }
-    #frame #sidepanel #bottom-bar button:nth-child(1) {
-        border-right: none;
-        border-bottom: 1px solid #eae8e8;
+        border-left: 1px solid #d0d0d0;
     }
     #frame #sidepanel #bottom-bar button i {
         font-size: 1.3em;
+        margin-top: -5px;
     }
-    #frame #sidepanel #bottom-bar button span {
-        display: none;
-    }
-    #frame #sidepanel #contacts ul li.contact .wrap .meta {
-        display: none;
+    #frame #sidepanel #bottom-bar {
+        position: absolute;
+        margin-bottom: -23px;
+        z-index: 99999;
+        right: 0;
+        display: flex;
     }
 }
 
@@ -1121,14 +1186,7 @@ img.shaking {
     }
 }
 
-@media screen and (max-width: 360px) {
-    #frame {
-        width: 100%;
-        height: 79vh;
-        /* Fallback for browsers that do not support Custom Properties */
-        height: calc(var(--vh, 1vh) * 79);
-    }
-}
+@media screen and (max-width: 360px) {}
 
 #sharedFiles i.fa-times-circle-o {
     color: #444343;
@@ -1184,9 +1242,11 @@ img.shaking {
 #sharedFiles .tab-content {
     width: calc(100% - 30px);
     overflow-y: auto;
+    overflow-x: hidden;
     position: relative;
-    height: 85vh;
+    height: inherit;
     margin: 0 auto;
+    margin-left:0px;
 }
 
 #sharedFiles .nav-tabs>li.active>a:focus,
@@ -1210,10 +1270,9 @@ img.shaking {
 }
 
 #sharedFiles .tab-content>.active {
-    overflow: hidden;
+    overflow-y: auto;
     width: 360px;
     margin: 0 auto;
-    margin-left: -13px;
     margin-top: 7px;
 }
 
@@ -1224,20 +1283,22 @@ img.shaking {
 
 #sharedFiles {
     z-index: 56 !important;
-    height: 82vh;
     width: 360px;
+    height: -webkit-fill-available;
+    height: -moz-available;
+    height: fill-available;
     float: right;
     display: none;
-    box-shadow: 0 0 0px 0 rgba(0, 0, 0, 0.32), 0 0 9px 0 rgba(0, 0, 0, 0.32);
-    background: #dce3ec;
-    right: 0;
+    background: #f5f5f5;
+    right: -360px;
     top: 60px;
     position: absolute;
-    -webkit-transition: all 1s;
-    -moz-transition: all 1s;
-    -ms-transition: all 1s;
-    -o-transition: all 1s;
-    transition: all 1s;
+    box-shadow: 1px 1px 1px 2px rgb(232, 232, 232);
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
 }
 
 #frame .chat_group_options .main_div_shared_files .nav-tabs>li.active>a:focus,
@@ -1265,18 +1326,11 @@ img.shaking {
 @media screen and (max-width: 320px) {
     body #wrapper #frame #sidepanel #groups,
     body #wrapper #frame #sidepanel #contacts {
-        height: 50vh;
-        height: calc(var(--vh, 1vh) * 50);
         overflow-x: hidden;
         overflow: scroll;
     }
-    #frame .content {
-        height: 82vh;
-        height: calc(var(--vh, 1vh) * 82);
-    }
     #frame #sidepanel {
         height: 82vh;
-        height: calc(var(--vh, 1vh) * 82);
     }
     #frame .content .messages ul li p,
     #frame .content .group_messages .own_group_message {
@@ -1287,15 +1341,20 @@ img.shaking {
         width: calc(100% - 50px);
         font-size: 14px;
     }
-    #wrapper,
-    #frame {
-        height: 82vh !important;
-        height: calc(var(--vh, 1vh) * 82) !important;
-    }
     #frame .content .message-input {
         left: 1px;
         width: 260px;
     }
+}
+
+svg.chat_back_mobile {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 16px;
+    left: 9px;
+    fill: #6986e8;
+    font-size: 23px;
 }
 
 
@@ -1419,13 +1478,15 @@ img.shaking {
     }
 }
 
+#frame .preview audio {
+    height: 1px;
+}
+
 
 /* Chat Full Screen Loader for uploading files */
 
 .main_loader_init:before {
     content: '';
-    position: absolute;
-    bottom: 50vh;
     color: #ffffff;
 }
 
@@ -1436,14 +1497,15 @@ img.shaking {
     align-items: center;
     background: rgb(0, 0, 0, 0.6);
     z-index: 99999999999999999;
-    height: 94vh;
-    height: calc(var(--vh, 1vh) * 94);
-    padding-left: 52%;
-    padding-bottom: 18%;
+    height: 100vh;
+    justify-content: center;
     overflow: hidden;
 }
 
 .main_loader_init div {
+    position: absolute;
+    top: 50%;
+    left: calc(50% - 15px);
     animation: main_loader_init 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     transform-origin: 32px 32px;
     -webkit-animation: main_loader_init 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
@@ -1556,9 +1618,66 @@ img.shaking {
 
 /* RTL SUPPORT */
 
-body.rtl #frame .dropdown-content {
+body.rtl #wrapper #frame .contact_name_placeholder {
+    top: -15px;
+    left: -39px;
+}
+
+body.rtl #frame .content .message-input .wrap textarea {
+    padding: 13px 102px 8px 8px;
+}
+
+body.rtl #wrapper #frame img.chatContactImage {
+    left: auto;
+    right: 7px;
+}
+
+body.rtl #wrapper #frame .contact_name_placeholder_notitle {
+    left: -39px;
+}
+
+body.rtl #wrapper #frame .dropdown-content {
     top: -53px;
     left: -46px;
+}
+
+body.rtl body #frame .client_data p {
+    padding-left: 9px;
+    padding-right: 0;
+}
+
+body.rtl #wrapper #frame .contact-profile .user_sound_icon {
+    right: 3px;
+    left: auto;
+}
+
+body.rtl #frame #sidepanel #profile .wrap img {
+    float: right;
+}
+
+body.rtl #frame .announcement {
+    cursor: pointer;
+    float: left;
+    margin-top: -41px;
+    font-size: 23px;
+    margin-left: 18px;
+}
+
+body.rtl #shared_user_files {
+    margin-left: 15px;
+}
+
+body.rtl #prchat-header-wrapper #top_status-options ul li span.status-circle {
+    right: 15px;
+}
+
+body.rtl #prchat-header-wrapper #top_status-options ul li p {
+    text-align: left;
+}
+
+body.rtl #prchat-header-wrapper {
+    left: 266px;
+    right: auto;
 }
 
 .rtl #frame .content .contact-profile .social-media {
@@ -1568,6 +1687,39 @@ body.rtl #frame .dropdown-content {
 .rtl #frame .content .contact-profile .social-media {
     float: left;
     margin-left: 0px;
+}
+
+body.rtl #frame .client_data span.contact_lang {
+    margin-right: 16px;
+}
+
+body.rtl #frame .content .messages,
+body.rtl #frame .content .client_messages {
+    margin: 0px 1px 0px 0px;
+}
+
+body.rtl #frame .content .contact-profile .client_data p {
+    padding-left: 16px;
+}
+
+body.rtl #frame .add_member {
+    position: absolute;
+    top: 20px;
+    right: 18px;
+    left: auto;
+}
+
+body.rtl #frame .chat_group_options .dismiss_chat_group {
+    line-height: inherit;
+    left: 12px;
+    right: auto;
+}
+
+body.rtl #frame a[href="#group_photos"] i,
+body.rtl #frame a[href="#group_files"] i,
+body.rtl #frame .tab-pane.active#group_files div a i {
+    padding-right: 4px;
+    padding-left: 5px;
 }
 
 .rtl #frame .content .contact-profile p {
@@ -1587,9 +1739,15 @@ body.rtl #frame .dropdown-content {
     margin-left: 10px;
 }
 
+body.rtl #frame #announcement .dropdown-menu {
+    right: -150px;
+    left: auto;
+}
+
 .rtl #frame #sidepanel #profile .wrap p {
-    float: right;
+    float: left;
     margin-right: 9px;
+    font-weight: 500;
 }
 
 .rtl #frame .content .messages {
@@ -1600,8 +1758,49 @@ body.rtl #frame .dropdown-content {
     margin: 15px 15px 6px 6px;
 }
 
+body.rtl #sharedFiles .icon_shared_files {
+    margin-right: 4px;
+    margin-left: 5px;
+    color: #3d5063;
+}
+
+body.rtl #sharedFiles .tab-content>.active {
+    width: auto;
+    margin-left: auto;
+}
+
+body.rtl #frame .chat_group_options .nav.nav-tabs,
+body.rtl #sharedFiles .nav.nav-tabs {
+    width: auto;
+}
+
+body.rtl #sharedFiles i.fa-times-circle-o {
+    left: 12px;
+    right: auto;
+}
+
+body.rtl #frame .history_slider {
+    float: left;
+    right: 6px;
+}
+
+body.rtl #frame .content .chat_client_messages ul li p.client,
+body.rtl #frame .content .messages ul li p.friend {
+    float: left;
+}
+
 .rtl #frame #sidepanel #search input {
-    padding: 0px 25px 0px 46px;
+    padding: 0px 32px 0px 46px;
+}
+
+body.rtl #frame #sidepanel .group_selector .group_wrapper a {
+    padding-right: 7px;
+}
+
+body.rtl #frame #sidepanel .group_selector .group_wrapper .groups_image {
+    padding-bottom: 10px;
+    margin-right: 8px;
+    width: 35px;
 }
 
 .rtl #frame #sidepanel #search i {
@@ -1638,7 +1837,6 @@ body.rtl #frame .dropdown-content {
 /* Group chat  */
 
 #frame .chat_group_messages ul li.from_other {
-    /* display: inline-block; */
     clear: both;
     float: right;
     margin: 15px 15px 6px 15px;
@@ -1648,7 +1846,6 @@ body.rtl #frame .dropdown-content {
 }
 
 #frame .chat_group_messages ul li.own_group_message_li {
-    /* display: inline-block; */
     clear: both;
     float: left;
     margin: 15px 15px 6px 15px;
@@ -1659,14 +1856,14 @@ body.rtl #frame .dropdown-content {
 
 #frame .chat_group_messages p.own_group_message {
     background: #6986e8;
-    color: #fff;
+    color: #ffffff;
     float: right;
     border-top-left-radius: 1.3em;
     border-bottom-left-radius: 1.3em;
     border-bottom-right-radius: 1.3em;
     width: auto !important;
     word-break: break-word;
-    max-width: 420px;
+    max-width: 712px;
     padding: 6px 15px;
     margin-top: 10px;
     margin-right: 5px;
@@ -1690,15 +1887,15 @@ body.rtl #frame .dropdown-content {
 }
 
 #frame .chat_group_messages p.from_other {
-    background: #d8d8d8;
-    color: #333;
+    background: #dce3ec;
+    color: #616161;
     float: left;
     border-bottom-right-radius: 1.3em;
     border-bottom-left-radius: 1.3em;
     border-top-right-radius: 1.3em;
     width: auto !important;
     word-break: break-word;
-    max-width: 420px;
+    max-width: 712px;
     padding: 6px 15px;
     margin-top: 9px;
     margin-left: 6px;
@@ -1718,6 +1915,8 @@ body.rtl #frame .dropdown-content {
     max-height: 25vh;
     width: auto;
     width: -webkit-fill-available;
+    width: -moz-available;
+    width: fill-available;
 }
 
 #frame .chat_group_messages .from_other img:not(.prchat_convertedImage) {
@@ -1732,11 +1931,34 @@ body.rtl #frame .dropdown-content {
     float: right;
 }
 
+#frame .content .startMic {
+    display: none;
+    position: absolute;
+    right: 151px;
+    z-index: 4;
+    margin-top: 9px;
+    font-size: 2em;
+    width: 20px;
+    fill: #6986e8;
+    cursor: pointer;
+    width: 29px;
+    height: 29px;
+}
+
+body #frame .content .group_msg_input .startMic {
+    right: 115px;
+}
+
+#frame .content p audio {
+    margin-bottom: -6px;
+    height: 35px;
+}
+
 
 /* Flash class and keyframe animation */
 
 .flashit {
-    color: #f2f;
+    color: #ce0e20;
     -webkit-animation: flash linear 2s infinite;
     animation: flash linear 2s infinite;
 }
@@ -1777,14 +1999,6 @@ body.rtl #frame .dropdown-content {
     color: #5e73e0;
 }
 
-#frame #sidepanel #groups {
-    overflow-x: hidden;
-    -ms-overflow-y: auto;
-    overflow-y: auto;
-    scrollbar-width: none;
-    height: 73vh;
-}
-
 #frame #sidepanel li.staff {
     border-right: 1px solid #eae8e8;
 }
@@ -1793,9 +2007,7 @@ body.rtl #frame .dropdown-content {
 #frame #sidepanel .nav-tabs>li.active>a,
 #frame #sidepanel .nav-tabs>li.active>a:focus,
 #frame #sidepanel .nav-tabs>li.active>a:hover {
-    margin-bottom: 3px;
-    outline: white;
-    color: #6986e8;
+    color: #6986e8 !important;
     border: 0px;
     transition: unset;
     font-weight: 400 !important;
@@ -1808,12 +2020,13 @@ body.rtl #frame .dropdown-content {
 }
 
 #frame #sidepanel .nav-tabs>li a {
-    color: #333;
+    color: #333333;
+    cursor: pointer;
 }
 
 #frame #sidepanel ul.nav.nav-tabs.chat_nav {
-    border-top: 1px solid #eae8e8;
-    border-bottom: 1px solid #eae8e8;
+    border-top: 1px solid #dce3ec !important;
+    border-bottom: 1px solid #dce3ec !important;
 }
 
 #frame #sidepanel ul.nav.nav-tabs {
@@ -1821,12 +2034,51 @@ body.rtl #frame .dropdown-content {
 }
 
 #frame .i_chat_navigation {
-    padding-right: 7px !important;
     font-size: 14px !important;
 }
 
+#frame svg.fa-search {
+    width: 17px;
+    height: 17px;
+    margin-top: 0px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+#frame #sidepanel .nav-tabs>li.active svg {
+    fill: #6986e8;
+}
+
+svg.fa-paper-plane {
+    width: 30px;
+    height: 30px;
+    margin-top: -3px;
+    margin-right: 0px;
+}
+
+.chat_group_options a svg.svg_add_chat_member {
+    margin-bottom: -4px;
+}
+
+svg.i_settings {
+    margin-right: 0px;
+}
+
+#announcement svg {
+    margin-top: -6px;
+    margin-bottom: -6px;
+}
+
+svg {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
 #frame #sidepanel .nav-tabs>li a {
-    padding: 12px 10px 12px 10px;
+    padding: 4px 0px 4px 0px;
 }
 
 #frame #sidepanel .nav-tabs>li {
@@ -1834,6 +2086,7 @@ body.rtl #frame .dropdown-content {
     display: flex;
     text-align: center;
     justify-content: center;
+    padding: 7px 10px 7px 10px;
 }
 
 #frame #sidepanel .nav-tabs li.groups {
@@ -1851,7 +2104,7 @@ body.rtl #frame .dropdown-content {
 }
 
 #frame #sidepanel .group_selector .group_wrapper a {
-    color: #333;
+    color: #333333;
     padding-left: 7px;
 }
 
@@ -1903,7 +2156,7 @@ body.rtl #frame .dropdown-content {
 #frame .chat_group_options a:not([role=tab]):not([target=_blank]) {
     width: 100%;
     font-size: 15px;
-    color: #333;
+    color: #ffffff;
 }
 
 #frame .group_members .members_list {
@@ -1917,20 +2170,24 @@ body.rtl #frame .dropdown-content {
 
 #frame .group_members .add_chat_member,
 #frame .group_members .members_list {
-    color: #333 !important;
+    color: #ffffff !important;
     cursor: context-menu;
     font-size: 14px;
 }
 
+body #add_members_modal {
+    z-index: 999999999999;
+}
+
 #frame .chat_group_options .add_chat_member {
-    color: #333 !important;
+    color: #2b2f38 !important;
     font-size: 14px;
 }
 
 #frame .chat_groups_list,
 #frame .chat_contacts_list {
-    margin-bottom: -5px;
-    max-height: 57vh;
+    margin-bottom: 0px;
+    height: calc(var(--vh, 1vh) * 78);
 }
 
 #frame .events_disabled {
@@ -1939,12 +2196,14 @@ body.rtl #frame .dropdown-content {
 }
 
 #frame #groupOptionsIcon {
-    color: #6986e8;
-    font-size: 24px;
     float: right;
-    padding: 16px 10px 2px 0px;
-    cursor: pointer;
-    margin-right: 6px;
+    width: 27px;
+    height: 27px;
+    padding: 0;
+    margin-top: 17px;
+    margin-left: 4px;
+    margin-right: 15px;
+    fill: #6986e8;
 }
 
 #frame .add_member {
@@ -1973,8 +2232,22 @@ body #frame .active_group_members {
     width: 93% !important;
 }
 
+#frame #sidepanel #bottom-bar #clients_show svg,
+#frame #sidepanel #bottom-bar #add_group_btn svg {
+    width: 20px;
+    height: 20px;
+    margin-top: 0px;
+    margin-bottom: -5px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
 #frame #sidepanel #bottom-bar #add_group_btn {
     width: 100%;
+}
+
+#frame .chat_group_options .dismiss_chat_group:hover {
+    background: #c8cdd4;
 }
 
 #frame .chat_group_options .dismiss_chat_group {
@@ -1983,6 +2256,7 @@ body #frame .active_group_members {
     font-size: 13px;
     position: absolute;
     margin-right: 11px;
+    line-height: inherit;
     right: 0;
     top: 2%;
     background: #d1d5da;
@@ -2023,14 +2297,14 @@ body #frame .active_group_members {
 }
 
 #frame .panel-heading {
-    background: #dce3ec;
+    background: #6986e8;
 }
 
 #frame .panel-heading .accordion-toggle:after {
     font-family: 'Glyphicons Halflings';
     content: "\e114";
     float: right;
-    color: #5d5c5c;
+    color: #ffffff;
 }
 
 #frame .panel-heading .accordion-toggle.collapsed:after {
@@ -2039,26 +2313,32 @@ body #frame .active_group_members {
 
 body #wrapper #frame .content .chat_group_options.active {
     display: block;
+    right: 0;
+}
+
+body #frame .white-text {
+    color: #ffffff !important;
 }
 
 #frame .chat_group_options {
-    border-left: 1px solid #eae8e8;
-    display: none;
     padding: 10px;
     margin-top: -11px;
     z-index: 56 !important;
-    height: 82vh;
+    height: -webkit-fill-available;
+    height: -moz-available;
+    height: fill-available;
     width: 360px;
     float: right;
     background: #f9f9f9;
-    right: 0;
-    top: 71px;
+    right: -360px;
+    top: 72px;
     position: absolute;
-    -webkit-transition: all 0.5s;
-    -moz-transition: all 0.5s;
-    -ms-transition: all 0.5s;
-    -o-transition: all 0.5s;
-    transition: all 0.5s;
+    box-shadow: 1px 1px 1px 2px rgb(232, 232, 232);
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -ms-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
 }
 
 #frame #sidepanel .group_selector .group_wrapper {
@@ -2071,13 +2351,17 @@ body #wrapper #frame .content .chat_group_options.active {
     position: relative;
 }
 
-#frame .group_messages::-webkit-scrollbar,
+
+/* #frame .group_messages::-webkit-scrollbar, */
+
 #frame .chat_group_options .main_div_shared_files::-webkit-scrollbar,
 #frame #sidepanel #groups::-webkit-scrollbar {
     width: 4px;
 }
 
-#frame .group_messages::-webkit-scrollbar-thumb,
+
+/* #frame .group_messages::-webkit-scrollbar-thumb, */
+
 #frame .chat_group_options .main_div_shared_files::-webkit-scrollbar-thumb,
 #frame #sidepanel #groups::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.3);
@@ -2085,7 +2369,7 @@ body #wrapper #frame .content .chat_group_options.active {
 
 #frame .chat_group_options .main_div_shared_files {
     -ms-overflow-y: scroll;
-    overflow-y: scroll;
+    overflow-y: auto;
     -ms-overflow-x: hidden;
     overflow-x: hidden;
     max-height: 360px !important;
@@ -2097,7 +2381,7 @@ body #wrapper #frame .content .chat_group_options.active {
     height: 60px;
     margin-left: 10px;
     margin-top: 5px;
-    border: 2px solid #51647c;
+    border: 2px solid #6986e8;
 }
 
 #frame .contact-profile .user_sound_icon:before {
@@ -2119,15 +2403,64 @@ body #wrapper #frame .content .chat_group_options.active {
 /* Group chat device responseive media screen */
 
 @media (max-width: 768px) {
+    body #sharedFiles .tab-content>.active {
+    overflow: scroll;
+    max-height: fit-content;
+    margin: 0 auto;
+    margin-top: 7px;
+    }
+    body #wrapper #frame .content p audio {
+        width: 250px;
+    }
+    body #wrapper #frame .nav.nav-tabs.chat_nav>li {
+        margin-bottom: 0px !important;
+    }
+    body #wrapper #frame ul[aria-labelledby="dropDownOptions"] li a:hover {
+        background: #40434a;
+    }
+    body #wrapper #frame ul[aria-labelledby="dropDownOptions"] li a {
+        color: #fff;
+    }
+    body #wrapper #frame ul[aria-labelledby="dropDownOptions"] {
+        background-color: #2b2f38;
+        border: none;
+        left: -23px !important;
+        bottom: 50px !important;
+    }
+    body #frame #bottom-bar .clients_settings.dropup {
+        width: 50%;
+    }
+    body #wrapper #frame #clients_container #bottom-bar .clients_settings.dropup button.dropdown-toggle {
+        width: 100% !important;
+        border-left: 1px solid #d0d0d0;
+    }
     body .modal.left .modal-dialog,
     body .modal.right .modal-dialog {
         width: calc(100%);
     }
     body #wrapper #frame .content .contact-profile {
-        height: 61px;
+        z-index: 99999999999;
     }
-    #frame #sidepanel .crm_clients {
-        display: none !important;
+    body #frame #crm_clients .customers_toggler {
+        margin: 0;
+    }
+    body.Prchat_Controller.mobile #mobile-search {
+        display: none;
+    }
+    body.Prchat_Controller #frame #crm_clients img.chatContactImage {
+        left: 10px !important;
+    }
+    body #wrapper #frame .content .contact-profile .client_data p {
+        display: none;
+    }
+    body.Prchat_Controller #frame .client_data span.contact_lang {
+        padding: 0px;
+        width: calc(100% - 21%);
+        margin-left: 46px !important;
+    }
+    body.Prchat_Controller #crm_clients .contact_name_placeholder_notitle,
+    body #frame #sidepanel #crm_clients #bottom-bar button:nth-child(1) {
+        width: calc(100% - 51px) !important;
     }
     #frame #sidepanel .nav-tabs>li {
         width: 50% !important;
@@ -2138,17 +2471,20 @@ body #wrapper #frame .content .chat_group_options.active {
     }
     body .main_loader_init {
         display: flex;
-        position: absolute;
+        position: fixed;
         top: -1px;
         width: 100%;
         align-items: center;
+        justify-content: center;
+        align-content: center;
         background: rgba(0, 0, 0, 0.45);
         z-index: 99999999999999999;
-        height: 94vh;
-        height: calc(var(--vh, 1vh) * 94);
-        padding-left: 44%;
-        padding-bottom: 73%;
+        padding-left: unset;
+        padding-bottom: unset;
         overflow: hidden;
+    }
+    #frame .panel-heading .accordion-toggle:after {
+        color: #f9f9f9;
     }
     #frame .message_loader,
     #frame .message_client_loader,
@@ -2161,7 +2497,6 @@ body #wrapper #frame .content .chat_group_options.active {
     }
     #frame #sidepanel li.staff {
         border-right: none;
-        border-bottom: 1px solid #eae8e8;
     }
     #frame #sidepanel li.groups {
         border-top: none !important;
@@ -2170,52 +2505,25 @@ body #wrapper #frame .content .chat_group_options.active {
         width: 100% !important;
         text-align: center;
     }
-    body #wrapper #frame .i_chat_navigation {
-        padding: 0px;
-        padding-left: 7px;
-    }
-    body.Prchat_Controller #wrapper #frame .content .contact-profile .groupOptions {
-        display: none !important;
-    }
-    body #wrapper #frame .content .chat_group_options.active {
-        display: none;
-    }
-    #frame .chat_groups_list .leave_chat_group {
-        display: none;
-    }
-    #frame #sidepanel .group_selector .group_wrapper .group-list {
-        display: none;
-    }
     #frame #sidepanel .group_selector .group_wrapper {
         padding-left: 14px;
     }
     #frame #sidepanel li.groups.active {
         border: none;
-        border-top: 1px solid #eae8e8;
         margin: 0 !important;
     }
     #frame #sidepanel li.active.staff,
     #frame #sidepanel li.active.staff a {
         margin: 0 !important;
         border: none;
-        border-bottom: 1px solid #eae8e8;
     }
     #frame #sidepanel .nav-tabs {
-        border-top: none;
-    }
-    #frame #sidepanel .nav-tabs>li a,
-    #frame #sidepanel .nav-tabs>li a,
-    #frame #sidepanel .nav-tabs>li a:hover,
-    #frame #sidepanel .nav-tabs>li.active>a,
-    #frame #sidepanel .nav-tabs>li.active>a:focus,
-    #frame #sidepanel .nav-tabs>li.active>a:hover {
-        margin: 0px;
-        padding: 9px 9px 9px 9px !important;
-        border: none;
+        border-top: none !important;
+        display: flex;
     }
     body #wrapper #frame .active_group_members {
-        font-size: 12px;
-        padding-top: 16px !important;
+        font-size: 10px;
+        padding-top: 14px !important;
     }
     body #frame .chat_groups_list .g_new_msg i.fa-comments {
         font-size: 15px;
@@ -2227,113 +2535,59 @@ body #wrapper #frame .content .chat_group_options.active {
         margin: 0px;
         color: #5e73e0;
     }
-}
-
-
-/* CRPM Light Theme Support */
-
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #sidepanel #contacts ul li.contact.active,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #groups ul li.group_selector.active,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #groups ul li.group_selector .group_wrapper:hover,
-body.perfex_dark_theme_initiated.chat_light #wrapper li.active a,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #sidepanel #contacts ul li.contact:hover {
-    background: #fff;
-    color: #333 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #frame #sidepanel ul.dropdown-menu a {
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    -moz-border-radius: 0 !important;
-    -ms-border-radius: 0 !important;
-    -o-border-radius: 0 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #frame #sidepanel ul.dropdown-menu {
-    border: 1px solid #cbcfd4 !important;
-    -webkit-border-radius: 0 !important;
-    border-radius: 0 !important;
-    -moz-border-radius: 0 !important;
-    -ms-border-radius: 0 !important;
-    -o-border-radius: 0 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #add_members_modal li a:hover,
-body.perfex_dark_theme_initiated.chat_light #chat_groups_custom_modal li a:hover {
-    background: #cbcfd4 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #add_members_modal li span,
-body.perfex_dark_theme_initiated.chat_light #chat_groups_custom_modal li span {
-    color: #333 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #sidepanel .dropdown-menu>li>a:focus,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #sidepanel .dropdown-menu>li>a:hover {
-    background: #cbcfd4 !important;
-    color: #fff !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #sidepanel .dropdown.open ul li a {
-    color: #333 !important;
-    background: #dce3ec;
-    border: none;
-}
-
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame .client_chatbox,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame .chatbox,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame .group_chatbox {
-    background: #fff !important;
-    border-color: #eae8e8 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #frame .shared_items_span,
-body.perfex_dark_theme_initiated.chat_light #frame #bottom-bar #add_group_btn {
-    color: #333 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #frame .chat_group_options .dismiss_chat_group {
-    background: #5f5f5f !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame p.member_name_other,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame p.friend {
-    color: #333;
-}
-
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame p:not(.you):not(.own_group_message) {
-    color: #333 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #sidepanel i.fa.fa-search,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame #bottom-bar button,
-body.perfex_dark_theme_initiated.chat_light #wrapper #frame a {
-    color: #333 !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #wrapper ul .divider,
-body #wrapper ul {
-    background: #fff !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #frame #groups ul li.group_selector .group_wrapper:hover,
-body.perfex_dark_theme_initiated.chat_light #frame #groups ul li.group_selector.active a,
-body.perfex_dark_theme_initiated.chat_light #frame #groups ul li.group_selector.active,
-body.perfex_dark_theme_initiated.chat_light #frame #groups ul li.group_selector.active a:hover,
-body.perfex_dark_theme_initiated.chat_light #frame #groups ul li.group_selector.active :hover,
-body.perfex_dark_theme_initiated.chat_light #frame .tab-content div>ul li.contact.active a,
-body.perfex_dark_theme_initiated.chat_light #frame .tab-content div>ul li.contact a:hover {
-    background: #dce3ec !important;
-}
-
-body.perfex_dark_theme_initiated.chat_light #frame .dropdown button i::before {
-    color: #777;
-}
-
-body.perfex_dark_theme_initiated.chat_light #frame .dropdown button.btn.btn-primary.dropdown-toggle,
-body.perfex_dark_theme_initiated.chat_light #frame .dropdown button.btn.btn-primary.dropdown-toggle:hover {
-    background-color: #dce3ec !important;
-    border-color: #eae8e8 !important;
+    body #wrapper #frame #groupOptionsThree .tab-content,
+    body #wrapper #frame #sharedFiles .tab-content {
+        border-top: none;
+        width: 100%;
+    }
+    #frame .chat_group_options .nav.nav-tabs,
+    #sharedFiles .nav.nav-tabs {
+        width: -webkit-fill-available;
+        width: -moz-available;
+        width: fill-available;
+    }
+    body #wrapper #frame #sharedFiles {
+        height: inherit;
+        top: 60px;
+        width: 100%;
+    }
+    body #wrapper #frame .chat_group_options .main_div_shared_files .shared_items_span,
+    body #wrapper #frame #sharedFiles .shared_items_span {
+        width: 100%;
+        margin-left: auto;
+        margin-top: 11px;
+    }
+    body #wrapper #frame .chat_group_options .main_div_shared_files .shared_items_span {
+        margin-left: 0px;
+    }
+    body #wrapper #frame .chat_group_options {
+        top: 71px;
+        height: inherit;
+        width: 100%;
+        right: -100%;
+    }
+    body #wrapper #frame .chat_group_options .main_div_shared_files .shared_files_ahref {
+        float: left !important;
+        margin-left: 4px;
+    }
+    body #wrapper #frame .chat_group_options .nav.nav-tabs,
+    body #wrapper #frame #sharedFiles .nav.nav-tabs {
+        display: inline-flex;
+    }
+    body #wrapper #frame #sharedFiles .nav-tabs li>a {
+        margin-top: -13px;
+    }
+    body #wrapper #frame .announcement .dropdown-menu li a {
+        color: #333333;
+    }
+    body #wrapper #frame .announcement .dropdown-menu li a:hover {
+        color: #333333;
+        background: #eae8e8;
+    }
+    body #wrapper #frame .announcement .dropdown-menu {
+        left: -139px;
+        border: none;
+    }
 }
 
 
@@ -2349,6 +2603,7 @@ body.perfex_dark_theme_initiated.chat_light #frame .dropdown button.btn.btn-prim
 
 body.Prchat_Controller #frame img.chatContactImage {
     width: 39px;
+    height: 39px;
     position: absolute;
     left: 7px;
     top: 9px;
@@ -2358,8 +2613,8 @@ body.Prchat_Controller #frame img.chatContactImage {
 body.Prchat_Controller #frame .contact_name.contactActive::before {
     content: '';
     display: block;
-    width: 11px;
-    height: 11px;
+    width: 10px;
+    height: 10px;
     background: #14b94e;
     background-color: rgb(74, 208, 129) !important;
     border-radius: 50%;
@@ -2377,20 +2632,20 @@ body.Prchat_Controller #frame .contact_name.contactActive::before {
 body #frame .contact_name::before {
     content: '';
     display: block;
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
     background: #a7adb3;
     background-color: #a7adb3;
+    border: 2px solid #ffffff;
     border-radius: 50%;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     -ms-border-radius: 50%;
     -o-border-radius: 50%;
     position: relative;
-    left: 12px;
+    left: 11px;
     top: 22px;
     z-index: 9;
-    border: 1px solid #f5f5f5;
 }
 
 body #frame .contact_name.contactActive::before {
@@ -2411,8 +2666,8 @@ body #frame .contact_name.contactActive::before {
 }
 
 body #frame .contact_name {
-    background: #f5f5f5;
     padding-left: 25px;
+    color: #333333;
     padding-top: 15px;
     padding-bottom: 15px;
     border: unset;
@@ -2431,9 +2686,9 @@ body #frame .contact_name {
     position: absolute;
     text-indent: 0px;
     right: 8px;
-    top: 11px;
+    top: 19px;
     font-size: 11px;
-    background: #3458f3;
+    background: #6986e8;
     color: #fff;
     width: 18px;
     height: 18px;
@@ -2448,8 +2703,12 @@ body #frame .contact_name {
     -o-border-radius: 50%;
 }
 
+body #frame .contact_name:hover::before {
+    border: 2px solid #dce3ec;
+}
+
 body #frame .contact_name:hover {
-    background: #dce3ec;
+    background-color: #a7adb3;
 }
 
 body #frame .customers_toggler::after,
@@ -2460,7 +2719,7 @@ body #frame .customers_toggler.chevron-right::after {
 body #frame .customers_toggler::after,
 body #frame .customers_toggler.chevron-default::after {
     content: "\f078";
-    color: #4c4c4c;
+    color: #333333;
     font: normal normal normal 14px/1 FontAwesome;
     font-size: inherit;
     text-rendering: auto;
@@ -2472,10 +2731,10 @@ body #frame .customers_toggler.chevron-default::after {
 body #frame .customers_toggler {
     cursor: default;
     padding-left: 3px;
-    background: #ffffff;
-    border-bottom: 1px solid #e4e0e0;
+    border-bottom: 1px solid #eae8e8;
     padding: 10px;
     margin: 0;
+    color: #333333;
     transition: all 0.75s 0.25s;
     transform: rotate(0);
     -webkit-transition: all 0.75s 0.25s;
@@ -2492,12 +2751,16 @@ body .company_selector.active li {
     color: #333;
 }
 
+body #wrapper #frame .company_selector.active li.selected.contact_name::before {
+    background-color: #a7adb3;
+    border: 2px solid #dce3ec;
+}
+
 body .company_selector.active li.selected {
     background: #dce3ec !important;
 }
 
 body #frame .company_selector {
-    background: #6986e8;
     margin: 0;
 }
 
@@ -2536,7 +2799,7 @@ body #frame .client_data strong {
 }
 
 body.Prchat_Controller #frame .client_data span {
-    color: #1d1d1d;
+    color: #333333;
 }
 
 body.Prchat_Controller #frame .client_data span.contact_lang.notitle {
@@ -2557,15 +2820,18 @@ body.Prchat_Controller #frame .client_data span.contact_lang.notitle {
 
 body.Prchat_Controller #frame .client_data span.contact_lang {
     margin-left: 16px;
-    background: whitesmoke;
+    background: #dce3ec;
     padding: 6px 15px;
+    color: #333333;
     border-radius: 5px;
 }
 
 body.Prchat_Controller #frame .client_data p a strong {
-    background: whitesmoke;
-    padding: 3px 11px;
+    margin-left: 3px;
+    background: #dce3ec;
+    padding: 6px 15px;
     border-radius: 5px;
+    color: #333333;
 }
 
 body #frame .client_data p {
@@ -2591,12 +2857,15 @@ body .message_history_view img {
 #frame .content .message-input .wrap .search_client_messages,
 #frame .content .message-input .wrap .search_messages {
     position: absolute;
-    right: 134px;
+    right: 121px;
     z-index: 4;
-    margin-top: 10px;
+    margin-top: 6px;
     font-size: 2em;
-    color: #6886e8;
+    width: 20px;
+    fill: #6986e8;
     cursor: pointer;
+    width: 33px;
+    height: 33px;
 }
 
 body .chat_message_history_view img {
@@ -2729,6 +2998,7 @@ body .chat_message_history_other .panel-heading {
     display: table;
     padding: 7px;
     width: fit-content;
+    width: max-content;
     padding: 3px 17px;
     display: flex;
     text-align: center;
@@ -2745,6 +3015,215 @@ body.Prchat_Controller .contact_name_placeholder_notitle {
     position: relative;
     top: -7px;
     left: 30px;
+}
+
+#frame #sidepanel #profile .wrap #status-options {
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    width: 150px;
+    margin: 70px 0 0 0;
+    border-radius: 6px;
+    z-index: 99;
+    line-height: initial;
+    background: #ffffff;
+    box-shadow: 0px 1px 5px -1px rgba(0, 0, 0, 0.38);
+    -moz-transition: 0.3s all ease;
+    -o-transition: 0.3s all ease;
+    -webkit-transition: 0.3s all ease;
+    transition: 0.3s all ease;
+}
+
+#frame #status-options li p {
+    margin-top: -1px !important;
+}
+
+@media screen and (max-width: 735px) {
+    #frame #sidepanel #profile .wrap #status-options {
+        width: 58px;
+        margin-top: 57px;
+    }
+}
+
+#frame #sidepanel #profile .wrap #status-options.active {
+    opacity: 1;
+    visibility: visible;
+    margin: 52px 0 0 0;
+}
+
+@media screen and (max-width: 735px) {
+    #frame #sidepanel #profile .wrap #status-options.active {
+        margin-top: 51px;
+        margin-left: 8px;
+    }
+}
+
+#frame #sidepanel #profile .wrap #status-options:before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 8px solid #dce3ec;
+    margin: -8px 0 0 24px;
+}
+
+@media screen and (max-width: 735px) {
+    #frame #sidepanel #profile .wrap #status-options:before {
+        margin-left: 23px;
+        border-bottom: 8px solid #ffffff;
+    }
+}
+
+#frame .wrap img {
+    cursor: pointer;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul {
+    overflow: hidden;
+    border-radius: 6px;
+    margin-bottom: 0px;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li {
+    padding: 15px 0 30px 18px;
+    display: block;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 735px) {
+    #frame #sidepanel #profile .wrap #status-options ul li {
+        padding: 15px 0 35px 22px;
+    }
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li:hover {
+    background: #dce3ec;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li span.status-circle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 5px 0 0 0;
+}
+
+@media screen and (max-width: 735px) {
+    #frame #sidepanel #profile .wrap #status-options ul li span.status-circle {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li span.status-circle:before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    margin: -3px 0 0 -3px;
+    background: transparent;
+    border-radius: 50%;
+    z-index: 0;
+}
+
+#frame .svg_add_chat_member,
+#frame #sidepanel svg:not(.i_settings) {
+    fill: #4a4a4a;
+}
+
+@media screen and (max-width: 735px) {
+    #frame #sidepanel #profile .wrap #status-options ul li span.status-circle:before {
+        height: 18px;
+        width: 18px;
+    }
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li p {
+    padding-left: 12px;
+}
+
+@media screen and (max-width: 735px) {
+    #frame #sidepanel #profile .wrap #status-options ul li p {
+        display: none;
+    }
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-online span.status-circle {
+    background: #2ecc71;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-online.active span.status-circle:before {
+    border: 2px solid #2ecc71;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-away span.status-circle {
+    background: #f1c40f;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-away.active span.status-circle:before {
+    border: 2px solid #f1c40f;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-busy span.status-circle {
+    background: #e74c3c;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-busy.active span.status-circle:before {
+    border: 2px solid #e74c3c;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-offline span.status-circle {
+    background: #95a5a6;
+}
+
+#frame #sidepanel #profile .wrap #status-options ul li#status-offline.active span.status-circle:before {
+    border: 2px solid #95a5a6;
+    padding: 1px;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap img.online,
+#frame .wrap #profile-img.online {
+    border: 2px solid #2ecc71 !important;
+    padding: 1px;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap span.away {
+    background: #f1c40f;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap img.away,
+#frame .wrap #profile-img.away {
+    border: 2px solid #f1c40f !important;
+    padding: 1px;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap span.busy {
+    background: #e74c3c;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap img.busy,
+#frame .wrap #profile-img.busy {
+    border: 2px solid #e74c3c !important;
+    padding: 1px;
+}
+
+#frame .wrap #profile-img.offline,
+#frame #sidepanel #contacts ul li.contact .wrap span.offline {
+    background: #d2d0d0;
+    padding: 1px;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap img.imgFriend,
+#frame #sidepanel #contacts ul li.contact .wrap img.offline,
+#frame .wrap #profile-img.offline {
+    border: 2px solid #d2d0d0;
+    padding: 0px !important;
+}
+
+#frame #sidepanel #contacts ul li.contact .wrap img {
+    padding: 1px;
 }
 
 body.Prchat_Controller .contact_name_placeholder {
@@ -2766,7 +3245,6 @@ body.app.admin.prchat.Prchat_Controller.perfex_office_theme_initiated #frame {
 
 @media screen and (max-width: 735px) {
     body.app.admin.prchat.Prchat_Controller.perfex_office_theme_initiated #frame {
-        /* height: 85vh; */
         margin-top: 0px;
     }
     body.app.admin.prchat.Prchat_Controller.perfex_office_theme_initiated #mobile-search {
@@ -2819,6 +3297,38 @@ body .mutual_messages_select_view {
 }
 
 
+/* Mentions */
+
+body #wrapper #frame .group_messages .from_other .user_mentioned {
+    font-weight: 500;
+    color: #6995cc !important;
+    text-decoration: none !important;
+    font-style: unset;
+}
+
+body #wrapper #frame .group_messages .from_other .user_mentioned:hover {
+    color: #6995cc !important;
+}
+
+body #wrapper #frame .group_messages .own_group_message .user_mentioned {
+    font-weight: 500;
+    color: #3e3e3e !important;
+    text-decoration: none !important;
+    font-style: unset;
+}
+
+body #wrapper #frame .group_messages .own_group_message .user_mentioned:hover {
+    color: #3e3e3e !important;
+}
+
+.meta .preview a[target="blank"] {
+    position: absolute;
+    top: 8px;
+    margin-left: 27px;
+    color: rgb(181, 181, 181) !important;
+}
+
+
 /* Absolute Center Spinner */
 
 .ticket_form_loading_spinner {
@@ -2848,9 +3358,6 @@ body .mutual_messages_select_view {
     background: radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, .8));
     background: -webkit-radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, .8));
 }
-
-
-/* :not(:required) hides these rules from IE9 and below */
 
 .ticket_form_loading_spinner:not(:required) {
     font: 0/0 a;
@@ -2945,5 +3452,37 @@ body .mutual_messages_select_view {
         -ms-transform: rotate(360deg);
         -o-transform: rotate(360deg);
         transform: rotate(360deg);
+    }
+}
+
+@-moz-document url-prefix() {
+    #pusherChat .enterBtn {
+        bottom: 4px;
+    }
+    #frame #sidepanel #profile .wrap #status-options ul li span.status-circle {
+        left: 22px;
+    }
+    #frame #sharedFiles {
+        height: inherit;
+    }
+    #frame .chat_group_options {
+        height: inherit;
+    }
+    .middleDateTime {
+        font-family: Arial;
+        font-weight: 100;
+        font-size: 11px;
+    }
+    body.Prchat_Controller .contact_name_placeholder span span.pull-left {
+        position: relative;
+        top: -15px;
+        left: 30px;
+    }
+    body #frame .customers_toggler {
+        margin: 1px;
+    }
+    #frame .messages .userIsTyping,
+    #frame .client_messages .userIsTyping {
+        top: 98%;
     }
 }

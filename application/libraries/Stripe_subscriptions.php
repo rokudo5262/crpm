@@ -81,19 +81,27 @@ class Stripe_subscriptions extends Stripe_core
         }
 
         if ($update_values['stripe_tax_id'] != $db_subscription->stripe_tax_id
+                    || $update_values['stripe_tax_id_2'] != $db_subscription->stripe_tax_id_2
                     || $update_values['quantity'] != $db_subscription->quantity
                     || $update_values['stripe_plan_id'] != $db_subscription->stripe_plan_id
                 ) {
-
             $stripeSubscription = $this->get_subscription($subscription_id);
 
-            if ($update_values['stripe_tax_id'] != $db_subscription->stripe_tax_id) {
-                if (empty($update_values['stripe_tax_id'])) {
-                    $stripeSubscription->default_tax_rates = null;
-                } else {
-                    $stripeSubscription->default_tax_rates = [$update_values['stripe_tax_id']];
+            if (empty($update_values['stripe_tax_id']) && empty($update_values['stripe_tax_id_2'])) {
+                $stripeSubscription->default_tax_rates = null;
+            } else {
+                $taxRates = null;
+                foreach (['stripe_tax_id', 'stripe_tax_id_2'] as $key) {
+                    if (!empty($update_values[$key])) {
+                        if (!is_array($taxRates)) {
+                            $taxRates = [];
+                        }
+                        $taxRates[] = $update_values[$key];
+                    }
                 }
+                $stripeSubscription->default_tax_rates = $taxRates;
             }
+
 
             // Causing issue when changin both plan/items and quantity
             if ($update_values['quantity'] != $db_subscription->quantity && $update_values['stripe_plan_id'] == $db_subscription->stripe_plan_id) {

@@ -25,7 +25,7 @@ foreach ($rResult as $aRow) {
 
             $_data .= '<div class="row-options">';
 
-            $_data .= '<a href="' . site_url('survey/' . $aRow['surveyid'] . '/' . $aRow['hash']) . '" target="_blank">' . _l('survey_list_view_tooltip') . '</a>';
+            $_data .= '<a href="' . site_url('surveys/survey/' . $aRow['surveyid'] . '/' . $aRow['hash']) . '" target="_blank">' . _l('survey_list_view_tooltip') . '</a>';
 
             if (total_rows(db_prefix() . 'surveyresultsets', 'surveyid=' . $aRow['surveyid']) > 0) {
                 $_data .= ' | <a href="' . admin_url('surveys/results/' . $aRow['surveyid']) . '">' . _l('survey_list_view_results_tooltip') . '</a>';

@@ -45,5 +45,8 @@
     $('#invoice-project-modal #clientid').change();
     $('input[name="show_quantity_as"]:checked').change();
     calculate_total();
-
+   // Trigger item select width fix
+    $('#invoice-project-modal').on('shown.bs.modal', function(){
+        $('#item_select').trigger('change')
+    })
 </script>

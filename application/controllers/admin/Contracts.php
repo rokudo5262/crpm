@@ -19,10 +19,15 @@ class Contracts extends AdminController
             access_denied('contracts');
         }
 
-        $data['chart_types']        = json_encode($this->contracts_model->get_contracts_types_chart_data());
-        $data['chart_types_values'] = json_encode($this->contracts_model->get_contracts_types_values_chart_data());
-        $data['contract_types']     = $this->contracts_model->get_contract_types();
-        $data['years']              = $this->contracts_model->get_contracts_years();
+        $data['expiring']               = $this->contracts_model->get_contracts_about_to_expire();
+        $data['count_active']           = count_active_contracts();
+        $data['count_expired']          = count_expired_contracts();
+        $data['count_recently_created'] = count_recently_created_contracts();
+        $data['count_trash']            = count_trash_contracts();
+        $data['chart_types']            = json_encode($this->contracts_model->get_contracts_types_chart_data());
+        $data['chart_types_values']     = json_encode($this->contracts_model->get_contracts_types_values_chart_data());
+        $data['contract_types']         = $this->contracts_model->get_contract_types();
+        $data['years']                  = $this->contracts_model->get_contracts_years();
         $this->load->model('currencies_model');
         $data['base_currency'] = $this->currencies_model->get_base_currency();
         $data['title']         = _l('contracts');

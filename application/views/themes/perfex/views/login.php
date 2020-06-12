@@ -22,9 +22,7 @@
                <input type="password" class="form-control" name="password" id="password">
                <?php echo form_error('password'); ?>
             </div>
-            <?php if(get_option('use_recaptcha_customers_area') == 1
-                     && get_option('recaptcha_secret_key') != ''
-                     && get_option('recaptcha_site_key') != ''){ ?>
+            <?php if(show_recaptcha_in_customers_area()){ ?>
             <div class="g-recaptcha mbot15" data-sitekey="<?php echo get_option('recaptcha_site_key'); ?>"></div>
             <?php echo form_error('g-recaptcha-response'); ?>
             <?php } ?>

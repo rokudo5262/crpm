@@ -44,6 +44,7 @@
         <?php echo render_yes_no_option('show_help_on_setup_menu','show_help_on_setup_menu'); ?>
         <hr />
         <?php render_yes_no_option('use_minified_files','use_minified_files'); ?>
+        <?php hooks()->do_action('after_misc_settings'); ?>
       </div>
 
       <div role="tabpanel" class="tab-pane" id="settings_tables">

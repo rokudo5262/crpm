@@ -27,7 +27,8 @@ trait PDF_Signature
             $this->ln(13);
 
             if ($signatureImage != '' && $signatureExists) {
-                $blankSignatureLine .= '<br /><br /><img src="' . site_url('uploads/company/' . $signatureImage) . '" />';
+                $imageData = base64_encode(file_get_contents($signaturePath));
+                $blankSignatureLine .= '<br /><br /><img src="@' . $imageData . '" />';
             }
 
             $this->MultiCell(($dimensions['wk'] / 2) - $dimensions['lm'], 0, _l('authorized_signature_text') . ' ' . $blankSignatureLine, 0, 'J', 0, 0, '', '', true, 0, true, true, 0);

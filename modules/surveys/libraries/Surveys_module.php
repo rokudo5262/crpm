@@ -36,7 +36,7 @@ class Surveys_module
                         $survey->fromname = get_option('companyname');
                     }
                     if (stripos($survey->description, '{survey_link}') !== false) {
-                        $survey->description = str_ireplace('{survey_link}', '<a href="' . site_url('survey/' . $survey->surveyid . '/' . $survey->hash) . '" target="_blank">' . $survey->subject . '</a>', $survey->description);
+                        $survey->description = str_ireplace('{survey_link}', '<a href="' . site_url('surveys/survey/' . $survey->surveyid . '/' . $survey->hash) . '" target="_blank">' . $survey->subject . '</a>', $survey->description);
                     }
                     $total = $_survey['total'];
                     foreach ($emails as $data) {

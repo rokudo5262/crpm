@@ -2865,9 +2865,11 @@ td[align="center"] {
     }
 }
 
-div:not(.preview-sticky-header) .preview-sticky-container {
-    padding-left: 0px;
-    padding-right: 0px;
+@media(min-width:767px) {
+    div:not(.preview-sticky-header) .preview-sticky-container {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
 }
 
 /*

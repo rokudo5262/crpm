@@ -6,6 +6,8 @@
 <?php echo render_input('settings[recaptcha_site_key]','recaptcha_site_key',get_option('recaptcha_site_key')); ?>
 <?php echo render_input('settings[recaptcha_secret_key]','recaptcha_secret_key',get_option('recaptcha_secret_key')); ?>
 <?php echo render_yes_no_option('use_recaptcha_customers_area','use_recaptcha_customers_area'); ?>
+<?php echo render_textarea('settings[recaptcha_ignore_ips]','recaptcha_ignore_ips', get_option('recaptcha_ignore_ips')); ?>
+<p><?php echo _l('recaptcha_ignore_ips_info'); ?></p>
 <hr />
 <h4>
 	<?php echo _l('calendar'); ?>

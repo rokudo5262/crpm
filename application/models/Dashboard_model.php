@@ -16,7 +16,10 @@ class Dashboard_model extends App_Model
      */
     public function get_upcoming_events()
     {
-        $this->db->where('(start BETWEEN "' . date('Y-m-d', strtotime('monday this week')) . '" AND "' . date('Y-m-d', strtotime('sunday this week')) . '")');
+        $monday_this_week = date('Y-m-d', strtotime('monday this week'));
+        $sunday_this_week = date('Y-m-d', strtotime('sunday this week'));
+
+        $this->db->where("(start BETWEEN '$monday_this_week' and '$sunday_this_week')");
         $this->db->where('(userid = ' . get_staff_user_id() . ' OR public = 1)');
         $this->db->order_by('start', 'desc');
         $this->db->limit(6);
@@ -34,7 +37,7 @@ class Dashboard_model extends App_Model
     {
         $monday_this_week = date('Y-m-d', strtotime('monday next week'));
         $sunday_this_week = date('Y-m-d', strtotime('sunday next week'));
-        $this->db->where('(start BETWEEN "' . $monday_this_week . '" AND "' . $sunday_this_week . '")');
+        $this->db->where("(start BETWEEN '$monday_this_week' and '$sunday_this_week')");
         $this->db->where('(userid = ' . get_staff_user_id() . ' OR public = 1)');
 
         return $this->db->count_all_results(db_prefix() . 'events');
@@ -200,16 +203,16 @@ class Dashboard_model extends App_Model
         $result = get_leads_summary();
 
         foreach ($result as $status) {
-            if (!isset($status['junk']) && !isset($status['lost'])) {
-                if ($status['color'] == '') {
-                    $status['color'] = '#737373';
-                }
-                array_push($chart['labels'], $status['name']);
-                array_push($_data['backgroundColor'], $status['color']);
-                array_push($_data['statusLink'], admin_url('leads?status=' . $status['id']));
-                array_push($_data['hoverBackgroundColor'], adjust_color_brightness($status['color'], -20));
-                array_push($_data['data'], $status['total']);
+            if ($status['color'] == '') {
+                $status['color'] = '#737373';
             }
+            array_push($chart['labels'], $status['name']);
+            array_push($_data['backgroundColor'], $status['color']);
+            if (!isset($status['junk']) && !isset($status['lost'])) {
+                array_push($_data['statusLink'], admin_url('leads?status=' . $status['id']));
+            }
+            array_push($_data['hoverBackgroundColor'], adjust_color_brightness($status['color'], -20));
+            array_push($_data['data'], $status['total']);
         }
 
         $chart['datasets'][] = $_data;

@@ -698,13 +698,6 @@ class Invoices_model extends App_Model
 
         $data['allowed_payment_modes'] = isset($data['allowed_payment_modes']) ? serialize($data['allowed_payment_modes']) : serialize([]);
 
-        // Recurring invoice set to NO, Cancelled
-        if ($original_invoice->recurring != 0 && $data['recurring'] == 0) {
-            $data['cycles']              = 0;
-            $data['total_cycles']        = 0;
-            $data['last_recurring_date'] = null;
-        }
-
         if (isset($data['recurring'])) {
             if ($data['recurring'] == 'custom') {
                 $data['recurring_type']   = $data['repeat_type_custom'];
@@ -718,6 +711,13 @@ class Invoices_model extends App_Model
             $data['custom_recurring'] = 0;
             $data['recurring']        = 0;
             $data['recurring_type']   = null;
+        }
+
+        // Recurring invoice set to NO, Cancelled
+        if ($original_invoice->recurring != 0 && $data['recurring'] == 0) {
+            $data['cycles']              = 0;
+            $data['total_cycles']        = 0;
+            $data['last_recurring_date'] = null;
         }
 
         $items = [];

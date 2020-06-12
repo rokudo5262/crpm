@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<div class="widget" id="widget-<?php echo basename(__FILE__,".php"); ?>" data-name="<?php echo _l('s_chart',_l('projects')); ?>">
+<div class="widget" id="widget-<?php echo create_widget_id(); ?>" data-name="<?php echo create_widget_id(); ?>">
   <div class="row">
     <div class="col-md-12">
      <div class="panel_s">

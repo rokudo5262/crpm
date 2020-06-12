@@ -24,16 +24,14 @@ $currentChatColor = !empty($color) ? $color : '#546bf1';
 
   .main_loader_init:before {
     content: '<?= _l("chat_accessing_channels"); ?>';
-    position: absolute;
     color: #ffffff;
-    top: 46%;
-    margin-left: -33px;
     font-size: 15px;
+    margin-top: -100px;
+    text-align: center;
   }
 </style>
 
 <script src="<?php echo base_url('modules/prchat/assets/js/tooltipster.bundle.min.js'); ?>"></script>
-
 <!-- Check if user has permission to delete own messages enabled -->
 <?php $chat_delete_option = get_option('chat_staff_can_delete_messages'); ?>
 <?php $chat_desktop_messages_notifications = get_option('chat_desktop_messages_notifications'); ?>
@@ -84,6 +82,7 @@ $currentChatColor = !empty($color) ? $color : '#546bf1';
     'convertToTicket': '<?php echo site_url('prchat/Prchat_Controller/convertToTicket'); ?>',
     'invalidColor': '<?php echo _l('chat_invalid_color_alert'); ?>',
     'areYouSure': '<?php echo _l('confirm_action_prompt'); ?>',
+    'handleChatStatus': '<?php echo site_url('prchat/Prchat_Controller/handleChatStatus'); ?>',
     // Clients
     'clientsMessagesPath': '<?php echo site_url('prchat/Prchat_ClientsController/initClientChat'); ?>',
     'getMutualMessages': '<?php echo site_url('prchat/Prchat_ClientsController/getMutualMessages'); ?>',
@@ -110,16 +109,12 @@ $currentChatColor = !empty($color) ? $color : '#546bf1';
     }
   }
   /*---------------* UI Track chat monitor current load and resize event activity for mobile and desktop version *---------------*/
+  // Currentluy not used for now 
   function monitorWindowActivity() {
-    var groupOptions = $('body #wrapper #frame .content .chat_group_options.active');
     $(window).resize(function() {
       if ($(window).width() > 733) {
-        $('#switchTheme, #announcement, #shared_user_files, #frame .groupOptions').show();
-        $(groupOptions).show();
         $('body').removeClass('hide-sidebar').addClass('show-sidebar');
       } else {
-        $('#switchTheme, #announcement, #sharedFiles, #shared_user_files, #frame .groupOptions').hide();
-        $(groupOptions).hide();
         $('body').removeClass('show-sidebar').addClass('hide-sidebar');
       }
       if ($('#frame #sidepanel #contacts li').length > 10) {
@@ -129,4 +124,29 @@ $currentChatColor = !empty($color) ? $color : '#546bf1';
       }
     });
   }
+
+  // Html audio helper function to decode html
+  function renderHtmlForAudio(unsafe) {
+    return unsafe
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, "\"")
+      .replace(/&#039;/g, "'");
+  }
+
+  /**
+   * Global Array where mentioned users are saved
+   */
+  var mentioned_users = [];
+
+  /** 
+   * Global chat statuses, translations and value mixed
+   */
+  var chat_user_statuses = {
+    online: "<?php echo _l('chat_status_online'); ?>",
+    away: "<?php echo _l('chat_status_away'); ?>",
+    busy: "<?php echo _l('chat_status_busy'); ?>",
+    offline: "<?php echo _l('chat_status_offline'); ?>"
+  };
 </script>

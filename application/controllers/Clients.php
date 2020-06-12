@@ -393,6 +393,14 @@ class Clients extends ClientsController
             } elseif ($group == 'project_tasks') {
                 $data['tasks_statuses'] = $this->tasks_model->get_statuses();
                 $data['project_tasks']  = $this->projects_model->get_tasks($id);
+            } elseif ($group == 'project_contracts') {
+                $data['contracts'] = [];
+                if (has_contact_permission('contracts')) {
+                    $data['contracts'] = $this->contracts_model->get('', [
+                            'client'     => get_client_user_id(),
+                            'project_id' => $id,
+                        ]);
+                }
             } elseif ($group == 'project_activity') {
                 $data['activity'] = $this->projects_model->get_activity($id);
             } elseif ($group == 'project_milestones') {

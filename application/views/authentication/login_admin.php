@@ -20,7 +20,7 @@
       <div class="form-group">
         <label for="password" class="control-label"><?php echo _l('admin_auth_login_password'); ?></label>
         <input type="password" id="password" name="password" class="form-control"></div>
-        <?php if(get_option('recaptcha_secret_key') != '' && get_option('recaptcha_site_key') != ''){ ?>
+        <?php if(show_recaptcha()){ ?>
         <div class="g-recaptcha" data-sitekey="<?php echo get_option('recaptcha_site_key'); ?>"></div>
         <?php } ?>
         <div class="checkbox">

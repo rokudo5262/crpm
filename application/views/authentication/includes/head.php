@@ -195,7 +195,7 @@
     }
   }
 </style>
-<?php if(get_option('recaptcha_secret_key') != '' && get_option('recaptcha_site_key') != ''){ ?>
+<?php if(show_recaptcha()){ ?>
   <script src='https://www.google.com/recaptcha/api.js'></script>
 <?php } ?>
 <?php if(file_exists(FCPATH.'assets/css/custom.css')){ ?>

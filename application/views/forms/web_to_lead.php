@@ -21,7 +21,7 @@
           <?php foreach($form_fields as $field){
            render_form_builder_field($field);
          } ?>
-         <?php if(get_option('recaptcha_secret_key') != '' && get_option('recaptcha_site_key') != '' && $form->recaptcha == 1){ ?>
+         <?php if(show_recaptcha() && $form->recaptcha == 1){ ?>
          <div class="col-md-12">
            <div class="form-group"><div class="g-recaptcha" data-sitekey="<?php echo get_option('recaptcha_site_key'); ?>"></div>
            <div id="recaptcha_response_field" class="text-danger"></div>

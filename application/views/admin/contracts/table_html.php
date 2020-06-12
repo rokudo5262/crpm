@@ -11,12 +11,16 @@ $table_data = array(
  _l('contract_value'),
  _l('contract_list_start_date'),
  _l('contract_list_end_date'),
+ (!isset($project) ? _l('project') : array(
+   'name'=>_l('project'),
+   'th_attrs'=>array('class'=>'not_visible')
+ )),
  _l('signature'),
 );
 $custom_fields = get_custom_fields('contracts',array('show_on_table'=>1));
 
 foreach($custom_fields as $field){
- array_push($table_data,$field['name']);
+ 	array_push($table_data,$field['name']);
 }
 
 $table_data = hooks()->apply_filters('contracts_table_columns', $table_data);

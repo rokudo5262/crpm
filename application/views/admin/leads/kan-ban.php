@@ -47,7 +47,7 @@ foreach ($statuses as $status) {
               $leads = $this->leads_model->do_kanban_query($status['id'],$this->input->get('search'),1,array('sort_by'=>$this->input->get('sort_by'),'sort'=>$this->input->get('sort')));
               $total_leads = count($leads);
               foreach ($leads as $lead) {
-                $this->load->view('admin/leads/_kan_ban_card',array('lead'=>$lead,'status'=>$status));
+                $this->load->view('admin/leads/_kan_ban_card',array('lead'=>$lead,'status'=>$status,'base_currency'=>$base_currency));
               } ?>
               <?php if($total_leads > 0 ){ ?>
               <li class="text-center not-sortable kanban-load-more" data-load-status="<?php echo $status['id']; ?>">

@@ -52,7 +52,9 @@
 
       // Lightbox for knowledge base images
       $.each($('.kb-article').find('img'), function () {
+        if(!$(this).parent().is('a')){
           $(this).wrap('<a href="'+$(this).attr('src')+'" data-lightbox="kb-attachment"></a>');
+        }
       });
 
       $('.article_useful_buttons button').on('click', function(e) {

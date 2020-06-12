@@ -25,7 +25,20 @@
       });
 
       $('body').on('show.bs.modal', '._project_file', function() {
-          discussion_comments('#project-file-discussion', discussion_id, 'file');
+          discussion_comments('#project-file-discussion', discussion_id, 'file')
+      });
+
+      $('body').on('shown.bs.modal', '._project_file', function() {
+          var content_height = ($('body').find('._project_file .modal-content').height() - 165);
+          var projectFilePreviewIframe = $('.project_file_area iframe');
+
+          if(projectFilePreviewIframe.length > 0){
+            projectFilePreviewIframe.css('height', content_height);
+          }
+
+          if(!is_mobile()){
+           $('.project_file_area,.project_file_discusssions_area').css('height',content_height);
+         }
       });
 
       $('body').on('shown.bs.modal', '#milestone', function() {
@@ -33,6 +46,13 @@
       });
 
       initDataTable('.table-credit-notes', admin_url + 'credit_notes/table?project_id=' + project_id, ['undefined'], ['undefined'], undefined, [0, 'desc']);
+
+        var ContractsServerParams = {};
+        $.each($('._hidden_inputs._filters input'),function(){
+            ContractsServerParams[$(this).attr('name')] = '[name="'+$(this).attr('name')+'"]';
+        });
+
+      initDataTable('.table-contracts', admin_url+'contracts/table?project_id='+project_id, undefined, undefined, ContractsServerParams, [6, 'desc']);
 
       if ($('#timesheetsChart').length > 0 && typeof(project_overview_chart) != 'undefined') {
           var chartOptions = {
@@ -68,6 +88,7 @@
           timesheetsChart = new Chart(ctx, chartOptions);
       }
       milestones_kanban();
+
       $('#project_top').on('change', function() {
           var val = $(this).val();
           var __project_group = get_url_param('group');

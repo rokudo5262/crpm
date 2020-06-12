@@ -129,6 +129,8 @@
             <p class="bold font-medium-xs"><?php echo (isset($lead) && $lead->website != '' ? '<a href="'.maybe_add_http($lead->website).'" target="_blank">' . $lead->website.'</a>' : '-') ?></p>
             <p class="text-muted lead-field-heading"><?php echo _l('lead_add_edit_phonenumber'); ?></p>
             <p class="bold font-medium-xs"><?php echo (isset($lead) && $lead->phonenumber != '' ? '<a href="tel:'.$lead->phonenumber.'">' . $lead->phonenumber.'</a>' : '-') ?></p>
+            <p class="text-muted lead-field-heading"><?php echo _l('lead_value'); ?></p>
+            <p class="bold font-medium-xs"><?php echo (isset($lead) && $lead->lead_value != 0 ? app_format_money($lead->lead_value , $base_currency->symbol): '-') ?></p>
             <p class="text-muted lead-field-heading"><?php echo _l('lead_company'); ?></p>
             <p class="bold font-medium-xs"><?php echo (isset($lead) && $lead->company != '' ? $lead->company : '-') ?></p>
             <p class="text-muted lead-field-heading"><?php echo _l('lead_address'); ?></p>
@@ -287,6 +289,16 @@
             <?php }
             $value = (isset($lead) ? $lead->phonenumber : ''); ?>
             <?php echo render_input('phonenumber','lead_add_edit_phonenumber',$value); ?>
+            <div class="form-group">
+                <label for="lead_value"><?php echo _l('lead_value'); ?></label>
+                <div class="input-group" data-toggle="tooltip" title="<?php echo _l('lead_value_tooltip'); ?>">
+                    <input type="number" class="form-control" name="lead_value" value="<?php if(isset($lead)){echo $lead->lead_value; }?>">
+                    <div class="input-group-addon">
+                      <?php echo $base_currency->symbol; ?>
+                    </div>
+                </div>
+               </label>
+            </div>
             <?php $value = (isset($lead) ? $lead->company : ''); ?>
             <?php echo render_input('company','lead_company',$value); ?>
          </div>

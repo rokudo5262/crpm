@@ -1,15 +1,16 @@
 <?php
 /*
-Module Name: CRPM Chat
-Description: Chat Module for CRPM
-
+Module Name: Perfex CRM Chat
+Description: Chat Module for Perfex CRM
+Author: Aleksandar Stojanov
+Author URI: https://idevalex.com
 */
 
 defined('BASEPATH') or exit('No direct script access allowed');
 define('CHAT_CURRENT_URI', strtolower($_SERVER['REQUEST_URI']));
 define('VERSIONING', get_instance()->app_scripts->core_version());
 
-if (staff_can('view', PR_CHAT_MODULE_NAME)) {
+if (staff_can('view', PR_CHAT_MODULE_NAME) && get_option('pusher_chat_enabled') == '1') {
     hooks()->add_action('before_staff_login', 'prchat_set_session_variable_before_login_for_notification');
     hooks()->add_action('app_admin_head', 'pr_chat_add_head_components');
     hooks()->add_action('app_admin_footer', 'pr_chat_init_checkView');
@@ -17,9 +18,10 @@ if (staff_can('view', PR_CHAT_MODULE_NAME)) {
     hooks()->add_action('app_admin_head', 'pr_chat_add_js_before_admin_render');
     hooks()->add_filter('migration_tables_to_replace_old_links', 'pr_chat_migration_tables_to_replace_old_links');
     hooks()->add_action('staff_member_deleted', 'pr_chat_staff_member_data_transfer');
+    hooks()->add_action('after_render_top_search', 'chat_insert_chat_statuses');
 }
 // Check if clients view is enabled in Setup->Settings->Chat Settings
-if (isClientsEnabled()) {
+if (isClientsEnabled() && get_option('pusher_chat_enabled') == '1') {
     hooks()->add_action('before_client_login', 'prchat_set_session_variable_before_login_for_notification_client');
     hooks()->add_action('app_customers_head', 'handle_clients_css_styles');
     hooks()->add_action('app_customers_footer', 'pr_chat_init_checkViewClients');
@@ -88,6 +90,23 @@ function pr_chat_load_js()
     if (!strpos($_SERVER['REQUEST_URI'], 'chat_full_view') !== false) {
         echo '<script src="' . module_dir_url('prchat', 'assets/js/pr-chat.js' . '?v=' . VERSIONING . '') . '"></script>';
     }
+    /**
+     * Mentions js
+     */
+    echo '<script src="' . base_url('modules/prchat/assets/js/mentions/underscore.js' . '?v=' . VERSIONING . '') . '"></script>';
+    echo '<script src="' . base_url('modules/prchat/assets/js/mentions/jquery-elastic.js' . '?v=' . VERSIONING . '') . '"></script>';
+    echo '<script src="' . base_url('modules/prchat/assets/js/mentions/mentions.js' . '?v=' . VERSIONING . '') . '"></script>';
+
+    if (strpos(CHAT_CURRENT_URI, '/prchat/prchat_controller/chat_full_view')) {
+        /**
+         * Audio record js
+         */
+        if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on') {
+            echo '<script src="' . module_dir_url('prchat', 'assets/js/audio/WebAudioRecorder.min.js' . '?v=' . VERSIONING . '') . '"></script>';
+            echo '<script src="' . module_dir_url('prchat', 'assets/js/audio/WebAudioRecorderOgg.min.js' . '?v=' . VERSIONING . '') . '"></script>';
+            echo '<script src="' . module_dir_url('prchat', 'assets/js/audio/sound_app.js' . '?v=' . VERSIONING . '') . '"></script>';
+        }
+    }
 }
 
 /**
@@ -119,8 +138,11 @@ function pr_chat_add_head_components()
     } else {
         chat_check_theme_options();
     }
+    // Mutual files for both chat views
     echo '<link href="' . base_url('modules/prchat/assets/css/tooltipster.bundle.min.css' . '?v=' . VERSIONING . '') . '"  rel="stylesheet" type="text/css" >';
     echo '<link href="' . base_url('modules/prchat/assets/css/lity.css' . '?v=' . VERSIONING . '') . '"  rel="stylesheet" type="text/css" />';
+    echo '<link href="' . base_url('modules/prchat/assets/css/chat_statuses.css') . '" rel="stylesheet" type="text/css"/>';
+    echo '<link href="' . base_url('modules/prchat/assets/css/mentions.css') . '" rel="stylesheet" type="text/css"/>';
 }
 
 /**
@@ -286,7 +308,10 @@ function get_staff_userrole($role_id)
     $CI->db->select('name');
     $CI->db->where('roleid', $role_id);
 
-    return $CI->db->get(db_prefix() . 'roles')->row_array()['name'];
+    $result = $CI->db->get(db_prefix() . 'roles')->row_array();
+    if ($result !== NULL) {
+        return $result['name'];
+    }
 }
 
 /**
@@ -563,7 +588,7 @@ function get_customer_admins()
 
     $select = 'SELECT firstname, lastname, staffid, email, profile_image, admin, role FROM ' . db_prefix() . 'staff';
     $where = 'WHERE (staffid IN (SELECT staff_id from ' . db_prefix() . 'customer_admins WHERE customer_id =' . get_client_user_id() . ')';
-
+    // add new option clients to choose either to show admins to clients or just assigned customer admins
     $customer_admins = $CI->db->query('' . $select . ' ' . $where . '  OR admin=1) AND active=1')->result_array();
 
     foreach ($customer_admins as $key => &$admin) {
@@ -605,7 +630,10 @@ function get_chat_staff_userrole($role_id)
     $CI->db->select('name');
     $CI->db->where('roleid', $role_id);
 
-    return $CI->db->get(db_prefix() . 'roles')->row_array()['name'];
+    $result = $CI->db->get(db_prefix() . 'roles')->row_array();
+    if ($result !== null) {
+        return $result['name'];
+    }
 }
 
 
@@ -619,7 +647,10 @@ function get_contact_customer_user_id($contact_id)
     $CI = &get_instance();
     $CI->db->select('userid');
     $CI->db->where('id', $contact_id);
-    return $CI->db->get(db_prefix() . 'contacts')->row_array()['userid'];
+    $result = $CI->db->get(db_prefix() . 'contacts')->row_array();
+    if ($result !== NULL) {
+        return $result['userid'];
+    }
 }
 
 
@@ -632,6 +663,21 @@ function chat_get_tickets_last_inserted_row()
     return get_instance()->db->select('ticketid')->order_by('ticketid', "desc")->limit(1)->get(db_prefix() . 'tickets')->row()->ticketid;
 }
 
+/** 
+ * Receives user active chat status
+ * @return string
+ */
+function get_user_chat_status()
+{
+    $CI = &get_instance();
+    $CI->db->where('user_id', get_staff_user_id());
+    $CI->db->where('name', 'chat_status');
+    $result = $CI->db->get(db_prefix() . 'chatsettings')->row_array();
+    if ($result !== NULL) {
+        return $result['value'];
+    }
+}
+
 /**
  * Check is chat module enabled.
  *
@@ -641,3 +687,65 @@ function isClientsEnabled()
 {
     return get_option('chat_client_enabled');
 }
+
+
+/** 
+ * After header is rendered add statuses design functionality
+ * @return string
+ */
+if (staff_can('view', PR_CHAT_MODULE_NAME)) {
+    function chat_insert_chat_statuses()
+    {
+        $CI = &get_instance();
+        if ($CI->db->table_exists(db_prefix() . 'chatsettings')) {
+            $CI->db->where('user_id', get_staff_user_id());
+            $CI->db->where('name', 'chat_status');
+            $status =  $CI->db->get(db_prefix() . 'chatsettings')->row_array()['value'];
+        } else {
+            $status = '';
+        }
+?>
+        <div id="prchat-header-wrapper">
+            <svg class="<?= ($status != "") ? $status : 'online' ?>" id="chat_status_top_icon" data-toggle="tooltip" title="<?= _l('chat_header_status') ?>" data-placement="bottom" viewBox="0 0 24 24">
+                <path d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M10,16V19.08L13.08,16H20V4H4V16H10M16,14H8V13C8,11.67 10.67,11 12,11C13.33,11 16,11.67 16,13V14M12,6A2,2 0 0,1 14,8A2,2 0 0,1 12,10A2,2 0 0,1 10,8A2,2 0 0,1 12,6Z" />
+            </svg>
+            <div id="top_status-options" class="">
+                <ul>
+                    <li id="status-online" class="active"><span class="status-circle"></span>
+                        <p><?= _l('chat_status_online'); ?></p>
+                    </li>
+                    <li id="status-away"><span class="status-circle"></span>
+                        <p><?= _l('chat_status_away'); ?></p>
+                    </li>
+                    <li id="status-busy"><span class="status-circle"></span>
+                        <p><?= _l('chat_status_busy'); ?></p>
+                    </li>
+                    <li id="status-offline"><span class="status-circle"></span>
+                        <p><?= _l('chat_status_offline'); ?></p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <?php } ?>
+<?php }
+
+/** 
+ * Template components js loader
+ * @param $params is user over all components do not remove in any case
+ */
+function loadChatComponent($name, $params = [])
+{    // Used in chat_full_view as ['prop' => 'class or something else']
+    // Then reuse this in the $name.php $params['prop']
+    require('modules/prchat/assets/module_includes/Components/' . $name . '.php');
+}
+
+// /** 
+//  * Template components js loader
+//  * @param $params is user over all components do not remove in any case
+//  */
+// function loadChatJsComponent($name, $attrs = [])
+// {    // Used in chat_full_view as ['prop' => 'class or something else']
+//     // Then reuse this in the $name.php $params['prop']
+//     require('modules/prchat/assets/module_includes/Components/Javascript/' . $name . '.php');
+// }
+?>

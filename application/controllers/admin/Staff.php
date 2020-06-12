@@ -218,9 +218,11 @@ class Staff extends AdminController
             }
 
             $success = $this->staff_model->update_profile($data, get_staff_user_id());
+
             if ($success) {
                 set_alert('success', _l('staff_profile_updated'));
             }
+
             redirect(admin_url('staff/edit_profile/' . get_staff_user_id()));
         }
         $member = $this->staff_model->get(get_staff_user_id());

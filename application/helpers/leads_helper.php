@@ -99,14 +99,14 @@ function get_leads_summary()
     $statuses[] = [
         'lost'  => true,
         'name'  => _l('lost_leads'),
-        'color' => '',
+        'color' => '#f0f0f0',
     ];
 
-    $statuses[] = [
+/*    $statuses[] = [
         'junk'  => true,
         'name'  => _l('junk_leads'),
         'color' => '',
-    ];
+    ];*/
 
     foreach ($statuses as $status) {
         $sql .= ' SELECT COUNT(*) as total';

@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 function access_control_media($attr, $path, $data, $volume, $isDir, $relpath)
 {
-    $paths = explode('/', $path);
+    $paths    = explode('/', $path);
     $basename = end($paths);
 
     if ($basename == 'index.html') {
@@ -89,7 +89,7 @@ function is_image($path)
             'psd', 'ppt',  'gzip', 'rar',
             'tar', 'tgz',  'mpeg', 'mpg',
             'flv', 'mov',  'wav', 'avi',
-            'dwg'
+            'dwg',
         ];
 
     $pathArray = explode('.', $path);
@@ -99,15 +99,17 @@ function is_image($path)
         return false;
     }
 
-    $image      = @getimagesize($path);
-    $image_type = $image[2];
-    if (in_array($image_type, [
-        IMAGETYPE_GIF,
-        IMAGETYPE_JPEG,
-        IMAGETYPE_PNG,
-        IMAGETYPE_BMP,
-    ])) {
-        return true;
+    $image = @getimagesize($path);
+    if ($image) {
+        $image_type = $image[2];
+        if (in_array($image_type, [
+            IMAGETYPE_GIF,
+            IMAGETYPE_JPEG,
+            IMAGETYPE_PNG,
+            IMAGETYPE_BMP,
+        ])) {
+            return true;
+        }
     }
 
     return false;

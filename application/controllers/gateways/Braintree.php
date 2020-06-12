@@ -270,7 +270,7 @@ class Braintree extends App_Controller
           authorization: clientToken,
           container: '#bt-dropin',
           locale: locale,
-          threeDSecure: true
+          threeDSecure: true,
         };
 
         if(paypalEnabled == '1') {
@@ -295,7 +295,7 @@ class Braintree extends App_Controller
 
             instance.requestPaymentMethod({
               threeDSecure: {
-                amount: '100.00',
+                amount: amount,
                 email: billingFields.email.input.value,
                 billingAddress: {
                   givenName: billingFields['billing-given-name'].input.value,
@@ -317,9 +317,9 @@ class Braintree extends App_Controller
 
         requestErrors.style.display = 'block';
         if(err.code === 'THREEDS_LOOKUP_VALIDATION_ERROR') {
-        requestErrors.innerText = err.details.originalError.details.originalError.error.message
+          requestErrors.innerText = err.details.originalError.details.originalError.error.message
         } else {
-        requestErrors.innerText = err.message
+          requestErrors.innerText = err.message
         }
 
         return;

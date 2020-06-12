@@ -467,7 +467,7 @@ class Contracts_model extends App_Model
     public function mark_as_signed($id)
     {
         $this->db->where('id', $id);
-        $this->db->update('contracts', ['marked_as_signed'=>1]);
+        $this->db->update('contracts', ['marked_as_signed' => 1]);
 
         return $this->db->affected_rows() > 0;
     }
@@ -482,7 +482,7 @@ class Contracts_model extends App_Model
     public function unmark_as_signed($id)
     {
         $this->db->where('id', $id);
-        $this->db->update('contracts', ['marked_as_signed'=>0]);
+        $this->db->update('contracts', ['marked_as_signed' => 0]);
 
         return $this->db->affected_rows() > 0;
     }
@@ -677,6 +677,32 @@ class Contracts_model extends App_Model
         }
 
         return false;
+    }
+
+    /**
+     * Get the contracts about to expired in the given days
+     *
+     * @param  integer $days
+     *
+     * @return array
+     */
+    public function get_contracts_about_to_expire($days = 7)
+    {
+        $diff1 = date('Y-m-d', strtotime('-' . $days . ' days'));
+        $diff2 = date('Y-m-d', strtotime('+' . $days . ' days'));
+
+        $this->db->select('id,subject,client,datestart,dateend');
+
+        if (! staff_can('view', 'contracts')) {
+            $this->db->where('addedfrom', get_staff_user_id());
+        }
+
+        $this->db->where('dateend IS NOT NULL');
+        $this->db->where('trash', 0);
+        $this->db->where('dateend >=', $diff1);
+        $this->db->where('dateend <=', $diff2);
+
+        return $this->db->get(db_prefix() . 'contracts')->result_array();
     }
 
     /**

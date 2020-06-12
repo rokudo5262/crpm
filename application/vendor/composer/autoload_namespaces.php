@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'UpdateHelper\\' => array($vendorDir . '/kylekatarnls/update-helper/src'),
     'Twocheckout' => array($vendorDir . '/2checkout/2checkout-php/lib'),
     'Parsedown' => array($vendorDir . '/erusev/parsedown'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),

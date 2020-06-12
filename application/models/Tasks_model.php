@@ -213,6 +213,7 @@ class Tasks_model extends App_Model
         $task           = $this->get($data['copy_from']);
         $fields_tasks   = $this->db->list_fields(db_prefix() . 'tasks');
         $_new_task_data = [];
+
         foreach ($fields_tasks as $field) {
             if (isset($task->$field)) {
                 $_new_task_data[$field] = $task->$field;
@@ -220,6 +221,7 @@ class Tasks_model extends App_Model
         }
 
         unset($_new_task_data['id']);
+
         if (isset($data['copy_task_status']) && is_numeric($data['copy_task_status'])) {
             $_new_task_data['status'] = $data['copy_task_status'];
         } else {
@@ -241,12 +243,14 @@ class Tasks_model extends App_Model
             $dDiff                     = $dStart->diff($dEnd);
             $_new_task_data['duedate'] = date('Y-m-d', strtotime(date('Y-m-d', strtotime('+' . $dDiff->days . 'DAY'))));
         }
+
         // Overwrite data options
         if (count($overwrites) > 0) {
             foreach ($overwrites as $key => $val) {
                 $_new_task_data[$key] = $val;
             }
         }
+
         unset($_new_task_data['datefinished']);
 
         $_new_task_data = hooks()->apply_filters('before_add_task', $_new_task_data);
@@ -256,20 +260,26 @@ class Tasks_model extends App_Model
         if ($insert_id) {
             $tags = get_tags_in($data['copy_from'], 'task');
             handle_tags_save($tags, $insert_id, 'task');
+
             if (isset($data['copy_task_assignees']) && $data['copy_task_assignees'] == 'true') {
                 $this->copy_task_assignees($data['copy_from'], $insert_id);
             }
+
             if (isset($data['copy_task_followers']) && $data['copy_task_followers'] == 'true') {
                 $this->copy_task_followers($data['copy_from'], $insert_id);
             }
+
             if (isset($data['copy_task_checklist_items']) && $data['copy_task_checklist_items'] == 'true') {
                 $this->copy_task_checklist_items($data['copy_from'], $insert_id);
             }
+
             if (isset($data['copy_task_attachments']) && $data['copy_task_attachments'] == 'true') {
                 $attachments = $this->get_task_attachments($data['copy_from']);
+
                 if (is_dir(get_upload_path_by_type('task') . $data['copy_from'])) {
                     xcopy(get_upload_path_by_type('task') . $data['copy_from'], get_upload_path_by_type('task') . $insert_id);
                 }
+
                 foreach ($attachments as $at) {
                     $_at      = [];
                     $_at[]    = $at;
@@ -285,6 +295,7 @@ class Tasks_model extends App_Model
                     $this->add_attachment_to_database($insert_id, $_at, $external, false);
                 }
             }
+
             $this->copy_task_custom_fields($data['copy_from'], $insert_id);
 
             hooks()->do_action('after_add_task', $insert_id);
@@ -976,7 +987,14 @@ class Tasks_model extends App_Model
             }
 
             $this->_send_task_responsible_users_notification($description, $data['taskid'], false, 'task_new_comment_to_staff', $additional_data, $insert_id);
-            $this->_send_customer_contacts_notification($data['taskid'], 'task_new_comment_to_customer');
+
+            $this->db->where('project_id', $task->rel_id);
+            $this->db->where('name', 'view_task_comments');
+            $project_settings = $this->db->get(db_prefix() . 'project_settings')->row();
+
+            if ($project_settings && $project_settings->value == 1) {
+                $this->_send_customer_contacts_notification($data['taskid'], 'task_new_comment_to_customer');
+            }
 
             hooks()->do_action('task_comment_added', ['task_id' => $data['taskid'], 'comment_id' => $insert_id]);
 

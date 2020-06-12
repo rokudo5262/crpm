@@ -237,7 +237,7 @@ class App_items_table extends App_items_table_template
 
     protected function get_description_item_width()
     {
-        $item_width = 38;
+        $item_width = hooks()->apply_filters('item_description_td_width', 38);
 
         // If show item taxes is disabled in PDF we should increase the item width table heading
         return $this->show_tax_per_item() == 0 ? $item_width + 15 : $item_width;

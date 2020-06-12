@@ -14,7 +14,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
           <p class="cname">
             <?php echo get_option('companyname'); ?>
           </p>
-          <i class="fa fa-th-large main_chat" data-toggle="tooltip" data-original-title="<?php echo _l('chat_browser_full_chat') ?>" data-placement="left"></i>
+          <svg class="main_chat" data-toggle="tooltip" data-original-title="<?php echo _l('chat_browser_full_chat') ?>" data-placement="left" viewBox="0 0 24 24">
+            <path d="M18,6V17H22V6M2,17H6V6H2M7,19H17V4H7V19Z" />
+          </svg>
         </div>
       </div>
       <div class="connection_field">
@@ -27,18 +29,29 @@ $currentChatColor = validateChatColorBeforeApply($color);
       <div class="chat-footer" style="background:<?php echo $currentChatColor; ?>">
         <div class="online" onclick="slideChat(this)">
           <?php echo _l('chat_online_users'); ?>
-          <i onclick="chatCircleTransform();" data-toggle="tooltip" title="<?= _l('chat_toggle_circle_text'); ?>" class="fa fa-comments toCircle"></i>
+          <svg onclick="chatCircleTransform();" fill="#ffffff" data-toggle="tooltip" title="<?= _l('chat_toggle_circle_text'); ?>" class="toCircle" viewBox="0 0 24 24">
+            <path d="M3,20.59L6.59,17H18A2,2 0 0,0 20,15V6A2,2 0 0,0 18,4H5A2,2 0 0,0 3,6V20.59M3,22H2V6A3,3 0 0,1 5,3H18A3,3 0 0,1 21,6V15A3,3 0 0,1 18,18H7L3,22M6,7H17V8H6V7M6,10H17V11H6V10M6,13H14V14H6V13Z" />
+          </svg>
+
           <span id="count">0</span>
         </div>
-        <i class="fa fa-volume-up" data-toggle="tooltip" data-placement="left" title="<?= _l('chat_sound_notifications'); ?>" aria-hidden="true" id="disableSound"></i>
-        <i class="fa fa-search" data-toggle="tooltip" title="<?= _l('chat_search_chat_members'); ?>" id="searchUsers" aria-hidden="true"></i>
+        <svg id="disableSound" data-toggle="tooltip" data-placement="left" title="<?= _l('chat_sound_notifications'); ?>" viewBox="0 0 24 24">
+          <path d="M21,12.5C21,16.47 17.91,19.73 14,20V19C17.36,18.73 20,15.92 20,12.5C20,9.08 17.36,6.27 14,6V5C17.91,5.27 21,8.53 21,12.5M18,12.5C18,14.82 16.25,16.72 14,16.97V15.96C15.7,15.72 17,14.26 17,12.5C17,10.74 15.7,9.28 14,9.04V8.03C16.25,8.28 18,10.18 18,12.5M15,12.5C15,13.15 14.58,13.71 14,13.91V11.09C14.58,11.29 15,11.85 15,12.5M2,9H6L10,5H12V20H10L6,16H2V9M3,15H6.41L10.41,19H11V6H10.41L6.41,10H3V15Z" />
+        </svg>
+        <svg data-toggle="tooltip" title="<?= _l('chat_search_chat_members'); ?>" id="searchUsers" viewBox="0 0 24 24">
+          <path d="M9.5,4A6.5,6.5 0 0,1 16,10.5C16,12.12 15.41,13.6 14.43,14.73L20.08,20.38L19.37,21.09L13.72,15.44C12.59,16.41 11.11,17 9.5,17A6.5,6.5 0 0,1 3,10.5A6.5,6.5 0 0,1 9.5,4M9.5,5A5.5,5.5 0 0,0 4,10.5A5.5,5.5 0 0,0 9.5,16A5.5,5.5 0 0,0 15,10.5A5.5,5.5 0 0,0 9.5,5Z" />
+        </svg>
         <div class="dropup">
           <button class="btn btn-primary dropdown-toggle gradientButton" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-cog" id="colorGradientChanger" aria-hidden="true" data-toggle="tooltip" data-original-title="<?= _l('chat_color_settings'); ?>"></i>
+            <svg id="colorGradientChanger" aria-hidden="true" data-toggle="tooltip" data-original-title="<?= _l('chat_color_settings'); ?>" viewBox="0 0 24 24">
+              <path d="M19.59,15.5L17.77,14.2C18.07,13.12 18.09,11.95 17.77,10.78L19.59,9.5L18.14,7L16.11,7.92C15.32,7.12 14.32,6.5 13.15,6.21L12.95,4H10.05L9.85,6.21C8.68,6.5 7.68,7.12 6.89,7.92L4.86,7L3.41,9.5L5.23,10.78C4.91,11.95 4.93,13.12 5.23,14.2L3.41,15.5L4.86,18L6.89,17.07C7.68,17.86 8.68,18.46 9.85,18.77L10.05,21H12.95L13.15,18.77C14.32,18.46 15.32,17.86 16.11,17.07L18.14,18L19.59,15.5M13.5,3C13.77,3 14,3.2 14,3.46L14.18,5.5C14.94,5.78 15.62,6.19 16.23,6.68L18.08,5.81C18.31,5.69 18.6,5.77 18.74,6L20.74,9.5C20.88,9.71 20.8,10 20.58,10.15L18.91,11.32C19.04,12.12 19.03,12.91 18.91,13.68L20.58,14.85C20.8,15 20.88,15.29 20.74,15.5L18.74,19C18.6,19.21 18.31,19.29 18.08,19.17L16.23,18.31C15.62,18.8 14.94,19.2 14.18,19.5L14,21.5C14,21.79 13.77,22 13.5,22H9.5A0.5,0.5 0 0,1 9,21.5L8.82,19.5C8.06,19.2 7.38,18.8 6.77,18.31L4.92,19.17C4.69,19.29 4.4,19.21 4.26,19L2.26,15.5C2.12,15.29 2.2,15 2.42,14.85L4.09,13.68C3.97,12.91 3.96,12.12 4.09,11.32L2.42,10.15C2.2,10 2.12,9.71 2.26,9.5L4.26,6C4.4,5.77 4.69,5.69 4.92,5.81L6.77,6.68C7.38,6.19 8.06,5.78 8.82,5.5L9,3.46C9,3.2 9.23,3 9.5,3H13.5M11.5,9A3.5,3.5 0 0,1 15,12.5A3.5,3.5 0 0,1 11.5,16A3.5,3.5 0 0,1 8,12.5A3.5,3.5 0 0,1 11.5,9M11.5,10A2.5,2.5 0 0,0 9,12.5A2.5,2.5 0 0,0 11.5,15A2.5,2.5 0 0,0 14,12.5A2.5,2.5 0 0,0 11.5,10Z" />
+            </svg>
           </button>
           <ul class="dropdown-menu" id="colorChangerMenu">
             <li><a href="#" id="colorChanger"><i class="fa fa-paint-brush" aria-hidden="true"></i><?= _l('chat_solid_color_text'); ?></a></li>
-            <li><a href="#" id="colorGradient"><i class="fa fa-paint-brush" aria-hidden="true"></i><?= _l('chat_gradient_color_text'); ?></a></li>
+            <li><a href="#" id="colorGradient"></i><svg viewBox="0 0 24 24">
+                  <path d="M19,11.5C19,11.5 17,13.67 17,15A2,2 0 0,0 19,17A2,2 0 0,0 21,15C21,13.67 19,11.5 19,11.5M5.21,10L10,5.21L14.79,10M16.56,8.94L7.62,0L6.21,1.41L8.59,3.79L3.44,8.94C2.85,9.5 2.85,10.47 3.44,11.06L8.94,16.56C9.23,16.85 9.62,17 10,17C10.38,17 10.77,16.85 11.06,16.56L16.56,11.06C17.15,10.47 17.15,9.5 16.56,8.94Z" />
+                </svg><?= _l('chat_gradient_color_text'); ?></a></li>
             <li><a href="#" id="resetColors" onClick="resetChatColors()"><i class="fa fa-refresh" aria-hidden="true"></i><?= _l('chat_reset_color_text'); ?></a></li>
           </ul>
         </div>
@@ -89,10 +102,14 @@ $currentChatColor = validateChatColorBeforeApply($color);
         </span>
       </span>
       <span class="user_view_selector">
-        <i class="fa fa-th-large user_view" data-toggle="tooltip" data-original-title="<?php echo _l('chat_browser_full_chat') ?>" data-placement="left"></i>
+        <svg class="user_view" data-toggle="tooltip" data-original-title="<?php echo _l('chat_browser_full_chat') ?>" data-placement="left" viewBox="0 0 24 24">
+          <path d="M18,6V17H22V6M2,17H6V6H2M7,19H17V4H7V19Z" />
+        </svg>
       </span>
       <span class="closeBox">
-        <i class="fa fa-close" data-toggle="tooltip" title="<?= _l('close'); ?>"></i>
+        <svg data-toggle="tooltip" title="<?= _l('close'); ?>" viewBox="0 0 24 24">
+          <path d="M5,13V12H11V6H12V12H18V13H12V19H11V13H5Z" />
+        </svg>
       </span>
       <chatHead class="chat-head" style="background:<?php echo $currentChatColor; ?>" onclick="slideChat(this)">
         <span class="userName"></span>
@@ -106,7 +123,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
           </div>
         </div>
         <div class="fileUpload" data-toggle="tooltip" title="<?php echo _l('chat_file_upload'); ?>">
-          <i class="fa fa-plus-circle" aria-hidden="true"></i>
+          <svg viewBox="0 0 24 24">
+            <path d="M15,11A3,3 0 0,1 12,8V4H8A2,2 0 0,0 6,6V19A2,2 0 0,0 8,21H17A2,2 0 0,0 19,19V11H15M13,8A2,2 0 0,0 15,10H18.59L13,4.41V8M8,3H13L20,10V19A3,3 0 0,1 17,22H8A3,3 0 0,1 5,19V6A3,3 0 0,1 8,3M8,24A5,5 0 0,1 3,19V7H4V19A4,4 0 0,0 8,23H16V24H8Z" />
+          </svg>
         </div>
         <form hidden enctype="multipart/form-data" name="fileForm" method="post" onsubmit="uploadFileForm(this);return false;">
           <input type="file" class="file" name="userfile" required />
@@ -116,7 +135,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
         <form method="post" enctype="multipart/form-data" name="pusherMessagesForm" onsubmit="return false;">
           <div>
             <div class="enterBtn">
-              <i class="fa fa-paper-plane" aria-hidden="true"></i>
+              <svg class="fa-paper-plane" viewBox="0 0 24 24">
+                <path d="M8,7.71L18,12L8,16.29V12.95L15.14,12L8,11.05V7.71M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4Z" />
+              </svg>
             </div>
             <textarea name="msg" class="chatbox" rows="3" placeholder="<?php echo _l('chat_type_a_message'); ?>"></textarea>
             <input type="hidden" name="from" class="from" />
@@ -135,8 +156,12 @@ $currentChatColor = validateChatColorBeforeApply($color);
   <span id="slideRight"><i class="fa fa-angle-double-right" aria-hidden="true"></i></span>
 </div>
 </div>
-<?php require_once('modules/prchat/assets/module_includes/chat_settings.php'); ?>
 <!-- Chat Template End -->
+
+<!-- Include chat settings file -->
+<?php require('modules/prchat/assets/module_includes/chat_settings.php'); ?>
+<!-- Include chat statuses file -->
+<?php require('modules/prchat/assets/module_includes/chat_statuses.php'); ?>
 
 <script>
   $(function() {
@@ -151,7 +176,6 @@ $currentChatColor = validateChatColorBeforeApply($color);
     }
   });
 
-  var wentOffline, wentOnline;
   window.addEventListener('online', handleConnectionChange);
   window.addEventListener('offline', handleConnectionChange);
   // Parse emojies in chat area do not touch
@@ -168,6 +192,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
   var appCluster = "<?php echo get_option('pusher_cluster') ?>";
   var staffFullName = "<?php echo get_staff_full_name(); ?>";
   var userSessionId = "<?php echo get_staff_user_id(); ?>";
+  var chat_desktop_notifications_enabled = "<?php echo get_option('chat_desktop_messages_notifications') ?>";
+  chat_desktop_notifications_enabled = (chat_desktop_notifications_enabled == '0') ? false : true;
+  var user_chat_status = "<?= get_user_chat_status(); ?>";
 
   $('#pusherChat').on('click', '.fileUpload', function() {
     $(this).parents('.pusherChatBox').find('form input:first').trigger('click');
@@ -203,7 +230,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
         var Regex = new RegExp('\[~%:\()@]');
         if (Regex.test(fileForm.name)) {
           alert_float('warning', '<?php echo _l('chat_permitted_files') ?>');
-          $('.pusherChatBox#' + sentTo + ' .chat-module-loader').remove();
+          $('.pusherChatBox#' + sentTo + ' .chat-module-loader').fadeOut(function() {
+            $(this).remove();
+          });
           return false;
         }
       },
@@ -211,7 +240,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
 
         if (r.error) {
           alert_float('danger', r.error);
-          $('.pusherChatBox#' + sentTo + ' .chat-module-loader').fadeOut();
+          $('.pusherChatBox#' + sentTo + ' .chat-module-loader').fadeOut(function() {
+            $(this).remove();
+          });
           return;
         }
 
@@ -222,12 +253,12 @@ $currentChatColor = validateChatColorBeforeApply($color);
 
         $('#pusherChat .pusherChatBox#' + formId + ' textarea').val(basePath + r.upload_data.file_name);
         setTimeout(function() {
-
           if ($('#pusherChat .pusherChatBox#' + formId + ' textarea').trigger(uploadSend)) {
             alert_float('info', 'File ' + r.upload_data.file_name + ' sent.');
-            $('.pusherChatBox#' + sentTo + ' .chat-module-loader').fadeOut();
+            $('.pusherChatBox#' + sentTo + ' .chat-module-loader').fadeOut(function() {
+              $(this).remove();
+            });
           }
-
         }, 100);
 
         var messagesContainer = $('#pusherChat .pusherChatBox#' + formId + ' .logMsg');
@@ -276,6 +307,7 @@ $currentChatColor = validateChatColorBeforeApply($color);
             } else {
               value.message = emojify.replace(value.message);
             }
+            value.message = ifAudioRender(value.message);
             var element = $('.pusherChatBox#id_' + to + ' .logMsg .msgTxt');
             if (value.reciever_id == from) {
               element.prepend('<em><div class="conversation_from"><img class="friendProfilePic" src="' + fetchUserAvatar(value.sender_id, value.user_image) + '"/></br><p data-toggle="tooltip" title="' + value.time_sent_formatted + '" class="friend">' + value.message + '</p></div></em>');
@@ -303,9 +335,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
   $('#pusherChat').on('click', '#disableSound', function() {
     if (isSoundMuted == '') {
       isSoundMuted = 'muted';
-      $(this).toggleClass("fa fa-volume-up fa fa-volume-off");
+      $(this).find('path').attr('d', 'M2.79,4.46L3.5,3.75L20.25,20.5L19.54,21.21L17.3,18.97C16.32,19.54 15.2,19.9 14,20V19C14.92,18.91 15.79,18.65 16.57,18.23L15.06,16.72C14.72,16.85 14.37,16.93 14,16.97V15.96C14.09,15.95 14.17,15.94 14.25,15.92L12,13.66V20H10L6,16H2V9H6L6.67,8.33L2.79,4.46M21,12.5C21,14.53 20.19,16.37 18.88,17.72L18.18,17C19.31,15.84 20,14.25 20,12.5C20,9.08 17.36,6.27 14,6V5C17.91,5.27 21,8.53 21,12.5M18,12.5C18,13.7 17.53,14.79 16.76,15.6L16.06,14.89C16.64,14.27 17,13.42 17,12.5C17,10.74 15.7,9.28 14,9.04V8.03C16.25,8.28 18,10.18 18,12.5M15,12.5C15,12.87 14.86,13.21 14.64,13.5L14,12.84V11.09C14.58,11.29 15,11.85 15,12.5M6.41,10H3V15H6.41L10.41,19H11V12.66L7.38,9.04L6.41,10M10,5H12V10.84L11,9.84V6H10.41L8.79,7.63L8.08,6.92L10,5Z');
     } else if (isSoundMuted == 'muted') {
-      $(this).toggleClass("fa fa-volume-off fa fa-volume-up");
+      $(this).find('path').attr('d', 'M21,12.5C21,16.47 17.91,19.73 14,20V19C17.36,18.73 20,15.92 20,12.5C20,9.08 17.36,6.27 14,6V5C17.91,5.27 21,8.53 21,12.5M18,12.5C18,14.82 16.25,16.72 14,16.97V15.96C15.7,15.72 17,14.26 17,12.5C17,10.74 15.7,9.28 14,9.04V8.03C16.25,8.28 18,10.18 18,12.5M15,12.5C15,13.15 14.58,13.71 14,13.91V11.09C14.58,11.29 15,11.85 15,12.5M2,9H6L10,5H12V20H10L6,16H2V9M3,15H6.41L10.41,19H11V6H10.41L6.41,10H3V15Z');
       isSoundMuted = '';
     }
   });
@@ -345,6 +377,7 @@ $currentChatColor = validateChatColorBeforeApply($color);
 
   /*---------------* Pusher Trigger accessing channel *---------------*/
   var presenceChannel = pusher.subscribe('presence-mychanel');
+  var chat_status = pusher.subscribe('user_changed_chat_status');
 
   /*---------------* Pusher Trigger subscription succeeded *---------------*/
   presenceChannel.bind('pusher:subscription_succeeded', function(members) {
@@ -367,8 +400,8 @@ $currentChatColor = validateChatColorBeforeApply($color);
         'requireInteraction': true,
         'icon': $('#header').find('img').attr('src'),
         'tag': 'user-join-' + members.id,
-        'closeTime': 5000,
-      })
+        'closeTime': app.options.dismiss_desktop_not_after != "0" ? app.options.dismiss_desktop_not_after * 1000 : null
+      });
     }
   });
 
@@ -385,7 +418,22 @@ $currentChatColor = validateChatColorBeforeApply($color);
     var current_time = new Date().toLocaleTimeString();
     var obj = $("a[href=\\#" + data.from + "]");
     if (presenceChannel.members.me.id == data.to && data.from != presenceChannel.members.me.id) {
-      playPushSound();
+      if (app.options.desktop_notifications && chat_desktop_notifications_enabled) {
+        if (user_chat_status != 'busy' && user_chat_status != 'offline') {
+
+          $.notify('', {
+            'title': data.from_name,
+            'body': (data.message.match('type="audio/ogg"&gt;&lt;/audio&gt')) ? "<?= _l('chat_i_sent_new_message'); ?>" : data.message,
+            'requireInteraction': false,
+            'icon': fetchUserAvatar(data.from, data.sender_image),
+            'tag': 'user-message-' + data.from,
+            'closeTime': app.options.dismiss_desktop_not_after != "0" ? app.options.dismiss_desktop_not_after * 1000 : null
+          });
+        }
+      }
+      if (user_chat_status != 'busy' && user_chat_status != 'offline') {
+        playPushSound();
+      }
       if ($('.pusherChatBox.on#id_' + data.from).hasClass('stillActive')) {
         $('.pusherChatBox#id_' + data.from).css('display', 'block');
         updateBoxPosition(obj);
@@ -401,6 +449,7 @@ $currentChatColor = validateChatColorBeforeApply($color);
       pusherFrom.addClass('stillActive');
       pusherFrom.addClass('receiveMsg').removeClass('writing');
       pusherDataLogMsg.find('.msgTxt').show();
+      data.message = ifAudioRender(data.message);
       $('#pusherChat .pusherChatBox#id_' + data.from + ' .msgTxt').append('<div class="conversation_from"><img class="friendProfilePic" data-toggle="tooltip" title="' + current_time + '" src="' + fetchUserAvatar(data.from, data.sender_image) + '"/></br><p class="friend">' + data.message + '</p></div>');
       $('title').html('');
       if ($('title').text().search('<?php echo _l('chat_sent_you_a_message'); ?>') == -1) {
@@ -409,7 +458,10 @@ $currentChatColor = validateChatColorBeforeApply($color);
         } else {
           $('title').text('<?php echo _l('chat_you_have_a_new_message'); ?>');
         }
-        if ($('.pusherChatBox#id_' + data.from).is(':hidden')) {
+        if ($('.pusherChatBox#id_' + data.from).is(':hidden') &&
+          user_chat_status != 'busy' ||
+          $('.pusherChatBox#id_' + data.from).is(':hidden') &&
+          user_chat_status != 'offline') {
           playPushSound();
         }
       }
@@ -421,7 +473,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
       data.message = createTextLinks_(emojify.replace(data.message));
       $('#pusherChat .pusherChatBox#id_' + data.to + ' .msgTxt').append('<div class="conversation_me"><img class="myProfilePic" data-toggle="tooltip" title="' + current_time + '" src="' + fetchUserAvatar(userSessionId, data.sender_image) + '"/></br><div class="message_container"><p class="you" style="background:' + getCurrentBackgound + '" id="' + data.last_insert_id + '">' + data.message + '</p></div></div>');
       var pusherDatalogMsgTo = $('#pusherChat .pusherChatBox#id_' + data.to + ' .logMsg');
-      pusherDatalogMsgTo.scrollTop(pusherDatalogMsgTo[0].scrollHeight);
+      if (pusherDatalogMsgTo != 'undefined') {
+        pusherDatalogMsgTo.scrollTop(pusherDatalogMsgTo[0].scrollHeight);
+      }
       <?php if ($chat_delete_option == '1' || is_admin()) :  ?>
         $('.message_container #' + data.last_insert_id).tooltipster({
           content: $("<span id='" + data.last_insert_id + "' class='prchat_message_delete' onClick='delete_chat_message(this)'>" + prchatSettings.deleteChatMessage + "</span>"),
@@ -472,20 +526,24 @@ $currentChatColor = validateChatColorBeforeApply($color);
   /*---------------* Slide up & down users list & chat boxes, update messages *---------------*/
   $('#pusherChat').on("click", ".pusherChatBox chathead", function(event) {
     $('title').html('');
+
     var obj = $(this);
     var id = obj.parent().attr('id');
-    var selector = $('#pusherChat .pusherChatBox#' + id + ' .slider');
-    if ($(obj).hasClass('hanging')) {
-      $(selector).find('.fileUpload').animate({
-        height: ["toggle", "swing"],
-        opacity: "toggle"
-      });
-      $(selector).find('.enterBtn').animate({
-        height: ["toggle", "swing"],
-        opacity: "toggle"
-      });
-    }
+    var slider = $('#pusherChat .pusherChatBox#' + id + ' .slider');
+    isSliderActive = $.Deferred();
+    isSliderActive.promise(slider);
+    // Resolve the deferred
+    isSliderActive.resolve(slider);
     $('#pusherChat .pusherChatBox#' + id + ' .logMsg').scrollTop($('#pusherChat .pusherChatBox#' + id + ' .logMsg')[0].scrollHeight);
+    isSliderActive.done(function(select) {
+      setTimeout(function() {
+        if (!select.is(':visible')) {
+          $('#pusherChat .pusherChatBox#' + id).addClass('hanging');
+        }
+      }, 500)
+    });
+
+    // return;
   });
 
   /*---------------* Close chatbox, update messages *---------------*/
@@ -497,10 +555,10 @@ $currentChatColor = validateChatColorBeforeApply($color);
     removeActiveChatWindow(updateId);
     var chatBox = $(this).parents('.pusherChatBox#' + id);
     var selector = $('#pusherChat .pusherChatBox#' + id + ' .slider');
-    $(selector).find('.fileUpload').css("display", "block");
-    $(selector).find('.enterBtn').css("display", "block");
+    $(selector).find('.fileUpload, .enterBtn').css("display", "block");
     $(this).parents('.pusherChatBox#' + id).hide();
     $(this).parents('.pusherChatBox.on#' + id).addClass('stillActive');
+    $(this).parents('.pusherChatBox#' + id).removeClass('hanging');
     $(chatBox).find('.slider').addClass('animated fadeIn').show();
     $(chatBox).find('.notification-count').text('0');
     updateBoxPosition();
@@ -509,9 +567,11 @@ $currentChatColor = validateChatColorBeforeApply($color);
 
   /*---------------* Trigger click on user & create chat box and check for messages *---------------*/
   $('#pusherChat #members-list').on("click", "a", function(event) {
+
     $('#pusherChat .scroll').animate({
       scrollTop: 0
     });
+
     var obj = $(this);
     var id = obj.attr('id');
 
@@ -708,10 +768,10 @@ $currentChatColor = validateChatColorBeforeApply($color);
     var promise = dfd.promise();
 
     if (!$('.pusherChatBox#' + id).html() || onlyLoadMessages) {
+      // Get class and append to pusherbox
+      $('.pusherChatBox#' + id).removeClass('hanging');
 
-      $('.pusherChatBox#' + id).removeClass('hanging')
-
-      if (!fromActiveChatWindowsClick) {
+      if (!onlyLoadMessages) {
         $.get(prchatSettings.getMessages, {
             from: userSessionId,
             to: getMsgId,
@@ -755,6 +815,7 @@ $currentChatColor = validateChatColorBeforeApply($color);
             } else {
               value.message = emojify.replace(value.message);
             }
+            value.message = ifAudioRender(value.message);
             if (value.reciever_id == userSessionId) {
               $('.pusherChatBox#' + id + ' .logMsg .msgTxt').prepend('<div class="conversation_from"><img class="friendProfilePic" data-toggle="tooltip" title="' + value.time_sent_formatted + '" src="' + fetchUserAvatar(value.sender_id, value.user_image) + '"/></br><p class="friend">' + value.message + '</p></div>');
             } else {
@@ -778,6 +839,7 @@ $currentChatColor = validateChatColorBeforeApply($color);
             } else {
               value.message = emojify.replace(value.message);
             }
+            value.message = ifAudioRender(value.message);
             if (value.reciever_id == userSessionId) {
               $('.pusherChatBox#' + id + ' .logMsg .msgTxt').prepend('<div class="conversation_from"><img class="friendProfilePic" data-toggle="tooltip" title="' + value.time_sent_formatted + '" src="' + fetchUserAvatar(value.sender_id, value.user_image) + '"/></br><p class="friend">' + value.message + '</p></div>');
             } else {
@@ -795,7 +857,7 @@ $currentChatColor = validateChatColorBeforeApply($color);
           });
         }
         $('#pusherChat #' + id + ' .logMsg').scrollTop($('#pusherChat #' + id + ' .logMsg')[0].scrollHeight);
-
+        $('.pusherChatBox#' + id + ' p').has('audio').css('max-width', '235px');
       });
 
       if (!onlyLoadMessages) {
@@ -841,10 +903,14 @@ $currentChatColor = validateChatColorBeforeApply($color);
         $(clone.show()).insertBefore('.chatBoxslide .pusherChatBox:visible:first');
       }
     }
+    var user_status_label = $('body').find('a#' + id.replace('id_', '')).attr('data-status');
+
     $('.pusherChatBox#' + id + ' textarea').focus();
     $('.pusherChatBox#' + id + ' .from').val(presenceChannel.members.me.id);
     $('.pusherChatBox#' + id + ' .to').val(obj.attr('href'));
     $('.pusherChatBox#' + id).addClass(off);
+    $('.pusherChatBox#' + id).addClass('stillActive ' + (user_status_label != 'undefined') ? user_status_label : obj.data('status'));
+
     updateBoxPosition();
 
     return false;
@@ -876,14 +942,14 @@ $currentChatColor = validateChatColorBeforeApply($color);
   }
 
   /*---------------* Open browser full view chat *---------------*/
-  $('#pusherChat .fa.fa-th-large.main_chat').on('click', function() {
+  $('#pusherChat svg.main_chat').on('click', function() {
     var redirect_url = $('.menu-item-prchat a').attr('href');
     window.location.href = redirect_url;
     return false;
   });
 
   /*---------------* Redirect directly to contact from toggled chat view *---------------*/
-  $('#pusherChat').on('click', '.fa.fa-th-large.user_view', function() {
+  $('#pusherChat').on('click', 'svg.user_view', function() {
     var parent_id = $(this).parents('.pusherChatBox').attr('id').replace("id_", "");
     localStorage.staff_to_redirect = parent_id;
     var redirect_url = $('.menu-item-prchat a').attr('href');
@@ -908,6 +974,32 @@ $currentChatColor = validateChatColorBeforeApply($color);
   } else {
     $('#pusherChat').show();
   }
+
+  chat_status.bind('status-changed-event', function(user) {
+    if (user.user_id !== userSessionId) {
+      if (user.status == 'online') {
+        user.status = '';
+      }
+      var userPlaceholder = $('body').find('#members-list a#' + user.user_id);
+      var memberHref = $('#members-list #' + user.user_id);
+      userPlaceholder.removeClass().addClass('on ' + user.status);
+
+      $('.pusherChatBox#id_' + user.user_id).removeClass('away busy offline online').addClass('on ' + user.status);
+
+      if ("" == user.status) {
+        user.status = 'online'
+      }
+      var translated_status = '';
+      for (var status in chat_user_statuses) {
+        if (status == user.status) {
+          translated_status = chat_user_statuses[status];
+        }
+      }
+      memberHref.attr('data-status', user.status);
+      memberHref.attr('data-original-title', translated_status);
+      memberHref.attr('title', translated_status);
+    }
+  });
 
   /*---------------* Internet connection navigator tracker *---------------*/
   function internetConnectionCheck() {
@@ -945,7 +1037,9 @@ $currentChatColor = validateChatColorBeforeApply($color);
 
     clientsChannel.bind('send-event', function(data) {
       if (data.to == 'staff_' + userSessionId) {
-        playPushSound();
+        if (user_chat_status != 'busy' && user_chat_status != 'offline') {
+          playPushSound();
+        }
         if ($('.chatNewMessages').length > 0) {
           var currentCount = parseInt($('.chatNewMessages').text());
           $('.chatNewMessages').text(currentCount += 1);

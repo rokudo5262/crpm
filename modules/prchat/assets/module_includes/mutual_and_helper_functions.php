@@ -14,7 +14,17 @@
         'uploadMethod': '<?php echo site_url('prchat/Prchat_ClientsController/uploadMethod'); ?>',
         'debug': <?php if (ENVIRONMENT != 'production') { ?> true <?php } else { ?> false <?php }; ?>,
     };
+    $(function() {
+        $(window).on("load resize", function(e) {
+            if (is_mobile()) {
+                // Wait until metsiMenu, collapse and other effect finish and set wrapper height
+                setTimeout(function() {
+                    $('#wrapper').css('min-height', '100%');
+                }, 500);
 
+            };
+        })
+    });
     /*---------------* Parse emojies in chat area do not touch *---------------*/
     emojify.setConfig({
         emojify_tag_type: 'div',
@@ -42,9 +52,24 @@
         })
     };
 
+    // Shows the full screen wrapper with buttons to start recording
+    function showRecordingWrapper() {
+        ifRecordingCancelledAndClose();
+    }
+
     /*-------* Live internet connection tracker *-------*/
     function internetConnectionCheck() {
         return navigator.onLine ? true : false;
+    }
+
+    function isAudioMessage(message) {
+        /** 
+         * Check if it is audio message and decode html
+         */
+        if (message.match('type="audio/ogg"&gt;&lt;/audio&gt')) {
+            return message = renderHtmlForAudio(message);
+        }
+        return message;
     }
 
     /*---------------* Security escaping html in chatboxes prevent database injection *---------------*/
@@ -160,27 +185,38 @@
         return text.value;
     };
 
-    $(window).resize(function() {
-        // Mobile version not allowed due to better client staff contact in full view only
-        ($(window).width() < 768) ?
-        $('#clientChat, .ch_pointer').hide():
-            $('#clientChat, .ch_pointer').show();
-        // Clients mobile version not allowed due to better client staff contact in full view only
-        if ($(window).width() < 768) {
-            if ($('#crm_clients').hasClass('active')) {
-                $('#frame .staff a').click();
-            }
-        }
-    });
-
     if ($(window).width() > 733) {
-        $('#switchTheme, #shared_user_files, #announcement, #frame .groupOptions').show();
         $('body').removeClass('hide-sidebar').addClass('show-sidebar');
     } else {
-        $('#switchTheme, #sharedFiles, #shared_user_files, #announcementm, #frame .groupOptions').hide();
         $('body').removeClass('show-sidebar').addClass('hide-sidebar');
     }
 
+    function animateContent() {
+        if (window.matchMedia("only screen and (max-width: 735px)").matches) {
+            var contentWidth = $('#frame .content');
+            setTimeout(function() {
+                isContentActive = true;
+            }, 1000);
+            contentWidth.show().animate({
+                "left": '0',
+                'opacity': '1'
+            }, 50, 'linear');
+            $('#frame #sidepanel').fadeOut(50);
+        }
+    }
+
+    function chatBackMobile() {
+        if (window.matchMedia("only screen and (max-width: 735px)").matches) {
+            $('#frame #sidepanel').fadeIn(50);
+            $('#frame .content').animate({
+                "left": '+=100%',
+                'opacity': '0'
+            }, 200, 'linear', function() {
+                $(this).hide();
+            });
+            isContentActive = false;
+        }
+    }
 
     function _debounce(func, wait, immediate) {
         var timeout;
@@ -195,6 +231,42 @@
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
             if (callNow) func.apply(context, args);
+        };
+    };
+
+    $('#frame textarea').on('focus click', function() {
+        if (window.matchMedia("only screen and (max-width: 735px)").matches) {
+            setTimeout(function() {
+                scroll_event();
+            }, 500);
+        }
+    });
+    $('body').on('click', '.connection_field', function() {
+        $(this).fadeOut();
+    });
+
+    /**
+     * Delete action on tooltipster for staff or groups dynamic
+     */
+    var tooltipserContent = function(message_id, trigger) {
+        var fnc = (trigger == 'group') ? 'delete_group_chat_message(this)' : 'delete_chat_message(this)';
+        var event = (is_mobile()) ? 'ontouchstart' : 'onclick';
+
+        return {
+            content: $("<span id='" + message_id + "' class='prchat_message_delete' " + event + "='" + fnc + "'>" + prchatSettings.deleteChatMessage + "</span>"),
+            interactive: true,
+            side: 'left',
+            animation: 'fade',
+            delay: 200,
+            trigger: "custom",
+            triggerOpen: {
+                mouseenter: true,
+                tap: true
+            },
+            triggerClose: {
+                mouseleave: true,
+                tap: true
+            }
         };
     };
 </script>

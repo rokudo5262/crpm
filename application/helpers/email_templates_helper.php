@@ -90,7 +90,6 @@ function parse_email_template_merge_fields($template, $merge_fields)
 
     foreach ($merge_fields as $key => $val) {
         foreach (['message', 'fromname', 'subject'] as $section) {
-
             $template->{$section} = stripos($template->{$section}, $key) !== false
             ? str_replace($key, $val, $template->{$section})
             : str_replace($key, '', $template->{$section});
@@ -156,7 +155,9 @@ function get_mail_template_path($class, &$params)
     $dir = APPPATH . 'libraries/mails/';
 
     // Check if second parameter is module and is activated so we can get the class from the module path
-    if (isset($params[0]) && is_string($params[0]) && is_dir(module_dir_path($params[0]))) {
+    // Also check if the first value is not equal to '/' e.q. when import is performed we set
+    // for some values which are blank to "/"
+    if (isset($params[0]) && is_string($params[0]) && $params[0] !== '/' && is_dir(module_dir_path($params[0]))) {
         $module = $CI->app_modules->get($params[0]);
 
         if ($module['activated'] === 1) {
@@ -181,7 +182,7 @@ function get_mail_template_path($class, &$params)
  */
 function create_email_template($subject, $message, $type, $name, $slug, $active = 1)
 {
-    if(total_rows('emailtemplates', ['slug'=>$slug]) > 0) {
+    if (total_rows('emailtemplates', ['slug' => $slug]) > 0) {
         return false;
     }
 

@@ -410,7 +410,7 @@ class Tickets_model extends App_Model
         }
 
         // admin can have html
-        if ($admin == null) {
+        if ($admin == null && hooks()->add_filter('ticket_message_without_html_for_non_admin', true)) {
             $data['message'] = _strip_tags($data['message']);
             $data['message'] = nl2br_save_html($data['message']);
         }
@@ -419,27 +419,37 @@ class Tickets_model extends App_Model
             $data['userid'] = 0;
         }
 
-        /*  if (is_client_logged_in()) {
-                    $data['contactid'] = get_contact_user_id();
-                }
-        */
-
-        // Temporary till the database is adjusted to support emojies
-        $data['message'] = preg_replace('/[[:^print:]]/', '', $data['message']);
-
-        $data = hooks()->apply_filters('before_ticket_reply_add', $data, $id, $admin);
+        $data['message'] = remove_emojis($data['message']);
+        $data            = hooks()->apply_filters('before_ticket_reply_add', $data, $id, $admin);
 
         $this->db->insert(db_prefix() . 'ticket_replies', $data);
 
         $insert_id = $this->db->insert_id();
 
         if ($insert_id) {
+            /**
+             * When a ticket is in status "In progress" and the customer reply to the ticket
+             * it changes the status to "Open" which is not normal.
+             *
+             * The ticket should keep the status "In progress"
+             */
+            $this->db->select('status');
+            $this->db->where('ticketid', $id);
+            $old_ticket_status = $this->db->get(db_prefix() . 'tickets')->row()->status;
+
+            $newStatus = hooks()->apply_filters(
+                'ticket_reply_status',
+                ($old_ticket_status == 2 && $admin == null ? $old_ticket_status : $status),
+                ['ticket_id' => $id, 'reply_id' => $insert_id, 'admin' => $admin, 'old_status' => $old_ticket_status]
+            );
+
             if (isset($assigned)) {
                 $this->db->where('ticketid', $id);
                 $this->db->update(db_prefix() . 'tickets', [
                     'assigned' => $assigned,
                 ]);
             }
+
             if ($pipe_attachments != false) {
                 $this->process_pipe_attachments($pipe_attachments, $id, $insert_id);
             } else {
@@ -453,28 +463,19 @@ class Tickets_model extends App_Model
 
             log_activity('New Ticket Reply [ReplyID: ' . $insert_id . ']');
 
-            $this->db->select('status');
-            $this->db->where('ticketid', $id);
-            $old_ticket_status = $this->db->get(db_prefix() . 'tickets')->row()->status;
-
-            /**
-             * When a ticket is in status "In progress" and the customer reply to the ticket it changes the status to "Open" which is not normal.
-             * The ticket should keep the status "In progress"
-             */
-
             $this->db->where('ticketid', $id);
             $this->db->update(db_prefix() . 'tickets', [
-                    'lastreply'  => date('Y-m-d H:i:s'),
-                    'status'     => ($old_ticket_status == 2 && $admin == null ? $old_ticket_status : $status),
-                    'adminread'  => 0,
-                    'clientread' => 0,
-                ]);
+                'lastreply'  => date('Y-m-d H:i:s'),
+                'status'     => $newStatus,
+                'adminread'  => 0,
+                'clientread' => 0,
+            ]);
 
-            if ($old_ticket_status != $status) {
+            if ($old_ticket_status != $newStatus) {
                 hooks()->do_action('after_ticket_status_changed', [
-                        'id'     => $id,
-                        'status' => $status,
-                    ]);
+                    'id'     => $id,
+                    'status' => $newStatus,
+                ]);
             }
 
             $ticket    = $this->get_ticket_by_id($id);
@@ -553,8 +554,11 @@ class Tickets_model extends App_Model
      */
     public function delete_ticket_reply($ticket_id, $reply_id)
     {
+        hooks()->do_action('before_delete_ticket_reply', ['ticket_id' => $ticket_id, 'reply_id' => $reply_id]);
+
         $this->db->where('id', $reply_id);
         $this->db->delete(db_prefix() . 'ticket_replies');
+
         if ($this->db->affected_rows() > 0) {
             // Get the reply attachments by passing the reply_id to get_ticket_attachments method
             $attachments = $this->get_ticket_attachments($ticket_id, $reply_id);
@@ -734,12 +738,14 @@ class Tickets_model extends App_Model
         if ($this->piping == true) {
             $data['message'] = preg_replace('/\v+/u', '<br>', $data['message']);
         }
+
         // Admin can have html
-        if ($admin == null) {
+        if ($admin == null && hooks()->add_filter('ticket_message_without_html_for_non_admin', true)) {
             $data['message'] = _strip_tags($data['message']);
             $data['subject'] = _strip_tags($data['subject']);
             $data['message'] = nl2br_save_html($data['message']);
         }
+
         if (!isset($data['userid'])) {
             $data['userid'] = 0;
         }
@@ -753,10 +759,8 @@ class Tickets_model extends App_Model
             unset($data['tags']);
         }
 
-        // Temporary till the database is adjusted to support emojies
-        $data['message'] = preg_replace('/[[:^print:]]/', '', $data['message']);
-
-        $data = hooks()->apply_filters('before_ticket_created', $data, $admin);
+        $data['message'] = remove_emojis($data['message']);
+        $data            = hooks()->apply_filters('before_ticket_created', $data, $admin);
 
         $this->db->insert(db_prefix() . 'tickets', $data);
         $ticketid = $this->db->insert_id();
@@ -784,7 +788,7 @@ class Tickets_model extends App_Model
                         pusher_trigger_notification([$data['assigned']]);
                     }
 
-                    send_mail_template('ticket_assigned_to_staff', $assignedEmail, $data['assigned'], $ticketid, $data['userid'], $data['contactid']);
+                    send_mail_template('ticket_assigned_to_staff', get_staff($data['assigned'])->email, $data['assigned'], $ticketid, $data['userid'], $data['contactid']);
                 }
             }
             if ($pipe_attachments != false) {

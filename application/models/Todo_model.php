@@ -9,7 +9,7 @@ class Todo_model extends App_Model
     public function __construct()
     {
         parent::__construct();
-        $this->todo_limit = hooks()->apply_filters('todos_limit', 20);
+        $this->todo_limit = hooks()->apply_filters('todos_limit', 10);
     }
 
     public function setTodosLimit($limit)

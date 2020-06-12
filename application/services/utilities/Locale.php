@@ -66,6 +66,8 @@ class Locale
             return 'sv_SE';
         } elseif ($locale == 'sl') {
             return 'sl_SI';
+        } elseif ($locale == 'zh') {
+            return 'zh_TW';
         }
 
         foreach ($availableLanguages as $lang) {
@@ -126,6 +128,7 @@ class Locale
         'Turkish'     => 'tr',
         'Ukrainian'   => 'uk',
         'Vietnamese'  => 'vi',
+        'Chinese'     => 'zh',
     ];
     }
 }

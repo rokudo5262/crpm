@@ -1,11 +1,4 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<?php
-/* Start RA - Edit Feb 18th */
-if($_GET['group'] == 'update' && !isset($_GET['dev'])) {
-  header('Location: https://crpm.reputyze.asia/admin/settings');
-}
-/* End RA - Edit Feb 18th */
-?>
 <?php init_head(); ?>
 <div id="wrapper">
  <div class="content">
@@ -43,17 +36,14 @@ if($_GET['group'] == 'update' && !isset($_GET['dev'])) {
       </ul>
       <div class="panel_s">
        <div class="panel-body">
-           <!-- <?php //if (isset($_GET['dev']) && $_GET['dev'] == 'ef9ef062-c607-4a85-83ce-12f0d321ab9f') { ?>
-        <a href="<?php //echo admin_url('settings?group=update'); ?>" class="<?php //if ($this->input->get('group') == 'update') {
+        <a href="<?php echo admin_url('settings?group=update'); ?>" class="<?php if ($this->input->get('group') == 'update') {
           echo 'bold';
-      //} ?>">
-          <?php //echo _l('settings_update'); ?>
+      } ?>">
+          <?php echo _l('settings_update'); ?>
         </a>
-        <hr class="hr-10" />
-           <?php //} ?> -->
         <?php if (is_admin()) {
           ?>
-          
+          <hr class="hr-10" />
           <a href="<?php echo admin_url('settings?group=info'); ?>" class="<?php if ($this->input->get('group') == 'info') {
               echo 'bold';
           } ?>">

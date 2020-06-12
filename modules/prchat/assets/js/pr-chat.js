@@ -173,6 +173,13 @@ function addChatMember(members) {
     var pendingRemoveTimeout = pendingRemoves[members.id];
     $('a#' + members.id).addClass('on').removeClass('off');
     $('.pusherChatBox#id_' + members.id).addClass('on').removeClass('off');
+
+    if (!$('a#' + members.id).hasClass(members.info.status)) {
+        $('a#' + members.id).addClass(members.info.status);
+    }
+    if (!$('.pusherChatBox#id_' + members.id).hasClass(members.info.status)) {
+        $('.pusherChatBox#id_' + members.id).addClass(members.info.status);
+    }
     if (pendingRemoveTimeout) {
         clearTimeout(pendingRemoveTimeout);
     }
@@ -189,8 +196,8 @@ function removeChatMember(members) {
             $("#menu .menu-item-prchat span.menu-text").append('<span class="liveUsers badge menu-badge bg-info" data-toggle="tooltip" title="' + prchatSettings.onlineUsersMenu + '">' + (presenceChannel.members.count - 1) + '</span>');
         }
 
-        $('a#' + members.id).removeClass('on').addClass('off');
-        $('.pusherChatBox#id_' + members.id).addClass('off').removeClass('on').removeClass('stillActive');
+        $('a#' + members.id).removeClass('on ' + members.info.status).addClass('off');
+        $('.pusherChatBox#id_' + members.id).addClass('off').removeClass('on stillActive ' + members.info.status);
         chatMemberUpdate();
     }, 5000);
 }
@@ -202,7 +209,7 @@ function updateBoxPosition() {
     var slideLeft = false;
     $('.chatBoxslide .pusherChatBox:visible').each(function() {
         $(this).css({
-            'right': right
+            'right': right,
         });
         right += $(this).width() + 20;
         $('.chatBoxslide').css({
@@ -253,8 +260,19 @@ function chatMemberUpdate(subscribed_event) {
         $.each(data, function(user_id, value) {
             if (value.staffid != presenceChannel.members.me.id) {
                 user = presenceChannel.members.get(value.staffid);
+
+                if (value.status != undefined && value.status.length != undefined && value.status == 'online') {
+                    value.status = '';
+                }
+                var user_status = ("" == value.status) ? 'online' : value.status;
+                var translated_status = '';
+                for (var status in chat_user_statuses) {
+                    if (status == user_status) {
+                        translated_status = chat_user_statuses[status];
+                    }
+                }
                 if (user != null) {
-                    onlineUser += '<a href="#' + value.staffid + '" id="' + value.staffid + '" class="on"><span class="user-name onlineUsername">' + strCapitalize(value.firstname + ' ' + value.lastname) + '</span><img src="' + fetchUserAvatar(value.staffid, value.profile_image) + '" class="imgFriend" /></a>';
+                    onlineUser += '<a data-status="' + value.status + '" data-toggle="tooltip" title="' + translated_status + '" href="#' + value.staffid + '" id="' + value.staffid + '" class="on ' + value.status + '"><span class="user-name onlineUsername">' + strCapitalize(value.firstname + ' ' + value.lastname) + '</span><img src="' + fetchUserAvatar(value.staffid, value.profile_image) + '" class="imgFriend" /></a>';
                     if (presenceChannel.members.count > 0) {
                         $("#count").html(presenceChannel.members.count - 1);
                         $('.liveUsers').remove();
@@ -421,15 +439,30 @@ function chatCircleTransform() {
         $('.scroll, .chat-footer, .fa.fa-eercast, .chat-footer .online, .topInfo, #searchUsers, #disableSound, #colorChanger, #membersContent').toggleClass('isToggled');
         (inputColor.is(':visible')) ? inputColor.hide(): inputColor.show();
     }
+    $('.toCircle').css({ 'width': '30px', 'height': '30px', 'top': '11px', 'right': '9px' });
     if ($('.scroll').hasClass('isToggled')) {
         inputcolorGradient.hide();
         localStorage.isToggled = 'true';
         localStorage.chat_head_position = 'none';
         scrollPosition.css('display', 'none');
     } else {
+        $('.toCircle').css({ 'width': '23px', 'height': '23px', 'top': 'unset', 'right': '36px' });
         inputcolorGradient.show();
         scrollPosition.css('display', 'none');
         localStorage.chat_head_position = 'none';
         localStorage.isToggled = 'false';
     }
+}
+
+/** 
+ * Check for audio message then convert to html readable element
+ */
+function ifAudioRender(message) {
+    /** 
+     * Check if it is audio message and decode html
+     */
+    if (message.match('type="audio/ogg"&gt;&lt;/audio&gt')) {
+        message = renderHtmlForAudio(message);
+    }
+    return message;
 }

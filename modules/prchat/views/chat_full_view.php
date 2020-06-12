@@ -1,235 +1,47 @@
-<?php
-defined('BASEPATH') or exit('No direct script access allowed');
-init_head();
-?>
+<?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+
+<?php init_head(); ?>
+
 <div id="wrapper" class="desktop_chat">
+
+  <?php
+  $isHttps = false;
+  (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ? $isHttps = true : false);
+  if ($isHttps) {
+    loadChatComponent('AudioComponent');
+  }
+  ?>
+
   <div id="frame">
-    <div class="main_loader_init" id="main_loader_init">
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-    <div id="sidepanel">
-      <div id="profile">
-        <div class="wrap">
-          <?php echo staff_profile_image($current_user->staffid, array('img', 'img-responsive', 'staff-profile-image-small', 'pull-left'), 'small', ['id' => 'profile-img']); ?>
-          <p>
-            <?php echo get_staff_full_name(); ?>
-          </p>
-        </div>
-      </div>
-      <div class="connection_field">
-        <i class="fa fa-wifi blink"></i>
-      </div>
-      <div id="search" style="width: <?= is_admin() ? '85%' : '100%'; ?>">
-        <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-        <input type="text" id="search_field" placeholder="<?php echo _l('chat_search_chat_members'); ?>" data-container="body" data-toggle="tooltip" data-placement="top" title="<?php echo _l('chat_search'); ?>" />
-      </div>
-      <?=
-        (is_admin())
-          ?
-          '<div class="announcement" id="announcement">
-      <div class="dropdown">
-      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-      <i class="fa fa-cog i_settings" data-toggle="tooltip" title="' . _l('advanced_options') . '" aria-hidden="true"></i>
-      </button>
-      <ul class="dropdown-menu">
-      <li class="i_announcement"><a href="javascript:void(0)"><i class="fa fa-bullhorn" aria-hidden="true"></i>' . _l('chat_message_announcement_text') . '</a></li>
-      <li class="i_groups"><a href="javascript:void(0)"><i class="fa fa-users" aria-hidden="true"></i></i>' . _l('chat_message_groups_text') . '</a></li>
-      </ul>
-      </div>
-      </div>'
-          : '';
-      ?>
-      <ul class="nav nav-tabs chat_nav">
-        <li class="active staff" style="<?= (!isClientsEnabled()) ? 'width:50%;' : ''; ?> "><a data-toggle="tab" href="#staff"><i class="fa fa-user i_chat_navigation"></i><?= _l('chat_staff_text');  ?></a></li>
-        <li class="groups events_disabled" style="<?= (!isClientsEnabled()) ? 'width:50%;' : ''; ?> "><a data-toggle="tab" class="events_disabled" href="#groups"><i class="fa fa-users i_chat_navigation"></i><?= _l('chat_groups_text');  ?></a></li>
-        <?php if (isClientsEnabled()) : ?>
-          <li class="crm_clients"><a data-toggle="tab" class="events_disabled" href="#crm_clients"><i class="fa fa-address-book i_chat_navigation"></i><?= _l('chat_lang_clients'); ?></a></li>
-        <?php endif; ?>
-      </ul>
-      <div class="tab-content">
-        <div id="staff" class="tab-pane fade in active">
-          <div id="contacts">
-            <div id="bottom-bar">
-              <button id="switchTheme"><i class="fa fa-ioxhost" aria-hidden="true"></i> <span>
-                  <div class="dropdown" id="theme_options">
-                    <a href="#" class="dropbtn"><?php echo _l('chat_theme_name'); ?></a>
-                    <div class="dropdown-content">
-                      <a id="light" onClick="chatSwitchTheme('light')" href="#"><?php echo _l('chat_theme_options_light'); ?></a>
-                      <a id="dark" onClick="chatSwitchTheme('dark')" href="#"><?php echo _l('chat_theme_options_dark'); ?></a>
-                    </div>
-                  </div>
-                </span></button>
-              <button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span><?= _l('settings'); ?></span></button>
-            </div>
-            <ul class="chat_contacts_list">
-              <li class="contact">
 
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div id="groups" class="tab-pane fade">
-          <div id="groups_container">
-            <ul class="chat_groups_list">
-            </ul>
-            <div id="bottom-bar">
-              <button id="add_group_btn"><i class="fa fa-plus" aria-hidden="true"></i> <span><?= _l('chat_message_groups_text'); ?></span></button>
-            </div>
-          </div>
-        </div>
-        <?php if (isClientsEnabled()) : ?>
-          <div id="crm_clients" class="tab-pane fade">
-            <div id="clients_container">
-              <ul class="chat_clients_list">
-              </ul>
-              <div id="bottom-bar">
-                <button id="clients_show"><i class="fa fa-align-justify" aria-hidden="true"></i> <span><?= _l('chat_lang_show_clients'); ?></span></button>
-                <div class="clients_settings dropup">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="dropDownOptions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-angle-double-up c_settings" aria-hidden="true" data-toggle="tooltip" title="<?= _l('chat_clients_bottom_options'); ?>"></i>
-                  </button>
-                  <ul class="dropdown-menu animated fadeIn" aria-labelledby="dropDownOptions">
-                    <li><a href="javascript:void(0)" id="showOnlineContacts"><i class="fa fa-circle" aria-hidden="true"></i><?= _l('chat_only_online_clients'); ?></a></li>
-                    <li><a href="javascript:void(0)" id="resetContacts"><i class="fa fa-refresh" aria-hidden="true"></i><?= _l('chat_reload_clients_list'); ?></a></li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        <?php endif; ?>
-      </div>
-    </div>
+    <?php loadChatComponent('Sidepanel', ['props' => $current_user]);  ?>
 
-    <div class="content">
-      <div id="sharedFiles">
-        <i class="fa fa-times-circle-o" aria-hidden="true"></i>
-        <div class="history_slider">
-        </div>
-      </div>
-      <div class="chat_group_options">
-      </div>
-      <div class="contact-profile">
-        <img src="" class="img img-responsive staff-profile-image-small pull-left" alt="" />
-        <p></p>
-        <i class="fa fa-volume-up user_sound_icon" data-toggle="tooltip" title="<?= _l('chat_sound_notifications'); ?>"></i>
-        <div class="social-media mright15">
-          <i data-toggle="tooltip" data-container="body" title="<?php echo _l('chat_shared_files'); ?>" data-placement="left" class="fa fa-share-alt" id="shared_user_files"></i>
-          <a href="" id="fa-skype" data-toggle="tooltip" data-container="body" class="mright5" title="<?php echo _l('chat_call_on_skype'); ?>"><i class="fa fa-skype" aria-hidden="true"></i></a>
-          <a href="" id="fa-facebook" target="_blank" class="mright5"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-          <a href="" id="fa-linkedin" target="_blank" class="mright5"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-        </div>
-      </div>
-      <div class="messages" onscroll="loadMessages(this)">
-        <svg class="message_loader" viewBox="0 0 50 50">
-          <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-        </svg>
-        <span class="userIsTyping bounce" id="">
-          <img src="<?php echo module_dir_url('prchat', 'assets/chat_implements/userIsTyping.gif'); ?>" />
-        </span>
-        <ul>
-        </ul>
-      </div>
-      <div class="group_messages" onscroll="loadGroupMessages(this)">
-        <svg class="message_group_loader" viewBox="0 0 50 50">
-          <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-        </svg>
-        <div class="chat_group_messages">
-          <ul>
-          </ul>
-        </div>
-      </div>
-      <?php if (isClientsEnabled()) : ?>
-        <div class="client_messages" id="">
-          <svg class="message_loader" viewBox="0 0 50 50">
-            <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
-          </svg>
-          <span class="userIsTyping bounce" id="">
-            <img src="<?php echo module_dir_url('prchat', 'assets/chat_implements/userIsTyping.gif'); ?>" />
-          </span>
-          <div class="chat_client_messages">
-            <ul>
-            </ul>
-          </div>
-        </div>
-      <?php endif; ?>
-      <!-- Groups -->
-      <form hidden enctype="multipart/form-data" name="fileForm" method="post" onsubmit="uploadFileForm(this);return false;">
-        <input type="file" class="file" name="userfile" required />
-        <input type="submit" name="submit" class="save" value="save" />
-        <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-      </form>
-      <form method="post" enctype="multipart/form-data" name="pusherMessagesForm" id="pusherMessagesForm" onsubmit="return false;">
-        <div class="message-input">
-          <div class="wrap">
-            <textarea type="text" disabled name="msg" class="chatbox ays-ignore" placeholder="<?= _l('chat_type_a_message'); ?>"></textarea>
-            <input type="hidden" class="ays-ignore from" name="from" value="" />
-            <input type="hidden" class="ays-ignore to" name="to" value="" />
-            <input type="hidden" class="ays-ignore typing" name="typing" value="false" />
-            <input type="hidden" class="ays-ignore" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-            <i class="fa fa-plus-square-o attachment fileUpload" data-container="body" data-toggle="tooltip" title="<?php echo _l('chat_file_upload'); ?>" aria-hidden="true"></i>
-            <i class="fa fa-cogs search_messages"></i>
-            <input type="hidden" class="ays-ignore has_newmessages" id="" value="false" />
-            <button class="submit enterBtn" name="enterBtn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-          </div>
-        </div>
-      </form>
-      <!-- Groups -->
-      <form hidden enctype="multipart/form-data" name="groupFileForm" id="groupFileForm" method="post" onsubmit="uploadGroupFileForm(this);return false;">
-        <input type="file" class="file" name="userfile" required />
-        <input type="submit" name="submit" class="save" value="save" />
-        <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-      </form>
-      <form hidden method="post" enctype="multipart/form-data" name="groupMessagesForm" id="groupMessagesForm" onsubmit="return false;">
-        <div class="message-input group_msg_input">
-          <div class="wrap">
-            <textarea type="text" name="g_message" class="group_chatbox ays-ignore" placeholder="<?= _l('chat_type_a_message'); ?>"></textarea>
-            <input type="hidden" class="ays-ignore from" name="from" value="" />
-            <input type="hidden" class="ays-ignore typing" name="typing" value="false" />
-            <input type="hidden" class="ays-ignore" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-            <i class="fa fa-plus-square-o attachment groupFileUpload" data-container="body" data-toggle="tooltip" title="<?php echo _l('chat_file_upload'); ?>" aria-hidden="true"></i>
-            <button class="submit enterGroupBtn" name="enterGroupBtn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-          </div>
-        </div>
-      </form>
-      <!-- Clients -->
-      <form hidden enctype="multipart/form-data" name="clientFileForm" id="clientFileForm" method="post" onsubmit="uploadClientFileForm(this);return false;">
-        <input type="file" class="file" name="userfile" required />
-        <input type="submit" name="submit" class="save" value="save" />
-        <input type="hidden" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-      </form>
-      <form hidden method="post" enctype="multipart/form-data" name="clientMessagesForm" id="clientMessagesForm" onsubmit="return false;">
-        <div class="message-input client_msg_input">
-          <div class="wrap">
-            <textarea type="text" name="client_message" class="client_chatbox ays-ignore" placeholder="<?= _l('chat_type_a_message'); ?>"></textarea>
-            <input type="hidden" class="ays-ignore from" name="from" value="staff_" />
-            <input type="hidden" class="ays-ignore to" name="to" value="client_" />
-            <input type="hidden" class="ays-ignore typing" name="typing" value="false" />
-            <input type="hidden" class="ays-ignore" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-            <i class="fa fa-plus-square-o attachment clientFileUpload" data-container="body" data-toggle="tooltip" title="<?php echo _l('chat_file_upload'); ?>" aria-hidden="true"></i>
-            <i class="fa fa-cogs search_client_messages"></i>
-            <input type="hidden" class="ays-ignore invisibleUnread" value="" />
-            <button class="submit enterClientBtn" name="enterClientBtn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-          </div>
-        </div>
-      </form>
-    </div>
+    <?php loadChatComponent('Content');  ?>
+
   </div>
+
   <div class="modal_container"></div>
+
   <?php init_tail(); ?>
-  <!-- Chat settings -->
-  <?php include('modules/prchat/assets/module_includes/chat_settings.php'); ?>
+
+  <!-- Include chat settings file -->
+  <?php require('modules/prchat/assets/module_includes/chat_settings.php'); ?>
+
+  <!-- Include chat settings file -->
+  <?php require('modules/prchat/assets/module_includes/chat_statuses.php'); ?>
+
+  <!-- Include various mutual functions file -->
   <?php require('modules/prchat/assets/module_includes/mutual_and_helper_functions.php'); ?>
-  <!-- Groups Settings and initializing -->
+
   <script>
+    'use strict';
     if (localStorage.chat_theme_name) {
       $('body').addClass('chat_' + localStorage.chat_theme_name);
     }
-
-    var wentOffline, wentOnline;
+    var isContentActive = false;
     window.addEventListener('online', handleConnectionChange);
     window.addEventListener('offline', handleConnectionChange);
+
     monitorWindowActivity();
 
     /*---------------* Main first thing get users/staff from database *---------------*/
@@ -247,9 +59,10 @@ init_head();
     var userSessionId = "<?= get_staff_user_id(); ?>";
     var isAdmin = app.user_is_admin;
     var staffCanCreateGroups = "<?= get_option('chat_members_can_create_groups'); ?>";
-    var checkforNewMessages = prchatSettings.getUnread;
-
-    var sound_user_id = '';
+    var checkForNewMessages = prchatSettings.getUnread;
+    var chat_desktop_notifications_enabled = "<?php echo get_option('chat_desktop_messages_notifications') ?>";
+    chat_desktop_notifications_enabled = (chat_desktop_notifications_enabled == '0') ? false : true;
+    var user_chat_status = "<?= get_user_chat_status(); ?>";
 
     if (staffCanCreateGroups === '0' && !isAdmin) {
       $('#add_group_btn').remove();
@@ -306,6 +119,7 @@ init_head();
             var uploadSend = $.Event("keypress", {
               which: 13
             });
+
             var basePath = "<?php echo base_url('modules/prchat/uploads/'); ?>";
             $('#frame textarea.chatbox').val(basePath + r.upload_data.file_name);
             setTimeout(function() {
@@ -324,6 +138,7 @@ init_head();
       $('form#' + formId).trigger("reset");
     }
 
+
     /*---------------* Check for messages history and append to main chat window *---------------*/
     function loadMessages(el) {
       var pos = $(el).scrollTop();
@@ -333,7 +148,6 @@ init_head();
 
       if (pos == 0 && offsetPush >= 10) {
         $('#frame .messages').find('.message_loader').show();
-
         $.get(prchatSettings.getMessages, {
             from: from,
             to: to,
@@ -367,6 +181,10 @@ init_head();
               } else {
                 value.message = emojify.replace(value.message);
               }
+              /** 
+               * Check if it is audio message and decode html
+               */
+              value.message = isAudioMessage(value.message);
 
               if (value.reciever_id == from) {
                 element.prepend('<li class="replies"><img class="friendProfilePic" src="' + fetchUserAvatar(value.sender_id, value.user_image) + '" data-toggle="tooltip" data-container="body" data-placement="right" title="' + value.time_sent_formatted + '"/><p class="friend">' + value.message + '</p></li>');
@@ -374,11 +192,7 @@ init_head();
                 element.prepend('<li class="sent" id="' + value.id + '"><img class="myProfilePic" src="' + fetchUserAvatar(value.sender_id, value.user_image) + '" data-toggle="tooltip" data-container="body" data-placement="left" title="' + value.time_sent_formatted + '"/><p class="you" id="msg_' + value.id + '">' + value.message + '</p></li>');
                 <?php if ($chat_delete_option == '1' || is_admin()) :  ?>
                   if (value.is_deleted == 0) {
-                    $('#msg_' + value.id).tooltipster({
-                      content: $("<span id='" + value.id + "' class='prchat_message_delete' ontouchstart='delete_chat_message(this)' onClick='delete_chat_message(this)'>" + prchatSettings.deleteChatMessage + "</span>"),
-                      interactive: true,
-                      side: 'left'
-                    });
+                    $('#msg_' + value.id).tooltipster(tooltipserContent(value.id, 'staff'));
                   }
                 <?php endif; ?>
               }
@@ -428,6 +242,7 @@ init_head();
 
     /*---------------* Pusher Trigger accessing channel *---------------*/
     var presenceChannel = pusher.subscribe('presence-mychanel');
+    var chat_status = pusher.subscribe('user_changed_chat_status');
     var groupChannels = pusher.subscribe('group-chat');
 
     pusher.config.unavailable_timeout = 5000;
@@ -452,17 +267,21 @@ init_head();
     /*---------------* Pusher Trigger subscription succeeded *---------------*/
     presenceChannel.bind('pusher:subscription_succeeded', function(members) {
       chatMemberUpdate(members);
+      var redirect_staff_id = localStorage.staff_to_redirect;
       users.then(function() {
         if (localStorage.touchClientsTab) {
           $('li.crm_clients a').click();
           localStorage.touchClientsTab = '';
         }
-        if (localStorage.staff_to_redirect) {
-          $('#contacts a#' + localStorage.staff_to_redirect).click();
+        if (redirect_staff_id != '') {
+          $('.chat_nav li.staff a').trigger('click');
+          $('#contacts a#' + redirect_staff_id).trigger('click');
           localStorage.staff_to_redirect = '';
         } else {
           setTimeout(function() {
-            $('#frame #sidepanel ul.nav.nav-tabs li.staff.active a').click();
+            if (!window.matchMedia("only screen and (max-width: 735px)").matches) {
+              $('#frame #sidepanel ul.nav.nav-tabs li.staff.active a').click();
+            }
           }, 600);
         }
       });
@@ -471,6 +290,17 @@ init_head();
     /*---------------* Pusher Trigger user connected *---------------*/
     presenceChannel.bind('pusher:member_added', function(member) {
       addChatMember(member);
+      if (member.info.status == '') {
+        member.info.status = 'online';
+      }
+      if (member.info.status != '') {
+        var userPlaceholder = $('body').find('.chat_contacts_list li a#' + member.id + ' .wrap img');
+        userPlaceholder.attr('title', strCapitalize(member.info.status)).attr('data-original-title', strCapitalize(member.info.status));
+        userPlaceholder.removeClass();
+        userPlaceholder.addClass('imgFriend ' + member.info.status + '');
+        $('body').find('.chat_contacts_list li a#' + member.id + ' .wrap span').removeClass().addClass(member.info.status);
+      }
+
       if (member.info.justLoggedIn) {
         var message_selector = $('#contacts .contact a#' + member.id).find('.wrap .meta .preview');
         var old_message_content = message_selector.html();
@@ -484,7 +314,7 @@ init_head();
           'requireInteraction': true,
           'icon': $('#header').find('img').attr('src'),
           'tag': 'user-join-' + member.id,
-          'closeTime': 5000,
+          'closeTime': app.options.dismiss_desktop_not_after != "0" ? app.options.dismiss_desktop_not_after * 1000 : null
         });
       }
     });
@@ -532,43 +362,50 @@ init_head();
 
     /*---------------* Append member to top of sidebar after logged in *---------------*/
     function appendMemberToTop(member) {
-      var $cloned = $('#contacts li.contact#' + member).clone();
-      $('#contacts li.contact#' + member).remove();
+      var contactMember = $('#contacts li.contact#' + member);
+      var $cloned = contactMember.clone();
+      contactMember.remove();
       $cloned.prependTo('#contacts ul')
     }
 
     /*---------------* Bind the 'send-event' & update the chat box message log *---------------*/
     presenceChannel.bind('send-event', function(data) {
+      /** 
+       * Check if it is audio message and decode html
+       */
+      data.message = isAudioMessage(data.message);
+
       if (data.global) {
         data.message = "<?= '<strong>' . _l('chat_message_announce') . '</strong>'; ?>" + data.message;
       }
+
       $('#frame .messages').find('span.userIsTyping').fadeOut(500);
       if (data.last_insert_id) {
         $('.messages').find('li.sent .you#' + userSessionId).attr('id', 'msg_' + data.last_insert_id)
         $('.messages').find('li.sent#' + userSessionId).attr('id', data.last_insert_id)
       }
       <?php if ($chat_delete_option == '1' || is_admin()) :  ?>
-        $('li#' + data.last_insert_id + ' #msg_' + data.last_insert_id).tooltipster({
-          content: $("<span id='" + data.last_insert_id + "' class='prchat_message_delete' ontouchstart='delete_chat_message(this)' onClick='delete_chat_message(this)'>" + prchatSettings.deleteChatMessage + "</span>"),
-          interactive: true,
-          side: 'left'
-        });
+        $('li#' + data.last_insert_id + ' #msg_' + data.last_insert_id).tooltipster(tooltipserContent(data.last_insert_id, 'staff'));
       <?php endif; ?>
 
       if (presenceChannel.members.me.id == data.to && data.from != presenceChannel.members.me.id) {
         $('.has_newmessages').val('true').attr('id', data.from);
         data.message = createTextLinks_(emojify.replace(data.message));
         $('.messages#id_' + data.from + ' ul').append('<li class="replies"><img class="friendProfilePic" src="' + fetchUserAvatar(data.from, data.sender_image) + '"/><p class="friend">' + data.message + '</p></li>');
+
         $('#contacts .contact a#' + data.from).find('.wrap .meta .preview').html(data.message);
         $('#contacts .contact a#' + data.from).find('.wrap .meta .pull-right.time_ago').html(moment().format('hh:mm A'));
-        initUserSound(data);
+
+        if (user_chat_status != 'busy' && user_chat_status != 'offline') {
+          initUserSound(data);
+        }
+
         if ($('.messages').hasScrollBar()) {
           scroll_event();
         }
       }
 
       if (presenceChannel.members.me.id == data.to) {
-        scroll_event();
         var old_data = emojify.replace(data.message);
         data.message = escapeHtml(data.message);
 
@@ -580,6 +417,10 @@ init_head();
 
         if (data.message.includes('data-lity target="blank" href')) {
           data.message = '<p class="tb">' + firstname + ' ' + '<?php echo _l('chat_new_link_shared'); ?></p>';
+        }
+
+        if (data.message.match('audio/ogg')) {
+          data.message = '<p class="tb">' + firstname + ' ' + '<?php echo _l('chat_new_audio_message'); ?></p>';
         }
 
         var truncated_message = '';
@@ -624,21 +465,29 @@ init_head();
       }
     });
 
-    /*---------------* Trigger notification popup increment*---------------*/
+    /*---------------* Trigger notification popup increment and live notification *---------------*/
     presenceChannel.bind('notify-event', function(data) {
-      <?php if ($chat_desktop_messages_notifications == '1') :  ?>
-        var messagesIndentifier = $('#frame .content .messages#id_' + data.from);
-        if (data.from !== userSessionId && data.to == userSessionId && !messagesIndentifier.is(':visible')) {
-          $.notify('', {
-            'title': data.from_name,
-            'body': data.message,
-            'requireInteraction': false,
-            'icon': fetchUserAvatar(data.from, data.sender_image),
-            'tag': 'user-message-' + data.from,
-            'closeTime': 4000,
-          });
+      if (chat_desktop_notifications_enabled) {
+        if (data.from !== userSessionId && data.to == userSessionId) {
+          if (user_chat_status != 'busy' && user_chat_status != 'offline') {
+            /**
+             * Check if message is audio
+             */
+            if (data.message.match('type="audio/ogg"&gt;&lt;/audio&gt')) {
+              data.message = "<?= _l('chat_i_sent_new_message'); ?>";
+            }
+
+            $.notify('', {
+              'title': data.from_name,
+              'body': data.message,
+              'requireInteraction': false,
+              'icon': fetchUserAvatar(data.from, data.sender_image),
+              'tag': 'user-message-' + data.from,
+              'closeTime': app.options.dismiss_desktop_not_after != "0" ? app.options.dismiss_desktop_not_after * 1000 : null
+            });
+          }
         }
-      <?php endif; ?>
+      }
 
       if ($(window).width() < 733) {
         if (presenceChannel.members.me.id == data.to && data.from != presenceChannel.members.me.id) {
@@ -658,16 +507,28 @@ init_head();
     });
 
     /*---------------* On click send message button trigger post message *---------------*/
-    $('#frame').on('click', '.enterBtn, .enterGroupBtn, .enterClientBtn', function(e) {
+    $('body').on('click', '.enterBtn, .enterGroupBtn, .enterClientBtn, .fa-paper-plane', function(e) {
       var eventEnter = $.Event("keypress", {
         which: 13
       });
-      if (e.target.name == 'enterBtn') {
+
+      var targetName = '';
+      if (e.currentTarget.getAttribute('name') !== null) {
+        targetName = e.currentTarget.getAttribute('name');
+      }
+      // Groups
+      if (targetName == '') {
+        targetName = e.currentTarget.parentNode.getAttribute('name')
+      }
+      if (targetName == 'enterBtn') {
         $('#frame').find('.chatbox').trigger(eventEnter);
-      } else if (e.target.name == 'enterGroupBtn') {
+        $('.chatbox').focus();
+      } else if (targetName == 'enterGroupBtn') {
         $('#frame').find('.group_chatbox').trigger(eventEnter);
-      } else if (e.target.name == 'enterClientBtn') {
+        $('.group_chatbox').focus();
+      } else if (targetName == 'enterClientBtn') {
         $('#frame').find('.client_chatbox').trigger(eventEnter);
+        $('.client_chatbox').focus();
       }
     });
 
@@ -680,7 +541,7 @@ init_head();
         if (Object.keys(data).length > 1) {
           $('#frame .nav.nav-tabs li.groups, #frame .nav.nav-tabs li.groups a, #frame .nav.nav-tabs li.crm_clients a').removeClass('events_disabled');
         } else {
-          $('.content .messages').html('<h3 class="text-center">No staff users with valid permissions found, try adding new users or (Grant Chat Access) to existing staff users.<br><br> To manage staff user permissions for chat navigate in sidemenu <strong>Setup->Staff</strong> select specific staff member and click Permissions and scroll down to Chat Module to assign chat access permissions, or disable In chat view show only users with chat permissions (also applies on client side) option in <strong>Setup->Settings->CRPM Chat Settings</strong><br><br> Administrators will not need any permissions.</h3>');
+          $('.content .messages').html('<h3 class="text-center">No staff users with valid permissions found, try adding new users or (Grant Chat Access) to existing staff users.<br><br> To manage staff user permissions for chat navigate in sidemenu <strong>Setup->Staff</strong> select specific staff member and click Permissions and scroll down to Chat Module to assign chat access permissions, or disable In chat view show only users with chat permissions (also applies on client side) option in <strong>Setup->Settings->Perfex Chat Settings</strong><br><br> Administrators will not need any permissions.</h3>');
           $('.message-input').remove();
           return false;
         }
@@ -691,15 +552,29 @@ init_head();
           }
           if (value.staffid != presenceChannel.members.me.id) {
             var user = presenceChannel.members.get(value.staffid);
+
             if (value.message == undefined) value.message = prchatSettings.sayHiText + ' ' + strCapitalize(value.firstname + ' ' + value.lastname);
+
             if (value.time_sent_formatted == undefined) value.time_sent_formatted = '';
+
+            var user_status = (value.status != undefined || value.status == '') ? value.status : 'online';
+
+            var translated_status = '';
+            for (var status in chat_user_statuses) {
+              if (status == user_status) {
+                translated_status = chat_user_statuses[status];
+              }
+            }
+
             if (user != null) {
               onlineUser += '<li class="contact" id="' + value.staffid + '" data-toggle="tooltip" data-container="body" title="<?php echo _l('chat_user_active_now'); ?>">';
-              onlineUser += '<a href="#' + value.staffid + '" id="' + value.staffid + '" class="on"><div class="wrap"><span class="online">';
-              onlineUser += '</span><img src="' + fetchUserAvatar(value.staffid, value.profile_image) + '" class="imgFriend" /><div class="meta"><p role="' + value.role + '" class="name">' + strCapitalize(value.firstname + ' ' + value.lastname) + '</p><social_info skype="' + value.skype + '" facebook="' + value.facebook + '" linkedin="' + value.linkedin + '"></social_info>';
-              onlineUser += '<p class="preview">' + value.message + '</p><p class="pull-right time_ago">' + value.time_sent_formatted + '</p>';
-              onlineUser += '</div></div>';
+              onlineUser += '<a href="#' + value.staffid + '" id="' + value.staffid + '" class="on"><div class="wrap"><span class="online ' + user_status + '"></span>';
+              onlineUser += '<img data-toggle="tooltip" title="' + translated_status + '" src="' + fetchUserAvatar(value.staffid, value.profile_image) + '" class="imgFriend ' + user_status + '" />';
+              onlineUser += '<div class="meta"><p role="' + value.role + '" class="name">' + strCapitalize(value.firstname + ' ' + value.lastname) + '</p>';
+              onlineUser += '<social_info skype="' + value.skype + '" facebook="' + value.facebook + '" linkedin="' + value.linkedin + '"></social_info>';
+              onlineUser += '<p class="preview">' + value.message + '</p><p class="pull-right time_ago">' + value.time_sent_formatted + '</p></div></div>';
               onlineUser += '<span class="unread-notifications" id="' + value.staffid + '" data-badge="0"></span></a></li>';
+
               if (presenceChannel.members.count > 0) {
                 $('.liveUsers').remove();
                 $("#menu .menu-item-prchat span.menu-text").append('<span class="liveUsers badge menu-badge bg-info" data-toggle="tooltip" title="' + prchatSettings.onlineUsersMenu + '">' + (' ' + presenceChannel.members.count - 1) + '</span>');
@@ -714,7 +589,7 @@ init_head();
               }
               offlineUser += ' data-toggle="tooltip" data-container="body" title="<?php echo _l('chat_last_seen'); ?>: ' + lastLoginText + '">';
               offlineUser += '<a href="#' + value.staffid + '" id="' + value.staffid + '" class="off"><div class="wrap"><span class="offline"></span>';
-              offlineUser += '<img src="' + fetchUserAvatar(value.staffid, value.profile_image) + '" class="imgFriend" /><div class="meta"><p role="' + value.role + '" class="name">' + strCapitalize(value.firstname + ' ' + value.lastname) + '</p>';
+              offlineUser += '<img data-toggle="tooltip" title="' + strCapitalize('offline') + '" src="' + fetchUserAvatar(value.staffid, value.profile_image) + '" class="imgFriend" /><div class="meta"><p role="' + value.role + '" class="name">' + strCapitalize(value.firstname + ' ' + value.lastname) + '</p>';
               offlineUser += '<p class="preview">' + value.message + '</p><p class="pull-right time_ago">' + value.time_sent_formatted + '</p><social_info skype="' + value.skype + '" facebook="' + value.facebook + '" linkedin="' + value.linkedin + '"></social_info>';
               offlineUser += '</div></div><span class="unread-notifications" id="' + value.staffid + '" data-badge="0"></span></a></li>';
             }
@@ -723,8 +598,8 @@ init_head();
         $('#frame #contacts ul').html('');
         $('#frame #contacts ul').prepend(onlineUser + offlineUser);
 
-        var newUnreadMessages = JSON.parse(checkforNewMessages);
-        if (!checkforNewMessages.includes('false')) {
+        var newUnreadMessages = JSON.parse(checkForNewMessages);
+        if (!checkForNewMessages.includes('false')) {
           $.each(newUnreadMessages, function(i, sender) {
             notifications = $('#contacts li a#' + sender.sender_id).find('.unread-notifications#' + sender.sender_id);
             if (notifications.length) {
@@ -739,6 +614,7 @@ init_head();
 
     /*---------------* Trigger click on user & create chat box and check for messages *---------------*/
     $('#frame #contacts .chat_contacts_list').on("click", "li.contact a", function(event) {
+      animateContent();
       var obj = $(this);
       var id = obj.attr('id').replace('id_', '');
       var contact_selector = $('#contacts a#' + id);
@@ -823,6 +699,7 @@ init_head();
         if (createChatBoxRequest) {
           createChatBoxRequest.abort();
         }
+
         createChatBoxRequest = $.get(prchatSettings.getMessages, {
             from: userSessionId,
             to: contact_id,
@@ -834,7 +711,7 @@ init_head();
 
             r = JSON.parse(r);
 
-            message = r;
+            var message = r;
 
             offsetPush += 10;
             dfd.resolve(message);
@@ -875,6 +752,11 @@ init_head();
             value.message = emojify.replace(value.message);
           }
 
+          /** 
+           * Check if it is audio message and decode html
+           */
+          value.message = isAudioMessage(value.message);
+
           if (value.sender_id == userSessionId) {
             $('.messages ul').prepend('<li class="sent" id="' + value.id + '"><img data-toggle="tooltip" data-container="body" data-placement="left" title="' + value.time_sent_formatted + '" class="myProfilePic" src="' + fetchUserAvatar(userSessionId, value.user_image) + '"/><p class="you" id="msg_' + value.id + '">' + value.message + '</p></li>');
 
@@ -884,11 +766,7 @@ init_head();
 
             <?php if ($chat_delete_option == '1' || is_admin()) :  ?>
               if (value.is_deleted == 0) {
-                $('#msg_' + value.id).tooltipster({
-                  content: $("<span id='" + value.id + "' class='prchat_message_delete' ontouchstart='delete_chat_message(this)' onClick='delete_chat_message(this)'>" + prchatSettings.deleteChatMessage + "</span>"),
-                  interactive: true,
-                  side: 'left'
-                });
+                $('#msg_' + value.id).tooltipster(tooltipserContent(value.id, 'staff'));
               }
             <?php endif; ?>
 
@@ -934,20 +812,32 @@ init_head();
       var form = $(this).parents('form');
       var imgPath = $('#sidepanel #profile .wrap img').prop('currentSrc');
 
+      var input_from = $(this).next().next().next();
+
+
       if (e.which == 13) {
+
         e.preventDefault();
+
         var message = $.trim($(this).val());
+
         if (message == '' || internetConnectionCheck() === false) {
           return false;
         }
 
         message = createTextLinks_(emojify.replace(message));
 
-        $('#contacts .contact.active').find('.wrap .meta .preview').html('<?php echo _l('chat_message_you'); ?>' + ' ' + escapeHtml(message));
+        var langMessageSent = "<?= _l('chat_new_audio_message_sent'); ?>";
+
+        var audioOrMessage = message.match('<audio controls src="') ? langMessageSent : message;
+
+        $('#contacts .contact.active').find('.wrap .meta .preview').html('<?php echo _l('chat_message_you'); ?>' + ' ' + audioOrMessage);
+
         $('.messages ul').append('<li class="sent" id="' + userSessionId + '"><img class="myProfilePic" src="' + imgPath + '"/><p class="you" id="' + userSessionId + '">' + message + '</p></li>');
-        $(this).next().next().next().val('false');
-        message = escapeHtml(message);
-        // send event 
+
+        input_from.val('false');
+
+        // send event
         var formData = form.serializeArray();
 
         $.post(prchatSettings.serverPath, formData);
@@ -955,9 +845,9 @@ init_head();
         $(this).focus();
         scroll_event();
 
-      } else if (!$(this).val() || ($(this).next().next().next().val() == 'null' && $(this).val())) {
-        // typing event 
-        $(this).next().next().next().val('true');
+      } else if (!$(this).val() || (input_from.val() == 'null' && $(this).val())) {
+        // typing event
+        input_from.val('true');
         $.post(prchatSettings.serverPath, form.serialize());
       }
     });
@@ -1079,7 +969,7 @@ init_head();
       msg_id = $(msg_id).attr('id');
       var contact_id = $('#contacts ul li').children('a.active_chat').attr('id');
       var paragraph = "<p class='you message_was_deleted' id='" + msg_id + "'><span></span></p>";
-      var selector = $(".messages li#" + msg_id);
+      var selector = $('body').find(".messages li#" + msg_id);
 
       $.post(prchatSettings.deleteMessage, {
         id: msg_id,
@@ -1132,7 +1022,7 @@ init_head();
     }
 
 
-    /*---------------* Truncate text message to contacts view left side *---------------*/
+    /*---------------* Truncate text message to user view left sidebar *---------------*/
     String.prototype.trunc = String.prototype.trunc ||
       function(n) {
         return (this.length > n) ? this.substr(0, n - 1) + '&hellip;' : this;
@@ -1143,9 +1033,14 @@ init_head();
       var m = $('.messages'),
         gm = $('.group_messages'),
         cm = $('.client_messages');
-      if (m.is(':visible') && m.hasScrollBar()) m.scrollTop(m[0].scrollHeight);
+
+      setTimeout(function() {
+        if (m.is(':visible') && m.hasScrollBar()) m.scrollTop(m[0].scrollHeight);
+      }, 100);
+
       if (gm.is(':visible') && gm.hasScrollBar()) gm.scrollTop(gm[0].scrollHeight);
       if (cm.is(':visible') && cm.hasScrollBar()) cm.scrollTop(cm[0].scrollHeight);
+
     }
 
     /*---------------* For mobile devices vh ports adjust for better UX *---------------*/
@@ -1159,7 +1054,7 @@ init_head();
 
     /*---------------* Theme events  *---------------*/
     $('#bottom-bar').on('click', '#switchTheme', function() {
-      $('.dropdown-content').slideToggle('fast');
+      $('.dropdown-content').toggle(10);
     });
 
     /*---------------* Check if staff has permissions for settings  *---------------*/
@@ -1171,38 +1066,58 @@ init_head();
       <?php endif; ?>
     });
 
+    var isUserMobile = window.matchMedia("only screen and (max-width: 735px)").matches;
     /*---------------* Shared files on lick icon hide div with shared items  *---------------*/
     $('#sharedFiles').on('click', 'i.fa-times-circle-o', function() {
-      $('#sharedFiles').css('display', 'none');
+      $('#sharedFiles').css({
+        'right': '-360px',
+        'width': '360px'
+      }, 10, 'linear').hide(1000);
     });
 
     /*---------------* On click event for shared files  *---------------*/
     $('#shared_user_files').on('click', function() {
-      (!$('#sharedFiles').is(':visible')) ?
-      $('#sharedFiles').css('display', 'block'): $('#sharedFiles').css('display', 'none');
+      ($('#sharedFiles').css('right') == '-360px') ?
+      $('#sharedFiles').show().animate({
+        'right': '0',
+        'width': (isUserMobile) ? '100%' : '360px'
+      }, 10, 'linear'): $('#sharedFiles').css({
+        'right': '-360px',
+        'width': (isUserMobile) ? '-360px' : '0px'
+      }, 10, 'linear').hide(500);
     });
+    /*---------------* Event click tracker for shared files   *---------------*/
+    $(".messages, .group_messages, .chat_client_messages, #contacts, textarea, #header, #menu").on('click', function() {
+      ($('#sharedFiles').is(':visible'))
+      $('#sharedFiles').css({
+        'right': '-360px',
+        'width': '360px'
+      }, 10, 'linear').hide(500);
 
-    /*---------------* Eventr click tracker for shared files   *---------------*/
-    $(".messages, .group_messages, #contacts, textarea, #header, #menu").on('click', function() {
-      ($('#sharedFiles').is(':visible')) ?
-      $('#sharedFiles').fadeOut(): false;
-
-      ($('.chat_group_options').hasClass('active')) ?
-      $('.chat_group_options').removeClass('active'): false;
-
+      $('.chat_group_options, #status-options').removeClass('active')
+      $('.chat_group_options').css({
+        'right': '-360px',
+        'width': '360px'
+      }, 10, 'linear').hide(500);
     });
 
     /*---------------* Modal create announcement handler  *---------------*/
-    $('#frame .dropdown .i_announcement').on('click', function() {
-      $('.modal_container').load(prchatSettings.chatAnnouncement, function(res) {
-        $('#chat_custom_modal').modal({
-          show: true
+    $(function() {
+
+      $('#frame .dropdown .i_announcement').on('click touchstart', function() {
+        $('.modal_container').load(prchatSettings.chatAnnouncement, function(res) {
+          if ($('.modal-backdrop.fade').hasClass('in')) {
+            $('.modal-backdrop.fade').remove();
+          }
+          $('#chat_custom_modal').modal({
+            show: true
+          });
         });
       });
-    });
 
+    })
     /*---------------* Modal create group handler  *---------------*/
-    $('#frame .dropdown .i_groups, #frame #sidepanel #add_group_btn').on('click', function() {
+    $('#frame .dropdown .i_groups, #frame #sidepanel #add_group_btn').on('click touchstart', function() {
       $('.modal_container').load(prchatSettings.chatGroups, function(res) {
         if ($('.modal-backdrop.fade').hasClass('in')) {
           $('.modal-backdrop.fade').remove();
@@ -1227,15 +1142,19 @@ init_head();
     var changeSearchField = function() {
       $('#search #search_clients_field').attr('id', 'search_field');
       $('#search #search_field').attr('placeholder', "<?= _l('chat_search_chat_members'); ?>");
+      $('.chat_contacts_list li').show();
     };
 
     /*---------------* Click event for staff users sidebar  *---------------*/
-    $('#frame #sidepanel .staff').click(function() {
+    $('#frame #sidepanel .staff a').click(function() {
       // hide groups form
       $('#frame form[name=groupMessagesForm],#frame form[name=clientMessagesForm], #frame .groupOptions').hide();
 
-      $('#frame .chat_group_options.active').hide().removeClass('active');
-      $('#frame form[name=pusherMessagesForm]').show();
+      $('#frame .chat_group_options.active').hide().removeClass('active').css({
+        'right': '-360px',
+        'width': '360px'
+      });
+      $('#frame form[name=pusherMessagesForm], #frame .startMic').show();
       $('.client_data').remove();
 
       if ($('.group_members_inline').remove()) {
@@ -1247,8 +1166,6 @@ init_head();
         chat_content_messages.show();
 
       }
-
-
       if (!optionsSelector.hasClass('active')) {
         optionsSelector.css('display', '');
       }
@@ -1258,16 +1175,21 @@ init_head();
       changeSearchField();
 
       $('.group_members_inline').remove();
-      $('#frame #contacts ul li').first().children('a').first().click();
-
+      if (!window.matchMedia("only screen and (max-width: 735px)").matches) {
+        $('#frame #contacts ul li').first().children('a').first().click();
+      }
     });
-
-
     /*---------------* Click event for groups sidebar  *---------------*/
-    $('#frame #sidepanel .groups').click(function() {
+    $('#frame #sidepanel .groups a').click(function() {
 
       // Hide staff chatbox form
-      $('#frame form[name=pusherMessagesForm], #frame form[name=clientMessagesForm], #sharedFiles').hide();
+      $('#frame form[name=pusherMessagesForm], #frame form[name=clientMessagesForm]').hide();
+
+      $('#sharedFiles').hide().css({
+        'right': '-360px',
+        'width': '360px'
+      });
+
       $(this).removeClass('flashit');
       $('.client_data').remove();
 
@@ -1275,7 +1197,7 @@ init_head();
       chat_group_messages.append('<ul></ul>');
 
       // show groups form
-      $('#frame .content .group_messages, #frame form[name=groupMessagesForm]').show();
+      $('#frame .content .group_messages, #frame form[name=groupMessagesForm], #frame .startMic').show();
 
       chat_content_messages.hide();
       chat_content_client_messages.hide();
@@ -1283,7 +1205,9 @@ init_head();
       chat_contact_profile_img.next().hide();
       chat_contact_profile_img.next().next().hide();
 
-      $('#frame ul.chat_groups_list li.active a').click();
+      if (!window.matchMedia("only screen and (max-width: 735px)").matches) {
+        $('#frame ul.chat_groups_list li.active a').click();
+      }
 
       var group_id = $('#frame ul.chat_groups_list li.active').attr('id');
 
@@ -1294,16 +1218,67 @@ init_head();
       clientsListCheck();
 
       changeSearchField();
-
+      if ($('.chat_groups_list li').length == 0) {
+        $('.contact-profile .groupOptions, .contact-profile .social-media').hide();
+      }
       if (group_id == undefined) {
         $('.message_group_loader').hide();
       }
     });
+    /**
+     * Mobile device back button pressed on phone
+     */
+    window.addEventListener("hashchange", function(event) {
+      if (window.matchMedia("only screen and (max-width: 735px)").matches && isContentActive) {
+        $('body').find('#frame #sidepanel').fadeIn(50);
+        $('body').find('#frame .content').hide(1);
+        isContentActive = false;
+      }
+    });
+
+
+    // Fix for height on the wrapper
+    function chatPinnedProjectFix() {
+      var pinned = $('li.pinned_project');
+      if (pinned.length > 3 && $(window).height() > 900) {
+        // Get and set current height
+        var topHeaderHeight = 63;
+        var navigationH = side_bar.height();
+        var bodyContentHeight = $("#wrapper").find('.content').height();
+        var content_wrapper = $('#sidepanel, #frame .content, body .main_loader_init, body #audio-wrapper');
+        content_wrapper.css('min-height', $(document).outerHeight(true) - topHeaderHeight + 'px');
+        // Set new height when content height is less then navigation
+        if (bodyContentHeight < navigationH) {
+          content_wrapper.css("min-height", navigationH + 'px');
+        }
+
+        // Set new height when content height is less then navigation and navigation is less then window
+        if (bodyContentHeight < navigationH && navigationH < $(window).height()) {
+          content_wrapper.css("min-height", $(window).height() - topHeaderHeight + 'px');
+        }
+        // Set new height when content is higher then navigation but less then window
+        if (bodyContentHeight > navigationH && bodyContentHeight < $(window).height()) {
+          content_wrapper.css("min-height", $(window).height() - topHeaderHeight + 'px');
+        }
+      }
+    }
+    chatPinnedProjectFix();
+    var isHostHttps = '<?= $isHttps; ?>';
+    if (!isHostHttps) {
+      $('.startMic').remove();
+    } else {
+      $('.startMic').css('display', 'block');
+    }
   </script>
+
+  <!-- Include chat groups file -->
   <?php require('modules/prchat/assets/module_includes/groups.php'); ?>
+
   <?php
   if (isClientsEnabled()) {
     require('modules/prchat/assets/module_includes/crm_clients.php');
   }
   ?>
+
+  <!-- Include chat sound settings file -->
   <?php require('modules/prchat/assets/module_includes/chat_sound_settings.php'); ?>

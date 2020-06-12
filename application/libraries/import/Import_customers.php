@@ -44,7 +44,10 @@ class Import_customers extends App_import
 
                 $row[$i] = $this->checkNullValueAddedByUser($row[$i]);
 
-                if (in_array($databaseFields[$i], $this->requiredFields) && $row[$i] == '' && $databaseFields[$i] != 'company') {
+                if (in_array($databaseFields[$i], $this->requiredFields) &&
+                    $row[$i] == '' &&
+                    $databaseFields[$i] != 'company'
+                    && $databaseFields[$i] != 'email') {
                     $row[$i] = '/';
                 } elseif (in_array($databaseFields[$i], $this->countryFields)) {
                     $row[$i] = $this->countryValue($row[$i]);
@@ -144,7 +147,7 @@ class Import_customers extends App_import
     private function insertCustomerGroups($groups, $customer_id)
     {
         foreach ($groups as $group) {
-            $this->ci->db->insert(db_prefix().'customer_groups', [
+            $this->ci->db->insert(db_prefix() . 'customer_groups', [
                                                     'customer_id' => $customer_id,
                                                     'groupid'     => $group,
                                                 ]);
@@ -154,7 +157,7 @@ class Import_customers extends App_import
     private function shouldAddContactUnderCustomer($data)
     {
         return (isset($data['company']) && $data['company'] != '' && $data['company'] != '/')
-        && (total_rows(db_prefix().'clients', ['company' => $data['company']]) === 1);
+        && (total_rows(db_prefix() . 'clients', ['company' => $data['company']]) === 1);
     }
 
     private function addContactUnderCustomer($data)
@@ -162,7 +165,7 @@ class Import_customers extends App_import
         $contactFields = $this->getContactFields();
         $this->ci->db->where('company', $data['company']);
 
-        $existingCompany = $this->ci->db->get(db_prefix().'clients')->row();
+        $existingCompany = $this->ci->db->get(db_prefix() . 'clients')->row();
         $tmpInsert       = [];
 
         foreach ($data as $key => $val) {
@@ -183,12 +186,12 @@ class Import_customers extends App_import
 
     private function getContactFields()
     {
-        return $this->ci->db->list_fields(db_prefix().'contacts');
+        return $this->ci->db->list_fields(db_prefix() . 'contacts');
     }
 
     private function isDuplicateContact($email)
     {
-        return total_rows(db_prefix().'contacts', ['email' => $email]);
+        return total_rows(db_prefix() . 'contacts', ['email' => $email]);
     }
 
     private function formatValuesForSimulation($values)
@@ -218,7 +221,7 @@ class Import_customers extends App_import
             $this->ci->db->where('country_id', $id);
         }
 
-        return  $this->ci->db->get(db_prefix().'countries')->row();
+        return  $this->ci->db->get(db_prefix() . 'countries')->row();
     }
 
     private function countryValue($value)

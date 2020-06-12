@@ -55,6 +55,10 @@ function get_dashboard_widgets()
             'path'      => 'admin/dashboard/widgets/projects_activity',
             'container' => 'right-4',
         ],
+        [
+            'path'      => 'admin/dashboard/widgets/contracts_expiring',
+            'container' => 'left-8',
+        ],
     ];
 
     return hooks()->apply_filters('get_dashboard_widgets', $widgets);
@@ -159,4 +163,22 @@ function render_dashboard_widgets($container)
 
         echo $widgetHTML;
     }
+}
+
+/**
+ * Create widget ID from the given widget file
+ *
+ * @param  string|null $id
+ *
+ * @return string
+ */
+function create_widget_id($id = null)
+{
+    $id = basename($id ? $id : debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2)[0]['file'], '.php');
+
+    if (startsWith($id, 'my_')) {
+        $id = strafter($id, 'my_');
+    }
+
+    return $id;
 }

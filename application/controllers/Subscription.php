@@ -39,18 +39,36 @@ class Subscription extends ClientsController
             }
         }
 
-        $upcomingInvoice           = new stdClass();
-        $upcomingInvoice->total    = $plan->amount * $subscription->quantity;
-        $upcomingInvoice->subtotal = $upcomingInvoice->total;
+        $upcomingInvoice                    = new stdClass();
+        $upcomingInvoice->default_tax_rates = null;
+        $upcomingInvoice->total             = $plan->amount * $subscription->quantity;
+        $upcomingInvoice->subtotal          = $upcomingInvoice->total;
+        $total                              = $upcomingInvoice->total;
 
-        if (!empty($subscription->tax_percent)) {
-            $totalTax = $upcomingInvoice->total * ($subscription->tax_percent / 100);
+        if (!empty($subscription->tax_percent) || !empty($subscription->tax_percent_2)) {
+            $totalTax                           = 0;
+            $upcomingInvoice->default_tax_rates = [];
+            if (!empty($subscription->tax_percent)) {
+                $tax1                                 = new stdClass();
+                $tax1->percentage                     = $subscription->tax_percent;
+                $tax1->display_name                   = $subscription->tax_name;
+                $upcomingInvoice->default_tax_rates[] = $tax1;
+                $totalTax += $upcomingInvoice->total * ($subscription->tax_percent / 100);
+            }
+
+            if (!empty($subscription->tax_percent_2)) {
+                $tax2                                 = new stdClass();
+                $tax2->percentage                     = $subscription->tax_percent_2;
+                $tax2->display_name                   = $subscription->tax_name_2;
+                $upcomingInvoice->default_tax_rates[] = $tax2;
+                $totalTax += $upcomingInvoice->total * ($subscription->tax_percent_2 / 100);
+            }
+
             $upcomingInvoice->total += $totalTax;
         }
 
-        $data['total']                = $upcomingInvoice->total;
-        $upcomingInvoice->tax_percent = $subscription->tax_percent;
-        $product                      = $this->stripe_subscriptions->get_product($plan->product);
+        $data['total'] = $upcomingInvoice->total;
+        $product       = $this->stripe_subscriptions->get_product($plan->product);
 
         $upcomingInvoice->lines       = new stdClass();
         $upcomingInvoice->lines->data = [];
@@ -60,8 +78,6 @@ class Subscription extends ClientsController
             'amount'      => $plan->amount * $subscription->quantity,
             'quantity'    => $subscription->quantity,
         ];
-
-
 
         $this->disableNavigation();
         $this->disableSubMenu();
@@ -191,10 +207,15 @@ class Subscription extends ClientsController
         try {
             $params = [];
 
-            if (!empty($subscription->stripe_tax_id)) {
-                $params['default_tax_rates'] = [
-                    $subscription->stripe_tax_id,
-                ];
+            if (!empty($subscription->stripe_tax_id) || !empty($subscription->stripe_tax_id_2)) {
+                $params['default_tax_rates'] = [];
+                if (!empty($subscription->stripe_tax_id)) {
+                    $params['default_tax_rates'][] = $subscription->stripe_tax_id;
+                }
+
+                if (!empty($subscription->stripe_tax_id_2)) {
+                    $params['default_tax_rates'][] = $subscription->stripe_tax_id_2;
+                }
             }
 
             $params['metadata'] = [

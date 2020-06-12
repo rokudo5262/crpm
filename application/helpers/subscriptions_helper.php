@@ -7,9 +7,9 @@ function create_subscription_invoice_data($subscription, $invoice)
     $CI     = &get_instance();
     $client = $CI->clients_model->get($subscription->clientid);
 
-    $stripeSubtotal   = is_array($invoice) ? $invoice['subtotal'] : $invoice->subtotal;
-    $stripeTotal      = is_array($invoice) ? $invoice['total'] : $invoice->total;
-    $stripeTaxPercent = is_array($invoice) ? $invoice['tax_percent'] : $invoice->tax_percent;
+    $stripeSubtotal = is_array($invoice) ? $invoice['subtotal'] : $invoice->subtotal;
+    $stripeTotal    = is_array($invoice) ? $invoice['total'] : $invoice->total;
+    $taxRates       = is_array($invoice) ? $invoice['default_tax_rates'] : $invoice->default_tax_rates;
 
     $new_invoice_data                    = [];
     $new_invoice_data['subscription_id'] = $subscription->id;
@@ -81,8 +81,10 @@ function create_subscription_invoice_data($subscription, $invoice)
         $new_invoice_data['newitems'][$key]['unit']    = '';
         $new_invoice_data['newitems'][$key]['taxname'] = [];
 
-        if (!empty($stripeTaxPercent)) {
-            array_push($new_invoice_data['newitems'][$key]['taxname'], $subscription->tax_name . '|' . $stripeTaxPercent);
+        if ($taxRates) {
+            foreach ($taxRates as $taxInfo) {
+                array_push($new_invoice_data['newitems'][$key]['taxname'], $taxInfo->display_name . '|' . $taxInfo->percentage);
+            }
         }
 
         $new_invoice_data['newitems'][$key]['order'] = $key;

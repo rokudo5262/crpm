@@ -32,8 +32,8 @@ class Download extends App_Controller
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
 
-        if(ob_get_contents()) {
-             ob_end_clean();
+        if (ob_get_contents()) {
+            ob_end_clean();
         }
 
         hooks()->do_action('before_output_preview_video');
@@ -76,8 +76,8 @@ class Download extends App_Controller
         header('Cache-Control: must-revalidate');
         header('Pragma: public');
 
-        if(ob_get_contents()) {
-             ob_end_clean();
+        if (ob_get_contents()) {
+            ob_end_clean();
         }
 
         hooks()->do_action('before_output_preview_image');
@@ -96,7 +96,7 @@ class Download extends App_Controller
         if ($folder_indicator == 'ticket') {
             if (is_logged_in()) {
                 $this->db->where('id', $attachmentid);
-                $attachment = $this->db->get(db_prefix().'ticket_attachments')->row();
+                $attachment = $this->db->get(db_prefix() . 'ticket_attachments')->row();
                 if (!$attachment) {
                     show_404();
                 }
@@ -115,7 +115,7 @@ class Download extends App_Controller
                     show_404();
                 }
                 $this->db->where('id', $attachmentid);
-                $attachment = $this->db->get(db_prefix().'files')->row();
+                $attachment = $this->db->get(db_prefix() . 'files')->row();
                 if (!$attachment) {
                     show_404();
                 }
@@ -127,16 +127,16 @@ class Download extends App_Controller
             }
 
             $this->db->where('attachment_key', $attachmentid);
-            $attachment = $this->db->get(db_prefix().'files')->row();
+            $attachment = $this->db->get(db_prefix() . 'files')->row();
             if (!$attachment) {
                 show_404();
             }
 
-            if(!is_staff_logged_in()) {
+            if (!is_staff_logged_in()) {
                 $this->db->select('not_visible_to_client');
                 $this->db->where('id', $attachment->rel_id);
-                $contract = $this->db->get(db_prefix().'contracts')->row();
-                if($contract->not_visible_to_client == 1) {
+                $contract = $this->db->get(db_prefix() . 'contracts')->row();
+                if ($contract->not_visible_to_client == 1) {
                     show_404();
                 }
             }
@@ -148,7 +148,7 @@ class Download extends App_Controller
             }
 
             $this->db->where('attachment_key', $attachmentid);
-            $attachment = $this->db->get(db_prefix().'files')->row();
+            $attachment = $this->db->get(db_prefix() . 'files')->row();
 
             if (!$attachment) {
                 show_404();
@@ -160,7 +160,7 @@ class Download extends App_Controller
             }
 
             $this->db->where('attachment_key', $attachmentid);
-            $attachment = $this->db->get(db_prefix().'files')->row();
+            $attachment = $this->db->get(db_prefix() . 'files')->row();
             if (!$attachment) {
                 show_404();
             }
@@ -172,7 +172,7 @@ class Download extends App_Controller
             }
             $this->db->where('rel_id', $attachmentid);
             $this->db->where('rel_type', 'expense');
-            $file = $this->db->get(db_prefix().'files')->row();
+            $file = $this->db->get(db_prefix() . 'files')->row();
             $path = get_upload_path_by_type('expense') . $file->rel_id . '/' . $file->file_name;
         // l_attachment_key is if request is coming from public form
         } elseif ($folder_indicator == 'lead_attachment' || $folder_indicator == 'l_attachment_key') {
@@ -188,16 +188,16 @@ class Download extends App_Controller
                 $this->db->where('attachment_key', $attachmentid);
             }
 
-            $attachment = $this->db->get(db_prefix().'files')->row();
+            $attachment = $this->db->get(db_prefix() . 'files')->row();
 
             if (!$attachment) {
                 show_404();
             }
 
             $path = get_upload_path_by_type('lead') . $attachment->rel_id . '/' . $attachment->file_name;
-        }  elseif ($folder_indicator == 'client') {
+        } elseif ($folder_indicator == 'client') {
             $this->db->where('attachment_key', $attachmentid);
-            $attachment = $this->db->get(db_prefix().'files')->row();
+            $attachment = $this->db->get(db_prefix() . 'files')->row();
             if (!$attachment) {
                 show_404();
             }
@@ -207,6 +207,11 @@ class Download extends App_Controller
         } else {
             die('folder not specified');
         }
+
+        $path = hooks()->apply_filters('download_file_path', $path, [
+            'folder'       => $folder_indicator,
+            'attachmentid' => $attachmentid,
+        ]);
 
         force_download($path, null);
     }

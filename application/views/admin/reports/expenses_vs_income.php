@@ -6,16 +6,22 @@
             <div class="col-md-12">
                 <div class="panel_s">
                     <div class="panel-body">
-                        <?php if(count($years) > 1 || (count($years) == 1 && $years[0] != date('Y'))){ ?>
+                        <?php if (count($years) > 1 || (count($years) == 1 && $years[0] != date('Y'))) {
+    ?>
                         <select class="selectpicker" name="expense_year" onchange="change_expense_report_year(this.value);" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-                            <?php foreach($years as $year) { ?>
-                            <option value="<?php echo $year; ?>"<?php if($year == $report_year){echo ' selected';} ?>>
+                            <?php foreach ($years as $year) {
+        ?>
+                            <option value="<?php echo $year; ?>"<?php if ($year == $report_year) {
+            echo ' selected';
+        } ?>>
                                 <?php echo $year; ?>
                             </option>
-                            <?php } ?>
+                            <?php
+    } ?>
                         </select>
                         <hr />
-                        <?php } ?>
+                        <?php
+} ?>
                         <p class="text-danger bold">
                             <?php echo _l('amount_display_in_base_currency'); ?>
                         </p>
@@ -31,12 +37,26 @@
 <?php init_tail(); ?>
 <script>
     $(function(){
+        init_currency(<?php echo $base_currency->id; ?>);
+
         chartExpenseVsIncome = new Chart($('#report-expense-vs-income'),{
-            type:'bar',
-            data:<?php echo $chart_expenses_vs_income_values; ?>,
-            options:{maintainAspectRatio:false,scales: {
+            type: 'bar',
+            data: <?php echo $chart_expenses_vs_income_values; ?>,
+            options:{
+                maintainAspectRatio:false,
+                 tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            return format_money(tooltipItem.yLabel)
+                        }
+                    }
+                },
+                scales: {
                 yAxes: [{
                   ticks: {
+                    callback: function (value) {
+                        return format_money(value)
+                    },
                     beginAtZero: true,
                 }
             }]

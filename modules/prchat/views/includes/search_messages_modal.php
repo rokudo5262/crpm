@@ -36,7 +36,7 @@
                 var input = $.trim($(this).val());
                 var render = [];
 
-                if (input.length > 2) {
+                if (input.length >= 2) {
                     for (var i = 0; i < messages_history.length; i++) {
                         for (var key in messages_history[i]) {
                             if (messages_history[i].message.toLowerCase().matchAll(input.toLowerCase()) &&
@@ -45,9 +45,7 @@
                             }
                         }
                     }
-
                     appendResultsToModal(render);
-
                 } else {
                     input = '';
                     messageHistoryParent.html('');

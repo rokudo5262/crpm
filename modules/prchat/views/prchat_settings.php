@@ -2,7 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
- * Show options for chat pusher in Setup->Settings->CRPM Chat Settings
+ * Show options for chat pusher in Setup->Settings->Perfex Chat Settings
  * get_option pusher_chat_enabled default 1
  */
 
@@ -53,7 +53,7 @@ $show_users_with_chat_permissions = get_option('chat_show_only_users_with_chat_p
 
 
 <!--  
-* Show options for chat pusher in Setup->Settings->CRPM Chat Settings
+* Show options for chat pusher in Setup->Settings->Perfex Chat Settings
  get_option chat_client_enabled is by default 1
 -->
 <?php $chat_client_enabled = get_option('chat_client_enabled'); ?>
@@ -75,7 +75,7 @@ $show_users_with_chat_permissions = get_option('chat_show_only_users_with_chat_p
 <hr>
 
 <!--  
-* Show options for chat pusher in Setup->Settings->CRPM Chat Settings
+* Show options for chat pusher in Setup->Settings->Perfex Chat Settings
 * get_option chat_members_can_create_groups is by default 1
 -->
 <?php $chat_members_can_create_groups = get_option('chat_members_can_create_groups');  ?>
@@ -97,7 +97,7 @@ $show_users_with_chat_permissions = get_option('chat_show_only_users_with_chat_p
 <hr>
 
 <!--  
-* Show options for chat pusher in Setup->Settings->CRPM Chat Settings
+* Show options for chat pusher in Setup->Settings->Perfex Chat Settings
 * get_option chat_staff_can_delete_messages is by default 1 
 -->
 <?php $can_delete = get_option('chat_staff_can_delete_messages');  ?>
@@ -118,7 +118,7 @@ $show_users_with_chat_permissions = get_option('chat_show_only_users_with_chat_p
 </div>
 <hr>
 <!--  
-* Show options for chat pusher in Setup->Settings->CRPM Chat Settings
+* Show options for chat pusher in Setup->Settings->Perfex Chat Settings
 * get_option chat_allow_staff_to_create_tickets is by default 1 
 -->
 <?php $alllow_to_covert_tickets = get_option('chat_allow_staff_to_create_tickets');  ?>
@@ -141,7 +141,7 @@ $show_users_with_chat_permissions = get_option('chat_show_only_users_with_chat_p
 
 
 <!--  
-* Show options for chat pusher in Setup->Settings->CRPM Chat Settings
+* Show options for chat pusher in Setup->Settings->Perfex Chat Settings
 * get_option chat_desktop_messages_notifications is by default 1
 -->
 <?php $notification_option = get_option('chat_desktop_messages_notifications');  ?>

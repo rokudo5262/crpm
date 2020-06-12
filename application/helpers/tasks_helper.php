@@ -301,27 +301,27 @@ function init_relation_tasks_table($table_attributes = [])
         [
             'name'     => _l('tasks_dt_name'),
             'th_attrs' => [
-                'style' => 'min-width:200px',
+                'style' => 'width:200px',
                 ],
             ],
              _l('task_status'),
          [
             'name'     => _l('tasks_dt_datestart'),
             'th_attrs' => [
-                'style' => 'min-width:75px',
+                'style' => 'width:75px',
                 ],
             ],
          [
             'name'     => _l('task_duedate'),
             'th_attrs' => [
-                'style' => 'min-width:75px',
+                'style' => 'width:75px',
                 'class' => 'duedate',
                 ],
             ],
          [
             'name'     => _l('task_assigned'),
             'th_attrs' => [
-                'style' => 'min-width:75px',
+                'style' => 'width:75px',
                 ],
             ],
         _l('tags'),

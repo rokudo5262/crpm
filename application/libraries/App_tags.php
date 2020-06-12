@@ -13,15 +13,18 @@ class App_tags
 
     public function get($name_or_id)
     {
-        $this->ci->db->where('name', $name_or_id);
-        $this->ci->db->or_where('id', $name_or_id);
+        if (is_numeric($name_or_id)) {
+            $this->ci->db->where('id', $name_or_id);
+        } else {
+            $this->ci->db->where('name', $name_or_id);
+        }
 
-        return $this->ci->db->get(db_prefix().'tags')->row();
+        return $this->ci->db->get(db_prefix() . 'tags')->row();
     }
 
     public function create($data)
     {
-        $this->ci->db->insert(db_prefix().'tags', $data);
+        $this->ci->db->insert(db_prefix() . 'tags', $data);
 
         return $this->ci->db->insert_id();
     }
@@ -47,7 +50,7 @@ class App_tags
                 }
             }
 
-            // Check if there is removed tags
+            // Check if there are removed tags
             $current_tags = get_tags_in($rel_id, $rel_type);
 
             foreach ($current_tags as $tag) {
@@ -57,7 +60,7 @@ class App_tags
                     $this->ci->db->where('rel_id', $rel_id);
                     $this->ci->db->where('rel_type', $rel_type);
                     $this->ci->db->where('tag_id', $tag->id);
-                    $this->ci->db->delete(db_prefix().'taggables');
+                    $this->ci->db->delete(db_prefix() . 'taggables');
                     if ($this->ci->db->affected_rows() > 0) {
                         $affectedRows++;
                     }
@@ -82,7 +85,7 @@ class App_tags
 
                 if ($this->is_related($tag_id, $rel_id, $rel_type)) {
                     $this->ci->db->insert(
-                    db_prefix().'taggables',
+                    db_prefix() . 'taggables',
                     [
                         'tag_id'    => $tag_id,
                         'rel_id'    => $rel_id,
@@ -103,7 +106,7 @@ class App_tags
 
     public function is_related($tag_id, $rel_id, $rel_type)
     {
-        return total_rows(db_prefix().'taggables', ['tag_id' => $tag_id, 'rel_id' => $rel_id, 'rel_type' => $rel_type]) == 0;
+        return total_rows(db_prefix() . 'taggables', ['tag_id' => $tag_id, 'rel_id' => $rel_id, 'rel_type' => $rel_type]) == 0;
     }
 
     public function relation($rel_id, $rel_type)
@@ -111,7 +114,7 @@ class App_tags
         $this->ci->db->where('rel_id', $rel_id);
         $this->ci->db->where('rel_type', $rel_type);
         $this->ci->db->order_by('tag_order', 'ASC');
-        $tags = $this->ci->db->get(db_prefix().'taggables')->result_array();
+        $tags = $this->ci->db->get(db_prefix() . 'taggables')->result_array();
 
         $tag_names = [];
         foreach ($tags as $tag) {
@@ -128,7 +131,7 @@ class App_tags
     {
         $this->ci->db->where('rel_id', $rel_id);
         $this->ci->db->where('rel_type', $rel_type);
-        $this->ci->db->delete(db_prefix().'taggables');
+        $this->ci->db->delete(db_prefix() . 'taggables');
 
         return $this->ci->db->affected_rows() > 0;
     }
@@ -139,7 +142,7 @@ class App_tags
 
         if (!$tags && !is_array($tags)) {
             $this->ci->db->order_by('name', 'ASC');
-            $tags = $this->ci->db->get(db_prefix().'tags')->result_array();
+            $tags = $this->ci->db->get(db_prefix() . 'tags')->result_array();
             $this->ci->app_object_cache->add('db-tags-array', $tags);
         }
 

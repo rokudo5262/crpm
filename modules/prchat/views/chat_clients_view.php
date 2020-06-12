@@ -95,7 +95,7 @@
                     <input type="hidden" class="ays-ignore to" name="to" value="" />
                     <input type="hidden" class="ays-ignore typing" name="typing" value="false" />
                     <input type="hidden" class="ays-ignore" name="<?php echo $this->security->get_csrf_token_name(); ?>" value="<?php echo $this->security->get_csrf_hash(); ?>">
-                    <i class="fa fa-plus-circle attachment fileUpload" data-container="body" data-toggle="tooltip" title="<?php echo _l('chat_file_upload'); ?>" aria-hidden="true"></i>
+                    <i class="fa fa-file-image-o attachment fileUpload" data-container="body" data-toggle="tooltip" title="<?php echo _l('chat_file_upload'); ?>" aria-hidden="true"></i>
                 </form>
             </div>
         </div>
@@ -200,6 +200,11 @@
         var dfd = jQuery.Deferred();
         var promises = [];
         var counter = 1;
+
+        if (!customerAdmins.length) {
+            console.log('No admins or customer admins found');
+            return false;
+        }
 
         $.each(customerAdmins, function(i, admin) {
             var fullname = admin.firstname + ' ' + admin.lastname;
@@ -359,22 +364,31 @@
 
     /*---------------* Event that is binded to send event with pusher webockets *---------------*/
     clientsChannel.bind('send-event', function(data) {
-
         $('.clientwrapper').find('.userIsTyping').fadeOut(500);
-        var ischatMinimized = $('body').find('.firstDiv').is(':hidden');
+        var isChatMinimized = $('body').find('.firstDiv').is(':hidden');
+
+        if (isChatMinimized) {
+            showChatNotification();
+        }
 
         if (data.from === currentStaff && data.to == contact_name_id) {
             data.message = createTextLinks_(emojify.replace(data.message));
-            $('.m-area ol.chat').append('<li class="customer_admin"><div class="msg"><span class="admin_name">' + data.from_name + '</span><p class="staff_message ">' + data.message + '</p></li></div>');
-            if (ischatMinimized) {
-                var notifyStaff = $('#' + data.from + ' .staff_notification');
-                var notification = parseInt(notifyStaff.attr('data-notification'));
-                notifyStaff.attr('data-notification', notification + 1).show();
-                showChatNotification();
-                initClientSound(data);
-            }
+
+            var msgHtml = '<li class="customer_admin"><div class="msg"><span class="admin_name">';
+            msgHtml += data.from_name + '</span><p class="staff_message ">' + data.message + '</p></li></div>';
+
+            $('.m-area ol.chat').append(msgHtml);
             scrollBottom();
         }
+
+        if (data.from !== currentStaff) {
+            var notifyStaff = $('#' + data.from + ' .staff_notification');
+            var notification = parseInt(notifyStaff.attr('data-notification'));
+            notifyStaff.attr('data-notification', notification + 1).show();
+        }
+
+        initClientSound(data);
+
     });
 
     /*---------------* Init current chat loader synchronized with client messages append *---------------*/

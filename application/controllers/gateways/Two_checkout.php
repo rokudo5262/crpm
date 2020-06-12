@@ -18,13 +18,11 @@ class Two_checkout extends App_Controller
             if($response['success'] == true) {
                 if ($response['charge']['response']['responseCode'] == 'APPROVED') {
 
-                    $success = $this->two_checkout_gateway->addPayment(
-                    [
-                      'amount'        => $response['charge']['response']['total'],
-                      'invoiceid'     => $invoice->id,
-                      'transactionid' => $response['charge']['response']['transactionId'],
-                      ]
-                    );
+                  $success = $this->two_checkout_gateway->addPayment([
+                    'amount'        => $response['charge']['response']['total'],
+                    'invoiceid'     => $invoice->id,
+                    'transactionid' => $response['charge']['response']['transactionId'],
+                  ]);
 
                     if ($success) {
                         set_alert('success', _l('online_payment_recorded_success'));

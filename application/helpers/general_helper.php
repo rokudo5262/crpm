@@ -119,6 +119,7 @@ function redirect_after_login_to_current_url()
 }
 /**
 * Check if user accessed url while not logged in to redirect after login
+*
 * @return null
 */
 function maybe_redirect_to_previous_url()
@@ -127,6 +128,14 @@ function maybe_redirect_to_previous_url()
     if ($CI->session->has_userdata('red_url')) {
         $red_url = $CI->session->userdata('red_url');
         $CI->session->unset_userdata('red_url');
+
+        // If staff previously accessed client URL's
+        // we should ensure to redirect to staff after login as it's confused
+        // if redirects to the client url
+        if (strpos($red_url, 'clients') !== false && is_staff_logged_in()) {
+            return;
+        }
+
         redirect($red_url);
     }
 }

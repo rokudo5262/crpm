@@ -138,12 +138,14 @@ class Invoices extends AdminController
         $original_number = $this->input->post('original_number');
         $number          = trim($number);
         $number          = ltrim($number, '0');
+
         if ($isedit == 'true') {
             if ($number == $original_number) {
                 echo json_encode(true);
                 die;
             }
         }
+
         if (total_rows(db_prefix() . 'invoices', [
             'YEAR(date)' => date('Y', strtotime(to_sql_date($date))),
             'number' => $number,

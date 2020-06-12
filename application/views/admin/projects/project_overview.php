@@ -210,7 +210,8 @@
            <div class="project-overview-open-tasks">
             <div class="col-md-9">
                <p class="text-uppercase bold text-dark font-medium">
-                  <?php echo $tasks_not_completed; ?> / <?php echo $total_tasks; ?> <?php echo _l('project_open_tasks'); ?>
+                  <span dir="ltr"><?php echo $tasks_not_completed; ?> / <?php echo $total_tasks; ?></span>
+                  <?php echo _l('project_open_tasks'); ?>
                </p>
                <p class="text-muted bold"><?php echo $tasks_not_completed_progress; ?>%</p>
             </div>
@@ -231,7 +232,8 @@
       <div class="row">
          <div class="col-md-9">
             <p class="text-uppercase bold text-dark font-medium">
-               <?php echo $project_days_left; ?> / <?php echo $project_total_days; ?> <?php echo _l('project_days_left'); ?>
+               <span dir="ltr"><?php echo $project_days_left; ?> / <?php echo $project_total_days; ?></span>
+               <?php echo _l('project_days_left'); ?>
             </p>
             <p class="text-muted bold"><?php echo $project_time_left_percent; ?>%</p>
          </div>

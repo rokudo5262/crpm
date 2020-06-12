@@ -238,6 +238,19 @@ class App_sms
         return $this->get_option($id, 'initialized') == '' ? false : true;
     }
 
+    /**
+     * Log success message
+     *
+     * @param  string $number
+     * @param  string $message
+     *
+     * @return void
+     */
+    protected function logSuccess($number, $message)
+    {
+        return log_activity('SMS sent to ' . $number . ', Message: ' . $message);
+    }
+
     private function set_default_triggers()
     {
         $customer_merge_fields = [

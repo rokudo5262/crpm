@@ -65,6 +65,13 @@ class App_mail_template
     protected $template;
 
     /**
+     * Indicates whether this template should be not be added in queue when enabled
+     *
+     * @var boolean
+     */
+    protected $skipQueue = false;
+
+    /**
      * Parent template should set $for property so the sending script can identify whether this email is for the customer or staff
      * Allowed values: customer, staff;
      * @var string
@@ -190,10 +197,9 @@ class App_mail_template
         }
 
         $this->_alt_message();
-
         $this->_attachments();
 
-        if ($this->ci->email->send()) {
+        if ($this->ci->email->send($this->skipQueue)) {
             log_activity('Email Sent To [Email: ' . $this->send_to . ', Template: ' . $this->template->name . ']');
 
             hooks()->do_action('email_template_sent', [

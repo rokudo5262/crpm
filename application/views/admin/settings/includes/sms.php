@@ -30,14 +30,37 @@ if($total_gateways > 1) { ?>
         }
 
         foreach($gateway['options'] as $g_option){
-            echo render_input('settings['.$this->app_sms->option_name($gateway['id'],$g_option['name']).']',$g_option['label'],$this->app_sms->get_option($gateway['id'],$g_option['name']));
+            $type = isset($g_option['field_type']) ? $g_option['field_type'] : 'text';
+            if($type == 'text'){
+                echo render_input('settings['.$this->app_sms->option_name($gateway['id'],$g_option['name']).']',$g_option['label'],$this->app_sms->get_option($gateway['id'],$g_option['name']));
+            } else if($type == 'radio') {
+                ?>
+                <div class="form-group">
+                    <p><?php echo $g_option['label']; ?></p>
+                    <?php
+                foreach($g_option['options'] as $option) {
+                    ?>
+                    <div class="radio radio-info radio-inline">
+                        <input type="radio"
+                        name="settings[<?php echo $optionName = $this->app_sms->option_name($gateway['id'], $g_option['name']); ?>]" value="<?php echo $option['value']; ?>"
+                        id="<?php echo $option['value'] . '-'.  $optionName; ?>"
+                        <?php if($this->app_sms->get_option($gateway['id'],$g_option['name']) == $option['value']){ echo ' checked';} ?>>
+                        <label for="<?php echo $option['value'] . '-'.  $optionName; ?>"><?php echo $option['label']; ?></label>
+                     </div>
+                    <?php
+                }
+                ?>
+                </div>
+                <?php
+            }
             if(isset($g_option['info'])) {
                 echo $g_option['info'];
             }
         }
         echo '<div class="sms_gateway_active">';
 
-        echo render_yes_no_option($this->app_sms->option_name($gateway['id'],'active'),'Active');
+        echo render_yes_no_option($this->app_sms->option_name($gateway['id'],'active'), 'Active');
+
         echo '</div>';
             if(get_option($this->app_sms->option_name($gateway['id'],'active')) == '1') {
                 echo '<hr />';

@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<div class="widget<?php if(count($upcoming_events) == 0 || !is_staff_member()){echo ' hide';} ?>" id="widget-<?php echo basename(__FILE__,".php"); ?>">
+<div class="widget<?php if(count($upcoming_events) == 0 || !is_staff_member()){echo ' hide';} ?>" id="widget-<?php echo create_widget_id(); ?>">
    <?php if(count($upcoming_events) > 0 && is_staff_member()){ ?>
    <div class="row">
       <div class="col-md-12">

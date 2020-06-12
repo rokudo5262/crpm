@@ -8,6 +8,8 @@ class Staff_two_factor_auth_key extends App_mail_template
 
     protected $staff;
 
+    protected $skipQueue = true;
+
     public $slug = 'two-factor-authentication';
 
     public $rel_type = 'staff';

@@ -1,7 +1,9 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 /*
-Module Name: CRPM Powerful Chat
-Description: Chat Module for CRPM
+Module Name: Perfex CRM Powerful Chat
+Description: Chat Module for Perfex CRM
+Author: Aleksandar Stojanov
+Author URI: https://idevalex.com
 */
 class Prchat_Controller extends AdminController
 {
@@ -26,6 +28,14 @@ class Prchat_Controller extends AdminController
     {
         parent::__construct();
 
+        if (!get_option('pusher_chat_enabled') == '1') {
+            redirect('admin');
+        }
+
+        if (!defined('PR_CHAT_MODULE_NAME')) {
+            show_404();
+        }
+
         if (!staff_can('view', PR_CHAT_MODULE_NAME)) {
             access_denied(_l('chat_access_label'));
         }
@@ -43,8 +53,8 @@ class Prchat_Controller extends AdminController
             get_option('pusher_cluster') == ''
         ) {
             echo '<h1>Seems that your Pusher account it is not setup correctly.</h1>';
-            echo '<h4>Setup Pusher now: <a href="' . site_url('admin/settings?group=pusher') . '">CRPM Settings->Pusher.com</a></h4>';
-            echo '<h4>Tutorial: <a target="blank" href="https://digityze.asia/setup-realtime-notifications-with-pusher-com/">See example how to setup Pusher from CRPM documentation</a>';
+            echo '<h4>Setup Pusher now: <a href="' . site_url('admin/settings?group=pusher') . '">Perfex CRM Settings->Pusher.com</a></h4>';
+            echo '<h4>Tutorial: <a target="blank" href="https://help.perfexcrm.com/setup-realtime-notifications-with-pusher-com/">See example how to setup Pusher from Perfex CRM documentation</a>';
             die;
         }
 
@@ -72,35 +82,38 @@ class Prchat_Controller extends AdminController
                 $from = $this->input->post('from');
                 $receiver = str_replace('#', '', $this->input->post('to'));
 
-                $message_data = array(
-                    'sender_id' => $this->input->post('from'),
-                    'reciever_id' => str_replace('#', '', $this->input->post('to')),
-                    'message' => htmlentities($this->input->post('msg')),
-                    'viewed' => 0,
-                );
+                if (trim($this->input->post('msg')) !== '') {
+                    $message_data = array(
+                        'sender_id' => $this->input->post('from'),
+                        'reciever_id' => str_replace('#', '', $this->input->post('to')),
+                        'message' => htmlentities($this->input->post('msg')),
+                        'viewed' => 0,
+                    );
+                    
+                    $last_id = $this->chat_model->createMessage($message_data);
 
-                $last_id = $this->chat_model->createMessage($message_data);
-
-                $this->pusher->trigger('presence-mychanel', 'send-event', array(
-                    'message' => pr_chat_convertLinkImageToString($this->input->post('msg'), $from, $receiver),
-                    'from' => $from,
-                    'to' => $receiver,
-                    'last_insert_id' => $last_id,
-                    'sender_image' => $imageData['sender_image'],
-                    'receiver_image' => $imageData['receiver_image'],
-                ));
-
-                $this->pusher->trigger(
-                    'presence-mychanel',
-                    'notify-event',
-                    array(
-                        'from' => $this->input->post('from'),
-                        'to' => str_replace('#', '', $this->input->post('to')),
-                        'from_name' => get_staff_full_name($from),
-                        'sender_image' => $imageData['sender_image'],
+                    $this->pusher->trigger('presence-mychanel', 'send-event', array(
                         'message' => pr_chat_convertLinkImageToString($this->input->post('msg'), $from, $receiver),
-                    )
-                );
+                        'from' => $from,
+                        'to' => $receiver,
+                        'from_name' => get_staff_full_name($from),
+                        'last_insert_id' => $last_id,
+                        'sender_image' => $imageData['sender_image'],
+                        'receiver_image' => $imageData['receiver_image'],
+                    ));
+
+                    $this->pusher->trigger(
+                        'presence-mychanel',
+                        'notify-event',
+                        array(
+                            'from' => $this->input->post('from'),
+                            'to' => str_replace('#', '', $this->input->post('to')),
+                            'from_name' => get_staff_full_name($from),
+                            'sender_image' => $imageData['sender_image'],
+                            'message' => pr_chat_convertLinkImageToString($this->input->post('msg'), $from, $receiver),
+                        )
+                    );
+                }
             } elseif ($this->input->post('typing') == 'true') {
                 $this->pusher->trigger(
                     'presence-mychanel',
@@ -199,11 +212,34 @@ class Prchat_Controller extends AdminController
      */
     public function users()
     {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
         $users = $this->chat_model->getUsers();
         if ($users) {
             echo json_encode($users, true);
         } else {
             die(_l('chat_error_table'));
+        }
+    }
+
+    public function getUsersInJsonFormat()
+    {
+        if (!$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $group_id = $this->input->get('group_id');
+
+        if ($group_id) {
+            $jsonFormattedUsers = $this->chat_model->getUsersInJsonFormat($group_id);
+            header('Content-Type: application/json');
+
+            if ($jsonFormattedUsers) {
+                echo json_encode($jsonFormattedUsers, true);
+            } else {
+                die(_l('chat_error_table'));
+            }
         }
     }
 
@@ -393,6 +429,7 @@ class Prchat_Controller extends AdminController
                 $presence_data = array(
                     'name' => $name,
                     'justLoggedIn' => $justLoggedIn,
+                    'status' => '' . $this->chat_model->_get_chat_status() . ''
                 );
 
                 $auth = $this->pusher->presence_auth($channel_name, $socket_id, $user_id, $presence_data);
@@ -884,5 +921,59 @@ class Prchat_Controller extends AdminController
         $department = $this->input->post('department');
 
         return $this->chat_model->chatHandleSupportTicketCreation($data, $subject, $department, $assigned);
+    }
+
+    /** 
+     * Handle chat status update post
+     */
+    public function handleChatStatus()
+    {
+        $status = $this->input->post('status');
+
+        if (!$status || !$this->input->is_ajax_request()) {
+            show_404();
+        }
+
+        $response = $this->chat_model->handleChatStatus($status);
+
+        if (!empty($response)) {
+            $this->pusher->trigger(
+                'user_changed_chat_status',
+                'status-changed-event',
+                array(
+                    'user_id' => $response['user_id'],
+                    'status' => $response['status'],
+                )
+            );
+            header('Content-Type: application/json');
+            echo json_encode($response);
+        }
+    }
+
+    public function pusherMentionEvent()
+    {
+        $data = $this->input->post();
+
+        if (!$data || !$this->input->is_ajax_request()) {
+            show_404();
+        }
+        if ($data) {
+            $this->chat_model->handleMentionEvent($data, $this->pusher);
+        }
+    }
+
+    /**
+     * Renders to file 
+     *
+     * @return json
+     */
+    public function handleAudio()
+    {
+        $audioBase64Data = $this->input->post('audio');
+
+        if ($audioBase64Data) {
+            header('Content-Type: application/json');
+            return $this->chat_model->handleAudioData($audioBase64Data);
+        }
     }
 }

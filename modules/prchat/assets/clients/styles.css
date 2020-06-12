@@ -465,7 +465,7 @@
     height: 49px;
     padding-left: -4px;
     margin-left: 0px;
-    margin-top: -1px;
+    margin-top: -2px;
 }
 
 .staff_children_parent_child_div img {
@@ -778,7 +778,7 @@ body #clientChat .attachment {
     right: 38px;
     z-index: 4;
     bottom: 8px;
-    font-size: 1.7em;
+    font-size: 1.6em;
     color: #5762e4;
     cursor: pointer;
 }
@@ -788,7 +788,7 @@ body .onlineStaff {
 }
 
 body .staff_image_wrapper .staff_children_parent_child_div.active_staff img {
-    margin-left: -1px;
+    margin-left: -2px;
 }
 
 body .staff_image_wrapper .staff_children_parent_child_div.active_staff {
@@ -955,7 +955,55 @@ img.prchat_convertedImage {
 }
 
 @media screen and (max-width: 735px) {
-    .ch_pointer {
+    body .staff_image_parent {
+        overflow-y: auto;
+        max-height: 54px;
+    }
+    .ch_pointer .ch_pointer-main {
+        position: fixed;
+        width: 100%;
+        bottom: 0px;
+        border-radius: 0px !important;
+        right: 0px;
+        color: #fff;
+    }
+    .firstDiv {
+        right: 0;
+        width: 100%;
+        bottom: calc(100% - 93%);
+        overflow: initial;
+    }
+    body .customer_first_co_wrapper {
+        overflow: auto !important;
+        width: 100%;
+        border-radius: 0px;
+        border-top: 2px solid rgba(27, 79, 228, 0.52);
+        border-bottom: 2px solid rgba(27, 79, 228, 0.52);
+        box-shadow: none;
+    }
+    .staff_info_wrapper_div {
+        display: none;
+    }
+    .staff_online_text {
+        padding-bottom: 11px;
+        margin-top: -13px;
+    }
+    .m-area {
+        height: 65vh;
+    }
+    .customer_admins_wrapper {
+        position: unset;
+        margin-left: 0px;
+        margin-top: 0px;
+        width: 100%;
+    }
+    .company_top_info::before {
+        background-image: unset;
+    }
+    .top_close_icon {
+        right: 0;
+    }
+    body .company_top_info {
         display: none;
     }
 }

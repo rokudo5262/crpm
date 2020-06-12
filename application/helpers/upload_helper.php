@@ -144,7 +144,7 @@ function handle_project_file_uploads($project_id)
                     } else {
                         $data['visible_to_customer'] = ($CI->input->post('visible_to_customer') == 'true' ? 1 : 0);
                     }
-                    $CI->db->insert(db_prefix().'project_files', $data);
+                    $CI->db->insert(db_prefix() . 'project_files', $data);
 
                     $insert_id = $CI->db->insert_id();
                     if ($insert_id) {
@@ -325,7 +325,6 @@ function handle_task_attachments_array($taskid, $index_name = 'attachments')
                     if (is_image($newFilePath)) {
                         create_img_thumb($path, $filename);
                     }
-
                 }
             }
         }
@@ -356,7 +355,7 @@ function handle_sales_attachments($rel_id, $rel_type)
     $CI = & get_instance();
     if (isset($_FILES['file']['name'])) {
         $uploaded_files = false;
-        $file_uploaded = false;
+        $file_uploaded  = false;
         // Get the temp file path
         $tmpFilePath = $_FILES['file']['tmp_name'];
         // Make sure we have a filepath
@@ -377,7 +376,7 @@ function handle_sales_attachments($rel_id, $rel_type)
                 $insert_id = $CI->misc_model->add_attachment_to_database($rel_id, $rel_type, $attachment);
                 // Get the key so we can return to ajax request and show download link
                 $CI->db->where('id', $insert_id);
-                $_attachment = $CI->db->get(db_prefix().'files')->row();
+                $_attachment = $CI->db->get(db_prefix() . 'files')->row();
                 $key         = $_attachment->attachment_key;
 
                 if ($rel_type == 'invoice') {
@@ -588,9 +587,12 @@ function handle_company_logo_upload()
                     'jpeg',
                     'png',
                     'gif',
+                    'svg',
                 ];
 
-                $allowed_extensions = hooks()->apply_filters('company_logo_upload_allowed_extensions', $allowed_extensions);
+                $allowed_extensions = array_unique(
+                    hooks()->apply_filters('company_logo_upload_allowed_extensions', $allowed_extensions)
+                );
 
                 if (!in_array($extension, $allowed_extensions)) {
                     set_alert('warning', 'Image extension not allowed.');
@@ -599,7 +601,7 @@ function handle_company_logo_upload()
                 }
 
                 // Setup our new file path
-                $filename    = $logo . '.' . $extension;
+                $filename    = md5($logo) . '.' . $extension;
                 $newFilePath = $path . $filename;
                 _maybe_create_upload_path($path);
                 // Upload the file into the company uploads dir
@@ -752,7 +754,7 @@ function handle_staff_profile_image_upload($staff_id = '')
                 $CI->image_lib->initialize($config);
                 $CI->image_lib->resize();
                 $CI->db->where('staffid', $staff_id);
-                $CI->db->update(db_prefix().'staff', [
+                $CI->db->update(db_prefix() . 'staff', [
                     'profile_image' => $filename,
                 ]);
                 // Remove original image
@@ -825,7 +827,7 @@ function handle_contact_profile_image_upload($contact_id = '')
                 $CI->image_lib->resize();
 
                 $CI->db->where('id', $contact_id);
-                $CI->db->update(db_prefix().'contacts', [
+                $CI->db->update(db_prefix() . 'contacts', [
                     'profile_image' => $filename,
                 ]);
                 // Remove original image
@@ -934,7 +936,7 @@ function _upload_extension_allowed($filename)
 
     //  https://discussions.apple.com/thread/7229860
     //  Used in main.js too for Dropzone
-    if(strtolower($browser) === 'safari'
+    if (strtolower($browser) === 'safari'
         && in_array('.jpg', $allowed_extensions)
         && !in_array('.jpeg', $allowed_extensions)
     ) {

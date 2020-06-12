@@ -198,7 +198,7 @@ function app_init_customer_profile_tabs()
         'name'     => _l('customer_statement'),
         'icon'     => 'fa fa-area-chart',
         'view'     => 'admin/clients/groups/statement',
-        'visible'  => (has_permission('invoices', '', 'view') && has_permission('payments', '', 'view')),
+        'visible'  => has_permission('invoices', '', 'view'),
         'position' => 20,
     ]);
 
@@ -670,7 +670,6 @@ function load_client_language($customer_id = '')
     $language = get_option('active_language');
 
     if (is_client_logged_in() || $customer_id != '') {
-
         $client_language = get_client_default_language($customer_id);
 
         if (!empty($client_language)
@@ -812,7 +811,7 @@ function login_as_client($id)
     if (!$primary) {
         set_alert('danger', _l('no_primary_contact'));
         redirect($_SERVER['HTTP_REFERER']);
-    } else if($primary->active == '0') {
+    } elseif ($primary->active == '0') {
         set_alert('danger', 'Customer primary contact is not active, please set the primary contact as active in order to login as client');
         redirect($_SERVER['HTTP_REFERER']);
     }
@@ -1136,7 +1135,7 @@ function _check_vault_entries_visibility($entries)
  */
 function get_sql_select_client_company()
 {
-    return 'CASE company WHEN "" THEN (SELECT CONCAT(firstname, " ", lastname) FROM ' . db_prefix() . 'contacts WHERE userid = ' . db_prefix() . 'clients.userid and is_primary = 1) ELSE company END as company';
+    return 'CASE company WHEN \'\' THEN (SELECT CONCAT(firstname, \'\', lastname) FROM ' . db_prefix() . 'contacts WHERE userid = ' . db_prefix() . 'clients.userid and is_primary = 1) ELSE company END as company';
 }
 
 function can_logged_in_contact_change_language()

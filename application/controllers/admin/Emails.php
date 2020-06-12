@@ -230,6 +230,7 @@ class Emails extends AdminController
             hooks()->do_action('before_send_test_smtp_email');
             $this->email->initialize();
             if (get_option('mail_engine') == 'phpmailer') {
+
                 $this->email->set_debug_output(function ($err) {
                     if (!isset($GLOBALS['debug'])) {
                         $GLOBALS['debug'] = '';
@@ -238,6 +239,7 @@ class Emails extends AdminController
 
                     return $err;
                 });
+
                 $this->email->set_smtp_debug(3);
             }
 
@@ -255,10 +257,12 @@ class Emails extends AdminController
 
             $this->email->subject($template->subject);
             $this->email->message($template->message);
+
             if ($this->email->send(true)) {
                 set_alert('success', 'Seems like your SMTP settings is set correctly. Check your email now.');
                 hooks()->do_action('smtp_test_email_success');
             } else {
+
                 set_debug_alert('<h1>Your SMTP settings are not set correctly here is the debug log.</h1><br />' . $this->email->print_debugger() . (isset($GLOBALS['debug']) ? $GLOBALS['debug'] : ''));
 
                 hooks()->do_action('smtp_test_email_failed');

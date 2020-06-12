@@ -45,13 +45,13 @@ class MX_Config extends CI_Config
 
         $_module or $_module = CI::$APP->router->fetch_module();
         list($path, $file)   = Modules::find($file, $_module, 'config/');
-        
+
         if ($path === false) {
             parent::load($file, $use_sections, $fail_gracefully);
 
             return $this->item($file);
         }
-        
+
         if ($config = Modules::load_file($file, $path, 'config')) {
             /* reference to the config array */
             $current_config = & $this->config;

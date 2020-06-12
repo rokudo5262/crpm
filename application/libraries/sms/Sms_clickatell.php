@@ -45,7 +45,7 @@ class Sms_clickatell extends App_sms
 
             if ($result) {
                 if (isset($result->messages[0]->accepted) && $result->messages[0]->accepted == true) {
-                    log_activity('SMS sent via Clickatell to ' . $number . ', Message: ' . $message);
+                    $this->logSuccess($number, $message);
 
                     return true;
                 } elseif (isset($result->messages) && isset($result->error)) {

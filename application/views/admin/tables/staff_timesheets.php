@@ -101,7 +101,7 @@ if ($project_ids && is_array($project_ids)) {
 
     if (count($project_ids) > 0) {
         $project_ids = implode(',', array_map(function ($project_id) {
-            return get_instance()->ci->db->escape_str($project_id);
+            return get_instance()->db->escape_str($project_id);
         }, $project_ids));
         array_push($where, 'AND task_id IN (SELECT id FROM ' . db_prefix() . 'tasks WHERE rel_type = "project" AND rel_id  IN (' . $project_ids . '))');
     }

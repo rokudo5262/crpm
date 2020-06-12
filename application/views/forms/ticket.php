@@ -75,7 +75,7 @@
   </div>
   <?php hooks()->do_action('ticket_form_after_attachments'); ?>
 
-  <?php if(get_option('recaptcha_secret_key') != '' && get_option('recaptcha_site_key') != '' && $form->recaptcha == 1){ ?>
+  <?php if(show_recaptcha() && $form->recaptcha == 1){ ?>
     <div class="row">
       <div class="col-md-12">
        <div class="form-group"><div class="g-recaptcha" data-sitekey="<?php echo get_option('recaptcha_site_key'); ?>"></div>

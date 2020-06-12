@@ -16,6 +16,12 @@ if (!is_dir(PR_CHAT_MODULE_GROUPS_UPLOAD_FOLDER)) {
   fclose($fp);
 }
 
+if (!is_dir(PR_CHAT_MODULE_AUDIO_UPLOAD_FOLDER)) {
+  mkdir(PR_CHAT_MODULE_AUDIO_UPLOAD_FOLDER, 0755);
+  $fp = fopen(PR_CHAT_MODULE_AUDIO_UPLOAD_FOLDER . '/index.html', 'w');
+  fclose($fp);
+}
+
 add_option('pusher_chat_enabled', 1);
 add_option('chat_staff_can_delete_messages', 1);
 add_option('chat_desktop_messages_notifications', 1);
@@ -23,7 +29,6 @@ add_option('chat_members_can_create_groups', 1);
 add_option('chat_client_enabled', 1);
 add_option('chat_allow_staff_to_create_tickets', 1);
 add_option('chat_show_only_users_with_chat_permissions', 0);
-
 
 $CI->db->query("CREATE TABLE IF NOT EXISTS `" . TABLE_CHATMESSAGES . "` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,

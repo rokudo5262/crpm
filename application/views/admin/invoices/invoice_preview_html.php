@@ -4,7 +4,7 @@ if($invoice->status == Invoices_model::STATUS_DRAFT){ ?>
       <?php echo _l('invoice_draft_status_info'); ?>
    </div>
 <?php }
-if($invoice->scheduled_email) { ?>
+if(isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
    <div class="alert alert-warning">
       <?php echo _l('invoice_will_be_sent_at', _dt($invoice->scheduled_email->scheduled_at)); ?>
       <?php if(staff_can('edit', 'invoices') || $invoice->addedfrom == get_staff_user_id()) { ?>

@@ -5295,7 +5295,7 @@ body.rtl a+.main-tasks-table-href-name {
 .checklist .checkbox.checklist-checkbox {
     margin-top: 0;
     margin-bottom: 0;
-    height:25px;
+    height: 25px;
 }
 
 .checklist:hover,
@@ -5339,17 +5339,14 @@ textarea[name="checklist-box"] {
 }
 
 textarea[name="checklist-description"] {
-    position: absolute;
     resize: none;
     overflow: hidden;
-    left: 25px;
-    top: 0;
     font-size: 14px;
-    width: 90%;
     border-radius: 3px;
+    padding: 0 5px 0px 5px;
     border: 0;
     outline: 0;
-    padding-left: 5px;
+    width:100%;
 }
 
 textarea[name="checklist-description"]:focus,
@@ -6170,9 +6167,20 @@ body.rtl .hr-panel-heading.project-area-separation {
     margin-right: -15px;
 }
 
+@media(max-width:768px) {
+    .jquery-comments ul.main li.comment .wrapper {
+        overflow: visible;
+        margin-top:25px;
+    }
+}
+
 .jquery-comments [contentEditable=true]:empty:not(:focus):before {
     color: #a1b4cc;
     font-size: 14px;
+}
+
+.jquery-comments .textarea-wrapper .close, .jquery-comments .textarea-wrapper .upload.inline-button {
+    display:none !important;
 }
 
 .jquery-comments ul.navigation li,
@@ -8480,10 +8488,6 @@ table tbody tr .checkbox {
         position: absolute;
         right: 8px;
     }
-
-    textarea[name="checklist-description"] {
-        width: 82%;
-    }
 }
 
 .checklist-items-template-select .checklist-item-template-remove {
@@ -9230,4 +9234,39 @@ body.gantt {
 .read-more {
     overflow: hidden;
     max-height: 150px;
+}
+
+.mce-notification {
+    z-index: 99999 !important;
+}
+
+.custom-fields-form-row .bootstrap-select .btn-default {
+    height: 34px;
+    padding: 3px 12px;
+}
+
+.table-vertical-scroll {
+    height: 420px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 15px;
+}
+
+.d-flex {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+}
+
+.flex-grow-1 {
+    -webkit-box-flex: 1 !important;
+        -ms-flex-positive: 1 !important;
+            flex-grow: 1 !important;
+}
+
+.flex-column {
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+        -ms-flex-direction: column !important;
+            flex-direction: column !important;
 }

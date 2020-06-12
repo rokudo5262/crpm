@@ -47,6 +47,12 @@
     </li>
     <?php } ?>
 
+    <?php if(has_contact_permission('contracts') && $project->settings->available_features['project_contracts'] == 1){ ?>
+    <li role="presentation" class="project_tab_contracts">
+        <a data-group="project_contracts" href="<?php echo site_url('clients/project/'.$project->id.'?group=project_contracts'); ?>" role="tab"><i class="fa fa-life-ring" aria-hidden="true"></i> <?php echo _l('contracts'); ?></a>
+    </li>
+    <?php } ?>
+
     <?php if(has_contact_permission('estimates') && $project->settings->available_features['project_estimates'] == 1){ ?>
     <li role="presentation" class="project_tab_estimates">
         <a data-group="project_estimates" href="<?php echo site_url('clients/project/'.$project->id.'?group=project_estimates'); ?>" role="tab"><i class="fa fa-sun-o" aria-hidden="true"></i> <?php echo _l('estimates'); ?></a>

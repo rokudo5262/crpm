@@ -953,7 +953,6 @@ class Cron_model extends App_Model
 
         $now = time();
         foreach ($invoices as $invoice) {
-
             if (empty($invoice['duedate'])) {
                 continue;
             }
@@ -1043,6 +1042,7 @@ class Cron_model extends App_Model
         if ($estimates_auto_operations_hour == '') {
             $estimates_auto_operations_hour = 9;
         }
+
         $estimates_auto_operations_hour = intval($estimates_auto_operations_hour);
         $hour_now                       = date('G');
         if ($hour_now != $estimates_auto_operations_hour && $this->manually === false) {
@@ -1377,13 +1377,20 @@ class Cron_model extends App_Model
         $this->db->select('host,encryption,password,email,delete_after_import,imap_username')->from(db_prefix() . 'departments')->where('host !=', '')->where('password !=', '')->where('email !=', '');
         $dep_emails = $this->db->get()->result_array();
         foreach ($dep_emails as $e) {
+            if (empty($e['password'])) {
+                continue;
+            }
+
             $password = $this->encryption->decrypt($e['password']);
+
             if (!$password) {
                 log_activity('Failed to decrypt department password', null);
 
                 continue;
             }
+
             require_once(APPPATH . 'third_party/php-imap/Imap.php');
+
             $mailbox  = $e['host'];
             $username = $e['email'];
             if (!empty($e['imap_username'])) {
@@ -1394,7 +1401,7 @@ class Cron_model extends App_Model
             // open connection
             $imap = new Imap($mailbox, $username, $password, $encryption);
             if ($imap->isConnected() === false) {
-                log_activity('Failed to connect to IMAP auto importing tickets from departments.', null);
+                log_activity('Failed to connect to IMAP auto importing tickets from departments ['.$e['email'].'].', null);
 
                 continue;
             }
@@ -1420,7 +1427,9 @@ class Cron_model extends App_Model
                 if (class_exists('EmailReplyParser\EmailReplyParser')
                     && get_option('ticket_import_reply_only') === '1'
                     && (mb_substr_count($email['subject'], 'FWD:') == 0 && mb_substr_count($email['subject'], 'FW:') == 0)) {
-                    $parsedBody = \EmailReplyParser\EmailReplyParser::parseReply($email['body']);
+                    $parsedBody = \EmailReplyParser\EmailReplyParser::parseReply(
+                        $this->prepare_imap_email_body_html($email['body'])
+                    );
                     $parsedBody = trim($parsedBody);
                     // For some emails this is causing an issue and not returning the email, instead is returning empty string
                     // In this case, only use parsed email reply if not empty

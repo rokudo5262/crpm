@@ -58,26 +58,7 @@ class Subscriptions_model extends App_Model
 
     public function create($data)
     {
-        if (isset($data['stripe_tax_id']) && !empty($data['stripe_tax_id'])) {
-            $this->load->library('stripe_core');
-            $stripe_tax = $this->stripe_core->retrieve_tax_rate($data['stripe_tax_id']);
-
-            $this->db->where('name', $stripe_tax->display_name);
-            $this->db->where('taxrate', $percentage = number_format($stripe_tax->percentage, get_decimal_places()));
-            $dbTax = $this->db->get('taxes')->row();
-            if (!$dbTax) {
-                $insert_id = $this->db->insert('taxes', [
-                    'name'    => $stripe_tax->display_name,
-                    'taxrate' => $percentage,
-                ]);
-                $data['tax_id'] = $insert_id;
-            } else {
-                $data['tax_id'] = $dbTax->id;
-            }
-        } elseif (isset($data['stripe_tax_id']) && !$data['stripe_tax_id']) {
-            $data['tax_id']        = 0;
-            $data['stripe_tax_id'] = null;
-        }
+        $data = $this->handleSelectedTax($data);
 
         $this->db->insert(db_prefix() . 'subscriptions', array_merge($data, [
                 'created'      => date('Y-m-d H:i:s'),
@@ -90,26 +71,7 @@ class Subscriptions_model extends App_Model
 
     public function update($id, $data)
     {
-        if (isset($data['stripe_tax_id']) && !empty($data['stripe_tax_id'])) {
-            $this->load->library('stripe_core');
-            $stripe_tax = $this->stripe_core->retrieve_tax_rate($data['stripe_tax_id']);
-
-            $this->db->where('name', $stripe_tax->display_name);
-            $this->db->where('taxrate', $percentage = number_format($stripe_tax->percentage, get_decimal_places()));
-            $dbTax = $this->db->get('taxes')->row();
-            if (!$dbTax) {
-                $insert_id = $this->db->insert('taxes', [
-                    'name'    => $stripe_tax->display_name,
-                    'taxrate' => $percentage,
-                ]);
-                $data['tax_id'] = $insert_id;
-            } else {
-                $data['tax_id'] = $dbTax->id;
-            }
-        } elseif (isset($data['stripe_tax_id']) && !$data['stripe_tax_id']) {
-            $data['tax_id']        = 0;
-            $data['stripe_tax_id'] = null;
-        }
+        $data = $this->handleSelectedTax($data);
 
         $this->db->where(db_prefix() . 'subscriptions.id', $id);
         $this->db->update(db_prefix() . 'subscriptions', $data);
@@ -119,13 +81,14 @@ class Subscriptions_model extends App_Model
 
     private function select()
     {
-        $this->db->select(db_prefix() . 'subscriptions.id as id, stripe_tax_id, terms, in_test_environment, date, next_billing_cycle, status, ' . db_prefix() . 'subscriptions.project_id as project_id, description, ' . db_prefix() . 'subscriptions.created_from as created_from, ' . db_prefix() . 'subscriptions.name as name, ' . db_prefix() . 'currencies.name as currency_name, ' . db_prefix() . 'currencies.symbol, currency, clientid, ends_at, date_subscribed, stripe_plan_id,stripe_subscription_id,quantity,hash,description_in_item,' . db_prefix() . 'taxes.name as tax_name, ' . db_prefix() . 'taxes.taxrate as tax_percent, tax_id, stripe_id as stripe_customer_id,' . get_sql_select_client_company());
+        $this->db->select(db_prefix() . 'subscriptions.id as id, stripe_tax_id, stripe_tax_id_2, terms, in_test_environment, date, next_billing_cycle, status, ' . db_prefix() . 'subscriptions.project_id as project_id, description, ' . db_prefix() . 'subscriptions.created_from as created_from, ' . db_prefix() . 'subscriptions.name as name, ' . db_prefix() . 'currencies.name as currency_name, ' . db_prefix() . 'currencies.symbol, currency, clientid, ends_at, date_subscribed, stripe_plan_id,stripe_subscription_id,quantity,hash,description_in_item,' . db_prefix() . 'taxes.name as tax_name, ' . db_prefix() . 'taxes.taxrate as tax_percent, ' . db_prefix() . 'taxes_2.name as tax_name_2, ' . db_prefix() . 'taxes_2.taxrate as tax_percent_2, tax_id, tax_id_2, stripe_id as stripe_customer_id,' . get_sql_select_client_company());
     }
 
     private function join()
     {
         $this->db->join(db_prefix() . 'currencies', db_prefix() . 'currencies.id=' . db_prefix() . 'subscriptions.currency');
-        $this->db->join(db_prefix() . 'taxes', db_prefix() . 'taxes.id=' . db_prefix() . 'subscriptions.tax_id', 'left');
+        $this->db->join(db_prefix() . 'taxes', '' . db_prefix() . 'taxes.id = ' . db_prefix() . 'subscriptions.tax_id', 'left');
+        $this->db->join('' . db_prefix() . 'taxes as ' . db_prefix() . 'taxes_2', '' . db_prefix() . 'taxes_2.id = ' . db_prefix() . 'subscriptions.tax_id_2', 'left');
         $this->db->join(db_prefix() . 'clients', db_prefix() . 'clients.userid=' . db_prefix() . 'subscriptions.clientid');
     }
 
@@ -167,5 +130,35 @@ class Subscriptions_model extends App_Model
         }
 
         return false;
+    }
+
+    protected function handleSelectedTax($data)
+    {
+        $this->load->library('stripe_core');
+        foreach (['stripe_tax_id', 'stripe_tax_id_2'] as $key) {
+            $localKey = $key === 'stripe_tax_id' ? 'tax_id' : 'tax_id_2';
+
+            if (isset($data[$key]) && !empty($data[$key])) {
+                $stripe_tax = $this->stripe_core->retrieve_tax_rate($data[$key]);
+
+                $this->db->where('name', $stripe_tax->display_name);
+                $this->db->where('taxrate', $percentage = number_format($stripe_tax->percentage, get_decimal_places()));
+                $dbTax = $this->db->get('taxes')->row();
+                if (!$dbTax) {
+                    $insert_id = $this->db->insert('taxes', [
+                    'name'    => $stripe_tax->display_name,
+                    'taxrate' => $percentage,
+                ]);
+                    $data[$localKey] = $insert_id;
+                } else {
+                    $data[$localKey] = $dbTax->id;
+                }
+            } elseif (isset($data[$key]) && !$data[$key]) {
+                $data[$localKey] = 0;
+                $data[$key]      = null;
+            }
+        }
+
+        return $data;
     }
 }

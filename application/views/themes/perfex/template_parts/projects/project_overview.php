@@ -9,22 +9,24 @@
         <td class="bold"><?php echo _l('project'); ?> <?php echo _l('the_number_sign'); ?></td>
         <td><?php echo $project->id; ?></td>
       </tr>
-      <tr class="project-billing-type">
-        <td class="bold"><?php echo _l('project_billing_type'); ?></td>
-        <td>
-         <?php
-         if($project->billing_type == 1){
-          $type_name = 'project_billing_type_fixed_cost';
-        } else if($project->billing_type == 2){
-          $type_name = 'project_billing_type_project_hours';
-        } else {
-          $type_name = 'project_billing_type_project_task_hours';
-        }
-        echo _l($type_name);
-        ?>
-      </td>
-    </tr>
-    <?php if($project->billing_type == 1 || $project->billing_type == 2){
+      <?php if($project->settings->view_finance_overview == 1){ ?>
+        <tr class="project-billing-type">
+          <td class="bold"><?php echo _l('project_billing_type'); ?></td>
+          <td>
+           <?php
+              if($project->billing_type == 1){
+                $type_name = 'project_billing_type_fixed_cost';
+              } else if($project->billing_type == 2){
+                $type_name = 'project_billing_type_project_hours';
+              } else {
+                $type_name = 'project_billing_type_project_task_hours';
+              }
+              echo _l($type_name);
+          ?>
+        </td>
+      </tr>
+    <?php } ?>
+    <?php if(($project->billing_type == 1 || $project->billing_type == 2) && $project->settings->view_finance_overview == 1){
      echo '<tr class="project-cost">';
      if($project->billing_type == 1){
        echo '<td class="bold">'._l('project_total_cost').'</td>';
@@ -92,7 +94,8 @@
     <div class="row">
      <div class="col-md-9">
       <p class="text-uppercase bold text-dark font-medium">
-       <?php echo $tasks_not_completed; ?> / <?php echo $total_tasks; ?> <?php echo _l('project_open_tasks'); ?>
+        <span dir="ltr"><?php echo $tasks_not_completed; ?> / <?php echo $total_tasks; ?></span>
+        <?php echo _l('project_open_tasks'); ?>
      </p>
      <p class="text-muted bold"><?php echo $tasks_not_completed_progress; ?>%</p>
    </div>
@@ -113,7 +116,8 @@
     <div class="row">
      <div class="col-md-9">
       <p class="text-uppercase bold text-dark font-medium">
-       <?php echo $project_days_left; ?> / <?php echo $project_total_days; ?> <?php echo _l('project_days_left'); ?>
+       <span dir="ltr"><?php echo $project_days_left; ?> / <?php echo $project_total_days; ?></span>
+       <?php echo _l('project_days_left'); ?>
      </p>
      <p class="text-muted bold"><?php echo $project_time_left_percent; ?>%</p>
    </div>

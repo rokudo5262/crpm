@@ -77,13 +77,6 @@ class Settings_model extends App_Model
             $name               = $hook_data['name'];
             $val                = $hook_data['value'];
 
-            // Check if the option exists
-            $this->db->where('name', $name);
-            $exists = $this->db->count_all_results(db_prefix() . 'options');
-            if ($exists == 0) {
-                continue;
-            }
-
             if ($name == 'default_contact_permissions') {
                 $val = serialize($val);
             } elseif ($name == 'lead_unique_validation') {

@@ -181,6 +181,9 @@ $route['forms/tickets/(:any)'] = 'forms/public_ticket/$1';
  */
 $route['authentication/set_password/(:num)/(:num)/(:any)'] = 'admin/authentication/set_password/$1/$2/$3';
 
+// For backward compatilibilty
+$route['survey/(:num)/(:any)'] = 'surveys/participate/index/$1/$2';
+
 if (file_exists(APPPATH . 'config/my_routes.php')) {
     include_once(APPPATH . 'config/my_routes.php');
 }

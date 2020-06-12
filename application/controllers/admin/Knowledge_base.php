@@ -64,6 +64,7 @@ class Knowledge_base extends AdminController
         }
 
         $this->app_scripts->add('tinymce-stickytoolbar',site_url('assets/plugins/tinymce-stickytoolbar/stickytoolbar.js'));
+
         $data['bodyclass'] = 'kb-article';
         $data['title']     = $title;
         $this->load->view('admin/knowledge_base/article', $data);

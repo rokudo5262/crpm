@@ -40,7 +40,7 @@ class Participate extends ClientsController
                 // Message is by default in English because there is no easy way to know the customer language
                 set_alert('success', hooks()->apply_filters('survey_success_message', 'Thank you for participating in this survey. Your answers are very important to us.'));
 
-                redirect(hooks()->apply_filters('survey_default_redirect', site_url('survey/' . $id . '/' . $hash . '?participated=yes')));
+                redirect(hooks()->apply_filters('survey_default_redirect', site_url('surveys/survey/' . $id . '/' . $hash . '?participated=yes')));
             }
         }
 

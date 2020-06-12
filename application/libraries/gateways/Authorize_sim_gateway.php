@@ -125,6 +125,7 @@ class Authorize_sim_gateway extends App_gateway
 function authorize_sim_notice($gateway)
 {
     if ($gateway['id'] == 'authorize_sim') {
+        echo '<div class="alert alert-info">Authorize SIM Gateway is <b>deprecated</b> by Authorize.net, use the Authorize.net Accept.js Gateway instead.</div>';
         echo '<p class="text-dark"><b>' . _l('currently_supported_currencies') . '</b>: USD, AUD, GBP, CAD, EUR, NZD</p>';
     }
 }

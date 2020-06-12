@@ -2,21 +2,12 @@
 <div id="proposal-wrapper">
    <?php
       ob_start();
-
-      $qty_heading = _l('estimate_table_quantity_heading', '', false);
-
-      if ($proposal->show_quantity_as == 2) {
-          $qty_heading = _l($this->type . '_table_hours_heading', '', false);
-      } elseif ($proposal->show_quantity_as == 3) {
-          $qty_heading = _l('estimate_table_quantity_heading', '', false) . '/' . _l('estimate_table_hours_heading', '', false);
-      }
-
       $items = get_items_table_data($proposal, 'proposal')
-              ->add_table_class('no-margin')
-              ->set_headings('estimate');
+      ->add_table_class('no-margin')
+      ->set_headings('estimate');
 
-              echo $items->table();
-              ?>
+      echo $items->table();
+      ?>
    <div class="row mtop15">
       <div class="col-md-6 col-md-offset-6">
          <table class="table text-right">
@@ -263,6 +254,7 @@
                </div>
                <?php } ?>
             </div>
+            <div style="margin-top:80px;"></div>
          </div>
       </div>
    </div>

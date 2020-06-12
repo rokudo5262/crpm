@@ -242,7 +242,10 @@
                                'name'=>_l('leads_dt_phonenumber'),
                                'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-phone')
                               );
-
+                              $_table_data[] =  array(
+                                 'name'=>_l('leads_dt_lead_value'),
+                                 'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-lead-value')
+                                );
                               $_table_data[] =  array(
                                'name'=>_l('tags'),
                                'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-tags')

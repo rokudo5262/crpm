@@ -25,6 +25,10 @@ class Dashboard extends AdminController
         $data['upcoming_events_next_week'] = $this->dashboard_model->get_upcoming_events_next_week();
         $data['upcoming_events']           = $this->dashboard_model->get_upcoming_events();
         $data['title']                     = _l('dashboard_string');
+
+        $this->load->model('contracts_model');
+        $data['expiringContracts'] = $this->contracts_model->get_contracts_about_to_expire();
+
         $this->load->model('currencies_model');
         $data['currencies']    = $this->currencies_model->get();
         $data['base_currency'] = $this->currencies_model->get_base_currency();

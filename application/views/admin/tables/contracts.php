@@ -12,6 +12,7 @@ $aColumns = [
     'contract_value',
     'datestart',
     'dateend',
+    db_prefix() . 'projects.name as project_name',
     'signature',
     ];
 
@@ -20,6 +21,7 @@ $sTable       = db_prefix() . 'contracts';
 
 $join = [
     'LEFT JOIN ' . db_prefix() . 'clients ON ' . db_prefix() . 'clients.userid = ' . db_prefix() . 'contracts.client',
+    'LEFT JOIN ' . db_prefix() . 'projects ON ' . db_prefix() . 'projects.id = ' . db_prefix() . 'contracts.project_id',
     'LEFT JOIN ' . db_prefix() . 'contracts_types ON ' . db_prefix() . 'contracts_types.id = ' . db_prefix() . 'contracts.contract_type',
 ];
 
@@ -35,6 +37,11 @@ foreach ($custom_fields as $key => $field) {
 
 $where  = [];
 $filter = [];
+
+$projectId = $this->ci->input->get('project_id');
+if ($projectId) {
+    array_push($where, 'AND project_id=' . $this->ci->db->escape_str($projectId));
+}
 
 if ($this->ci->input->post('exclude_trashed_contracts')) {
     array_push($filter, 'AND trash = 0');
@@ -105,7 +112,7 @@ if (count($custom_fields) > 4) {
     @$this->ci->db->query('SET SQL_BIG_SELECTS=1');
 }
 
-$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix() . 'contracts.id', 'trash', 'client', 'hash', 'marked_as_signed']);
+$result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [db_prefix() . 'contracts.id', 'trash', 'client', 'hash', 'marked_as_signed', 'project_id']);
 
 $output  = $result['output'];
 $rResult = $result['rResult'];
@@ -115,7 +122,7 @@ foreach ($rResult as $aRow) {
 
     $row[] = $aRow['id'];
 
-    $subjectOutput = '<a href="' . admin_url('contracts/contract/' . $aRow['id']) . '">' . $aRow['subject'] . '</a>';
+    $subjectOutput = '<a href="' . admin_url('contracts/contract/' . $aRow['id']) . '"' . ($projectId ? ' target="_blank"' : '') . '>' . $aRow['subject'] . '</a>';
     if ($aRow['trash'] == 1) {
         $subjectOutput .= '<span class="label label-danger pull-right">' . _l('contract_trash') . '</span>';
     }
@@ -144,6 +151,8 @@ foreach ($rResult as $aRow) {
     $row[] = _d($aRow['datestart']);
 
     $row[] = _d($aRow['dateend']);
+
+    $row[] = '<a href="' . admin_url('projects/view/' . $aRow['project_id']) . '">' . $aRow['project_name'] . '</a>';
 
     if ($aRow['marked_as_signed'] == 1) {
         $row[] = '<span class="text-success">' . _l('marked_as_signed') . '</span>';

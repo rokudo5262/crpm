@@ -24,9 +24,9 @@ hooks()->add_filter('get_dashboard_widgets', 'goals_add_dashboard_widget');
 function goals_add_dashboard_widget($widgets)
 {
     $widgets[] = [
-            'path'      => 'goals/widget',
-            'container' => 'right-4',
-        ];
+        'path'      => 'goals/widget',
+        'container' => 'right-4',
+    ];
 
     return $widgets;
 }
@@ -99,17 +99,22 @@ function goals_notification()
     $goals = $CI->goals_model->get('', true);
     foreach ($goals as $goal) {
         $achievement = $CI->goals_model->calculate_goal_achievement($goal['id']);
+
         if ($achievement['percent'] >= 100) {
-            if ($goal['notify_when_achieve'] == 1) {
-                if (date('Y-m-d') >= $goal['end_date']) {
+            if (date('Y-m-d') >= $goal['end_date']) {
+                if ($goal['notify_when_achieve'] == 1) {
                     $CI->goals_model->notify_staff_members($goal['id'], 'success', $achievement);
+                } else {
+                    $CI->goals_model->mark_as_notified($goal['id']);
                 }
             }
         } else {
             // not yet achieved, check for end date
-            if ($goal['notify_when_fail'] == 1) {
-                if (date('Y-m-d') > $goal['end_date']) {
+            if (date('Y-m-d') > $goal['end_date']) {
+                if ($goal['notify_when_fail'] == 1) {
                     $CI->goals_model->notify_staff_members($goal['id'], 'failed', $achievement);
+                } else {
+                    $CI->goals_model->mark_as_notified($goal['id']);
                 }
             }
         }
@@ -160,52 +165,86 @@ function goals_module_init_menu_items()
 
 /**
  * Get goal types for the goals feature
+ *
  * @return array
  */
 function get_goal_types()
 {
     $types = [
         [
-            'key'      => 1,
-            'lang_key' => 'goal_type_total_income',
-            'subtext'  => 'goal_type_income_subtext',
+            'key'       => 1,
+            'lang_key'  => 'goal_type_total_income',
+            'subtext'   => 'goal_type_income_subtext',
+            'dashboard' => has_permission('invoices', 'view'),
         ],
         [
-            'key'      => 2,
-            'lang_key' => 'goal_type_convert_leads',
+            'key'       => 8,
+            'lang_key'  => 'goal_type_invoiced_amount',
+            'subtext'   => '',
+            'dashboard' => has_permission('invoices', 'view'),
         ],
         [
-            'key'      => 3,
-            'lang_key' => 'goal_type_increase_customers_without_leads_conversions',
-            'subtext'  => 'goal_type_increase_customers_without_leads_conversions_subtext',
+            'key'       => 2,
+            'lang_key'  => 'goal_type_convert_leads',
+            'dashboard' => is_staff_member(),
         ],
         [
-            'key'      => 4,
-            'lang_key' => 'goal_type_increase_customers_with_leads_conversions',
-            'subtext'  => 'goal_type_increase_customers_with_leads_conversions_subtext',
+            'key'       => 3,
+            'lang_key'  => 'goal_type_increase_customers_without_leads_conversions',
+            'subtext'   => 'goal_type_increase_customers_without_leads_conversions_subtext',
+            'dashboard' => has_permission('customers', 'view'),
         ],
         [
-            'key'      => 5,
-            'lang_key' => 'goal_type_make_contracts_by_type_calc_database',
-            'subtext'  => 'goal_type_make_contracts_by_type_calc_database_subtext',
+            'key'        => 4,
+            'lang_key'   => 'goal_type_increase_customers_with_leads_conversions',
+            'subtext'    => 'goal_type_increase_customers_with_leads_conversions_subtext',
+             'dashboard' => has_permission('customers', 'view'),
+
         ],
         [
-            'key'      => 7,
-            'lang_key' => 'goal_type_make_contracts_by_type_calc_date',
-            'subtext'  => 'goal_type_make_contracts_by_type_calc_date_subtext',
+            'key'       => 5,
+            'lang_key'  => 'goal_type_make_contracts_by_type_calc_database',
+            'subtext'   => 'goal_type_make_contracts_by_type_calc_database_subtext',
+            'dashboard' => has_permission('contracts', 'view'),
         ],
         [
-            'key'      => 6,
-            'lang_key' => 'goal_type_total_estimates_converted',
-            'subtext'  => 'goal_type_total_estimates_converted_subtext',
+            'key'       => 7,
+            'lang_key'  => 'goal_type_make_contracts_by_type_calc_date',
+            'subtext'   => 'goal_type_make_contracts_by_type_calc_date_subtext',
+            'dashboard' => has_permission('contracts', 'view'),
+        ],
+        [
+            'key'       => 6,
+            'lang_key'  => 'goal_type_total_estimates_converted',
+            'subtext'   => 'goal_type_total_estimates_converted_subtext',
+            'dashboard' => has_permission('estimates', 'view'),
         ],
     ];
 
     return hooks()->apply_filters('get_goal_types', $types);
 }
+
+/**
+ * Get goal type by given key
+ *
+ * @param  int $key
+ *
+ * @return array
+ */
+function get_goal_type($key)
+{
+    foreach (get_goal_types() as $type) {
+        if ($type['key'] == $key) {
+            return $type;
+        }
+    }
+}
+
 /**
  * Translate goal type based on passed key
+ *
  * @param  mixed $key
+ *
  * @return string
  */
 function format_goal_type($key)

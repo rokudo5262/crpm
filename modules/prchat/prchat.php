@@ -1,15 +1,17 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 /*
-Module Name: CRPM Powerful Chat
-Description: Chat Module for CRPM
-Version: 1.4.0
-
+Module Name: Perfex CRM Powerful Chat
+Description: Chat Module for Perfex CRM
+Version: 1.4.3
+Author: Aleksandar Stojanov
+Author URI: https://idevalex.com
 Requires at least: 2.3.2
 */
 
 define('PR_CHAT_MODULE_NAME', 'prchat');
 define('PR_CHAT_MODULE_UPLOAD_FOLDER', module_dir_path(PR_CHAT_MODULE_NAME, 'uploads'));
 define('PR_CHAT_MODULE_GROUPS_UPLOAD_FOLDER', module_dir_path(PR_CHAT_MODULE_NAME, 'uploads/groups'));
+define('PR_CHAT_MODULE_AUDIO_UPLOAD_FOLDER', module_dir_path(PR_CHAT_MODULE_NAME, 'uploads/audio'));
 
 /*
  Defined group chat table names
@@ -50,7 +52,7 @@ register_language_files(PR_CHAT_MODULE_NAME, ['chat']);
 if (staff_can('view', PR_CHAT_MODULE_NAME)) {
 	if (get_option('pusher_chat_enabled') == '1') {
 		$CI->app_menu->add_sidebar_menu_item('prchat', [
-			'name'     => 'chat',
+			'name'     => 'Chat',
 			'href'     => admin_url('prchat/Prchat_Controller/chat_full_view'),
 			'icon'     => 'fa fa-comments-o',
 			'position' => 6,

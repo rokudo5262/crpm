@@ -223,13 +223,18 @@
                         if (content) ed.setContent(content);
                       })
                   }
+                var containerId = this.get_container_id(comment_index);
+                tinyMCE.remove('#'+containerId);
 
-                var editor = init_editor('#'+ this.get_container_id(comment_index), editorConfig)
+                setTimeout(function(){
+                  init_editor('#'+ containerId, editorConfig)
+                },100)
             },
             get_container: function (textarea) {
                 if (!textarea.data('comment_index')) {
                     textarea.data('comment_index', ++this.opts.comment_index);
                 }
+
                 return $('<div/>', {
                     'id': this.get_container_id(this.opts.comment_index)
                 });

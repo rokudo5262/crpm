@@ -3,10 +3,10 @@
 $goals = [];
 if (is_staff_member()) {
    $this->load->model('goals/goals_model');
-   $goals = $this->goals_model->get_staff_goals(get_staff_user_id());
+   $goals = $this->goals_model->get_all_goals();
 }
 ?>
-<div class="widget<?php if(count($goals) == 0 || !is_staff_member()){echo ' hide';} ?>" id="widget-<?php echo basename(__FILE__,".php"); ?>">
+<div class="widget<?php if(count($goals) == 0 || !is_staff_member()){echo ' hide';} ?>" id="widget-<?php echo create_widget_id('goals'); ?>">
    <?php if(is_staff_member()){ ?>
       <div class="row">
          <div class="col-md-12">

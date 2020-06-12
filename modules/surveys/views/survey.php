@@ -96,7 +96,7 @@
                         <a href="<?php echo admin_url('surveys/results/' . $survey->surveyid); ?>" target="_blank" class="btn btn-success pull-right mleft10 btn-with-tooltip" data-toggle="tooltip" data-placement="bottom" data-title="<?php echo _l('survey_list_view_results_tooltip'); ?>"><i class="fa fa-area-chart"></i></a>
                         <?php } ?>
                         <!-- Single button -->
-                        <a href="<?php echo site_url('survey/'.$survey->surveyid . '/' . $survey->hash); ?>" target="_blank" class="btn btn-success pull-right mleft10 btn-with-tooltip" data-toggle="tooltip" data-placement="bottom" data-title="<?php echo _l('survey_list_view_tooltip'); ?>"><i class="fa fa-eye"></i></a>
+                        <a href="<?php echo site_url('surveys/survey/'.$survey->surveyid . '/' . $survey->hash); ?>" target="_blank" class="btn btn-success pull-right mleft10 btn-with-tooltip" data-toggle="tooltip" data-placement="bottom" data-title="<?php echo _l('survey_list_view_tooltip'); ?>"><i class="fa fa-eye"></i></a>
                         <?php if(has_permission('surveys','','edit')){ ?>
                         <div class="btn-group pull-right">
                            <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

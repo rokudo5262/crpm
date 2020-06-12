@@ -11,15 +11,14 @@
    <?php  echo '<p class="no-margin">'._l('task_is_billed','<a href="'.admin_url('invoices/list_invoices/'.$task->invoice_id).'" target="_blank" class="color-white">'.format_invoice_number($task->invoice_id)). '</a></p>'; ?>
    <?php } ?>
    <?php if($task->is_public == 0){ ?>
-   <small class="no-margin color-white">
+   <p class="no-margin color-white">
    <?php echo _l('task_is_private'); ?>
-   <?php if(has_permission('tasks','','edit')) { ?> -
-   <a href="#" class="color-white text-has-action"onclick="make_task_public(<?php echo $task->id; ?>); return false;">
-   <?php echo _l('task_view_make_public'); ?>
-   </a>
-   <?php } ?>
-   </small>
-   <br />
+      <?php if(has_permission('tasks','','edit')) { ?> -
+         <a href="#" class="color-white text-has-action" onclick="make_task_public(<?php echo $task->id; ?>); return false;">
+            <?php echo _l('task_view_make_public'); ?>
+         </a>
+      <?php } ?>
+   </p>
    <?php } ?>
 </div>
 <div class="modal-body">
