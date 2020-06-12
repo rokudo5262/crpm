@@ -37,21 +37,21 @@
       </ul>
       <div class="panel_s">
        <div class="panel-body">
-        <a href="<?php echo admin_url('settings?group=update'); ?>" class="<?php if ($this->input->get('group') == 'update') {
-          echo 'bold';
-      } ?>">
-          <?php echo _l('settings_update'); ?>
-        </a>
-<!--        --><?php //if (is_admin()) {
-//          ?>
-<!--          <hr class="hr-10" />-->
-<!--          <a href="--><?php //echo admin_url('settings?group=info'); ?><!--" class="--><?php //if ($this->input->get('group') == 'info') {
-//              echo 'bold';
-//          } ?><!--">-->
-<!--            System/Server Info-->
-<!--          </a>-->
-<!--        --><?php
-//      } ?>
+<!--        <a href="--><?php //echo admin_url('settings?group=update'); ?><!--" class="--><?php //if ($this->input->get('group') == 'update') {
+//          echo 'bold';
+//      } ?><!--">-->
+<!--          --><?php //echo _l('settings_update'); ?>
+<!--        </a>-->
+        <?php if (is_admin()) {
+          ?>
+          <hr class="hr-10" />
+          <a href="<?php echo admin_url('settings?group=info'); ?>" class="<?php if ($this->input->get('group') == 'info') {
+              echo 'bold';
+          } ?>">
+            System/Server Info
+          </a>
+        <?php
+      } ?>
         <div class="btn-bottom-toolbar text-right">
           <button type="submit" class="btn btn-info">
             <?php echo _l('settings_save'); ?>
