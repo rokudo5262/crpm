@@ -1,5 +1,7 @@
 <?php
 
+use app\services\utilities\Date;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class Tasks extends AdminController
@@ -474,10 +476,10 @@ class Tasks extends AdminController
         if ($reminder && ($reminder->creator == get_staff_user_id() || is_admin()) && $reminder->isnotified == 0) {
             $success = $this->misc_model->edit_reminder($this->input->post(), $id);
             echo json_encode([
-                    'taskHtml'   => $this->get_task_data($reminder->rel_id, true),
-                    'alert_type' => 'success',
-                    'message'    => ($success ? _l('updated_successfully', _l('reminder')) : ''),
-                ]);
+                'taskHtml'   => $this->get_task_data($reminder->rel_id, true),
+                'alert_type' => 'success',
+                'message'    => ($success ? _l('updated_successfully', _l('reminder')) : ''),
+            ]);
         }
     }
 
@@ -637,8 +639,10 @@ class Tasks extends AdminController
             $data['content'] = nl2br($this->input->post('content'));
         }
         $comment_id = false;
-        if ($data['content'] != ''
-            || (isset($_FILES['file']['name']) && is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
+        if (
+            $data['content'] != ''
+            || (isset($_FILES['file']['name']) && is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
+        ) {
             $comment_id = $this->tasks_model->add_task_comment($data);
             if ($comment_id) {
                 $commentAttachments = handle_task_attachments_array($data['taskid'], 'file');
@@ -779,9 +783,11 @@ class Tasks extends AdminController
     /* Unmark task as complete / ajax*/
     public function unmark_complete($id)
     {
-        if ($this->tasks_model->is_task_assignee(get_staff_user_id(), $id)
+        if (
+            $this->tasks_model->is_task_assignee(get_staff_user_id(), $id)
             || $this->tasks_model->is_task_creator(get_staff_user_id(), $id)
-            || has_permission('tasks', '', 'edit')) {
+            || has_permission('tasks', '', 'edit')
+        ) {
             $success = $this->tasks_model->unmark_complete($id);
 
             // Don't do this query if the action is not performed via task single
@@ -807,9 +813,11 @@ class Tasks extends AdminController
 
     public function mark_as($status, $id)
     {
-        if ($this->tasks_model->is_task_assignee(get_staff_user_id(), $id)
+        if (
+            $this->tasks_model->is_task_assignee(get_staff_user_id(), $id)
             || $this->tasks_model->is_task_creator(get_staff_user_id(), $id)
-            || has_permission('tasks', '', 'edit')) {
+            || has_permission('tasks', '', 'edit')
+        ) {
             $success = $this->tasks_model->mark_as($status, $id);
 
             // Don't do this query if the action is not performed via task single
@@ -1050,9 +1058,11 @@ class Tasks extends AdminController
                         }
                     } else {
                         if ($status) {
-                            if ($this->tasks_model->is_task_creator(get_staff_user_id(), $id)
+                            if (
+                                $this->tasks_model->is_task_creator(get_staff_user_id(), $id)
                                 || $is_admin
-                                || $this->tasks_model->is_task_assignee(get_staff_user_id(), $id)) {
+                                || $this->tasks_model->is_task_assignee(get_staff_user_id(), $id)
+                            ) {
                                 $this->tasks_model->mark_as($status, $id);
                             }
                         }
@@ -1087,12 +1097,12 @@ class Tasks extends AdminController
                                         'staffid'       => $user_id,
                                         'taskid'        => $id,
                                         'assigned_from' => get_staff_user_id(),
-                                        ]);
+                                    ]);
                                     if ($user_id != get_staff_user_id()) {
                                         $notification_data = [
-                                        'description' => 'not_task_assigned_to_you',
-                                        'touserid'    => $user_id,
-                                        'link'        => '#taskid=' . $id,
+                                            'description' => 'not_task_assigned_to_you',
+                                            'touserid'    => $user_id,
+                                            'link'        => '#taskid=' . $id,
                                         ];
 
                                         $notification_data['additional_data'] = serialize([
@@ -1112,6 +1122,34 @@ class Tasks extends AdminController
             if ($this->input->post('mass_delete')) {
                 set_alert('success', _l('total_tasks_deleted', $total_deleted));
             }
+        }
+    }
+
+    public function gantt_date_update($task_id)
+    {
+        if (staff_can('edit', 'tasks')) {
+            $post_data = $this->input->post();
+            foreach ($post_data as $key => $val) {
+                $this->db->where('id', $task_id);
+                $this->db->update(db_prefix() . 'tasks', [$key => $val]);
+            }
+        }
+    }
+
+    public function get_task_by_id($id)
+    {
+        if ($this->input->is_ajax_request()) {
+            $tasks_where = [];
+            if (!staff_can('view', 'tasks')) {
+                $tasks_where = get_tasks_where_string(false);
+            }
+            $task = $this->tasks_model->get($id, $tasks_where);
+            if (!$task) {
+                header('HTTP/1.0 404 Not Found');
+                echo 'Task not found';
+                die();
+            }
+            echo json_encode($task);
         }
     }
 }

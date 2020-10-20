@@ -1107,7 +1107,7 @@ class Reports extends AdminController
 
             if ($this->input->is_ajax_request()) {
                 $aColumns = [
-                    'category',
+                    db_prefix().'expenses.category',
                     'amount',
                     'expense_name',
                     'tax',

@@ -27,7 +27,7 @@ class Dashboard extends AdminController
         $data['title']                     = _l('dashboard_string');
 
         $this->load->model('contracts_model');
-        $data['expiringContracts'] = $this->contracts_model->get_contracts_about_to_expire();
+        $data['expiringContracts'] = $this->contracts_model->get_contracts_about_to_expire(get_staff_user_id());
 
         $this->load->model('currencies_model');
         $data['currencies']    = $this->currencies_model->get();

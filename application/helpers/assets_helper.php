@@ -71,8 +71,8 @@ function _init_admin_assets()
     add_favicon_link_asset();
 
     $CI->app_css->add('reset-css', 'assets/css/reset.min.css');
-    $CI->app_css->add('roboto-css', 'assets/plugins/roboto/roboto.css');
-    $CI->app_css->add('vendor-css', 'assets/builds/vendor-admin.css');
+    $CI->app_css->add('roboto-css', 'assets/plugins/roboto/roboto.css', 'admin', ['reset-css']);
+    $CI->app_css->add('vendor-css', 'assets/builds/vendor-admin.css', 'admin', ['reset-css']);
 
     if (is_rtl()) {
         $CI->app_css->add('bootstrap-rtl-css', 'assets/plugins/bootstrap-arabic/css/bootstrap-arabic.min.css');
@@ -90,7 +90,6 @@ function _init_admin_assets()
 
 function add_calendar_assets($group = 'admin', $tryGcal = true)
 {
-
     $locale = $GLOBALS['locale'];
     $CI     = &get_instance();
 
@@ -124,7 +123,7 @@ function add_favicon_link_asset($group = 'admin')
             'type' => false,
         ],
         ], $group);
-     get_instance()->app_css->add('favicon-apple-touch-icon', [
+        get_instance()->app_css->add('favicon-apple-touch-icon', [
         'path'       => 'uploads/company/' . $favIcon,
         'version'    => false,
         'attributes' => [

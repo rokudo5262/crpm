@@ -154,7 +154,7 @@
             <p class="bold font-medium-xs mbot15"><?php echo (isset($lead) && $lead->status_name != '' ? $lead->status_name : '-') ?></p>
             <p class="text-muted lead-field-heading"><?php echo _l('lead_add_edit_source'); ?></p>
             <p class="bold font-medium-xs mbot15"><?php echo (isset($lead) && $lead->source_name != '' ? $lead->source_name : '-') ?></p>
-            <?php if(get_option('disable_language') == 0){ ?>
+            <?php if(!is_language_disabled()){ ?>
             <p class="text-muted lead-field-heading"><?php echo _l('localization_default_language'); ?></p>
             <p class="bold font-medium-xs mbot15"><?php echo (isset($lead) && $lead->default_language != '' ? ucfirst($lead->default_language) : _l('system_default_string')) ?></p>
             <?php } ?>
@@ -317,7 +317,7 @@
                ?>
             <?php $value = (isset($lead) ? $lead->zip : ''); ?>
             <?php echo render_input('zip','lead_zip',$value); ?>
-            <?php if(get_option('disable_language') == 0){ ?>
+            <?php if(!is_language_disabled()){ ?>
             <div class="form-group">
                <label for="default_language" class="control-label"><?php echo _l('localization_default_language'); ?></label>
                <select name="default_language" data-live-search="true" id="default_language" class="form-control selectpicker" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">

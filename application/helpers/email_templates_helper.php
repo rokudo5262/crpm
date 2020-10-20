@@ -199,3 +199,17 @@ function create_email_template($subject, $message, $type, $name, $slug, $active 
 
     return $CI->emails_model->add_template($data);
 }
+
+/**
+ * Check whether an email template is active based on given slug
+ *
+ * @since 2.7.0
+ *
+ * @param  string  $slug
+ *
+ * @return boolean
+ */
+function is_email_template_active($slug)
+{
+    return total_rows(db_prefix() . 'emailtemplates', ['slug' => $slug, 'active' => 1]) > 0;
+}

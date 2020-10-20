@@ -43,6 +43,11 @@
                         </a>
                        </p>
                         <textarea class="form-control" rows="2"><iframe width="600" height="850" src="<?php echo site_url('forms/wtl/'.$form->form_key); ?>" frameborder="0" allowfullscreen></iframe></textarea>
+                          <hr />
+                          <p class="bold mtop15">When placing the iframe snippet code consider the following:</p>
+                          <p class="<?php if(strpos(site_url(),'http://') !== false){echo 'bold text-success';} ?>">1. If the protocol of your installation is http use a http page inside the iframe.</p>
+                          <p class="<?php if(strpos(site_url(),'https://') !== false){echo 'bold text-success';} ?>">2. If the protocol of your installation is https use a https page inside the iframe.</p>
+                          <p>None SSL installation will need to place the link in non ssl eq. landing page and backwards.</p>
                      </div>
                      <?php } ?>
                      <div role="tabpanel" class="tab-pane<?php if (!isset($form)) { echo ' active'; } ?>" id="tab_form_information">

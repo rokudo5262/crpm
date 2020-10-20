@@ -13,13 +13,15 @@ class App_tags
 
     public function get($name_or_id)
     {
-        if (is_numeric($name_or_id)) {
+        $this->ci->db->where('name', $name_or_id);
+        $tag = $this->ci->db->get('tags')->row();
+
+        if (!$tag && is_numeric($name_or_id)) {
             $this->ci->db->where('id', $name_or_id);
-        } else {
-            $this->ci->db->where('name', $name_or_id);
+            $tag = $this->ci->db->get('tags')->row();
         }
 
-        return $this->ci->db->get(db_prefix() . 'tags')->row();
+        return $tag;
     }
 
     public function create($data)

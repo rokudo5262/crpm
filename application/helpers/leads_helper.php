@@ -99,7 +99,7 @@ function get_leads_summary()
     $statuses[] = [
         'lost'  => true,
         'name'  => _l('lost_leads'),
-        'color' => '#f0f0f0',
+        'color' => '#fc2d42',
     ];
 
 /*    $statuses[] = [

@@ -42,6 +42,13 @@ class Subscriptions_merge_fields extends App_merge_fields
                     ],
                     'templates' => ['subscription-payment-requires-action'],
                 ],
+                [
+                    'name'      => 'Estimate Subtotal',
+                    'key'       => '{estimate_subtotal}',
+                    'available' => [
+                        'subscriptions',
+                    ],
+                ],
             ];
     }
 
@@ -72,6 +79,7 @@ class Subscriptions_merge_fields extends App_merge_fields
         $fields['{subscription_id}']          = $subscription->id;
         $fields['{subscription_name}']        = $subscription->name;
         $fields['{subscription_description}'] = $subscription->description;
+        $fields['{project_name}']    = get_project_name_by_id($subscription->project_id);
 
         return hooks()->apply_filters('subscription_merge_fields', $fields, [
         'id'           => $id,

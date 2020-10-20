@@ -27,6 +27,11 @@
 				<label for="codeigniter">CodeIgniter</label>
 			</div>
 			<hr />
+			<?php if(get_option('email_protocol') == 'mail'){ ?>
+				<div class="alert alert-warning">
+					The "mail" protocol is not the recommended protocol to send emails, you should strongly consider configuring the "SMTP" protocol to avoid any distruptions and delivery issues.
+				</div>
+			<?php } ?>
 			<label for="email_protocol"><?php echo _l('email_protocol'); ?></label><br />
 			<div class="radio radio-inline radio-primary">
 				<input type="radio" name="settings[email_protocol]" id="smtp" value="smtp" <?php if(get_option('email_protocol') == 'smtp'){echo 'checked';} ?>>

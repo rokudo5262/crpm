@@ -5,7 +5,12 @@
          <div class="row">
             <div class="col-md-9">
                <h3 class="no-mbot bold pull-left">
-                  <?php if($project->settings->edit_tasks == 1 && $view_task->is_added_from_contact == 1 && $view_task->addedfrom == get_contact_user_id()){ ?>
+                  <?php if(
+                     $project->settings->edit_tasks == 1 && 
+                     $view_task->is_added_from_contact == 1 && 
+                     $view_task->addedfrom == get_contact_user_id() &&
+                     $view_task->billed == 0
+                     ){ ?>
                   <a href="<?php echo site_url('clients/project/'.$project->id.'?group=edit_task&taskid='.$view_task->id); ?>">
                   <i class="fa fa-pencil-square-o"></i>
                   </a>

@@ -70,6 +70,13 @@ class Estimate_merge_fields extends App_merge_fields
                         'estimate',
                     ],
                 ],
+                [
+                    'name'      => 'Project name',
+                    'key'       => '{project_name}',
+                    'available' => [
+                        'estimate',
+                    ],
+                ],
             ];
     }
 
@@ -99,6 +106,7 @@ class Estimate_merge_fields extends App_merge_fields
         $fields['{estimate_expirydate}']   = _d($estimate->expirydate);
         $fields['{estimate_date}']         = _d($estimate->date);
         $fields['{estimate_status}']       = format_estimate_status($estimate->status, '', false);
+        $fields['{project_name}']    = get_project_name_by_id($estimate->project_id);
 
         $custom_fields = get_custom_fields('estimate');
         foreach ($custom_fields as $field) {

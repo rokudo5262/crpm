@@ -56,7 +56,7 @@ if(isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
          <?php } else if($show_recurring_invoice_info){ ?>
             <span class="label label-default padding-5">
                <?php
-               if($invoice->status == Invoices_model::STATUS_DRAFT){
+               if($recurring_invoice->status == Invoices_model::STATUS_DRAFT){
                   echo '<i class="fa fa-exclamation-circle fa-fw text-warning" data-toggle="tooltip" title="'._l('recurring_invoice_draft_notice').'"></i>';
                }
                echo _l('cycles_remaining'); ?>:

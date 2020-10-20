@@ -40,6 +40,8 @@
 <hr />
 <?php render_yes_no_option('customers_register_require_confirmation','customers_register_require_confirmation'); ?>
 <hr />
+<?php render_yes_no_option('allow_primary_contact_to_manage_other_contacts','allow_primary_contact_to_manage_other_contacts'); ?>
+<hr />
 <?php render_yes_no_option('allow_primary_contact_to_view_edit_billing_and_shipping','allow_primary_contact_to_view_edit_billing_and_shipping'); ?>
 <hr />
 <?php render_yes_no_option('only_own_files_contacts','only_own_files_contacts','only_own_files_contacts_help'); ?>

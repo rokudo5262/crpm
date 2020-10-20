@@ -48,6 +48,7 @@ class Estimates_model extends App_Model
             if ($estimate) {
                 $estimate->attachments                           = $this->get_attachments($id);
                 $estimate->visible_attachments_to_customer_found = false;
+
                 foreach ($estimate->attachments as $attachment) {
                     if ($attachment['visible_to_customer'] == 1) {
                         $estimate->visible_attachments_to_customer_found = true;
@@ -55,17 +56,23 @@ class Estimates_model extends App_Model
                         break;
                     }
                 }
+
                 $estimate->items = get_items_by_type('estimate', $id);
 
                 if ($estimate->project_id != 0) {
                     $this->load->model('projects_model');
                     $estimate->project_data = $this->projects_model->get($estimate->project_id);
                 }
+
                 $estimate->client = $this->clients_model->get($estimate->clientid);
+
                 if (!$estimate->client) {
                     $estimate->client          = new stdClass();
                     $estimate->client->company = $estimate->deleted_customer_name;
                 }
+
+                $this->load->model('email_schedule_model');
+                $estimate->scheduled_email = $this->email_schedule_model->get($id, 'estimate');
             }
 
             return $estimate;
@@ -1104,6 +1111,10 @@ class Estimates_model extends App_Model
                 $this->delete_attachment($attachment['id']);
             }
 
+            $this->db->where('rel_id', $id);
+            $this->db->where('rel_type', 'estimate');
+            $this->db->delete('scheduled_emails');
+
             // Get related tasks
             $this->db->where('rel_type', 'estimate');
             $this->db->where('rel_id', $id);
@@ -1132,14 +1143,20 @@ class Estimates_model extends App_Model
             'sent'     => 1,
             'datesend' => date('Y-m-d H:i:s'),
         ]);
+
         $this->log_estimate_activity($id, 'invoice_estimate_activity_sent_to_client', false, serialize([
             '<custom_data>' . implode(', ', $emails_sent) . '</custom_data>',
         ]));
+
         // Update estimate status to sent
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'estimates', [
             'status' => 2,
         ]);
+
+        $this->db->where('rel_id', $id);
+        $this->db->where('rel_type', 'estimate');
+        $this->db->delete('scheduled_emails');
     }
 
     /**
@@ -1219,30 +1236,38 @@ class Estimates_model extends App_Model
         $estimate = $this->get($id);
 
         if ($template_name == '') {
-            if ($estimate->sent == 0) {
-                $template_name = 'estimate_send_to_customer';
-            } else {
-                $template_name = 'estimate_send_to_customer_already_sent';
-            }
+            $template_name = $estimate->sent == 0 ?
+            'estimate_send_to_customer' :
+            'estimate_send_to_customer_already_sent';
         }
 
         $estimate_number = format_estimate_number($estimate->id);
 
         $emails_sent = [];
-        $sent        = false;
-        $sent_to     = $this->input->post('sent_to');
-        if ($manually === true) {
-            $sent_to  = [];
-            $contacts = $this->clients_model->get_contacts($estimate->clientid, ['active' => 1, 'estimate_emails' => 1]);
+        $send_to     = [];
+
+        // Manually is used when sending the estimate via add/edit area button Save & Send
+        if (!DEFINED('CRON') && $manually === false) {
+            $send_to = $this->input->post('sent_to');
+        } elseif (isset($GLOBALS['scheduled_email_contacts'])) {
+            $send_to = $GLOBALS['scheduled_email_contacts'];
+        } else {
+            $contacts = $this->clients_model->get_contacts(
+                $estimate->clientid,
+                ['active' => 1, 'estimate_emails' => 1]
+            );
+
             foreach ($contacts as $contact) {
-                array_push($sent_to, $contact['id']);
+                array_push($send_to, $contact['id']);
             }
         }
 
-        $status_now          = $estimate->status;
         $status_auto_updated = false;
-        if (is_array($sent_to) && count($sent_to) > 0) {
+        $status_now          = $estimate->status;
+
+        if (is_array($send_to) && count($send_to) > 0) {
             $i = 0;
+
             // Auto update status to sent in case when user sends the estimate is with status draft
             if ($status_now == 1) {
                 $this->db->where('id', $estimate->id);
@@ -1260,15 +1285,18 @@ class Estimates_model extends App_Model
                 $attach = $pdf->Output($estimate_number . '.pdf', 'S');
             }
 
-            foreach ($sent_to as $contact_id) {
+            foreach ($send_to as $contact_id) {
                 if ($contact_id != '') {
-
                     // Send cc only for the first contact
                     if (!empty($cc) && $i > 0) {
                         $cc = '';
                     }
 
                     $contact = $this->clients_model->get_contact($contact_id);
+
+                    if (!$contact) {
+                        continue;
+                    }
 
                     $template = mail_template($template_name, $estimate, $contact, $cc);
 
@@ -1286,7 +1314,6 @@ class Estimates_model extends App_Model
                     }
 
                     if ($template->send()) {
-                        $sent = true;
                         array_push($emails_sent, $contact->email);
                     }
                 }
@@ -1295,12 +1322,14 @@ class Estimates_model extends App_Model
         } else {
             return false;
         }
-        if ($sent) {
+
+        if (count($emails_sent) > 0) {
             $this->set_estimate_sent($id, $emails_sent);
             hooks()->do_action('estimate_sent', $id);
 
             return true;
         }
+
         if ($status_auto_updated) {
             // Estimate not send to customer but the status was previously updated to sent now we need to revert back to draft
             $this->db->where('id', $estimate->id);
@@ -1308,7 +1337,6 @@ class Estimates_model extends App_Model
                     'status' => 1,
                 ]);
         }
-
 
         return false;
     }

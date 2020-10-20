@@ -28,7 +28,7 @@ trait PDF_Signature
 
             if ($signatureImage != '' && $signatureExists) {
                 $imageData = base64_encode(file_get_contents($signaturePath));
-                $blankSignatureLine .= '<br /><br /><img src="@' . $imageData . '" />';
+                $blankSignatureLine .= str_repeat('<br />', hooks()->apply_filters('pdf_signature_break_lines', 1)) . '<img src="@' . $imageData . '" />';
             }
 
             $this->MultiCell(($dimensions['wk'] / 2) - $dimensions['lm'], 0, _l('authorized_signature_text') . ' ' . $blankSignatureLine, 0, 'J', 0, 0, '', '', true, 0, true, true, 0);
@@ -60,7 +60,7 @@ trait PDF_Signature
 
             $imageData = base64_encode(file_get_contents($customerSignaturePath));
 
-            $customerSignature .= '<br /><br /><img src="@' . $imageData . '">';
+            $customerSignature .= str_repeat('<br />', hooks()->apply_filters('pdf_signature_break_lines', 1)) . '<img src="@' . $imageData . '">';
             $width = ($dimensions['wk'] / 2) - $dimensions['rm'];
 
             if (!$leftColumnExists) {

@@ -45,7 +45,7 @@
 <?php } ?>
 <?php if(get_option('show_help_on_setup_menu') == 1 && is_admin()){ $totalSetupMenuItems++; ?>
     <li>
-        <a href="<?php echo hooks()->apply_filters('help_menu_item_link','https://help.reputyze.asia'); ?>" target="_blank">
+        <a href="<?php echo hooks()->apply_filters('help_menu_item_link','https://help.perfexcrm.com'); ?>" target="_blank">
             <?php echo hooks()->apply_filters('help_menu_item_text',_l('setup_help')); ?>
         </a>
     </li>

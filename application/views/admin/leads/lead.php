@@ -261,13 +261,21 @@
          <?php echo form_close(); ?>
          <?php if(get_option('dropbox_app_key') != ''){ ?>
          <hr />
-         <div class="text-right">
+         <div class=" pull-left">
+            <?php if (count($lead->attachments) > 0) { ?>
+               <a href="<?php echo admin_url('leads/download_files/'.$lead->id); ?>" class="bold">
+               <?php echo _l('download_all'); ?> (.zip)
+            </a>
+            <?php } ?>
+         </div>
+         <div class="pull-right">
           <button class="gpicker">
             <i class="fa fa-google" aria-hidden="true"></i>
             <?php echo _l('choose_from_google_drive'); ?>
           </button>
           <div id="dropbox-chooser-lead"></div>
         </div>
+        <div class=" clearfix"></div>
          <?php } ?>
          <?php if(count($lead->attachments) > 0) { ?>
          <div class="mtop20" id="lead_attachments">

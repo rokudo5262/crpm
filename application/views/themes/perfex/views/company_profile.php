@@ -73,7 +73,7 @@
                         <label for="state"><?php echo _l('clients_state'); ?></label>
                         <input type="text" class="form-control" name="state" id="state" value="<?php echo $client->state; ?>">
                     </div>
-                    <?php if(get_option('disable_language') == 0){ ?>
+                    <?php if(!is_language_disabled()){ ?>
                         <div class="form-group company-profile-language-group">
                             <label for="default_language" class="control-label"><?php echo _l('localization_default_language'); ?>
                         </label>

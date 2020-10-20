@@ -56,7 +56,7 @@
                      } ?>
                </div>
                <div class="col-md-4 project_file_discusssions_area">
-                  <div id="project-file-discussion"></div>
+                  <div id="project-file-discussion" class="tc-content"></div>
                </div>
             </div>
          </div>

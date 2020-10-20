@@ -1,5 +1,9 @@
 <?php
 
+use app\services\imap\Imap;
+use app\services\imap\ConnectionErrorException;
+use Ddeboer\Imap\Exception\MailboxDoesNotExistException;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class Departments extends AdminController
@@ -90,13 +94,13 @@ class Departments extends AdminController
         $departmentid = $this->input->post('departmentid');
         if ($departmentid) {
             $this->db->where('departmentid', $departmentid);
-            $_current_email = $this->db->get(db_prefix().'departments')->row();
+            $_current_email = $this->db->get(db_prefix() . 'departments')->row();
             if ($_current_email->email == $this->input->post('email')) {
                 echo json_encode(true);
                 die();
             }
         }
-        $exists = total_rows(db_prefix().'departments', [
+        $exists = total_rows(db_prefix() . 'departments', [
             'email' => $this->input->post('email'),
         ]);
         if ($exists > 0) {
@@ -110,45 +114,39 @@ class Departments extends AdminController
     {
         app_check_imap_open_function();
 
-        $email         = $this->input->post('email');
-        $password      = $this->input->post('password', false);
-        $host          = $this->input->post('host');
-        $imap_username = $this->input->post('username');
-        if ($this->input->post('encryption')) {
-            $encryption = $this->input->post('encryption');
-        } else {
-            $encryption = '';
-        }
+        $imap = new Imap(
+           $this->input->post('username') ? $this->input->post('username') : $this->input->post('email'),
+           $this->input->post('password', false),
+           $this->input->post('host'),
+           $this->input->post('encryption')
+        );
 
-        require_once(APPPATH . 'third_party/php-imap/Imap.php');
+        try {
+            $connection = $imap->testConnection();
 
-        $mailbox = $host;
-
-        if ($imap_username != '') {
-            $username = $imap_username;
-        } else {
-            $username = $email;
-        }
-
-        $password   = $password;
-        $encryption = $encryption;
-        // open connection
-        $imap = new Imap($mailbox, $username, $password, $encryption);
-        if ($imap->isConnected() === true) {
+            try {
+                $connection->getMailbox('INBOX');
+            } catch (MailboxDoesNotExistException $e) {
+                echo json_encode([
+                    'alert_type' => 'warning',
+                    'message'    => $e->getMessage(),
+                ]);
+                die;
+            }
             echo json_encode([
                 'alert_type' => 'success',
                 'message'    => _l('lead_email_connection_ok'),
             ]);
-        } else {
+        } catch (ConnectionErrorException $e) {
             echo json_encode([
                 'alert_type' => 'warning',
-                'message'    => $imap->getError(),
+                'message'    => $e->getMessage(),
             ]);
         }
     }
 
     private function email_exist_as_staff()
     {
-        return total_rows(db_prefix().'departments', 'email IN (SELECT email FROM '.db_prefix().'staff)') > 0;
+        return total_rows(db_prefix() . 'departments', 'email IN (SELECT email FROM ' . db_prefix() . 'staff)') > 0;
     }
 }

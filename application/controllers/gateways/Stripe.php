@@ -186,6 +186,8 @@ class Stripe extends App_Controller
 
             $this->subscriptions_model->update($dbSubscription->id, $update);
 
+            send_email_customer_subscribed_to_subscription_to_staff($dbSubscription);
+
             hooks()->do_action('customer_subscribed_to_subscription', $dbSubscription);
         }
     }
@@ -261,7 +263,6 @@ class Stripe extends App_Controller
 
                     $this->subscriptions_model->update($dbSubscription->id, $update);
 
-                    send_email_customer_subscribed_to_subscription_to_staff($dbSubscription);
                 }
             }
         }

@@ -18,6 +18,22 @@ $(document).keyup(function(e) {
 
 $(function() {
 
+    setTimeout(function(){
+        // Remove the left and right resize indicators for gantt
+        $("#gantt .noDrag > g.handle-group").hide();
+
+        // Removes the gantt dragging by bar wrapper
+        var ganttBarWrappers = document.querySelectorAll('.bar-wrapper');
+
+        Array.prototype.forEach.call(ganttBarWrappers, function(el) {
+            el.addEventListener('mousedown', function(e, element) {
+                if($(e.target).closest('.bar-wrapper').hasClass('noDrag')){
+                    event.stopPropagation();
+                }
+            }, true)
+        });
+    }, 1000)
+
     // + button for adding more attachments
     var addMoreAttachmentsInputKey = 1;
     $("body").on('click', '.add_more_attachments', function() {

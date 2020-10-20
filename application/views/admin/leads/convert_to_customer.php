@@ -147,7 +147,7 @@
          </span>
       </div>
    </div>
-   <?php if(total_rows(db_prefix().'emailtemplates',array('slug'=>'contact-set-password','active'=>0)) == 0){ ?>
+   <?php if(is_email_template_active('contact-set-password')){ ?>
    <div class="checkbox checkbox-primary">
       <input type="checkbox" name="send_set_password_email" id="send_set_password_email">
       <label for="send_set_password_email">
@@ -155,7 +155,7 @@
       </label>
    </div>
    <?php } ?>
-   <?php if(total_rows(db_prefix().'emailtemplates',array('slug'=>'new-client-created','active'=>0)) == 0){ ?>
+   <?php if(is_email_template_active('new-client-created')){ ?>
    <div class="checkbox checkbox-primary">
       <input type="checkbox" name="donotsendwelcomeemail" id="donotsendwelcomeemail">
       <label for="donotsendwelcomeemail"><?php echo _l('client_do_not_send_welcome_email'); ?></label>

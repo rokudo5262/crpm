@@ -17,13 +17,12 @@ class Migration_Version_240 extends CI_Migration
         $this->db->query('ALTER TABLE `' . db_prefix() . 'subscriptions` ADD `terms` TEXT NULL DEFAULT NULL AFTER `date`;');
         $this->db->query('ALTER TABLE `' . db_prefix() . 'subscriptions` ADD `stripe_tax_id` VARCHAR(50) NULL AFTER `tax_id`;');
 
-        $this->db->query("INSERT INTO `".db_prefix()."emailtemplates` (`type`, `slug`, `language`, `name`, `subject`, `message`, `fromname`, `fromemail`, `plaintext`, `active`, `order`) VALUES
+        $this->db->query('INSERT INTO `' . db_prefix() . "emailtemplates` (`type`, `slug`, `language`, `name`, `subject`, `message`, `fromname`, `fromemail`, `plaintext`, `active`, `order`) VALUES
 ('subscriptions', 'subscription-payment-requires-action', 'english', 'Credit Card Authorization Required - SCA', 'Important: Confirm your subscription {subscription_name} payment', '<p>Hello {contact_firstname}</p>\r\n<p><strong>Your bank sometimes requires an additional step to make sure an online transaction was authorized.</strong><br /><br />Because of European regulation to protect consumers, many online payments now require two-factor authentication. Your bank ultimately decides when authentication is required to confirm a payment, but you may notice this step when you start paying for a service or when the cost changes.<br /><br />In order to pay the subscription <strong>{subscription_name}</strong>, you will need to&nbsp;confirm your payment by clicking on the follow link: <strong><a href=\"{subscription_authorize_payment_link}\">{subscription_authorize_payment_link}</a></strong><br /><br />To view the subscription, please click at the following link: <a href=\"{subscription_link}\"><span>{subscription_link}</span></a><br />or you can login in our dedicated area here: <a href=\"{crm_url}/login\">{crm_url}/login</a> in case you want to update your credit card or view the subscriptions you are subscribed.<br /><br />Best Regards,<br />{email_signature}</p>', '{companyname} | CRM', '', 0, 1, 0);");
 
         try {
             if (!empty($this->stripe_gateway->decryptSetting('api_secret_key'))) {
                 $this->load->library('stripe_core');
-                $this->load->model('subscriptions_model');
 
                 $endpoints = $this->stripe_core->list_webhook_endpoints();
                 foreach ($endpoints->data as $endpoint) {
@@ -34,7 +33,7 @@ class Migration_Version_240 extends CI_Migration
                     }
                 }
 
-                $subscriptionsWithTaxes = $this->subscriptions_model->get(['tax_id !=' => 0]);
+                $subscriptionsWithTaxes = $this->getSubscriptions();
                 $stripeTaxes            = $this->stripe_core->get_tax_rates();
 
                 foreach ($subscriptionsWithTaxes as $subscription) {
@@ -65,5 +64,16 @@ class Migration_Version_240 extends CI_Migration
 
         delete_option('paymentmethod_stripe_ideal_webhook_key');
         delete_option('paymentmethod_stripe_webhook_key');
+    }
+
+    protected function getSubscriptions()
+    {
+        $this->db->select(db_prefix() . 'subscriptions.id as id,' . db_prefix() . 'taxes.name as tax_name, ' . db_prefix() . 'taxes.taxrate as tax_percent, tax_id');
+
+        $this->db->join(db_prefix() . 'taxes', db_prefix() . 'taxes.id=' . db_prefix() . 'subscriptions.tax_id', 'left');
+
+        $this->db->where(['tax_id !=' => 0]);
+
+        return $this->db->get(db_prefix() . 'subscriptions')->result_array();
     }
 }

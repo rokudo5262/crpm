@@ -29,7 +29,7 @@ function _app_init()
     /**
      * In case of failures, users can skip the modules to be loaded
      */
-    if (is_admin() && $ci->input->get('skip_modules_load') && $ci->input->get('skip_modules_load')) {
+    if ($ci->input->get('skip_modules_load') && $ci->input->get('skip_modules_load') && is_admin()) {
         $modules = [];
     } else {
         /**

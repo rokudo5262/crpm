@@ -42,15 +42,15 @@ function get_tasks_priorities()
 {
     return hooks()->apply_filters('tasks_priorities', [
         [
-            'id'     => 1,
-            'name'   => _l('task_priority_low'),
-             'color' => '#777',
+            'id'    => 1,
+            'name'  => _l('task_priority_low'),
+            'color' => '#777',
 
         ],
         [
-            'id'     => 2,
-            'name'   => _l('task_priority_medium'),
-             'color' => '#03a9f4',
+            'id'    => 2,
+            'name'  => _l('task_priority_medium'),
+            'color' => '#03a9f4',
 
         ],
         [
@@ -73,7 +73,7 @@ function get_tasks_priorities()
  */
 function get_task_subject_by_id($id)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->db->select('name');
     $CI->db->where('id', $id);
     $task = $CI->db->get(db_prefix() . 'tasks')->row();
@@ -95,12 +95,12 @@ function get_task_status_by_id($id)
     $statuses = $CI->tasks_model->get_statuses();
 
     $status = [
-      'id'         => 0,
-      'bg_color'   => '#333',
-      'text_color' => '#333',
-      'name'       => '[Status Not Found]',
-      'order'      => 1,
-      ];
+        'id'         => 0,
+        'bg_color'   => '#333',
+        'text_color' => '#333',
+        'name'       => '[Status Not Found]',
+        'order'      => 1,
+    ];
 
     foreach ($statuses as $s) {
         if ($s['id'] == $id) {
@@ -166,10 +166,10 @@ function format_members_by_ids_and_names($ids, $names, $hidden_export_table = tr
         if ($assigned != '') {
             $outputAssignees .= '<a href="' . admin_url('profile/' . $assignee_id) . '">' .
                 staff_profile_image($assignee_id, [
-                  $image_class . ' mright5',
+                    $image_class . ' mright5',
                 ], 'small', [
-                  'data-toggle' => 'tooltip',
-                  'data-title'  => $assigned,
+                    'data-toggle' => 'tooltip',
+                    'data-title'  => $assigned,
                 ]) . '</a>';
             $exportAssignees .= $assigned . ', ';
         }
@@ -238,31 +238,45 @@ function task_rel_link($rel_id, $rel_type)
  * @param  array $task task array
  * @return array
  */
-function get_task_array_gantt_data($task)
+function get_task_array_gantt_data($task, $dep_id = null, $defaultEnd = null)
 {
-    $data           = [];
-    $data['values'] = [];
-    $values         = [];
+    $data = [];
 
+    $data['id']   = $task['id'];
     $data['desc'] = $task['name'];
-    $data['name'] = '';
 
-    $values['from']  = strftime('%Y/%m/%d', strtotime($task['startdate']));
-    $values['to']    = strftime('%Y/%m/%d', strtotime($task['duedate']));
-    $values['desc']  = $task['name'] . ' - ' . _l('task_total_logged_time') . ' ' . seconds_to_time_format($task['total_logged_time']);
-    $values['label'] = $task['name'];
-    if ($task['duedate'] && date('Y-m-d') > $task['duedate'] && $task['status'] != Tasks_model::STATUS_COMPLETE) {
-        $values['customClass'] = 'ganttRed';
-    } elseif ($task['status'] == Tasks_model::STATUS_COMPLETE) {
-        $values['label']       = ' <i class="fa fa-check"></i> ' . $values['label'];
-        $values['customClass'] = 'ganttGreen';
+    $data['start'] = strftime('%Y-%m-%d', strtotime($task['startdate']));
+
+    if ($task['duedate']) {
+        $data['end'] = strftime('%Y-%m-%d', strtotime($task['duedate']));
+    } else {
+        $data['end'] = $defaultEnd;
     }
 
-    $values['dataObj'] = [
-        'task_id' => $task['id'],
-    ];
+    $data['desc']  = $task['name'] . ' - ' . _l('task_total_logged_time') . ' ' . seconds_to_time_format($task['total_logged_time']);
+    $data['label'] = $task['name'];
+    if ($task['duedate'] && date('Y-m-d') > $task['duedate'] && $task['status'] != Tasks_model::STATUS_COMPLETE) {
+        $data['custom_class'] = 'ganttRed';
+    } elseif ($task['status'] == Tasks_model::STATUS_COMPLETE) {
+        $data['custom_class'] = 'ganttGreen';
+    }
 
-    $data['values'][] = $values;
+    $data['name']    = $task['name'];
+    $data['task_id'] = $task['id'];
+    $data['progress'] = 0;
+
+    //for task in single project gantt
+    if ($dep_id) {
+        $data['dependencies'] = $dep_id;
+    }
+
+    if (!staff_can('edit', 'tasks') || is_client_logged_in()) {
+        if (isset($data['custom_class'])) {
+            $data['custom_class'] .= ' noDrag';
+        } else {
+            $data['custom_class'] = 'noDrag';
+        }
+    }
 
     return $data;
 }
@@ -302,28 +316,28 @@ function init_relation_tasks_table($table_attributes = [])
             'name'     => _l('tasks_dt_name'),
             'th_attrs' => [
                 'style' => 'width:200px',
-                ],
             ],
-             _l('task_status'),
-         [
+        ],
+        _l('task_status'),
+        [
             'name'     => _l('tasks_dt_datestart'),
             'th_attrs' => [
                 'style' => 'width:75px',
-                ],
             ],
-         [
+        ],
+        [
             'name'     => _l('task_duedate'),
             'th_attrs' => [
                 'style' => 'width:75px',
                 'class' => 'duedate',
-                ],
             ],
-         [
+        ],
+        [
             'name'     => _l('task_assigned'),
             'th_attrs' => [
                 'style' => 'width:75px',
-                ],
             ],
+        ],
         _l('tags'),
         _l('tasks_list_priority'),
     ];
@@ -349,7 +363,7 @@ function init_relation_tasks_table($table_attributes = [])
     }
 
     $table      = '';
-    $CI         = & get_instance();
+    $CI         = &get_instance();
     $table_name = '.table-' . $name;
     $CI->load->view('admin/tasks/tasks_filter_by', [
         'view_table_name' => $table_name,
@@ -482,9 +496,9 @@ function tasks_summary_data($rel_id = null, $rel_type = null)
 function get_sql_calc_task_logged_time($task_id)
 {
     /**
-    * Do not remove where task_id=
-    * Used in tasks detailed_overview to overwrite the taskid
-    */
+     * Do not remove where task_id=
+     * Used in tasks detailed_overview to overwrite the taskid
+     */
     return 'SELECT SUM(CASE
             WHEN end_time is NULL THEN ' . time() . '-start_time
             ELSE end_time-start_time

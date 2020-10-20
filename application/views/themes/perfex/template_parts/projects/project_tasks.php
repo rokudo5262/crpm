@@ -11,7 +11,9 @@
 </div>
 <?php } ?>
 <?php if($project->settings->view_milestones == 1 && !isset($view_task)){ ?>
-<a href="#" class="btn btn-default pull-left" onclick="taskTable(); return false;"><i class="fa fa-th-list"></i></a>
+<a href="#" class="btn btn-default pull-left task-table-toggle" onclick="taskTable(); return false;">
+    <i class="fa fa-th-list"></i>
+</a>
 <div class="clearfix"></div>
 <hr />
 <div class="tasks-phases">
@@ -30,7 +32,7 @@
           $milestones[] = $m;
       }
       ?>
-   <div class="row">
+   <div class="kan-ban-row">
       <?php foreach($milestones as $milestone){
          $tasks = $this->projects_model->get_tasks($project->id,array('milestone'=>$milestone['id']));
          $percent              = 0;
@@ -46,7 +48,7 @@
             $milestone_color = ' style="background:'.$milestone["color"].';border:1px solid '.$milestone['color'].'"';
          }
          ?>
-      <div class="col-md-4<?php if($milestone['id'] == 0 && count($tasks) == 0){echo ' hide'; } ?>">
+      <div class="kan-ban-col<?php if($milestone['id'] == 0 && count($tasks) == 0){echo ' hide'; } ?>">
          <div class="panel-heading <?php if($milestone_color != ''){echo 'color-not-auto-adjusted color-white ';} ?><?php if($milestone['id'] != 0){echo 'task-phase';}else{echo 'info-bg';} ?>"<?php echo $milestone_color; ?>>
             <?php if($milestone['id'] != 0 && $milestone['description_visible_to_customer'] == 1){ ?>
             <i class="fa fa-file-text pointer" aria-hidden="true" data-toggle="popover" data-title="<?php echo _l('milestone_description'); ?>" data-html="true" data-content="<?php echo htmlspecialchars($milestone['description']); ?>"></i>&nbsp;
@@ -65,7 +67,12 @@
             <div class="media _task_wrapper<?php if((!empty($task['duedate']) && $task['duedate'] < date('Y-m-d')) && $task['status'] != Tasks_model::STATUS_COMPLETE){ echo ' overdue-task'; } ?>">
                <div class="media-body">
                   <a href="<?php echo site_url('clients/project/'.$project->id.'?group=project_tasks&taskid='.$task['id']); ?>" class="task_milestone pull-left<?php if($task['status'] == Tasks_model::STATUS_COMPLETE){echo ' line-throught text-muted';} ?>"><?php echo $task['name']; ?></a>
-                  <?php if($project->settings->edit_tasks == 1 && $task['is_added_from_contact'] == 1 && $task['addedfrom'] == get_contact_user_id()){ ?>
+                  <?php if(
+                     $project->settings->edit_tasks == 1 &&
+                     $task['is_added_from_contact'] == 1 &&
+                     $task['addedfrom'] == get_contact_user_id() &&
+                     $task['billed'] == 0
+                     ){ ?>
                   <a href="<?php echo site_url('clients/project/'.$project->id.'?group=edit_task&taskid='.$task['id']); ?>" class="pull-right">
                   <small><i class="fa fa-pencil-square-o"></i></small>
                   </a>
@@ -121,7 +128,12 @@
             foreach($project_tasks as $task){ ?>
          <tr>
             <td>
-               <?php if($project->settings->edit_tasks == 1 && $task['is_added_from_contact'] == 1 && $task['addedfrom'] == get_contact_user_id()){ ?>
+               <?php if(
+                  $project->settings->edit_tasks == 1 &&
+                  $task['is_added_from_contact'] == 1 &&
+                  $task['addedfrom'] == get_contact_user_id() &&
+                  $task['billed'] == 0
+                  ){ ?>
                <a href="<?php echo site_url('clients/project/'.$project->id.'?group=edit_task&taskid='.$task['id']); ?>"><i class="fa fa-pencil-square-o"></i></a>
                <?php } ?>
                <a href="<?php echo site_url('clients/project/'.$project->id.'?group=project_tasks&taskid='.$task['id']); ?>">
@@ -168,3 +180,16 @@
    }
 }
 ?>
+<script>
+   $(function(){
+      var milesonesColumns = $('.tasks-phases .kan-ban-col:visible');
+      var totalMilestones = milesonesColumns.length;
+      if(totalMilestones > 0){
+          var phaseWidth = milesonesColumns.eq(0).width();
+          $('.kan-ban-row').css('min-width', totalMilestones * (phaseWidth + 20) + 'px');
+      } else if($('.task-table-toggle').length > 0) {
+        // When there are no milestones and the client is allowed to view milestones, show the tasks table as default
+        taskTable();
+      }
+   });
+</script>

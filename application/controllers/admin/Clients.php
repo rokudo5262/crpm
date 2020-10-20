@@ -452,14 +452,7 @@ class Clients extends AdminController
 
     public function delete_contact_profile_image($contact_id)
     {
-        hooks()->do_action('before_remove_contact_profile_image');
-        if (file_exists(get_upload_path_by_type('contact_profile_images') . $contact_id)) {
-            delete_dir(get_upload_path_by_type('contact_profile_images') . $contact_id);
-        }
-        $this->db->where('id', $contact_id);
-        $this->db->update(db_prefix() . 'contacts', [
-            'profile_image' => null,
-        ]);
+        $this->clients_model->delete_contact_profile_image($contact_id);
     }
 
     public function mark_as_active($id)

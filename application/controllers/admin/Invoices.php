@@ -149,6 +149,7 @@ class Invoices extends AdminController
         if (total_rows(db_prefix() . 'invoices', [
             'YEAR(date)' => date('Y', strtotime(to_sql_date($date))),
             'number' => $number,
+            'status !=' => Invoices_model::STATUS_DRAFT,
         ]) > 0) {
             echo 'false';
         } else {
@@ -684,12 +685,15 @@ class Invoices extends AdminController
         if (!user_can_view_invoice($id)) {
             access_denied('Invoice Mark As Sent');
         }
+
         $success = $this->invoices_model->set_invoice_sent($id, true);
+
         if ($success) {
             set_alert('success', _l('invoice_marked_as_sent'));
         } else {
             set_alert('warning', _l('invoice_marked_as_sent_failed'));
         }
+
         redirect(admin_url('invoices/list_invoices/' . $id));
     }
 

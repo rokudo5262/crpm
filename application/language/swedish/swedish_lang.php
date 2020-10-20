@@ -1834,7 +1834,6 @@ $lang['ticket_pipe_date']     = 'Datum';
 $lang['ticket_pipe_status']   = 'Status';
 
 # Home
-$lang['home_latest_activity']   = 'Senaste aktivitet';
 $lang['home_my_tasks']          = 'Mina uppgifter';
 $lang['home_latest_activity']   = 'Senaste aktivitet';
 $lang['home_my_todo_items']     = 'Mina Att göra uppgifter';
@@ -2666,15 +2665,10 @@ $lang['task_single_log_user'] = $lang['project_timesheet_user'];
 $lang['milestone_description']                      = 'Beskrivning';
 $lang['description_visible_to_customer']            = 'Visa beskrivning för kunden';
 $lang['upcoming_tasks']                             = 'Kommande uppgift';
-$lang['paymentmethod_two_checkout_account_number']  = 'Kontonummer (Säljare ID)';
-$lang['paymentmethod_two_checkout_private_key']     = 'Privat nyckel';
-$lang['paymentmethod_two_checkout_publishable_key'] = 'publik nyckel';
 $lang['payment_credit_card_number']                 = 'Kortnummer';
 $lang['payment_credit_card_expiration_date']        = 'Utångsdatum';
 $lang['payment_billing_email']                      = 'Epost';
 $lang['submit_payment']                             = 'Skicka Betalning';
-$lang['2checkout_notice_payment']                   = 'Kreditkortsuppgifter  behandlas säkert med token tillhandahållen Från 2Checkout';
-$lang['2checkout_usage_notice']                     = 'SSL krävs om du använder 2Checkout betalnings API. Det krävs för att säkert kontakta tokenization och auktorisationen. Systemet kommer att fungera utan SSL, men detta kommer att placera dig ur plan, där det riskerar att avaktivering av API-behörigheter.överensstämmelse';
 $lang['custom_field_disallow_customer_to_edit']     = 'Tillåt ej kunden att redigera det här fältet';
 $lang['project_due_notice']                         = 'Detta projekt är förfallet med %s dagar';
 $lang['not_lead_added_attachment']                  = 'lagt till nya bilaga till lead %s';
@@ -2822,7 +2816,6 @@ $lang['show_pay_link_to_invoice_pdf']                = 'Visa en betallänk på P
 $lang['no_leads_found']                              = 'Inga Leads Funna';
 $lang['created_today']                               = 'Skapad idag';
 $lang['total_tasks_deleted']                         = 'Totalt antal uppgifter raderade: %s';
-$lang['total_tickets_delete']                        = 'Totalt antal poster raderade: %s';
 $lang['total_tickets_delete']                        = 'Totalt antal poster raderade: %s';
 $lang['format_letter_portrait']                      = 'Brev porträtt';
 $lang['format_letter_landscape']                     = 'Brev Landskap';
@@ -3519,7 +3512,6 @@ $lang['view_consent']                                           = 'View Consent'
 $lang['transfer_consent']                                       = 'Transfer Consent';
 $lang['view_public_form']                                       = 'View Public Form';
 $lang['update_consent']                                         = 'Update Consent';
-$lang['update_consent']                                         = 'Update Consent';
 $lang['consent_last_updated']                                   = 'Last Updated: %s';
 $lang['showing_search_result']                                  = 'Showing search results for: %s';
 $lang['per_page']                                               = 'Per Page';
@@ -3705,3 +3697,35 @@ $lang['lead_value_tooltip']                 = 'Base currency will be used.';
 $lang['leads_dt_lead_value']                = 'Lead Value';
 $lang['leads_canban_lead_value']            = 'Lead Value: %s';
 $lang['lead_add_edit_lead_value']           = 'Lead Value';
+
+# Version 2.6.0
+$lang['gantt_view_day'] = 'Days View';
+$lang['gantt_view_week'] = 'Weeks View';
+$lang['gantt_view_month'] = 'Months View';
+$lang['gantt_view_year'] = 'Years View';
+
+# Version 2.7.0
+$lang['hour_of_day_perform_tasks_reminder_notification_help'] = '24 hours format eq. 9 for 9am or 15 for 3pm.I t Used for recurring Task, Task reminders etc.';
+$lang['clients_nav_contacts']                                 = 'Contacts';
+$lang['clients_my_contacts']                                  = 'Contacts';
+$lang['clients_my_contact']                                   = 'Contact';
+$lang['new_contact']                                          = 'New Contact';
+$lang['customer_contact']                                     = 'My Contacts';
+$lang['clients_contact_added']                                = 'Contact added successfuly';
+$lang['clients_contact_updated']                              = 'Contact updated successfuly';
+$lang['allow_primary_contact_to_manage_other_contacts']       = 'Allow primary contact to manage other customer contacts';
+$lang['contact_form_validation_is_unique']                    = 'Contact with this {field} already exists in our system';
+$lang['invoice_number_not_applied_on_draft']                  = 'If the invoice is saved as draft, the number won\'t be applied, instead, the next invoice number will be given when the invoice is sent to the customer or is marked as sent.';
+
+$lang['two_factor_authentication_disabed']                    = 'Disabled';
+$lang['enable_google_two_factor_authentication']              = 'Enable Googe Authenticator';
+$lang['set_google_two_factor_authentication_failed']          = 'Saving authentication failed, please try again';
+$lang['enter_two_factor_auth_code_from_mobile']               = 'Enter authentication code from the Authenticator app';
+$lang['staff_two_factor_authentication']                      = 'Two Factor Authentication';
+$lang['google_authentication_code']                           = 'Enter code from Authenticator app';
+$lang['set_two_factor_authentication_successful']             = 'Successfully updated two factor authentication settings';
+$lang['set_two_factor_authentication_failed']                 = 'Could not update two factor authentication settings';
+$lang['google_2fa_code_valid']                                = 'Successfuly verified the authentication';
+$lang['google_2fa_code_invalid']                              = 'Invalid authentication code entered, try again.';
+$lang['google_2fa_scan_qr_guide']                             = 'Scan the QR below with the Google Authenticator app on your mobile device, after that fill in the field below with the code generated in the app';
+$lang['google_2fa_manul_input_secret']                        = 'Secret key for manual input';

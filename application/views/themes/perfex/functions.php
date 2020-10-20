@@ -38,12 +38,12 @@ function theme_assets()
         $CI->app_scripts->theme('circle-progress-js', 'assets/plugins/jquery-circle-progress/circle-progress.min.js');
 
         $CI->app_scripts->theme('jquery-comments-js', 'assets/plugins/jquery-comments/js/jquery-comments.min.js');
-        $CI->app_scripts->theme('jquery-gantt-js', 'assets/plugins/gantt/js/jquery.fn.gantt.min.js');
+        $CI->app_scripts->theme('frape-gantt-js', 'assets/plugins/frappe/frappe-gantt-es2015.js');
         add_moment_js_assets($groupName);
         add_dropbox_js_assets($groupName);
 
         $CI->app_css->theme('jquery-comments-css', 'assets/plugins/jquery-comments/css/jquery-comments.css');
-        $CI->app_css->theme('jquery-gantt-css', 'assets/plugins/gantt/css/style.css');
+        $CI->app_css->theme('frappe-gantt-css', 'assets/plugins/frappe/frappe-gantt.css');
         add_calendar_assets($groupName, false);
 
         if (get_option('enable_google_picker') == '1') {

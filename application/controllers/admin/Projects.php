@@ -123,8 +123,6 @@ class Projects extends AdminController
     {
         $data['title'] = _l('project_gant');
 
-
-
         $selected_statuses = [];
         $selectedMember    = null;
         $data['statuses']  = $this->projects_model->get_project_statuses();
@@ -151,6 +149,7 @@ class Projects extends AdminController
         if (count($selected_statuses) == 0) {
             $selected_statuses = $allStatusesIds;
         }
+
 
         $data['selected_statuses'] = $selected_statuses;
 
@@ -211,7 +210,7 @@ class Projects extends AdminController
                 'projects-js',
                 base_url($this->app_scripts->core_file('assets/js', 'projects.js')) . '?v=' . $this->app_scripts->core_version(),
                 'admin',
-                ['app-js', 'jquery-comments-js', 'jquery-gantt-js', 'circle-progress-js']
+                ['app-js', 'jquery-comments-js', 'frappe-gantt-js', 'circle-progress-js']
             );
 
             if ($group == 'project_overview') {

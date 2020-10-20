@@ -220,7 +220,7 @@ class App_Email extends App_mailer
             $this->set_crlf(config_item('crlf'));
 
             $this->to($recipients);
-            $this->$cc(cc);
+            $this->cc($cc);
             $this->bcc($bcc);
 
             $this->message($email->message);

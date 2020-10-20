@@ -109,9 +109,10 @@ $autoload['drivers'] = ['session'];
 /*
 * @deprecated version 2.3.0
  */
-include_once(APPPATH.'third_party/action_hooks.php');
+include_once(APPPATH . 'third_party/action_hooks.php');
 
 $autoload['helper'] = [
+        'language',
         'url',
         'file',
         'form',

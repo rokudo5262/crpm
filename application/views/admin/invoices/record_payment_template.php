@@ -36,7 +36,7 @@
                         </div>
                         <?php
                     }
-                    $pr_template = total_rows(db_prefix().'emailtemplates',array('slug'=>'invoice-payment-recorded','active'=>0)) == 0;
+                    $pr_template = is_email_template_active('invoice-payment-recorded');
                     $sms_trigger = is_sms_trigger_active(SMS_TRIGGER_PAYMENT_RECORDED);
                     if($pr_template || $sms_trigger){ ?>
                     <div class="checkbox checkbox-primary mtop15 inline-block">

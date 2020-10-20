@@ -170,13 +170,17 @@
                 }
                }
 
+               $_is_draft = (isset($invoice) && $invoice->status == Invoices_model::STATUS_DRAFT) ? true : false;
                $_invoice_number = str_pad($__number, get_option('number_padding_prefixes'), '0', STR_PAD_LEFT);
                $isedit = isset($invoice) ? 'true' : 'false';
                $data_original_number = isset($invoice) ? $invoice->number : 'false';
 
                ?>
             <div class="form-group">
-               <label for="number"><?php echo _l('invoice_add_edit_number'); ?></label>
+               <label for="number">
+                  <?php echo _l('invoice_add_edit_number'); ?> 
+                  <i class="fa fa-question-circle" data-toggle="tooltip" data-title="<?php echo _l('invoice_number_not_applied_on_draft') ?>" data-placement="top"></i>
+            </label>
                <div class="input-group">
                   <span class="input-group-addon">
                   <?php if(isset($invoice)){ ?>
@@ -187,7 +191,7 @@
                     echo $prefix;
                   ?>
                   </span>
-                  <input type="text" name="number" class="form-control" value="<?php echo $_invoice_number; ?>" data-isedit="<?php echo $isedit; ?>" data-original-number="<?php echo $data_original_number; ?>">
+                  <input type="text" name="number" class="form-control" value="<?php echo ($_is_draft) ? 'DRAFT' : $_invoice_number; ?>" data-isedit="<?php echo $isedit; ?>" data-original-number="<?php echo $data_original_number; ?>" <?php echo ($_is_draft) ? 'disabled' : '' ?>>
                   <?php if($format == 3) { ?>
                   <span class="input-group-addon">
                      <span id="prefix_year" class="format-n-yy"><?php echo $yy; ?></span>
