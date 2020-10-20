@@ -89,7 +89,7 @@ function admin_url($url = '')
  */
 function staff_can($capability, $feature = null, $staff_id = '')
 {
-    $staff_id = $staff_id == '' ? get_staff_user_id() : $staff_id;
+    $staff_id = empty($staff_id) ? get_staff_user_id() : $staff_id;
 
     /**
      * Maybe permission is function?
@@ -196,7 +196,7 @@ function load_admin_language($staff_id = '')
     $CI->lang->language  = [];
 
     $language = get_option('active_language');
-    if (is_staff_logged_in() || $staff_id != '') {
+    if ((is_staff_logged_in() || $staff_id != '') && !is_language_disabled()) {
         $staff_language = get_staff_default_language($staff_id);
         if (!empty($staff_language)
             && file_exists(APPPATH . 'language/' . $staff_language)) {
@@ -236,6 +236,7 @@ function get_admin_uri()
  */
 function is_admin($staffid = '')
 {
+
     /**
      * Checking for current user?
      */
@@ -243,15 +244,24 @@ function is_admin($staffid = '')
         if (isset($GLOBALS['current_user'])) {
             return $GLOBALS['current_user']->admin === '1';
         }
+
         $staffid = get_staff_user_id();
     }
 
     $CI = & get_instance();
+
+    if ($cache = $CI->app_object_cache->get('is-admin-' . $staffid)) {
+        return $cache === 'yes';
+    }
+
     $CI->db->select('1')
     ->where('admin', 1)
     ->where('staffid', $staffid);
 
-    return $CI->db->count_all_results(db_prefix() . 'staff') > 0 ? true : false;
+    $result = $CI->db->count_all_results(db_prefix() . 'staff') > 0 ? true : false;
+    $CI->app_object_cache->add('is-admin-' . $staffid, $result ? 'yes' : 'no');
+
+    return is_admin($staffid);
 }
 
 function admin_body_class($class = '')
@@ -340,6 +350,7 @@ function render_admin_js_variables()
         'enable_google_picker'                        => get_option('enable_google_picker'),
         'google_client_id'                            => get_option('google_client_id'),
         'google_api'                                  => get_option('google_api_key'),
+        'has_permission_create_task'                  => staff_can('create', 'task'),
     ];
 
     // by remove it means do not prefix it
@@ -411,7 +422,7 @@ function render_admin_js_variables()
     echo 'app.available_tags = ' . json_encode(get_tags_clean()) . ';';
     echo 'app.available_tags_ids = ' . json_encode(get_tags_ids()) . ';';
     echo 'app.user_recent_searches = ' . json_encode(get_staff_recent_search_history()) . ';';
-    echo 'app.months_json = ' . json_encode([_l('January'), _l('February'), _l('March'), _l('April'), _l('May'), _l('June'), _l('July'), _l('August'), _l('September'), _l('October'), _l('November'), _l('December')]) . ';';
+    echo 'app.months_json = ' . $monthNames = json_encode([_l('January'), _l('February'), _l('March'), _l('April'), _l('May'), _l('June'), _l('July'), _l('August'), _l('September'), _l('October'), _l('November'), _l('December')]) . ';';
     echo 'app.tinymce_lang = "' . get_tinymce_language($GLOBALS['locale']) . '";';
     echo 'app.locale = "' . $GLOBALS['locale'] . '";';
     echo 'app.browser = "' . strtolower($CI->agent->browser()) . '";';
@@ -518,8 +529,6 @@ function _maybe_system_setup_warnings()
     hooks()->add_action('before_start_render_dashboard_content', [new Message('app\services\messages\Timezone'), 'check']);
     // Notice for cloudflare rocket loader
     hooks()->add_action('before_start_render_dashboard_content', [new Message('app\services\messages\CloudFlare'), 'check']);
-    // Php version notice, version 2.4.1
-    hooks()->add_action('before_start_render_dashboard_content', [new Message('app\services\messages\PhpVersionNotice'), 'check']);
     // Notice for iconv extension
     hooks()->add_action('before_start_render_dashboard_content', [new Message('app\services\messages\Iconv'), 'check']);
     // Check if there is dot in database name, causing problem on upgrade

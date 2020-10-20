@@ -37,7 +37,7 @@
     echo render_select( 'country',get_all_countries(),array( 'country_id',array( 'short_name')), 'lead_country',$lead->country,array('data-none-selected-text'=>_l('dropdown_non_selected_tex')));
     ?>
     <?php echo render_input('zip','lead_zip',$lead->zip); ?>
-    <?php if(get_option('disable_language') == 0){ ?>
+    <?php if(!is_language_disabled()){ ?>
       <div class="form-group">
        <label for="default_language" class="control-label"><?php echo _l('localization_default_language'); ?></label>
        <select name="default_language" data-live-search="true" id="default_language" class="form-control selectpicker" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">

@@ -42,7 +42,7 @@ class App_Loader extends MX_Loader
 
                 $module = CI::$APP->router->fetch_module();
 
-                if (is_null($module) || (!is_null($module) && module_supports($module, 'my_prefixed_view_files'))) {
+                if ($this->canMyPrefixViewFile($module, $_view_file)) {
                     $_my_view_file_temp_data = explode('/', $_view_file);
 
                     end($_my_view_file_temp_data);
@@ -115,5 +115,32 @@ class App_Loader extends MX_Loader
         } else {
             CI::$APP->output->append_output(ob_get_clean());
         }
+    }
+
+    /**
+     * Check whether the given view file path can be my_ prefixed
+     *
+     * @param  string|null $moduleName
+     * @param  string $filePath
+     *
+     * @return boolean
+     */
+    protected function canMyPrefixViewFile($moduleName, $filePath)
+    {
+        if (is_null($moduleName)) {
+            return true;
+        }
+
+        if (module_supports($moduleName, 'my_prefixed_view_files')) {
+            return true;
+        }
+
+        // Core file, in this case, just return true
+        if (!startsWith($filePath, module_views_path($moduleName))) {
+            return true;
+        }
+
+        // Module does not support my_ prefixed files
+        return false;
     }
 }

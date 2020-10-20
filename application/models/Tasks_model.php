@@ -143,7 +143,7 @@ class Tasks_model extends App_Model
             $tasks_where = get_tasks_where_string(false);
         }
 
-        $this->db->select('id,name,duedate,startdate,status,' . get_sql_select_task_total_checklist_items() . ',' . get_sql_select_task_total_finished_checklist_items() . ',(SELECT COUNT(id) FROM ' . db_prefix() . 'task_comments WHERE taskid=' . db_prefix() . 'tasks.id) as total_comments,(SELECT COUNT(id) FROM ' . db_prefix() . 'files WHERE rel_id=' . db_prefix() . 'tasks.id AND rel_type="task") as total_files,' . get_sql_select_task_asignees_full_names() . ' as assignees' . ',' . get_sql_select_task_assignees_ids() . ' as assignees_ids,(SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid=' . db_prefix() . 'tasks.id AND staffid=' . get_staff_user_id() . ') as current_user_is_assigned, (SELECT CASE WHEN addedfrom=' . get_staff_user_id() . ' AND is_added_from_contact=0 THEN 1 ELSE 0 END) as current_user_is_creator');
+        $this->db->select(tasks_rel_name_select_query() . ' as rel_name,rel_type,rel_id,id,priority,name,duedate,startdate,status,' . get_sql_select_task_total_checklist_items() . ',' . get_sql_select_task_total_finished_checklist_items() . ',(SELECT COUNT(id) FROM ' . db_prefix() . 'task_comments WHERE taskid=' . db_prefix() . 'tasks.id) as total_comments,(SELECT COUNT(id) FROM ' . db_prefix() . 'files WHERE rel_id=' . db_prefix() . 'tasks.id AND rel_type="task") as total_files,' . get_sql_select_task_asignees_full_names() . ' as assignees' . ',' . get_sql_select_task_assignees_ids() . ' as assignees_ids,(SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid=' . db_prefix() . 'tasks.id AND staffid=' . get_staff_user_id() . ') as current_user_is_assigned, (SELECT CASE WHEN addedfrom=' . get_staff_user_id() . ' AND is_added_from_contact=0 THEN 1 ELSE 0 END) as current_user_is_creator');
 
         $this->db->from(db_prefix() . 'tasks');
         $this->db->where('status', $status);
@@ -526,7 +526,8 @@ class Tasks_model extends App_Model
                 $data['custom_recurring'] = 0;
             }
         } else {
-            $data['recurring'] = 0;
+            $data['recurring']    = 0;
+            $data['repeat_every'] = null;
         }
 
         if (isset($data['repeat_type_custom']) && isset($data['repeat_every_custom'])) {
@@ -2194,6 +2195,14 @@ class Tasks_model extends App_Model
         return $this->db->get(db_prefix() . 'reminders')->result_array();
     }
 
+    /**
+     * Check whether the given staff can access the given task
+     *
+     * @param  int $staff_id
+     * @param  int $task_id
+     *
+     * @return boolean
+     */
     public function can_staff_access_task($staff_id, $task_id)
     {
         $retVal              = false;
@@ -2209,6 +2218,13 @@ class Tasks_model extends App_Model
         return $retVal;
     }
 
+    /**
+     * Get the staff members that can view the given task
+     *
+     * @param  int $task_id
+     *
+     * @return array
+     */
     public function get_staff_members_that_can_access_task($task_id)
     {
         $task_id = $this->db->escape_str($task_id);
@@ -2224,15 +2240,24 @@ class Tasks_model extends App_Model
             AND active=1')->result_array();
     }
 
+    /**
+     * Check whether the given staff should receive notification for
+     * the given task
+     *
+     * @param  int $staffid
+     * @param  int $taskid  [description]
+     *
+     * @return boolean
+     */
     private function should_staff_receive_notification($staffid, $taskid)
     {
         if (!$this->can_staff_access_task($staffid, $taskid)) {
             return false;
         }
 
-        return ($this->is_task_assignee($staffid, $taskid)
+        return hooks()->apply_filters('should_staff_receive_task_notification', ($this->is_task_assignee($staffid, $taskid)
                 || $this->is_task_follower($staffid, $taskid)
                 || $this->is_task_creator($staffid, $taskid)
-                || $this->staff_has_commented_on_task($staffid, $taskid));
+                || $this->staff_has_commented_on_task($staffid, $taskid)), ['staff_id' => $staffid, 'task_id' => $taskid]);
     }
 }

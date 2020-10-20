@@ -257,7 +257,7 @@ class Contracts_model extends App_Model
                         'description'     => 'not_contract_comment_from_client',
                         'touserid'        => $member['staffid'],
                         'fromcompany'     => 1,
-                        'fromuserid'      => null,
+                        'fromuserid'      => 0,
                         'link'            => 'contracts/contract/' . $data['contract_id'],
                         'additional_data' => serialize([
                             $contract->subject,
@@ -682,20 +682,21 @@ class Contracts_model extends App_Model
     /**
      * Get the contracts about to expired in the given days
      *
+     * @param  integer|null $staffId
      * @param  integer $days
      *
      * @return array
      */
-    public function get_contracts_about_to_expire($days = 7)
+    public function get_contracts_about_to_expire($staffId = null, $days = 7)
     {
         $diff1 = date('Y-m-d', strtotime('-' . $days . ' days'));
         $diff2 = date('Y-m-d', strtotime('+' . $days . ' days'));
 
-        $this->db->select('id,subject,client,datestart,dateend');
-
-        if (! staff_can('view', 'contracts')) {
-            $this->db->where('addedfrom', get_staff_user_id());
+        if ($staffId && ! staff_can('view', 'contracts', $staffId)) {
+            $this->db->where('addedfrom', $staffId);
         }
+
+        $this->db->select('id,subject,client,datestart,dateend');
 
         $this->db->where('dateend IS NOT NULL');
         $this->db->where('trash', 0);

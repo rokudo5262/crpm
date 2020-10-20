@@ -1,6 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php init_head(); ?>
-
 <div id="wrapper">
  <div class="content">
   <?php echo form_open_multipart(
@@ -37,14 +36,14 @@
       </ul>
       <div class="panel_s">
        <div class="panel-body">
-<!--        <a href="--><?php //echo admin_url('settings?group=update'); ?><!--" class="--><?php //if ($this->input->get('group') == 'update') {
-//          echo 'bold';
-//      } ?><!--">-->
-<!--          --><?php //echo _l('settings_update'); ?>
-<!--        </a>-->
+        <a href="<?php echo admin_url('settings?group=update'); ?>" class="<?php if ($this->input->get('group') == 'update') {
+          echo 'bold';
+      } ?>">
+          <?php echo _l('settings_update'); ?>
+        </a>
         <?php if (is_admin()) {
           ?>
-<!--          <hr class="hr-10" />-->
+          <hr class="hr-10" />
           <a href="<?php echo admin_url('settings?group=info'); ?>" class="<?php if ($this->input->get('group') == 'info') {
               echo 'bold';
           } ?>">

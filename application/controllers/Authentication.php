@@ -51,6 +51,10 @@ class Authentication extends ClientsController
                 redirect(site_url('authentication/login'));
             }
 
+            if ($this->input->post('language') && $this->input->post('language') != '') {
+                set_contact_language($this->input->post('language'));
+            }
+
             $this->load->model('announcements_model');
             $this->announcements_model->set_announcements_as_read_except_last_one(get_contact_user_id());
 
@@ -297,5 +301,20 @@ class Authentication extends ClientsController
     public function recaptcha($str = '')
     {
         return do_recaptcha_validation($str);
+    }
+
+    public function change_language($lang = '')
+    {
+        if (is_language_disabled()) {
+            redirect(site_url());
+        }
+
+        set_contact_language($lang);
+
+        if (isset($_SERVER['HTTP_REFERER']) && !empty($_SERVER['HTTP_REFERER'])) {
+            redirect($_SERVER['HTTP_REFERER']);
+        } else {
+            redirect(site_url());
+        }
     }
 }

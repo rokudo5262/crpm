@@ -52,7 +52,7 @@ class Invoices_model extends App_Model
     /**
      * Get invoice by id
      * @param  mixed $id
-     * @return array
+     * @return array|object
      */
     public function get($id = '', $where = [])
     {
@@ -114,6 +114,8 @@ class Invoices_model extends App_Model
 
     public function mark_as_cancelled($id)
     {
+        $isDraft = $this->is_draft($id);
+
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'invoices', [
             'status' => self::STATUS_CANCELLED,
@@ -121,7 +123,12 @@ class Invoices_model extends App_Model
         ]);
 
         if ($this->db->affected_rows() > 0) {
+            if ($isDraft) {
+                $this->change_invoice_number_when_status_draft($id);
+            }
+
             $this->log_invoice_activity($id, 'invoice_activity_marked_as_cancelled');
+
             hooks()->do_action('invoice_marked_as_cancelled', $id);
 
             return true;
@@ -136,6 +143,7 @@ class Invoices_model extends App_Model
         $this->db->update(db_prefix() . 'invoices', [
             'status' => self::STATUS_UNPAID,
         ]);
+
         if ($this->db->affected_rows() > 0) {
             $this->log_invoice_activity($id, 'invoice_activity_unmarked_as_cancelled');
 
@@ -157,6 +165,7 @@ class Invoices_model extends App_Model
         $this->db->where('is_recurring_from', $id);
         $invoices           = $this->db->get(db_prefix() . 'invoices')->result_array();
         $recurring_invoices = [];
+
         foreach ($invoices as $invoice) {
             $recurring_invoices[] = $this->get($invoice['id']);
         }
@@ -316,6 +325,7 @@ class Invoices_model extends App_Model
         $data['hash'] = app_generate_hash();
 
         $items = [];
+
         if (isset($data['newitems'])) {
             $items = $data['newitems'];
             unset($data['newitems']);
@@ -342,12 +352,6 @@ class Invoices_model extends App_Model
         $this->db->insert(db_prefix() . 'invoices', $data);
         $insert_id = $this->db->insert_id();
         if ($insert_id) {
-
-            // Update next invoice number in settings
-            $this->db->where('name', 'next_invoice_number');
-            $this->db->set('value', 'value+1', false);
-            $this->db->update(db_prefix() . 'options');
-
             if (isset($custom_fields)) {
                 handle_custom_fields_post($insert_id, $custom_fields);
             }
@@ -445,6 +449,11 @@ class Invoices_model extends App_Model
             }
 
             update_invoice_status($insert_id);
+
+            // Update next invoice number in settings if status is not draft
+            if (!$this->is_draft($insert_id)) {
+                $this->increment_next_number();
+            }
 
             foreach ($items as $key => $item) {
                 if ($itemid = add_new_sales_item_post($item, $insert_id, 'invoice')) {
@@ -676,7 +685,10 @@ class Invoices_model extends App_Model
         $original_invoice = $this->get($id);
         $affectedRows     = 0;
 
-        $data['number'] = trim($data['number']);
+        // Perhaps draft?
+        if (isset($data['nubmer'])) {
+            $data['number'] = trim($data['number']);
+        }
 
         $original_number_formatted = format_invoice_number($id);
 
@@ -832,7 +844,7 @@ class Invoices_model extends App_Model
 
         if ($this->db->affected_rows() > 0) {
             $affectedRows++;
-            if ($original_number != $data['number']) {
+            if (isset($data['data']) && $original_number != $data['number']) {
                 $this->log_invoice_activity($original_invoice->id, 'invoice_activity_number_changed', false, serialize([
                     $original_number_formatted,
                     format_invoice_number($original_invoice->id),
@@ -1078,26 +1090,29 @@ class Invoices_model extends App_Model
      */
     public function delete($id, $simpleDelete = false)
     {
-        if (get_option('delete_only_on_last_invoice') == 1 && $simpleDelete == false) {
-            if (!is_last_invoice($id)) {
-                return false;
-            }
+        if (get_option('delete_only_on_last_invoice') == 1 &&
+                $simpleDelete == false &&
+                !is_last_invoice($id)) {
+            return false;
         }
-        $number = format_invoice_number($id);
+
+        $number  = format_invoice_number($id);
+        $isDraft = $this->is_draft($id);
 
         hooks()->do_action('before_invoice_deleted', $id);
+
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'invoices');
+
         if ($this->db->affected_rows() > 0) {
-            if (get_option('invoice_number_decrement_on_delete') == 1 && $simpleDelete == false) {
-                $current_next_invoice_number = get_option('next_invoice_number');
-                if ($current_next_invoice_number > 1) {
-                    // Decrement next invoice number to
-                    $this->db->where('name', 'next_invoice_number');
-                    $this->db->set('value', 'value-1', false);
-                    $this->db->update(db_prefix() . 'options');
-                }
+            if (get_option('invoice_number_decrement_on_delete') == 1 &&
+                get_option('next_invoice_number') > 1 &&
+                $simpleDelete == false &&
+                !$isDraft) {
+                // Decrement next invoice number to
+                $this->decrement_next_number();
             }
+
             if ($simpleDelete == false) {
                 $this->db->where('invoiceid', $id);
                 $this->db->update(db_prefix() . 'expenses', [
@@ -1177,6 +1192,10 @@ class Invoices_model extends App_Model
                 $this->db->delete(db_prefix() . 'related_items');
             }
 
+            $this->db->where('rel_id', $id);
+            $this->db->where('rel_type', 'invoice');
+            $this->db->delete('scheduled_emails');
+
             $this->db->where('invoiceid', $id);
             $this->db->delete(db_prefix() . 'invoicepaymentrecords');
 
@@ -1243,10 +1262,13 @@ class Invoices_model extends App_Model
             'sent'     => 1,
             'datesend' => date('Y-m-d H:i:s'),
         ]);
-        $marked = false;
-        if ($this->db->affected_rows() > 0) {
-            $marked = true;
+
+        $marked = $this->db->affected_rows() > 0;
+
+        if ($marked && $this->is_draft($id)) {
+            $this->change_invoice_number_when_status_draft($id);
         }
+
         if (DEFINED('CRON')) {
             $additional_activity_data = serialize([
                 '<custom_data>' . implode(', ', $emails_sent) . '</custom_data>',
@@ -1367,40 +1389,47 @@ class Invoices_model extends App_Model
      */
     public function send_invoice_to_client($id, $template_name = '', $attachpdf = true, $cc = '', $manually = false, $attachStatement = [])
     {
-        $invoice = $this->get($id);
+        $originalNumber = null;
 
-        $invoice = hooks()->apply_filters('invoice_object_before_send_to_client', $invoice);
+        if ($isDraft = $this->is_draft($id)) {
+            // Update invoice number from draft before sending
+            $originalNumber = $this->change_invoice_number_when_status_draft($id);
+        }
+
+        $invoice = hooks()->apply_filters(
+            'invoice_object_before_send_to_client',
+            $this->get($id)
+        );
 
         if ($template_name == '') {
-            if ($invoice->sent == 0) {
-                $template_name = 'invoice_send_to_customer';
-            } else {
-                $template_name = 'invoice_send_to_customer_already_sent';
-            }
+            $template_name = $invoice->sent == 0 ?
+                'invoice_send_to_customer' :
+                'invoice_send_to_customer_already_sent';
 
             $template_name = hooks()->apply_filters('after_invoice_sent_template_statement', $template_name);
         }
 
-        $invoice_number = format_invoice_number($invoice->id);
-        $emails_sent    = [];
-        $sent           = false;
-        $sent_to        = [];
+        $emails_sent = [];
+        $send_to     = [];
 
         // Manually is used when sending the invoice via add/edit area button Save & Send
         if (!DEFINED('CRON') && $manually === false) {
-            $sent_to = $this->input->post('sent_to');
+            $send_to = $this->input->post('sent_to');
         } elseif (isset($GLOBALS['scheduled_email_contacts'])) {
-            $sent_to = $GLOBALS['scheduled_email_contacts'];
+            $send_to = $GLOBALS['scheduled_email_contacts'];
         } else {
-            $contacts = $this->clients_model->get_contacts($invoice->clientid, ['active' => 1, 'invoice_emails' => 1]);
+            $contacts = $this->clients_model->get_contacts(
+                $invoice->clientid,
+                ['active' => 1, 'invoice_emails' => 1]
+            );
 
             foreach ($contacts as $contact) {
-                array_push($sent_to, $contact['id']);
+                array_push($send_to, $contact['id']);
             }
         }
 
         $attachStatementPdf = false;
-        if (is_array($sent_to) && count($sent_to) > 0) {
+        if (is_array($send_to) && count($send_to) > 0) {
             if (isset($attachStatement['attach']) && $attachStatement['attach'] == true) {
                 $statement    = $this->clients_model->get_statement($invoice->clientid, $attachStatement['from'], $attachStatement['to']);
                 $statementPdf = statement_pdf($statement);
@@ -1412,15 +1441,16 @@ class Invoices_model extends App_Model
 
             $status_updated = update_invoice_status($invoice->id, true, true);
 
+            $invoice_number = format_invoice_number($invoice->id);
+
             if ($attachpdf) {
-                $_pdf_invoice = $this->get($id);
                 set_mailing_constant();
-                $pdf    = invoice_pdf($_pdf_invoice);
+                $pdf    = invoice_pdf($this->get($id));
                 $attach = $pdf->Output($invoice_number . '.pdf', 'S');
             }
 
             $i = 0;
-            foreach ($sent_to as $contact_id) {
+            foreach ($send_to as $contact_id) {
                 if ($contact_id != '') {
 
                     // Send cc only for the first contact
@@ -1459,26 +1489,52 @@ class Invoices_model extends App_Model
                 }
                 $i++;
             }
-        } else {
+        } elseif ($isDraft) {
+            // Revert the number on failure
+            $this->db->where('id', $id);
+            $this->db->update('invoices', ['number' => $originalNumber]);
+
+            $this->decrement_next_number();
+
             return false;
         }
 
-        if ($sent) {
+        if (count($emails_sent) > 0) {
             $this->set_invoice_sent($id, false, $emails_sent, true);
+
             hooks()->do_action('invoice_sent', $id);
 
             return true;
         }
 
-        // In case the invoice not sended and the status was draft and the invoice status is updated before send return back to draft status
-        if ($invoice->status == self::STATUS_DRAFT && $status_updated !== false) {
+        // In case the invoice not sent and the status was draft and
+        // the invoice status is updated before send return back to draft status
+        // and actually update the number to the orignal number
+        if ($isDraft && $status_updated !== false) {
+            $this->decrement_next_number();
+
             $this->db->where('id', $invoice->id);
-            $this->db->update(db_prefix() . 'invoices', [
-                    'status' => self::STATUS_DRAFT,
-                ]);
+            $this->db->update('invoices', [
+                'status' => self::STATUS_DRAFT,
+                'number' => $originalNumber,
+            ]);
         }
 
         return false;
+    }
+
+    /**
+     * @since  2.7.0
+     *
+     * Check whether the given invoice is draft
+     *
+     * @param  int  $id
+     *
+     * @return boolean
+     */
+    public function is_draft($id)
+    {
+        return total_rows('invoices', ['id' => $id, 'status' => self::STATUS_DRAFT]) === 1;
     }
 
     /**
@@ -1526,11 +1582,24 @@ class Invoices_model extends App_Model
         ]);
     }
 
+    /**
+     * Get the invoices years
+     *
+     * @return array
+     */
     public function get_invoices_years()
     {
         return $this->db->query('SELECT DISTINCT(YEAR(date)) as year FROM ' . db_prefix() . 'invoices ORDER BY year DESC')->result_array();
     }
 
+    /**
+     * Map the shipping columns into the data
+     *
+     * @param  array  $data
+     * @param  boolean $expense
+     *
+     * @return array
+     */
     private function map_shipping_columns($data, $expense = false)
     {
         if (!isset($data['include_shipping'])) {
@@ -1556,5 +1625,58 @@ class Invoices_model extends App_Model
         }
 
         return $data;
+    }
+
+    /**
+     * @since  2.7.0
+     *
+     * Change the invoice number for status when it's draft
+     *
+     * @param  int $id
+     *
+     * @return int
+     */
+    public function change_invoice_number_when_status_draft($id)
+    {
+        $this->db->select('number')->where('id', $id);
+        $invoice = $this->db->get('invoices')->row();
+
+        $newNumber = get_option('next_invoice_number');
+
+        $this->db->where('id', $id);
+        $this->db->update('invoices', ['number' => $newNumber]);
+
+        $this->increment_next_number();
+
+        return $invoice->number;
+    }
+
+    /**
+     * @since  2.7.0
+     *
+     * Increment the invoies next nubmer
+     *
+     * @return void
+     */
+    public function increment_next_number()
+    {
+        // Update next invoice number in settings
+        $this->db->where('name', 'next_invoice_number');
+        $this->db->set('value', 'value+1', false);
+        $this->db->update(db_prefix() . 'options');
+    }
+
+    /**
+     * @since  2.7.0
+     *
+     * Decrement the invoies next number
+     *
+     * @return void
+     */
+    public function decrement_next_number()
+    {
+        $this->db->where('name', 'next_invoice_number');
+        $this->db->set('value', 'value-1', false);
+        $this->db->update(db_prefix() . 'options');
     }
 }

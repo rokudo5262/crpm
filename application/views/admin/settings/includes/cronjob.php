@@ -65,6 +65,9 @@
 
   </div>
   <div role="tabpanel" class="tab-pane" id="tasks">
+  <i class="fa fa-question-circle pull-left" data-toggle="tooltip" data-title="<?php echo _l('hour_of_day_perform_tasks_reminder_notification_help'); ?>"></i>
+    <?php echo render_input('settings[tasks_reminder_notification_hour]','hour_of_day_perform_auto_operations',get_option('tasks_reminder_notification_hour'),'number',array('data-toggle'=>'tooltip','data-title'=>_l('hour_of_day_perform_auto_operations_format'),'max'=>23)); ?>
+    <hr />
    <i class="fa fa-question-circle pull-left" data-toggle="tooltip" data-title="<?php echo _l('tasks_reminder_notification_before_help'); ?>"></i>
    <?php echo render_input('settings[tasks_reminder_notification_before]','tasks_reminder_notification_before',get_option('tasks_reminder_notification_before'),'number'); ?>
  </div>

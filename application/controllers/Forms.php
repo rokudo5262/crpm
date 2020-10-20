@@ -293,7 +293,7 @@ class Forms extends ClientsController
                                         'description'     => 'not_lead_imported_from_form',
                                         'touserid'        => $member['staffid'],
                                         'fromcompany'     => 1,
-                                        'fromuserid'      => null,
+                                        'fromuserid'      => 0,
                                         'additional_data' => serialize([
                                             $form->name,
                                             ]),

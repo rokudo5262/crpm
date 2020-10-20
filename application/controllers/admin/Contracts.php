@@ -19,7 +19,7 @@ class Contracts extends AdminController
             access_denied('contracts');
         }
 
-        $data['expiring']               = $this->contracts_model->get_contracts_about_to_expire();
+        $data['expiring']               = $this->contracts_model->get_contracts_about_to_expire(get_staff_user_id());
         $data['count_active']           = count_active_contracts();
         $data['count_expired']          = count_expired_contracts();
         $data['count_recently_created'] = count_recently_created_contracts();

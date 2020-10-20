@@ -56,7 +56,7 @@ class Dashboard_model extends App_Model
         $this->db->select(db_prefix() . 'invoicepaymentrecords.id, amount,' . db_prefix() . 'invoicepaymentrecords.date');
         $this->db->from(db_prefix() . 'invoicepaymentrecords');
         $this->db->join(db_prefix() . 'invoices', '' . db_prefix() . 'invoices.id = ' . db_prefix() . 'invoicepaymentrecords.invoiceid');
-        $this->db->where('YEARWEEK(tblinvoicepaymentrecords.date) = YEARWEEK(CURRENT_DATE)');
+        $this->db->where('YEARWEEK(' . db_prefix() . 'invoicepaymentrecords.date) = YEARWEEK(CURRENT_DATE)');
         $this->db->where('' . db_prefix() . 'invoices.status !=', 5);
         if ($currency != 'undefined') {
             $this->db->where('currency', $currency);
@@ -71,7 +71,7 @@ class Dashboard_model extends App_Model
         $this->db->select(db_prefix() . 'invoicepaymentrecords.id, amount,' . db_prefix() . 'invoicepaymentrecords.date');
         $this->db->from(db_prefix() . 'invoicepaymentrecords');
         $this->db->join(db_prefix() . 'invoices', '' . db_prefix() . 'invoices.id = ' . db_prefix() . 'invoicepaymentrecords.invoiceid');
-        $this->db->where('YEARWEEK(tblinvoicepaymentrecords.date) = YEARWEEK(CURRENT_DATE - INTERVAL 7 DAY) ');
+        $this->db->where('YEARWEEK(' . db_prefix() . 'invoicepaymentrecords.date) = YEARWEEK(CURRENT_DATE - INTERVAL 7 DAY) ');
 
         $this->db->where('' . db_prefix() . 'invoices.status !=', 5);
         if ($currency != 'undefined') {

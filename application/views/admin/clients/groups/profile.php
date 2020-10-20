@@ -112,7 +112,7 @@
                      }
                             // Do not remove the currency field from the customer profile!
                      echo render_select('default_currency',$currencies,array('id','name','symbol'),'invoice_add_edit_currency',$selected,$s_attrs); ?>
-                  <?php if(get_option('disable_language') == 0){ ?>
+                  <?php if(!is_language_disabled()){ ?>
                   <div class="form-group select-placeholder">
                      <label for="default_language" class="control-label"><?php echo _l('localization_default_language'); ?>
                      </label>

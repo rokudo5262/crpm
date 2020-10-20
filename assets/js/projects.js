@@ -173,28 +173,6 @@
           currency: 'required'
       }, projectExpenseSubmitHandler);
 
-      gantt = $("#gantt").gantt({
-          source: gantt_data,
-          itemsPerPage: 25,
-          months: app.months_json,
-          navigate: 'scroll',
-          onRender: function() {
-              $('#gantt .leftPanel .name .fn-label:empty').parents('.name').css('background', 'initial');
-              $('#gantt .leftPanel .spacer').html('<span class="gantt_project_name"><i class="fa fa-cubes"></i> ' + $('.project-name').text() + '</span>');
-              var _percent = $('input[name="project_percent"]').val();
-              $('#gantt .leftPanel .spacer').append('<div style="padding:10px 20px 10px 20px;"><div class="progress mtop5 progress-bar-mini"><div class="progress-bar progress-bar-success no-percent-text" role="progressbar" aria-valuenow="' + _percent + '" aria-valuemin="0" aria-valuemax="100" style="width: 0%" data-percent="' + _percent + '"></div></div></div>');
-              init_progress_bars();
-          },
-          onItemClick: function(data) {
-              init_task_modal(data.task_id);
-          },
-          onAddClick: function(dt, rowId) {
-              var fmt = new DateFormatter();
-              var d0 = new Date(+dt);
-              var d1 = fmt.formatDate(d0, app.options.date_format);
-              new_task(admin_url + 'tasks/task?rel_type=project&rel_id=' + project_id + '&start_date=' + d1);
-          }
-      });
       // Expenses additional server params
       var Expenses_ServerParams = {};
       $.each($('._hidden_inputs._filters input'), function() {

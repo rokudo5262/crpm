@@ -458,12 +458,16 @@
                        $comments .= '<span class="pull-right mright5"><a href="#" onclick="edit_task_comment(' . $comment['id'] . '); return false;"><i class="fa fa-pencil-square-o"></i></span></a>';
                     }
                   }
-                  $comments .= '<div class="media-body">';
+
+                  $comments .= '<div class="media-body comment-wrapper">';
+                  $comments .= '<div class="mleft40">';
+
                   if($comment['staffid'] != 0){
                    $comments .= '<a href="' . admin_url('profile/' . $comment['staffid']) . '" target="_blank">' . $comment['staff_full_name'] . '</a> <br />';
                   } elseif($comment['contact_id'] != 0) {
                    $comments .= '<span class="label label-info mtop5 mbot5 inline-block">'._l('is_customer_indicator').'</span><br /><a href="' . admin_url('clients/client/'.get_user_id_by_contact_id($comment['contact_id']) .'?contactid='.$comment['contact_id'] ) . '" class="pull-left" target="_blank">' . get_contact_full_name($comment['contact_id']) . '</a> <br />';
                   }
+
                   $comments .= '<div data-edit-comment="'.$comment['id'].'" class="hide edit-task-comment"><textarea rows="5" id="task_comment_'.$comment['id'].'" class="ays-ignore form-control">'.str_replace('[task_attachment]', '', $comment['content']).'</textarea>
                   <div class="clearfix mtop20"></div>
                   <button type="button" class="btn btn-info pull-right" onclick="save_edited_comment('.$comment['id'].','.$task->id.')">'._l('submit').'</button>
@@ -491,8 +495,9 @@
                   $comments .= '<div class="comment-content mtop10">'.app_happy_text(check_for_links($comment['content'])) . '</div>';
                   $comments .= '</div>';
                   if ($i >= 0 && $i != $len - 1) {
-                  $comments .= '<hr class="task-info-separator" />';
+                     $comments .= '<hr class="task-info-separator" />';
                   }
+                  $comments .= '</div>';
                   $comments .= '</div>';
                   $i++;
                   }

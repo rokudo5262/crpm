@@ -86,8 +86,8 @@ function add_notification($values)
     }
 
     if (isset($data['fromcompany'])) {
-        unset($data['fromuserid']);
-        unset($data['from_fullname']);
+        $data['fromuserid']    = 0;
+        $data['from_fullname'] = '';
     }
 
     $data['date'] = date('Y-m-d H:i:s');

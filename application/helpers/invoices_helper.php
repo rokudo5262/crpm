@@ -293,6 +293,7 @@ function update_invoice_status($id, $force_update = false, $prevent_logging = fa
 
     if ($CI->db->affected_rows() > 0) {
         hooks()->do_action('invoice_status_changed', ['invoice_id' => $id, 'status' => $status]);
+
         if ($prevent_logging == true) {
             return $status;
         }
@@ -341,14 +342,26 @@ function is_last_invoice($id)
 function format_invoice_number($id)
 {
     $CI = & get_instance();
-    $CI->db->select('date,number,prefix,number_format')->from(db_prefix() . 'invoices')->where('id', $id);
+
+    $CI->db->select('date,number,prefix,number_format,status')
+        ->from(db_prefix() . 'invoices')
+        ->where('id', $id);
+
     $invoice = $CI->db->get()->row();
 
     if (!$invoice) {
         return '';
     }
 
-    $number = sales_number_format($invoice->number, $invoice->number_format, $invoice->prefix, $invoice->date);
+   if (!class_exists('Invoices_model', false)) {
+        get_instance()->load->model('invoices_model');
+    }
+
+    if ($invoice->status == Invoices_model::STATUS_DRAFT) {
+        $number = $invoice->prefix . 'DRAFT';
+    } else {
+        $number = sales_number_format($invoice->number, $invoice->number_format, $invoice->prefix, $invoice->date);
+    }
 
     return hooks()->apply_filters('format_invoice_number', $number, [
         'id'      => $id,

@@ -87,7 +87,7 @@
                     <?php if(isset($project) && project_has_recurring_tasks($project->id)) { ?>
                         <div class="alert alert-warning recurring-tasks-notice hide"></div>
                     <?php } ?>
-                    <?php if(total_rows(db_prefix().'emailtemplates',array('slug'=>'project-finished-to-customer','active'=>0)) == 0){ ?>
+                    <?php if(is_email_template_active('project-finished-to-customer')){ ?>
                         <div class="form-group project_marked_as_finished hide">
                             <div class="checkbox checkbox-primary">
                                 <input type="checkbox" name="project_marked_as_finished_email_to_contacts" id="project_marked_as_finished_email_to_contacts">
@@ -184,7 +184,7 @@
                 <p class="bold"><?php echo _l('project_description'); ?></p>
                 <?php $contents = ''; if(isset($project)){$contents = $project->description;} ?>
                 <?php echo render_textarea('description','',$contents,array(),array(),'','tinymce'); ?>
-                <?php if(total_rows(db_prefix().'emailtemplates',array('slug'=>'assigned-to-project','active'=>0)) == 0){ ?>
+                <?php if(is_email_template_active('assigned-to-project')){ ?>
                     <div class="checkbox checkbox-primary">
                      <input type="checkbox" name="send_created_email" id="send_created_email">
                      <label for="send_created_email"><?php echo _l('project_send_created_email'); ?></label>

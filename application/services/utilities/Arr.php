@@ -95,6 +95,23 @@ class Arr
         return false;
     }
 
+    public static function uniqueByKey($array, $key)
+    {
+        $temp_array = [];
+        $i          = 0;
+        $key_array  = [];
+
+        foreach ($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i]  = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+
+        return $temp_array;
+    }
+
     public static function sortBy($array, $key, $keepIndex = false)
     {
         if (!is_array($array)) {

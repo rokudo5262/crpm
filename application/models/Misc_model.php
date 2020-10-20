@@ -1,5 +1,7 @@
 <?php
 
+use app\services\utilities\Arr;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 class Misc_model extends App_Model
@@ -99,7 +101,7 @@ class Misc_model extends App_Model
         }
 
         // Clear the duplicates
-        $taxes = array_map('unserialize', array_unique(array_map('serialize', $taxes)));
+        $taxes = Arr::uniqueByKey($taxes, 'name');
 
         $select = '<select class="selectpicker display-block tax" data-width="100%" name="' . $name . '" multiple data-none-selected-text="' . _l('no_tax') . '">';
 

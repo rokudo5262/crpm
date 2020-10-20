@@ -89,7 +89,7 @@ function send_contract_signed_notification_to_staff($contract_id)
             'description'     => 'not_contract_signed',
             'touserid'        => $member['staffid'],
             'fromcompany'     => 1,
-            'fromuserid'      => null,
+            'fromuserid'      => 0,
             'link'            => 'contracts/contract/' . $contract->id,
             'additional_data' => serialize([
                 '<b>' . $contract->subject . '</b>',

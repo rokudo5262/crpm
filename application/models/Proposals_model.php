@@ -543,7 +543,7 @@ class Proposals_model extends App_Model
                         'description'     => 'not_proposal_comment_from_client',
                         'touserid'        => $member['staffid'],
                         'fromcompany'     => 1,
-                        'fromuserid'      => null,
+                        'fromuserid'      => 0,
                         'link'            => 'proposals/list_proposals/' . $data['proposalid'],
                         'additional_data' => serialize([
                             $proposal->subject,

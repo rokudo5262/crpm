@@ -239,7 +239,7 @@
 					<?php
 					$memory = ini_get('memory_limit');
 					echo $memory ? $memory : 'N/A';
-					if(floatval($memory) < 128) {
+					if(floatval($memory) < 128 && floatval($memory) > -1) {
 						echo '<br /><span class="text-warning">128M is recommended value (or bigger)</span>';
 					}
 					?>

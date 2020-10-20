@@ -601,7 +601,7 @@ function handle_company_logo_upload()
                 }
 
                 // Setup our new file path
-                $filename    = md5($logo) . '.' . $extension;
+                $filename    = md5($logo . time()) . '.' . $extension;
                 $newFilePath = $path . $filename;
                 _maybe_create_upload_path($path);
                 // Upload the file into the company uploads dir

@@ -43,6 +43,13 @@
                         </a>
                      </li>
                      <?php if($contact->is_primary == 1){ ?>
+                        <?php if(can_loggged_in_user_manage_contacts()) { ?>
+                           <li class="customers-nav-item-edit-profile">
+                              <a href="<?php echo site_url('contacts'); ?>">
+                                 <?php echo _l('clients_nav_contacts'); ?>
+                              </a>
+                           </li>
+                        <?php } ?>
                         <li class="customers-nav-item-company-info">
                            <a href="<?php echo site_url('clients/company'); ?>">
                               <?php echo _l('client_company_info'); ?>
@@ -71,20 +78,20 @@
                            <?php } ?>
                         </a>
                      </li>
-                     <?php if(can_logged_in_contact_change_language()) {
+                     <?php if(!is_language_disabled()) {
                         ?>
                         <li class="dropdown-submenu pull-left customers-nav-item-languages">
                            <a href="#" tabindex="-1">
                               <?php echo _l('language'); ?>
                            </a>
                            <ul class="dropdown-menu dropdown-menu-left">
-                              <li class="<?php if($client->default_language == ""){echo 'active';} ?>">
+                              <li class="<?php if(get_contact_language() == ""){echo 'active';} ?>">
                                  <a href="<?php echo site_url('clients/change_language'); ?>">
                                     <?php echo _l('system_default_string'); ?>
                                  </a>
                               </li>
                               <?php foreach($this->app->get_available_languages() as $user_lang) { ?>
-                                 <li <?php if($client->default_language == $user_lang){echo 'class="active"';} ?>>
+                                 <li <?php if(get_contact_language() == $user_lang){echo 'class="active"';} ?>>
                                     <a href="<?php echo site_url('clients/change_language/'.$user_lang); ?>">
                                        <?php echo ucfirst($user_lang); ?>
                                     </a>

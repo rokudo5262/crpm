@@ -164,5 +164,5 @@
 
 </div>
 <?php
-include_once(APPPATH . 'views/admin/clients/modals/send_file_modal.php');
+$this->load->view('admin/clients/modals/send_file_modal');
 } ?>

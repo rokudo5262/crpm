@@ -565,7 +565,7 @@ function get_items_by_type($type, $id)
     $CI->db->where('rel_type', $type);
     $CI->db->order_by('item_order', 'asc');
 
-   return $CI->db->get()->result_array();
+    return $CI->db->get()->result_array();
 }
 /**
 * Function that update total tax in sales table eq. invoice, proposal, estimates, credit note

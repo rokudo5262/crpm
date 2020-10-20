@@ -219,26 +219,30 @@ class Tickets_model extends App_Model
                 $extension     = end($filenameparts);
                 $extension     = strtolower($extension);
                 if (in_array('.' . $extension, $allowed_extensions)) {
+
                     $filename = implode(array_slice($filenameparts, 0, 0 - 1));
                     $filename = trim(preg_replace('/[^a-zA-Z0-9-_ ]/', '', $filename));
+
                     if (!$filename) {
                         $filename = 'attachment';
                     }
+
                     if (!file_exists($path)) {
                         mkdir($path, 0755);
                         $fp = fopen($path . 'index.html', 'w');
                         fclose($fp);
                     }
+
                     $filename = unique_filename($path, $filename . '.' . $extension);
-                    $fp       = fopen($path . $filename, 'w');
-                    fwrite($fp, $attachment['data']);
-                    fclose($fp);
+                    file_put_contents($path.$filename, $attachment['data']);
+
                     array_push($ticket_attachments, [
                         'file_name' => $filename,
                         'filetype'  => get_mime_by_extension($filename),
                     ]);
                 }
             }
+
             $this->insert_ticket_attachments_to_database($ticket_attachments, $ticket_id, $reply_id);
         }
     }
@@ -410,7 +414,7 @@ class Tickets_model extends App_Model
         }
 
         // admin can have html
-        if ($admin == null && hooks()->add_filter('ticket_message_without_html_for_non_admin', true)) {
+        if ($admin == null && hooks()->apply_filters('ticket_message_without_html_for_non_admin', true)) {
             $data['message'] = _strip_tags($data['message']);
             $data['message'] = nl2br_save_html($data['message']);
         }
@@ -511,7 +515,7 @@ class Tickets_model extends App_Model
                                     'description'     => 'not_new_ticket_reply',
                                     'touserid'        => $member['staffid'],
                                     'fromcompany'     => 1,
-                                    'fromuserid'      => null,
+                                    'fromuserid'      => 0,
                                     'link'            => 'tickets/ticket/' . $id,
                                     'additional_data' => serialize([
                                         $ticket->subject,
@@ -740,7 +744,7 @@ class Tickets_model extends App_Model
         }
 
         // Admin can have html
-        if ($admin == null && hooks()->add_filter('ticket_message_without_html_for_non_admin', true)) {
+        if ($admin == null && hooks()->apply_filters('ticket_message_without_html_for_non_admin', true)) {
             $data['message'] = _strip_tags($data['message']);
             $data['subject'] = _strip_tags($data['subject']);
             $data['message'] = nl2br_save_html($data['message']);
@@ -777,7 +781,7 @@ class Tickets_model extends App_Model
                         'description'     => 'not_ticket_assigned_to_you',
                         'touserid'        => $data['assigned'],
                         'fromcompany'     => 1,
-                        'fromuserid'      => null,
+                        'fromuserid'      => 0,
                         'link'            => 'tickets/ticket/' . $ticketid,
                         'additional_data' => serialize([
                             $data['subject'],
@@ -837,7 +841,7 @@ class Tickets_model extends App_Model
                                     'description'     => 'not_new_ticket_created',
                                     'touserid'        => $member['staffid'],
                                     'fromcompany'     => 1,
-                                    'fromuserid'      => null,
+                                    'fromuserid'      => 0,
                                     'link'            => 'tickets/ticket/' . $ticketid,
                                     'additional_data' => serialize([
                                         $data['subject'],
@@ -1034,7 +1038,7 @@ class Tickets_model extends App_Model
                         'description'     => 'not_ticket_reassigned_to_you',
                         'touserid'        => $data['assigned'],
                         'fromcompany'     => 1,
-                        'fromuserid'      => null,
+                        'fromuserid'      => 0,
                         'link'            => 'tickets/ticket/' . $data['ticketid'],
                         'additional_data' => serialize([
                             $data['subject'],
@@ -1052,7 +1056,7 @@ class Tickets_model extends App_Model
                     'description'     => 'not_ticket_assigned_to_you',
                     'touserid'        => $data['assigned'],
                     'fromcompany'     => 1,
-                    'fromuserid'      => null,
+                    'fromuserid'      => 0,
                     'link'            => 'tickets/ticket/' . $data['ticketid'],
                     'additional_data' => serialize([
                         $data['subject'],

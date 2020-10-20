@@ -113,6 +113,13 @@ class Invoice_merge_fields extends App_merge_fields
                         'invoice-payment-recorded',
                     ],
                 ],
+                [
+                    'name'      => 'Project name',
+                    'key'       => '{project_name}',
+                    'available' => [
+                        'invoice',
+                    ],
+                ],
             ];
     }
 
@@ -155,6 +162,7 @@ class Invoice_merge_fields extends App_merge_fields
         $fields['{invoice_duedate}'] = _d($invoice->duedate);
         $fields['{invoice_date}']    = _d($invoice->date);
         $fields['{invoice_status}']  = format_invoice_status($invoice->status, '', false);
+        $fields['{project_name}']    = get_project_name_by_id($invoice->project_id);
 
         $custom_fields = get_custom_fields('invoice');
         foreach ($custom_fields as $field) {

@@ -5199,8 +5199,16 @@ body.rtl a+.main-tasks-table-href-name {
 }
 
 
+#task-comments .comment-wrapper {
+    display:block;
+    width:100%;
+}
+
 #task-comments .comment-content {
-    word-break: break-word;
+   word-break: break-word;
+    overflow-x: scroll;
+    overflow-wrap: break-word;
+    overflow: auto;
 }
 
 .firefox #task-comments .comment-content {
@@ -5904,91 +5912,6 @@ body.rtl div.dataTables_wrapper {
     right: 0;
 }
 
-.fn-label a {
-    font-weight: 500;
-}
-
-.fn-gantt {
-    border: 2px solid #EEF2F4;
-    border-radius: 4px;
-}
-
-.fn-gantt-hint {
-    background: #6c7888;
-    border: 0;
-    color: #fff;
-}
-
-.fn-gantt .leftPanel {
-    width: 450px;
-    border-right: 1px solid #e4e4e4;
-}
-
-.fn-gantt .leftPanel .name {
-    font-weight: 500;
-    font-size: 13px;
-    background: #717a86;
-}
-
-.fn-gantt .rightPanel .fn-label:hover {
-    cursor: pointer;
-}
-
-.fn-gantt .rightPanel .month {
-    color: #717a86;
-}
-
-.fn-gantt .wd,
-.fn-gantt .bottom,
-.fn-gantt .rightPanel .month,
-.fn-gantt .rightPanel .year,
-.fn-gantt .spacer,
-.fn-gantt .leftPanel .desc {
-    background-color: #ffffff;
-}
-
-.fn-gantt .leftPanel .fn-label {
-    width: 100%;
-}
-
-.fn-gantt .leftPanel .name,
-.fn-gantt .leftPanel .desc {
-    border-bottom: 1px solid #f5f5f5;
-    height: 23px;
-}
-
-.fn-gantt .leftPanel .name {
-    width: 40%;
-}
-
-.fn-gantt .leftPanel .desc {
-    width: 60%;
-}
-
-#gantt .gantt_project_name {
-    font-weight: 500;
-    text-align: center;
-    font-size: 16px;
-    margin: 0 auto;
-    display: block;
-    margin-top: 32px;
-}
-
-.fn-gantt .leftPanel .name .fn-label {
-    color: #fff;
-}
-
-.fn-gantt table th:first-child {
-    width: 150px;
-}
-
-.fn-gantt *,
-.fn-gantt *:after,
-.fn-gantt *:before {
-    -webkit-box-sizing: content-box;
-    box-sizing: content-box;
-}
-
 .width300 {
     width: 300px;
 }
@@ -6179,7 +6102,7 @@ body.rtl .hr-panel-heading.project-area-separation {
     font-size: 14px;
 }
 
-.jquery-comments .textarea-wrapper .close, .jquery-comments .textarea-wrapper .upload.inline-button {
+.jquery-comments .textarea-wrapper .upload.inline-button {
     display:none !important;
 }
 
@@ -6192,6 +6115,14 @@ body.rtl .hr-panel-heading.project-area-separation {
 
 .jquery-comments ul.main li.comment .name {
     color: #0081BB;
+}
+
+.jquery-comments ul.main {
+    list-style:none !important;
+}
+
+.jquery-comments.tc-content ul.main ul {
+    list-style: initial !important;
 }
 
 .jquery-comments ul.main li.comment .wrapper .content {
@@ -7039,10 +6970,6 @@ li.task.overdue-task .panel-body {
     .dataTables_filter input:focus {
         width: 100% !important;
     }
-
-    .fn-gantt .fn-content {
-        overflow-x: scroll;
-    }
 }
 
 #inline-editor-save-btn button {
@@ -7339,6 +7266,7 @@ div.dataTables_wrapper div.dataTables_length label,
 .tc-content ol {
     list-style: inherit;
     margin-left: 16px;
+    line-height: 10px;
 }
 
 .tc-content ol {
@@ -9167,16 +9095,6 @@ body.gantt {
     width: inherit;
 }
 
-.ganttProject {
-    background-color: #e6e8ec !important;
-}
-
-.ganttProject .fn-label {
-    font-size: 13px !important;
-    text-align: left !important;
-    padding-left: 10px;
-}
-
 .gpicker {
     opacity: 0;
 }
@@ -9257,7 +9175,6 @@ body.gantt {
     display: -ms-flexbox !important;
     display: flex !important;
 }
-
 .flex-grow-1 {
     -webkit-box-flex: 1 !important;
         -ms-flex-positive: 1 !important;
@@ -9269,4 +9186,12 @@ body.gantt {
     -webkit-box-direction: normal !important;
         -ms-flex-direction: column !important;
             flex-direction: column !important;
+}
+
+.gantt .ganttGreen .bar {
+    fill: #84C529;
+}
+
+.gantt .ganttRed .bar {
+    fill: #cc5900;
 }

@@ -437,6 +437,18 @@ function app_set_update_message_info($version)
 }
 
 /**
+ * Get the scheduled email default date
+ *
+ * @since 2.7.0
+ *
+ * @return string
+ */
+function get_scheduled_email_default_date()
+{
+    return hooks()->apply_filters('scheduled_email_default_date', date('Y-m-d 08:00', strtotime('+1 day')));
+}
+
+/**
  * Set pipe.php file permissions to 0755 after update
  */
 function app_set_pipe_php_permissions()

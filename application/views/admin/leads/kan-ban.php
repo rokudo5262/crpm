@@ -33,10 +33,11 @@ foreach ($statuses as $status) {
                 <?php echo _l('new_lead'); ?>
               </button>
             </div>
+            <?php if (is_admin()){?>
             <hr />
             <div class='kan-ban-settings cpicker-wrapper'>
               <?php echo $settings; ?>
-            </div>" data-html="true" data-trigger="focus">
+            </div><?php } ?>" data-html="true" data-trigger="focus">
             <i class="fa fa-angle-down"></i>
           </a>
         </div>
@@ -66,4 +67,4 @@ foreach ($statuses as $status) {
         </div>
       </li>
     </ul>
-    <?php $i++; } ?>
+    <?php $i++; } ?> 

@@ -443,7 +443,7 @@ class App_mailer extends CI_Email
             if ($result) {
                 $this->_set_error_message('lang:email_sent', $this->_get_protocol());
                 if ($auto_clear) {
-                    $this->clear();
+                    $this->clear(true);
                 }
             } else {
                 $this->_set_error_message($this->phpmailer->ErrorInfo);

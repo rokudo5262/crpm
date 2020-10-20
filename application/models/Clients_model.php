@@ -64,6 +64,7 @@ class Clients_model extends App_Model
         }
 
         $this->db->order_by('is_primary', 'DESC');
+
         return $this->db->get(db_prefix() . 'contacts')->result_array();
     }
 
@@ -387,6 +388,10 @@ class Clients_model extends App_Model
             }
         }
 
+        if (($client_request == true) && $send_set_password_email) {
+            $set_password_email_sent = $this->authentication_model->set_password_email($data['email'], 0);
+        }
+
         if ($affectedRows > 0) {
             hooks()->do_action('contact_updated', $id, $data);
         }
@@ -446,6 +451,7 @@ class Clients_model extends App_Model
 
             // If client register set this contact as primary
             $data['is_primary'] = 1;
+
             if (is_email_verification_enabled() && !empty($data['email'])) {
                 // Verification is required on register
                 $data['email_verified_at']      = null;
@@ -573,6 +579,76 @@ class Clients_model extends App_Model
 
             log_activity('Contact Created [ID: ' . $contact_id . ']');
 
+            hooks()->do_action('contact_created', $contact_id);
+
+            return $contact_id;
+        }
+
+        return false;
+    }
+
+    /**
+     * Add new contact via customers area
+     *
+     * @param array  $data
+     * @param mixed  $customer_id
+     */
+    public function add_contact_via_customers_area($data, $customer_id)
+    {
+        $send_welcome_email      = isset($data['donotsendwelcomeemail']) && $data['donotsendwelcomeemail'] ? false : true;
+        $send_set_password_email = isset($data['send_set_password_email']) && $data['send_set_password_email'] ? true : false;
+        $custom_fields           = $data['custom_fields'];
+        unset($data['custom_fields']);
+
+        if (!is_email_verification_enabled()) {
+            $data['email_verified_at'] = date('Y-m-d H:i:s');
+        }
+
+        $password_before_hash = $data['password'];
+
+        $data = array_merge($data, [
+            'datecreated' => date('Y-m-d H:i:s'),
+            'userid'      => $customer_id,
+            'password'    => app_hash_password(isset($data['password']) ? $data['password'] : time()),
+        ]);
+
+        $data = hooks()->apply_filters('before_create_contact', $data);
+        $this->db->insert(db_prefix() . 'contacts', $data);
+
+        $contact_id = $this->db->insert_id();
+
+        if ($contact_id) {
+            handle_custom_fields_post($contact_id, $custom_fields);
+
+            // Apply default permissions
+            $default_permissions = @unserialize(get_option('default_contact_permissions'));
+
+            if (is_array($default_permissions)) {
+                foreach (get_contact_permissions() as $permission) {
+                    if (in_array($permission['id'], $default_permissions)) {
+                        $this->db->insert(db_prefix() . 'contact_permissions', [
+                            'userid'        => $contact_id,
+                            'permission_id' => $permission['id'],
+                        ]);
+                    }
+                }
+            }
+
+            if ($send_welcome_email === true) {
+                send_mail_template(
+                    'customer_created_welcome_mail',
+                    $data['email'],
+                    $customer_id,
+                    $contact_id,
+                    $password_before_hash
+                );
+            }
+
+            if ($send_set_password_email === true) {
+                $this->authentication_model->set_password_email($data['email'], 0);
+            }
+
+            log_activity('Contact Created [ID: ' . $contact_id . ']');
             hooks()->do_action('contact_created', $contact_id);
 
             return $contact_id;
@@ -1556,5 +1632,17 @@ class Clients_model extends App_Model
         }
 
         return $data;
+    }
+
+    public function delete_contact_profile_image($id)
+    {
+        hooks()->do_action('before_remove_contact_profile_image');
+        if (file_exists(get_upload_path_by_type('contact_profile_images') . $id)) {
+            delete_dir(get_upload_path_by_type('contact_profile_images') . $id);
+        }
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'contacts', [
+            'profile_image' => null,
+        ]);
     }
 }

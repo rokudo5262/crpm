@@ -196,6 +196,17 @@
          <hr class="hr-panel-heading" />
          <div class="tab-content">
             <div role="tabpanel" class="tab-pane ptop10 active" id="tab_estimate">
+               <?php if(isset($estimate->scheduled_email) && $estimate->scheduled_email) { ?>
+                     <div class="alert alert-warning">
+                        <?php echo _l('invoice_will_be_sent_at', _dt($estimate->scheduled_email->scheduled_at)); ?>
+                        <?php if(staff_can('edit', 'estimates') || $estimate->addedfrom == get_staff_user_id()) { ?>
+                           <a href="#"
+                           onclick="edit_estimate_scheduled_email(<?php echo $estimate->scheduled_email->id; ?>); return false;">
+                           <?php echo _l('edit'); ?>
+                        </a>
+                     <?php } ?>
+                  </div>
+               <?php } ?>
                <div id="estimate-preview">
                   <div class="row">
                      <?php if($estimate->status == 4 && !empty($estimate->acceptance_firstname) && !empty($estimate->acceptance_lastname) && !empty($estimate->acceptance_email)){ ?>
@@ -513,5 +524,8 @@
    init_selectpicker();
    init_form_reminder();
    init_tabs_scrollable();
+   <?php if($send_later) { ?>
+      schedule_estimate_send(<?php echo $estimate->id; ?>);
+   <?php } ?>
 </script>
 <?php $this->load->view('admin/estimates/estimate_send_to_client'); ?>

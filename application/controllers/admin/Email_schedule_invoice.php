@@ -36,7 +36,7 @@ class Email_schedule_invoice extends AdminController
 
         $data            = $this->scheduleData($id);
         $data['formUrl'] = admin_url('email_schedule_invoice/create/' . $id);
-        $data['date']    = hooks()->apply_filters('scheduled_email_default_date', date('Y-m-d 08:00', strtotime('+1 day')));
+        $data['date']    = get_scheduled_email_default_date();
         $this->load->view('admin/invoices/schedule', $data);
     }
 
