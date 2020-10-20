@@ -1,5 +1,7 @@
 *.xml
-/.idea
+/index.php
 application/config/app-config.php
 application/config/config.php
+/application/logs
 /uploads
+
