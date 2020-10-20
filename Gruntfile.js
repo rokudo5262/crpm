@@ -63,11 +63,6 @@ module.exports = function(grunt) {
                         ext: '.min.css'
                     },
                     {
-                        src: ['assets/css/reset.css'],
-                        dest: 'assets/css/reset.min.css',
-                        ext: '.min.css'
-                    },
-                    {
                         src: ['assets/builds/vendor-admin.css'],
                         dest: 'assets/builds/vendor-admin.css',
                         ext: '.css'
