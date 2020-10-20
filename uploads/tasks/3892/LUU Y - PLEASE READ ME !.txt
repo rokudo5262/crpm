@@ -1,8 +1,0 @@
-Tải phần mềm POEdit (rất nhẹ): https://poedit.net
-Cài xong mở file dịch lên và bắt đầu dịch, dịch xong một đoạn thì Ctrl+Enter để chuyển sang đoạn tiếp theo
-
-====
-Lưu ý cho file: woocommerce-vi.po
-Khi mở file này bằng phần mềm POEdit, chọn View > Show String ID
-* Không dịch từ ID 422 - 1871
-===
