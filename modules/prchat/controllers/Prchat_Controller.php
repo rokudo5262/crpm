@@ -54,7 +54,7 @@ class Prchat_Controller extends AdminController
         ) {
             echo '<h1>Seems that your Pusher account it is not setup correctly.</h1>';
             echo '<h4>Setup Pusher now: <a href="' . site_url('admin/settings?group=pusher') . '">Perfex CRM Settings->Pusher.com</a></h4>';
-            echo '<h4>Tutorial: <a target="blank" href="https://help.reputyze.asia/setup-realtime-notifications-with-pusher-com/">See example how to setup Pusher from Perfex CRM documentation</a>';
+            echo '<h4>Tutorial: <a target="blank" href="https://help.perfexcrm.com/setup-realtime-notifications-with-pusher-com/">See example how to setup Pusher from Perfex CRM documentation</a>';
             die;
         }
 
