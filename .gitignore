@@ -1,4 +1,4 @@
 *.xml
 application/config/app-config.php
 application/config/config.php
-uploads/*
+/uploads
