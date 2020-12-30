@@ -1,6 +1,23 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<div class="col-md-4 col-md-offset-4 text-center mbot15">
-    <h1 class="text-uppercase register-heading"><?php echo _l('clients_register_heading'); ?></h1>
+<div class="col-md-10 row col-md-offset-1 mbot15">
+<div class="col-md-6">
+    <h1 class="text-uppercase register-heading text-right"><?php echo _l('clients_register_heading'); ?></h1>
+</div>
+<div class="col-md-3 mtop15">
+<?php if (!is_language_disabled()) { ?>
+        <div class="form-group select-placeholder">
+            <select name="language" id="language" class="form-control selectpicker" onchange="change_contact_language(this)" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-live-search="true">
+                <?php $selected = (get_contact_language() != '') ? get_contact_language() : get_option('active_language'); ?>
+                <?php foreach ($this->app->get_available_languages() as $availableLanguage) {
+                ?>
+                    <option value="<?php echo $availableLanguage; ?>" <?php echo ($availableLanguage == $selected) ? 'selected' : '' ?>>
+                        <?php echo ucfirst($availableLanguage); ?>
+                    </option>
+                <?php } ?>
+            </select>
+        </div>
+    <?php } ?>
+</div>
 </div>
 <div class="col-md-10 col-md-offset-1">
     <?php echo form_open('authentication/register', ['id'=>'register-form']); ?>
@@ -10,17 +27,17 @@
                 <div class="col-md-6">
                     <h4 class="bold register-contact-info-heading"><?php echo _l('client_register_contact_info'); ?></h4>
                     <div class="form-group mtop15 register-firstname-group">
-                        <label class="control-label" for="firstname"><?php echo _l('clients_firstname'); ?></label>
+                        <label class="control-label" for="firstname"><span class="text-danger">*</span> <?php echo _l('clients_firstname'); ?></label>
                         <input type="text" class="form-control" name="firstname" id="firstname" value="<?php echo set_value('firstname'); ?>">
                         <?php echo form_error('firstname'); ?>
                     </div>
                     <div class="form-group register-lastname-group">
-                        <label class="control-label" for="lastname"><?php echo _l('clients_lastname'); ?></label>
+                        <label class="control-label" for="lastname"><span class="text-danger">*</span> <?php echo _l('clients_lastname'); ?></label>
                         <input type="text" class="form-control" name="lastname" id="lastname" value="<?php echo set_value('lastname'); ?>">
                         <?php echo form_error('lastname'); ?>
                     </div>
                     <div class="form-group register-email-group">
-                        <label class="control-label" for="email"><?php echo _l('clients_email'); ?></label>
+                        <label class="control-label" for="email"><span class="text-danger">*</span> <?php echo _l('clients_email'); ?></label>
                         <input type="email" class="form-control" name="email" id="email" value="<?php echo set_value('email'); ?>">
                         <?php echo form_error('email'); ?>
                     </div>
@@ -37,12 +54,12 @@
                         <input type="text" class="form-control" name="title" id="title" value="<?php echo set_value('title'); ?>">
                     </div>
                     <div class="form-group register-password-group">
-                        <label class="control-label" for="password"><?php echo _l('clients_register_password'); ?></label>
+                        <label class="control-label" for="password"><span class="text-danger">*</span> <?php echo _l('clients_register_password'); ?></label>
                         <input type="password" class="form-control" name="password" id="password">
                         <?php echo form_error('password'); ?>
                     </div>
                     <div class="form-group register-password-repeat-group">
-                        <label class="control-label" for="passwordr"><?php echo _l('clients_register_password_repeat'); ?></label>
+                        <label class="control-label" for="passwordr"><span class="text-danger">*</span> <?php echo _l('clients_register_password_repeat'); ?></label>
                         <input type="password" class="form-control" name="passwordr" id="passwordr">
                         <?php echo form_error('passwordr'); ?>
                     </div>
@@ -53,7 +70,12 @@
                 <div class="col-md-6">
                     <h4 class="bold register-company-info-heading"><?php echo _l('client_register_company_info'); ?></h4>
                     <div class="form-group mtop15 register-company-group">
-                        <label class="control-label" for="company"><?php echo _l('clients_company'); ?></label>
+                        <label class="control-label" for="company">
+                            <?php if(get_option('company_is_required') == 1) { ?>
+                                <span class="text-danger">*</span>
+                            <?php } ?>
+                            <?php echo _l('clients_company'); ?>
+                        </label>
                         <input type="text" class="form-control" name="company" id="company" value="<?php echo set_value('company'); ?>">
                         <?php echo form_error('company'); ?>
                     </div>

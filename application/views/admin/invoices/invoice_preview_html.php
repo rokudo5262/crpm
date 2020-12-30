@@ -33,7 +33,7 @@ if(isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
             $next_recurring_date_compare = $recurring_invoice->last_recurring_date;
          }
       } else {
-       $next_recurring_date_compare = to_sql_date($recurring_invoice->date);
+       $next_recurring_date_compare = $recurring_invoice->date;
        if($recurring_invoice->last_recurring_date){
         $next_recurring_date_compare = $recurring_invoice->last_recurring_date;
      }
@@ -122,14 +122,14 @@ if(isset($invoice->scheduled_email) && $invoice->scheduled_email) { ?>
       <span class="bold">
          <?php echo _l('invoice_data_date'); ?>
       </span>
-      <?php echo $invoice->date; ?>
+      <?php echo _d($invoice->date); ?>
    </p>
    <?php if(!empty($invoice->duedate)){ ?>
       <p class="no-mbot">
          <span class="bold">
             <?php echo _l('invoice_data_duedate'); ?>
          </span>
-         <?php echo $invoice->duedate; ?>
+         <?php echo _d($invoice->duedate); ?>
       </p>
    <?php } ?>
    <?php if($invoice->sale_agent != 0 && get_option('show_sale_agent_on_invoices') == 1){ ?>

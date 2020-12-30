@@ -56,6 +56,7 @@
                      </a>
                   </li>
                   <?php } ?>
+                  <?php hooks()->do_action('after_user_data_widget_tabs'); ?>
                </ul>
                <hr class="hr-panel-heading hr-user-data-tabs" />
                <div class="tab-content">
@@ -145,6 +146,7 @@
                      </div>
                   </div>
                   <?php } ?>
+                  <?php hooks()->do_action('after_user_data_widge_tabs_content'); ?>
                </div>
             </div>
          </div>

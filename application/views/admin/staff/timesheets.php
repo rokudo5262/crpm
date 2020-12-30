@@ -103,8 +103,6 @@
                            <?php } ?>
                            <th><?php echo _l('project_timesheet_task'); ?></th>
                            <th><?php echo _l('timesheet_tags'); ?></th>
-                           <th class="t-start-time"><?php echo _l('project_timesheet_start_time'); ?></th>
-                           <th class="t-end-time"><?php echo _l('project_timesheet_end_time'); ?></th>
                            <th width="150px;"><?php echo _l('note'); ?></th>
                            <th><?php echo _l('task_relation'); ?></th>
                            <th><?php echo _l('time_h'); ?></th>
@@ -117,8 +115,6 @@
                            <?php if(isset($view_all)){ ?>
                            <td></td>
                            <?php } ?>
-                           <td></td>
-                           <td></td>
                            <td></td>
                            <td></td>
                            <td></td>
@@ -186,20 +182,7 @@
     });
 
     $('body').on('change','#group_by_task',function(){
-      var tApi = timesheetsTable.DataTable();
-      var visible = $(this).prop('checked') == false;
-      var tEndTimeIndex = $('.t-end-time').index();
-      var tStartTimeIndex = $('.t-start-time').index();
-      if(tEndTimeIndex == -1 && tStartTimeIndex == -1) {
-        tStartTimeIndex = $(this).attr('data-start-time-index');
-        tEndTimeIndex = $(this).attr('data-end-time-index');
-      } else {
-        $(this).attr('data-start-time-index',tStartTimeIndex);
-        $(this).attr('data-end-time-index',tEndTimeIndex);
-      }
-      tApi.column(tEndTimeIndex).visible(visible, false).columns.adjust();
-      tApi.column(tStartTimeIndex).visible(visible, false).columns.adjust();
-      tApi.ajax.reload();
+       timesheetsTable.DataTable().ajax.reload();
     });
 
     var timesheetsChart;

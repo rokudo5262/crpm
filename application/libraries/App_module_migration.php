@@ -172,7 +172,7 @@ class App_module_migration
                 $this->_error_string = sprintf($this->ci->lang->line('migration_class_doesnt_exist'), $class);
 
                 return false;
-            } elseif (! is_callable([$class, $method])) {
+            } elseif (! is_callable($class, $method)) {
                 $this->_error_string = sprintf($this->ci->lang->line('migration_missing_' . $method . '_method'), $class);
 
                 return false;

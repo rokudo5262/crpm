@@ -109,7 +109,7 @@ class Stripe_core
      */
     public function get_tax_rates()
     {
-        return \Stripe\TaxRate::all();
+        return \Stripe\TaxRate::all(['limit' => 100]);
     }
 
     /**

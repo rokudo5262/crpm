@@ -3,6 +3,41 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 /**
+ * Get proposal short_url
+ * @since  Version 2.7.3
+ * @param  object $proposal
+ * @return string Url
+ */
+function get_proposal_shortlink($proposal)
+{
+    $long_url = site_url("invoice/{$proposal->id}/{$proposal->hash}");
+    if (!get_option('bitly_access_token')) {
+        return $long_url;
+    }
+
+    // Check if proposal has short link, if yes return short link
+    if (!empty($proposal->short_link)) {
+        return $proposal->short_link;
+    }
+
+    // Create short link and return the newly created short link
+    $short_link = app_generate_short_link([
+        'long_url'  => $long_url,
+        'title'     => format_proposal_number($proposal->id)
+    ]);
+
+    if ($short_link) {
+        $CI = &get_instance();
+        $CI->db->where('id', $proposal->id);
+        $CI->db->update(db_prefix() . 'proposals', [
+            'short_link' => $short_link
+        ]);
+        return $short_link;
+    }
+    return $long_url;
+}
+
+/**
  * Check if proposal hash is equal
  * @param  mixed $id   proposal id
  * @param  string $hash proposal hash
@@ -10,7 +45,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 function check_proposal_restrictions($id, $hash)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->load->model('proposals_model');
     if (!$hash || !$id) {
         show_404();
@@ -123,7 +158,7 @@ function format_proposal_number($id)
  */
 function get_proposal_item_taxes($itemid)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->db->where('itemid', $itemid);
     $CI->db->where('rel_type', 'proposal');
     $taxes = $CI->db->get(db_prefix() . 'item_tax')->result_array();
@@ -222,7 +257,8 @@ function user_can_view_proposal($id, $staff_id = false)
     $proposal = $CI->db->get()->row();
 
     if ((has_permission('proposals', $staff_id, 'view_own') && $proposal->addedfrom == $staff_id)
-            || ($proposal->assigned == $staff_id && get_option('allow_staff_view_proposals_assigned') == 1)) {
+        || ($proposal->assigned == $staff_id && get_option('allow_staff_view_proposals_assigned') == 1)
+    ) {
         return true;
     }
 

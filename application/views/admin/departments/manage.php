@@ -60,7 +60,10 @@
                         </div>
                         <hr />
                         <?php echo render_input('email','department_email','','email'); ?>
-                        <i class="fa fa-question-circle" data-toggle="tooltip" data-title="<?php echo _l('department_username_help'); ?>"></i>
+                        <br />
+                        <h4><?php echo _l('email_to_ticket_config'); ?></h4>
+                        <br />
+                        <i class="fa fa-question-circle pull-left" data-toggle="tooltip" data-title="<?php echo _l('department_username_help'); ?>"></i>
                         <?php echo render_input('imap_username','department_username'); ?>
                         <?php echo render_input('host','dept_imap_host'); ?>
                         <?php echo render_input('password','dept_email_password','','password'); ?>
@@ -79,6 +82,15 @@
                                 <label for="no_enc"><?php echo _l('dept_email_no_encryption'); ?></label>
                             </div>
                         </div>
+                        <div class="form-group">
+                          <label for="folder" class="control-label">
+                              <?php echo _l('imap_folder'); ?>
+                              <a href="#" onclick="retrieve_imap_department_folders(); return false;">
+                                    <i class="fa fa-refresh hidden" id="folders-loader"></i> <?php echo _l('retrieve_folders'); ?>
+                               </a>
+                          </label>
+                          <select name="folder" class="form-control selectpicker" id="folder"></select>
+                       </div>
                         <div class="form-group">
                             <div class="checkbox checkbox-primary">
                                 <input type="checkbox" name="delete_after_import" id="delete_after_import">
@@ -116,15 +128,16 @@
                     }
                 }
             }}},manage_departments);
-           $('#department').on('hidden.bs.modal', function(event) {
-            $('#additional').html('');
-            $('#department input[type="text"]').val('');
-            $('#department input[type="email"]').val('');
-            $('input[name="delete_after_import"]').prop('checked',false);
-            $('.add-title').removeClass('hide');
-            $('.edit-title').removeClass('hide');
+            $('#department').on('hidden.bs.modal', function(event) {
+                $('#additional').html('');
+                $('#department input[type="text"]').val('');
+                $('#department input[type="email"]').val('');
+                $('input[name="delete_after_import"]').prop('checked',false);
+                $('.add-title').removeClass('hide');
+                $('.edit-title').removeClass('hide');
         });
        });
+
         function manage_departments(form) {
             var data = $(form).serialize();
             var url = form.action;
@@ -144,32 +157,30 @@
             });
             return false;
         }
+
         function new_department(){
             $('#department').modal('show');
             $('.edit-title').addClass('hide');
+            $('#folder').html('');
+            $('#folder').selectpicker('refresh');
         }
+
         function edit_department(invoker,id){
             var hide_from_client = $(invoker).data('hide-from-client');
             var delete_after_import = $(invoker).data('delete-after-import');
-            if(hide_from_client == 1){
-                $('input[name="hidefromclient"]').prop('checked',true);
-            } else {
-                $('input[name="hidefromclient"]').prop('checked',false);
-            }
-            if(delete_after_import == 1){
-                $('input[name="delete_after_import"]').prop('checked',true);
-            } else {
-                $('input[name="delete_after_import"]').prop('checked',false);
-            }
-            var enc = $(invoker).data('encryption');
-            var input_enc_selector;
-            if(enc == ''){
-                input_enc_selector = '#no_enc';
-            } else {
-                input_enc_selector = '#'+enc;
-            }
+            var folder = $(invoker).data('folder');
+            $('input[name="hidefromclient"]').prop('checked',hide_from_client == 1);
+            $('input[name="delete_after_import"]').prop('checked',delete_after_import == 1);
+
+            var encryption = $(invoker).data('encryption');
+            var input_enc_selector = encryption == '' ? '#no_enc' : '#'+encryption;
             $(input_enc_selector).prop('checked',true);
+
+            $('#folder').html('<option value="'+folder+'" selected>'+folder+'</option>');
+            $('#folder').selectpicker('refresh');
+
             $('#additional').append(hidden_input('id',id));
+
             $('#department input[name="name"]').val($(invoker).data('name'));
             $('#department input[name="email"]').val($(invoker).data('email'));
             $('#department input[name="calendar_id"]').val($(invoker).data('calendar-id'));
@@ -179,14 +190,27 @@
             $('#department').modal('show');
             $('.add-title').addClass('hide');
         }
+
+        function retrieve_imap_department_folders() {
+            retrieve_imap_folders(admin_url+'departments/folders', {
+                email:$('input[name="email"]').val(),
+                password:$('input[name="password"]').val(),
+                host:$('input[name="host"]').val(),
+                username:$('input[name="imap_username"]').val(),
+                encryption: $('input[name="encryption"]:checked').val()
+            })
+        }
+
         function test_dep_imap_connection(){
-            var data = {};
-            data.email = $('input[name="email"]').val();
-            data.password = $('input[name="password"]').val();
-            data.host = $('input[name="host"]').val();
-            data.username = $('input[name="imap_username"]').val();
-            data.encryption = $('input[name="encryption"]:checked').val();
-            $.post(admin_url+'departments/test_imap_connection',data).done(function(response){
+            $.post(admin_url+'departments/test_imap_connection', {
+                email:$('input[name="email"]').val(),
+                password:$('input[name="password"]').val(),
+                host:$('input[name="host"]').val(),
+                username:$('input[name="imap_username"]').val(),
+                encryption: $('input[name="encryption"]:checked').val(),
+                folder: $('#folder').selectpicker('val'),
+            })
+            .done(function(response){
                 response = JSON.parse(response);
                 alert_float(response.alert_type,response.message);
             });

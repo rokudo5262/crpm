@@ -474,7 +474,8 @@ abstract class App_items_table_template
 
     protected function exclude_currency()
     {
-        return hooks()->apply_filters('items_table_amounts_exclude_currency_symbol', true, [
+        $exclude = get_option('items_table_amounts_exclude_currency_symbol') == 1 ? true : false;
+        return hooks()->apply_filters('items_table_amounts_exclude_currency_symbol', $exclude, [
             'type'        => $this->type,
             'transaction' => $this->transaction,
         ]);

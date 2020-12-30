@@ -1101,10 +1101,16 @@ class Invoices_model extends App_Model
 
         hooks()->do_action('before_invoice_deleted', $id);
 
+        $invoice = $this->get($id);
+
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'invoices');
 
         if ($this->db->affected_rows() > 0) {
+            if (!is_null($invoice->short_link)) {
+                app_archive_short_link($invoice->short_link);
+            }
+
             if (get_option('invoice_number_decrement_on_delete') == 1 &&
                 get_option('next_invoice_number') > 1 &&
                 $simpleDelete == false &&

@@ -138,10 +138,14 @@ class Tasks extends AdminController
     public function update_task_description($id)
     {
         if (has_permission('tasks', '', 'edit')) {
-            $this->db->where('id', $id);
-            $this->db->update(db_prefix() . 'tasks', [
+            $data = hooks()->apply_filters('before_update_task', [
                 'description' => html_purify($this->input->post('description', false)),
-            ]);
+            ], $id);
+
+            $this->db->where('id', $id);
+            $this->db->update(db_prefix() . 'tasks', $data);
+
+            hooks()->do_action('after_update_task', $id);
         }
     }
 
@@ -626,7 +630,11 @@ class Tasks extends AdminController
     public function add_external_attachment()
     {
         if ($this->input->post()) {
-            $this->tasks_model->add_attachment_to_database($this->input->post('task_id'), $this->input->post('files'), $this->input->post('external'));
+            $this->tasks_model->add_attachment_to_database(
+                $this->input->post('task_id'),
+                $this->input->post('files'),
+                $this->input->post('external')
+            );
         }
     }
 
@@ -846,10 +854,14 @@ class Tasks extends AdminController
     public function change_priority($priority_id, $id)
     {
         if (has_permission('tasks', '', 'edit')) {
+            $data = hooks()->apply_filters('before_update_task', ['priority' => $priority_id], $id);
+
             $this->db->where('id', $id);
-            $this->db->update(db_prefix() . 'tasks', ['priority' => $priority_id]);
+            $this->db->update(db_prefix() . 'tasks', $data);
 
             $success = $this->db->affected_rows() > 0 ? true : false;
+
+            hooks()->do_action('after_update_task', $id);
 
             // Don't do this query if the action is not performed via task single
             $taskHtml = $this->input->get('single_task') === 'true' ? $this->get_task_data($id, true) : '';
@@ -891,8 +903,14 @@ class Tasks extends AdminController
         if (has_permission('tasks', '', 'edit')) {
             $post_data = $this->input->post();
             foreach ($post_data as $key => $val) {
+                $data = hooks()->apply_filters('before_update_task', [
+                    $key => to_sql_date($val),
+                ], $task_id);
+
                 $this->db->where('id', $task_id);
-                $this->db->update(db_prefix() . 'tasks', [$key => to_sql_date($val)]);
+                $this->db->update(db_prefix() . 'tasks', $data);
+
+                hooks()->do_action('after_update_task', $task_id);
             }
         }
     }
@@ -1032,7 +1050,15 @@ class Tasks extends AdminController
     public function update_tags()
     {
         if (has_permission('tasks', '', 'create') || has_permission('tasks', '', 'edit')) {
-            handle_tags_save($this->input->post('tags'), $this->input->post('task_id'), 'task');
+            $id = $this->input->post('task_id');
+
+            $data = hooks()->apply_filters('before_update_task', [
+                'tags' => $this->input->post('tags'),
+            ], $id);
+
+            handle_tags_save($data['tags'], $id, 'task');
+
+            hooks()->do_action('after_update_task', $id);
         }
     }
 
@@ -1150,6 +1176,23 @@ class Tasks extends AdminController
                 die();
             }
             echo json_encode($task);
+        }
+    }
+
+    public function get_staff_names_for_mentions($taskid)
+    {
+        if ($this->input->is_ajax_request()) {
+            $taskId = $this->db->escape_str($taskid);
+
+            $members = $this->tasks_model->get_staff_members_that_can_access_task($taskId);
+            $members = array_map(function ($member) {
+                $_member['id'] = $member['staffid'];
+                $_member['name'] = $member['firstname'] . ' ' . $member['lastname'];
+
+                return $_member;
+            }, $members);
+
+            echo json_encode($members);
         }
     }
 }

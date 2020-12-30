@@ -44,36 +44,44 @@
             },
             createPicker: function() {
                 if (pickerApiLoaded && oauthToken) {
-                    var view = new google.picker.DocsView().setParent('root').setIncludeFolders(true)
-                    var uploadView = new google.picker.DocsUploadView().setIncludeFolders(true);
+                    var view = new google.picker.DocsView()
+                        .setIncludeFolders(true);
+                    var uploadView = new google.picker.DocsUploadView()
+                        .setIncludeFolders(true);
 
                     if (settings.mimeTypes) {
                         view.setMimeTypes(settings.mimeTypes);
                         uploadView.setMimeTypes(settings.mimeTypes);
                     }
 
-                    var picker = new google.picker.PickerBuilder().
-                    addView(view).
-                    addView(uploadView).
-                    setOAuthToken(oauthToken).
-                    setDeveloperKey(settings.developerKey).
-                    setCallback(internal.pickerCallback).
-                    build();
-                    picker.setVisible(true);
+                    new google.picker.PickerBuilder()
+                        .addView(view)
+                        //.enableFeature(google.picker.Feature.MULTISELECT_ENABLED)
+                        .addView(uploadView)
+                        .setOAuthToken(oauthToken)
+                        .setDeveloperKey(settings.developerKey)
+                        .setCallback(internal.pickerCallback)
+                        .build()
+                        .setVisible(true);
+
                     setTimeout(function() {
-                        $('.picker-dialog').css('z-index', 10002);
-                    }, 10);
+                        $('.picker-dialog')
+                            .css('z-index', 10002);
+                    }, 20);
                 }
             },
             pickerCallback: function(data) {
                 var url;
                 if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
-                    var doc = data[google.picker.Response.DOCUMENTS][0];
-                    var retVal = [{
-                        name: doc[google.picker.Document.NAME],
-                        link: doc[google.picker.Document.URL],
-                        mime: doc[google.picker.Document.MIME_TYPE],
-                    }];
+                    var retVal = [];
+
+                    data[google.picker.Response.DOCUMENTS].forEach(function(doc) {
+                        retVal.push({
+                            name: doc[google.picker.Document.NAME],
+                            link: doc[google.picker.Document.URL],
+                            mime: doc[google.picker.Document.MIME_TYPE],
+                        })
+                    })
 
                     typeof(settings.onPick) == 'function' ? settings.onPick(retVal): window[settings.onPick](retVal);
                 }
@@ -84,14 +92,18 @@
 
         return this.each(function() {
             if (settings.clientId) {
-                if ($(this).data('on-pick')) {
-                    settings.onPick = $(this).data('on-pick')
+                if ($(this)
+                    .data('on-pick')) {
+                    settings.onPick = $(this)
+                        .data('on-pick')
                 }
                 internal.initGooglePickerAPI($(this)[0]);
-                $(this).css('opacity', 1)
+                $(this)
+                    .css('opacity', 1)
             } else {
                 // Not configured
-                $(this).css('opacity', 0);
+                $(this)
+                    .css('opacity', 0);
             }
         });
     };

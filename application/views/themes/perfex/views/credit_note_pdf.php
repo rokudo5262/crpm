@@ -143,7 +143,7 @@ $pdf->writeHTML($tbltotal, true, false, false, false, '');
 if (get_option('total_to_words_enabled') == 1) {
     // Set the font bold
     $pdf->SetFont($font_name, 'B', $font_size);
-    $pdf->Cell(0, 0, _l('num_word') . ': ' . $CI->numberword->convert($credit_note->total, $credit_note->currency_name), 0, 1, 'C', 0, '', 0);
+    $pdf->writeHTMLCell('', '', '', '', _l('num_word') . ': ' . $CI->numberword->convert($credit_note->total, $credit_note->currency_name), 0, 1, false, true, 'C', true);
     // Set the font again to normal like the rest of the pdf
     $pdf->SetFont($font_name, '', $font_size);
     $pdf->Ln(4);

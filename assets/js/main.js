@@ -4248,7 +4248,9 @@ function print_lead_information() {
     mywindow.focus(); // necessary for IE >= 10*/
 
     mywindow.print();
-    mywindow.close();
+    setTimeout(function () {
+        mywindow.close();
+    }, 1000)
 }
 
 function print_expense_information() {
@@ -4276,7 +4278,9 @@ function print_expense_information() {
     mywindow.focus(); // necessary for IE >= 10*/
 
     mywindow.print();
-    mywindow.close();
+    setTimeout(function () {
+        mywindow.close();
+    }, 1000)
 }
 
 
@@ -4299,7 +4303,9 @@ function print_ticket_message(id, type) {
     mywindow.focus(); // necessary for IE >= 10*/
 
     mywindow.print();
-    mywindow.close();
+    setTimeout(function () {
+        mywindow.close();
+    }, 1000)
 }
 
 // Kan ban leads sorting
@@ -6384,7 +6390,7 @@ function format_money(total, excludeSymbol) {
 }
 
 // Set the currency for accounting
-function init_currency(id) {
+function init_currency(id, callback) {
     var $accountingTemplate = $("body").find('.accounting-template');
 
     if ($accountingTemplate.length || id) {
@@ -6398,6 +6404,10 @@ function init_currency(id) {
                 accounting.settings.currency.symbol = currency.symbol;
                 accounting.settings.currency.format = currency.placement == 'after' ? '%v %s' : '%s%v';
                 calculate_total();
+
+                if(callback) {
+                    callback();
+                }
             });
     }
 }
@@ -6669,7 +6679,10 @@ function validate_credit_note_form(selector) {
                 },
                 original_number: function () {
                     return $('input[name="number"]').data('original-number');
-                }
+                },
+                date: function () {
+                    return $(".credit_note input[name='date']").val();
+                },
             }
         },
         messages: {
@@ -7162,11 +7175,64 @@ function init_new_task_comment(manual) {
     }));
 
     var editorConfig = _simple_editor_config();
+
     if (typeof (manual) == 'undefined' || manual === false) {
         editorConfig.auto_focus = true;
     }
-    var iOS = is_ios();
+
     // Not working fine on iOs
+    var iOS = is_ios();
+
+    var taskid = $('#task-modal #taskid').val();
+    editorConfig.plugins[0] += ' mention';
+
+    editorConfig.content_style = 'span.mention {\
+        background-color: #eeeeee;\
+        padding: 3px;\
+    }';
+
+    editorConfig.setup = function (editor) {
+        editor.on('init', function () {
+
+            if ($('#mention-autocomplete-css').length === 0) {
+                $('<link>').appendTo('head').attr({
+                    id: 'mention-autocomplete-css',
+                    type: 'text/css',
+                    rel: 'stylesheet',
+                    href: site_url + 'assets/plugins/tinymce/plugins/mention/autocomplete.css'
+                });
+            }
+
+            if ($('#mention-css').length === 0) {
+                $('<link>').appendTo('head').attr({
+                    type: 'text/css',
+                    id: 'mention-css',
+                    rel: 'stylesheet',
+                    href: site_url + 'assets/plugins/tinymce/plugins/mention/rte-content.css'
+                });
+            }
+        });
+    }
+
+    var UserMentions = [];
+
+    editorConfig.mentions = {
+        source: function (query, process, delimiter) {
+            if (UserMentions.length < 1) {
+                $.getJSON(admin_url + 'tasks/get_staff_names_for_mentions/' + taskid, function (data) {
+                    UserMentions = data;
+                    process(data)
+                });
+            } else {
+                process(UserMentions)
+            }
+        },
+        insert: function(item) {
+            return '<span class="mention" contenteditable="false" data-mention-id="'+ item.id + '">@'
+            + item.name + '</span>&nbsp;';
+        }
+    };
+
     if (!iOS) {
         init_editor('#task_comment', editorConfig);
     }
@@ -7230,12 +7296,10 @@ function init_ajax_search(type, selector, server_data, url) {
 // Used for email template URL
 function merge_field_format_url(url, node, on_save, name) {
     // Merge fields url
-    if (url.indexOf("{") > -1 && url.indexOf("}") > -1) {
-        url = '{' + url.split('{')[1];
-    } else if (url.indexOf("%7B") > -1 && url.indexOf("%7D") > -1) {
-        url = '{' + url.replace('%7B', '').replace('%7D', '') + '}'
+    if (url.indexOf("%7B") > -1 && url.indexOf("%7D") > -1) {
+        url = url.replace('%7B', '{').replace('%7D', '}');
     }
-    // Return new URL
+
     return url;
 }
 
@@ -7315,6 +7379,127 @@ function requestGetJSON(uri, params) {
     params = typeof (params) == 'undefined' ? {} : params;
     params.dataType = 'json';
     return requestGet(uri, params);
+}
+
+// Templates Js
+function get_templates(rel_type, rel_id) {
+    if (rel_type === 'proposals') {
+        $('#proposal-templates').load(admin_url + 'templates', {
+            rel_type: rel_type,
+            rel_id: rel_id
+        });
+    } else if (rel_type === 'contracts') {
+        $('#contract-templates').load(admin_url + 'templates', {
+            rel_type: rel_type,
+            rel_id: rel_id
+        });
+    }
+}
+
+function add_template(rel_type, rel_id) {
+    $('#modal-wrapper').load(admin_url + 'templates/modal', {
+        slug: 'new',
+        rel_type: rel_type,
+        rel_id: rel_id,
+    }, function () {
+        if ($('#TemplateModal').is(':hidden')) {
+            $('#TemplateModal').modal({
+                backdrop: 'static',
+                show: true
+            });
+        }
+        appValidateForm($('#template-form'), {
+            name: 'required'
+        });
+        tinymce.remove('#content');
+        init_editor('#content');
+    });
+}
+
+function edit_template(rel_type, id, rel_id) {
+    $('#modal-wrapper').load(admin_url + 'templates/modal', {
+        slug: 'edit',
+        id: id,
+        rel_type: rel_type,
+        rel_id: rel_id,
+    }, function () {
+        if ($('#TemplateModal').is(':hidden')) {
+            $('#TemplateModal').modal({
+                backdrop: 'static',
+                show: true
+            });
+        }
+        appValidateForm($('#template-form'), {
+            name: 'required'
+        });
+        tinymce.remove('#content');
+        init_editor('#content');
+    });
+}
+
+function delete_template(wrapper, rel_type, id) {
+    if (confirm_delete()) {
+        $.post(admin_url + 'templates/delete/' + id).done(function (response) {
+            response = JSON.parse(response);
+
+            if (response.success === true || response.success == 'true') {
+                if (rel_type === 'proposals') {
+                    $(wrapper).parents('.proposal-templates-wrapper').html("");
+                } else if (rel_type === 'contracts') {
+                    $(wrapper).parents('.contract-templates-wrapper').html("");
+                }
+
+                get_templates(rel_type);
+            }
+        })
+    }
+}
+
+function insert_template(wrapper, rel_type, id) {
+    requestGetJSON(admin_url + 'templates/index/' + id).done(function (response) {
+        var data = response.data;
+        tinymce.activeEditor.execCommand('mceInsertContent', false, data.content);
+        if (rel_type == 'proposals') {
+            $('a[aria-controls="tab_proposal"]').click()
+        } else if (rel_type == 'contracts') {
+            $('a[aria-controls="tab_content"]').click()
+        }
+        tinymce.activeEditor.focus();
+    });
+}
+
+function retrieve_imap_folders(url, params) {
+    var dfd = $.Deferred();
+    $('#folders-loader').addClass('spinning').removeClass('hidden');
+
+    $.post(url, params).done(function(response){
+        response = JSON.parse(response);
+        if(response.hasOwnProperty('alert_type')) {
+            alert_float(response.alert_type,response.message);
+        } else {
+            var output = '';
+            var $folder = $('#folder');
+            var currentFolder = $folder.selectpicker('val');
+
+            response.forEach(function(folderName) {
+                output += '<option name="'+folderName+'"'+(folderName == currentFolder ? ' selected' : '')+'>'+folderName+'</option>';
+            })
+
+            $folder.html(output);
+            $folder.selectpicker('refresh');
+
+            if(!currentFolder) {
+                $folder.selectpicker('val', $folder.find('option:eq(0)')[0].value)
+            }
+        }
+        dfd.resolve(response)
+    }).fail(function() {
+        dfd.reject(error)
+    }).always(function(){
+        $('#folders-loader').removeClass('spinning').addClass('hidden');
+    });
+
+    return dfd.promise();
 }
 
 /**

@@ -3335,7 +3335,7 @@ $lang['not_new_ticket_reply']                           = 'Customer replied to t
 $lang['receive_notification_on_new_ticket_replies']     = 'Receive notification when customer reply to a ticket';
 $lang['receive_notification_on_new_ticket_reply_help']  = 'All staff members which belong to the ticket department will receive notification when customer reply to a ticket';
 $lang['payment_gateway_enable_paypal']                  = 'Enable PayPal Payments';
-$lang['project_member']                                 = 'Project Member';
+$lang['project_member']                                 = 'Członek projektu';
 $lang['contract_notes']                                 = 'Notes';
 $lang['contract_add_note']                              = 'Add Note';
 
@@ -3348,10 +3348,10 @@ $lang['enter_new_card']    = 'Enter New Card';
 
 # Version 2.2.0
 $lang['save_and_record_payment']                                     = 'Save & Record Payment';
-$lang['choose_from_google_drive']                                    = 'Choose from Google Drive';
-$lang['open_in_google']                                              = 'Open In Google';
+$lang['choose_from_google_drive']                                    = 'Wybierz z Dysku Google';
+$lang['open_in_google']                                              = 'Otwórz w Google';
 $lang['google_picker']                                               = 'Google Picker';
-$lang['enable_google_picker']                                        = 'Enable Google Picker';
+$lang['enable_google_picker']                                        = 'Włącz Google Picker';
 $lang['google_api_client_id']                                        = 'Google API Client ID';
 $lang['subtract_tax_total_from_amount']                              = 'Subtract TAX total (%s) from amount';
 $lang['expense_subtract_info_text']                                  = 'Use this option to subtract the total tax amount from the expense amount, useful when you entered the expense amount with tax included (tax inclusive).';
@@ -3360,28 +3360,28 @@ $lang['import_items']                                                = 'Import I
 $lang['total_items_deleted']                                         = 'Total items deleted: %s';
 $lang['billable_amount']                                             = 'Billable Amount';
 $lang['last_child_invoice_date']                                     = 'Last Child Invoice Date';
-$lang['good_morning']                                                = 'Good Morning';
+$lang['good_morning']                                                = 'Dzień dobry';
 $lang['good_afternoon']                                              = 'Good Afternoon';
-$lang['good_evening']                                                = 'Good Evening';
+$lang['good_evening']                                                = 'Dobry wieczór';
 $lang['description_in_invoice_item']                                 = 'Include description in invoice item';
 $lang['description_in_invoice_item_help']                            = 'Useful if you want to include additional information on the subscription invoice, e.q. what this subscription includes.';
 $lang['ticket_reminders']                                            = 'Reminders';
 $lang['ticket_set_reminder_title']                                   = 'Set Ticket Reminder';
 $lang['calendar_ticket_reminder']                                    = 'Ticket Reminders';
-$lang['email_verification_required']                                 = 'Email Verification Required';
-$lang['email_verification_required_message']                         = 'In order to access all the available features in the portal, first you must verify your email.';
+$lang['email_verification_required']                                 = 'Wymagana weryfikacja adresu e-mail';
+$lang['email_verification_required_message']                         = 'Aby uzyskać dostęp do wszystkich funkcji dostępnych w portalu, najpierw musisz zweryfikować swój adres e-mail.';
 $lang['email_verification_required_message_mail']                    = 'We have sent you an email with verification instructions, if you haven\'t received the email please check the spam folder or click <a href="%s">here</a> to resend the verification mail.';
-$lang['email_already_verified']                                      = 'Your email is already verified';
-$lang['invalid_verification_key']                                    = 'Invalid verification key';
-$lang['verification_key_expired']                                    = 'Verification Key Expired';
-$lang['email_successfully_verified']                                 = 'Your email has been successfully verified.';
-$lang['email_successfully_verified_but_required_admin_confirmation'] = 'Your email has been successfully verified, you will be able to login once administrator confirm your account manually.';
-$lang['email_verification_mail_sent_successully']                    = 'We sent you an email with verification instructions';
+$lang['email_already_verified']                                      = 'Twój email jest już zweryfikowany';
+$lang['invalid_verification_key']                                    = 'Nieprawidłowy klucz weryfikacyjny';
+$lang['verification_key_expired']                                    = 'Klucz weryfikacyjny wygasł';
+$lang['email_successfully_verified']                                 = 'Twój e-mail został pomyślnie zweryfikowany.';
+$lang['email_successfully_verified_but_required_admin_confirmation'] = 'Twój adres e-mail został pomyślnie zweryfikowany, będziesz mógł się zalogować, gdy administrator ręcznie potwierdzi Twoje konto.';
+$lang['email_verification_mail_sent_successully']                    = 'Wysłaliśmy Ci wiadomość e-mail z instrukcjami dotyczącymi weryfikacji';
 $lang['create_reminder']                                             = 'Create Reminder';
 $lang['no_reminders_for_this_task']                                  = 'No reminders for this task';
 $lang['reminder_for']                                                = 'Reminder for %s on %s';
 $lang['no_description_provided']                                     = 'No description provided';
-$lang['pay_with_card']                                               = 'Pay With Card';
+$lang['pay_with_card']                                               = 'Zapłać kartą';
 $lang['not_customer_uploaded_file']                                  = 'New File(s) Uploaded in Profile';
 
 # Version 2.2.1
@@ -3392,20 +3392,20 @@ $lang['sales_item']                  = 'Item';
 
 # Version 2.3.0
 
-$lang['modules']                    = 'Modules';
-$lang['module']                     = 'Module';
-$lang['module_description']         = 'Description';
+$lang['modules']                    = 'Moduły';
+$lang['module']                     = 'Moduł';
+$lang['module_description']         = 'Opis';
 $lang['module_activate']            = 'Activate';
 $lang['module_deactivate']          = 'Deactivate';
-$lang['module_uninstall']           = 'Uninstall';
+$lang['module_uninstall']           = 'Odinstaluj';
 $lang['module_upgrade_database']    = 'Upgrade Database';
-$lang['module_settings']            = 'Settings';
-$lang['module_version']             = 'Version %s';
+$lang['module_settings']            = 'Ustawienia';
+$lang['module_version']             = 'Wersja %s';
 $lang['module_by']                  = 'By %s';
 $lang['staff_which_are_using_role'] = 'Staff members which are using this role';
 $lang['copy']                       = 'Copy';
-$lang['read_more']                  = 'Read More';
-$lang['show_less']                  = 'Show Less';
+$lang['read_more']                  = 'Czytaj więcej';
+$lang['show_less']                  = 'Pokaż mniej';
 $lang['project_progress_text']      = 'Project Progress';
 $lang['timer_not_stopped_yet']                   = 'This timer is not yet stopped';
 $lang['refunds']                                 = 'Refunds';
@@ -3419,9 +3419,9 @@ $lang['create_recurring_from_child_error_message'] = 'You cannot set this %s as 
 $lang['statement_credit_note_refund']              = 'Credit Note Refund - %s';
 $lang['no_validation']                             = 'No Validation';
 $lang['lead_unique_validation_on']                 = 'Perform validation for duplicate lead on the following fields:';
-$lang['phonenumber_exists']                        = 'Phone number already exists';
-$lang['company_exists']                            = 'Company already exists';
-$lang['website_exists']                            = 'Website already exists';
+$lang['phonenumber_exists']                        = 'Numer telefonu już istnieje';
+$lang['company_exists']                            = 'Firma już istnieje';
+$lang['website_exists']                            = 'Witryna już istnieje';
 $lang['send_payment_receipt_to_client']            = 'Send Payment Receipt To Client';
 $lang['payment_sent_successfully']                 = 'Payment receipt sent successfully.';
 $lang['payment_sent_failed']                       = 'Failed to send payment receipt.';
@@ -3431,12 +3431,12 @@ $lang['tags_update_replace_warning'] = 'Some tags are not updated because the na
 $lang['attach_statement']            = 'Attach Customer Statement';
 
 # Version 2.4.0
-$lang['delete_credit_card']               = 'Delete Card';
-$lang['delete_credit_card_info']          = 'You cannot delete the credit card as you have active subscriptions.';
-$lang['credit_card_successfully_deleted'] = 'Credit card successfully deleted.';
+$lang['delete_credit_card']               = 'Usuń kartę';
+$lang['delete_credit_card_info']          = 'Nie możesz usunąć karty kredytowej, ponieważ masz aktywne subskrypcje.';
+$lang['credit_card_successfully_deleted'] = 'Karta kredytowa została pomyślnie usunięta.';
 $lang['subscription_incomplete']          = 'Incomplete';
 $lang['subscription_incomplete_expired']  = 'Incomplete Expired';
-$lang['credit_card_short']                = 'Card';
+$lang['credit_card_short']                = 'Karta';
 $lang['webhook_created']                  = 'Webhook created successfully.';
 $lang['subscriptions_terms_info']         = 'Enter customer terms & conditions to be displayed to the customer before subscribe to the subscription.';
 $lang['subscription_complete_payment']    = 'Complete Payment';
@@ -3478,7 +3478,7 @@ $lang['gantt_view_month'] = 'Months View';
 $lang['gantt_view_year'] = 'Years View';
 
 # Version 2.7.0
-$lang['hour_of_day_perform_tasks_reminder_notification_help'] = '24 hours format eq. 9 for 9am or 15 for 3pm.I t Used for recurring Task, Task reminders etc.';
+$lang['hour_of_day_perform_tasks_reminder_notification_help'] = '24 hours format eq. 9 for 9am or 15 for 3pm. It is used for recurring Task, Task reminders etc.';
 $lang['clients_nav_contacts']                                 = 'Contacts';
 $lang['clients_my_contacts']                                  = 'Contacts';
 $lang['clients_my_contact']                                   = 'Contact';
@@ -3491,7 +3491,7 @@ $lang['contact_form_validation_is_unique']                    = 'Contact with th
 $lang['invoice_number_not_applied_on_draft']                  = 'If the invoice is saved as draft, the number won\'t be applied, instead, the next invoice number will be given when the invoice is sent to the customer or is marked as sent.';
 
 $lang['two_factor_authentication_disabed']                    = 'Disabled';
-$lang['enable_google_two_factor_authentication']              = 'Enable Googe Authenticator';
+$lang['enable_google_two_factor_authentication']              = 'Enable Google Authenticator';
 $lang['set_google_two_factor_authentication_failed']          = 'Saving authentication failed, please try again';
 $lang['enter_two_factor_auth_code_from_mobile']               = 'Enter authentication code from the Authenticator app';
 $lang['staff_two_factor_authentication']                      = 'Two Factor Authentication';
@@ -3502,3 +3502,34 @@ $lang['google_2fa_code_valid']                                = 'Successfuly ver
 $lang['google_2fa_code_invalid']                              = 'Invalid authentication code entered, try again.';
 $lang['google_2fa_scan_qr_guide']                             = 'Scan the QR below with the Google Authenticator app on your mobile device, after that fill in the field below with the code generated in the app';
 $lang['google_2fa_manul_input_secret']                        = 'Secret key for manual input';
+
+# Version 2.7.1
+$lang['templates']                                   = 'Templates';
+$lang['add_template']                                = 'Add Template';
+$lang['edit_template']                               = 'Edit Template';
+$lang['template_added']                              = 'Template added successfully';
+$lang['template_updated']                            = 'Template updated successfully';
+$lang['template_name']                               = 'Template Title';
+$lang['template_content']                            = 'Template Content';
+$lang['insert_template']                             = 'Insert';
+$lang['items_table_amounts_exclude_currency_symbol'] = 'Exclude currency symbol from items table Amount';
+
+$lang['multiplies_of']               = 'Multiplies of';
+$lang['round_off_task_timer_option'] = 'Round off task timer';
+$lang['task_timer_dont_round_off']   = 'Don\'t round off';
+$lang['task_timer_round_up']         = 'Round up';
+$lang['task_timer_round_down']       = 'Round down';
+$lang['task_timer_round_nearest']    = 'Round to nearest';
+$lang['calendar_task_reminder']      = 'Task Reminder';
+$lang['projects_chart']              = 'Projects Chart';
+$lang['overdue_by_days']             = 'OVERDUE BY %s DAYS';
+
+$lang['two_checkout_payment_processing'] = 'Payment is been processed,you will be notified if successful';
+$lang['two_checkout_payment_cancelled']  = 'Payment Cancelled';
+$lang['two_checkout_merchant_code']      = 'Merchant Code';
+$lang['two_checkout_secret_Key']         = 'Secret Code';
+$lang['two_gateway_webhook_notice']      = 'The IPN Endpoint for 2Checkout is ( %s )';
+$lang['something_went_wrong']            = 'Something went wrong. Try again';
+$lang['imap_folder']                     = 'Folder';
+$lang['retrieve_folders']                = 'Retrieve Folders';
+$lang['email_to_ticket_config']          = 'Email to ticket configuration';

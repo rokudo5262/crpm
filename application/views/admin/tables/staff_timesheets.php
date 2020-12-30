@@ -10,6 +10,8 @@ $v = $this->ci->db->query('SELECT VERSION() as version')->row();
     'task_id',
     'rel_type',
     'rel_id',
+    'start_time',
+    'end_time',
     'billed',
     'status', ];
 
@@ -27,8 +29,6 @@ if ($v && strpos($v->version, '5.7') !== false) {
     $aColumns = [
         'ANY_VALUE(name) as name',
         'ANY_VALUE((SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'taskstimers.id and rel_type="timesheet" ORDER by tag_order ASC)) as tags',
-        'ANY_VALUE(start_time) as start_time',
-        'ANY_VALUE(end_time) as end_time',
         'ANY_VALUE(note) as note',
         'ANY_VALUE(' . tasks_rel_name_select_query() . ') as rel_name',
         'ANY_VALUE(end_time - start_time) as time_h',
@@ -40,8 +40,6 @@ if ($v && strpos($v->version, '5.7') !== false) {
     $aColumns = [
         'name as name',
         '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'taskstimers.id and rel_type="timesheet" ORDER by tag_order ASC) as tags',
-        'start_time as start_time',
-        'end_time as end_time',
         'note as note',
         tasks_rel_name_select_query() . ' as rel_name',
         'end_time - start_time as time_h',
@@ -49,14 +47,14 @@ if ($v && strpos($v->version, '5.7') !== false) {
     ];
 }
 
-$time_h_column = 6;
-$time_d_column = 7;
+$time_h_column = 4;
+$time_d_column = 5;
 
 if ($view_all == true) {
     array_unshift($aColumns, $staffIdSelect);
 
-    $time_h_column = 7;
-    $time_d_column = 8;
+    $time_h_column = 5;
+    $time_d_column = 6;
 }
 
 if ($this->ci->input->post('group_by_task')) {
@@ -242,15 +240,15 @@ $chartData = $this->ci->db->query('SELECT end_time - start_time logged_time_h,
 
 foreach ($chartData as $timer) {
     if ($timer['logged_time_h'] == null) {
-        $footer_data['total_logged_time_h'] += (time() - $timer['start_time']);
+        $footer_data['total_logged_time_h'] += task_timer_round((time() - $timer['start_time']));
     } else {
-        $footer_data['total_logged_time_h'] += $timer['logged_time_h'];
+        $footer_data['total_logged_time_h'] += task_timer_round($timer['logged_time_h']);
     }
 
     if ($timer['logged_time_d'] == null) {
-        $total_logged_time_d = time() - $timer['start_time'];
+        $total_logged_time_d = task_timer_round(time() - $timer['start_time']);
     } else {
-        $total_logged_time_d = $timer['logged_time_d'];
+        $total_logged_time_d = task_timer_round($timer['logged_time_d']);
     }
     if ($chart_type == 'today') {
         array_push($footer_data['chart']['data'], $total_logged_time_d);
@@ -297,16 +295,8 @@ foreach ($rResult as $aRow) {
 
     $taskName .= '<span class="hidden"> - </span><span class="inline-block pull-right mright5 label" style="border:1px solid ' . $status['color'] . ';color:' . $status['color'] . '" task-status-table="' . $aRow['status'] . '">' . $status['name'] . '</span>';
 
-    $row[] = $taskName;
-
-    $row[] = render_tags($aRow['tags']);
-
-    $row[] = _dt($aRow['start_time'], true);
-
-    $endTimeOutput = ($aRow['end_time'] ? _dt($aRow['end_time'], true) : '');
-
-    if (!$aRow['end_time'] && is_admin() && $aRow['billed'] == 0) {
-        $endTimeOutput .= ' <a href="#"
+    if (!$this->ci->input->post('group_by_task') && (!$aRow['end_time'] && is_admin() && $aRow['billed'] == 0)) {
+        $taskName .= ' <a href="#"
         data-toggle="popover"
         data-placement="bottom"
         data-html="true"
@@ -317,12 +307,16 @@ foreach ($rResult as $aRow) {
         onclick="timer_action(this, ' . $aRow['task_id'] . ', ' . $aRow['id'] . ', 1);"
         class="btn btn-info btn-xs">' . _l('save')
         . "</button>'
-        class=\"text-danger\"
+        class=\"text-danger mleft10\"
         onclick=\"return false;\">
                 <i class=\"fa fa-clock-o\"></i> " . _l('task_stop_timer') . '
         </a>';
     }
-    $row[] = $endTimeOutput;
+
+    $row[] = $taskName;
+
+    $row[] = render_tags($aRow['tags']);
+
     $row[] = $aRow['note'];
 
     if ($aRow['rel_name']) {
@@ -339,7 +333,7 @@ foreach ($rResult as $aRow) {
     } else {
         $total_logged_time = $aRow['time_h'];
     }
-    $row[] = seconds_to_time_format($total_logged_time);
+    $row[] = seconds_to_time_format(task_timer_round($total_logged_time));
 
     $total_logged_time = 0;
     if ($aRow['time_d'] == null) {
@@ -347,7 +341,7 @@ foreach ($rResult as $aRow) {
     } else {
         $total_logged_time = $aRow['time_d'];
     }
-    $row[] = sec2qty($total_logged_time);
+    $row[] = sec2qty(task_timer_round($total_logged_time));
 
     $output['aaData'][] = $row;
 }

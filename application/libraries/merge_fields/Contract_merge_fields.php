@@ -92,6 +92,7 @@ class Contract_merge_fields extends App_merge_fields
 
         $fields['{contract_link}'] = site_url('contract/' . $contract->id . '/' . $contract->hash);
         $fields['{project_name}']    = get_project_name_by_id($contract->project_id);
+        $fields['{contract_short_url}'] = get_contract_shortlink($contract);
 
         $custom_fields = get_custom_fields('contracts');
         foreach ($custom_fields as $field) {

@@ -17,6 +17,8 @@ $system_path = rtrim($system_path, '/') . '/';
 
 define('BASEPATH', str_replace('\\', '/', $system_path));
 define('APPPATH', $application_folder . '/');
+$view_folder = APPPATH.'views';
+define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
 define('EXT', '.php');
 define('ENVIRONMENT', $environment ? $environment : 'development');
 define('FCPATH', dirname(__FILE__) . '/');
@@ -110,15 +112,15 @@ $instance->load->helper('database');
 $mailParser = new \ZBateson\MailMimeParser\MailMimeParser();
 $message    = $mailParser->parse($input);
 
-$body = $message->getTextContent();
+$body = $message->getHtmlContent();
 
-if (!$body) {
-    $body = $message->getHtmlContent();
+if (! $body) {
+    $body = $message->getTextContent();
 }
 
 $body = trim($body);
 
-if (!$body) {
+if (! $body) {
     $body = 'No message found.';
 }
 
@@ -161,6 +163,7 @@ if ($reply_to = $message->getHeaderValue('reply-to')) {
 $toemails = [];
 foreach (['to', 'cc', 'bcc'] as $checkHeader) {
     $addreses = $message->getHeader($checkHeader);
+
     if ($addreses) {
         foreach ($addreses->getAddresses() as $addr) {
             $toemails[] = $addr->getEmail();
@@ -170,14 +173,13 @@ foreach (['to', 'cc', 'bcc'] as $checkHeader) {
 
 $to = implode(',', $toemails);
 
-$body = handle_google_drive_links_in_text($body);
-
 if (class_exists('EmailReplyParser\EmailReplyParser')
     && get_option('ticket_import_reply_only') === '1'
     && (mb_substr_count($subject, 'FWD:') == 0 && mb_substr_count($subject, 'FW:') == 0)) {
     $parsedBody = \EmailReplyParser\EmailReplyParser::parseReply($body);
 
     $parsedBody = trim($parsedBody);
+
     // For some emails this is causing an issue and not returning the email, instead is returning empty string
     // In this case, only use parsed email reply if not empty
     if (!empty($parsedBody)) {

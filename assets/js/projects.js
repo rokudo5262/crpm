@@ -242,6 +242,7 @@
 
       $('#discussion').on('hidden.bs.modal', function(event) {
           var $d = $('#discussion');
+          $d.find('input[name="id"]').remove();
           $d.find('input[name="subject"]').val('');
           $d.find('textarea[name="description"]').val('');
           $d.find('input[name="show_to_customer"]').prop('checked', true);

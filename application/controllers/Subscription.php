@@ -74,7 +74,7 @@ class Subscription extends ClientsController
         $upcomingInvoice->lines->data = [];
 
         $upcomingInvoice->lines->data[] = [
-            'description' => $product->name . ' (' . app_format_money(strcasecmp($plan->currency, 'JPY') == 0 ? $plan->amount : $plan->amount / 100, strtoupper($subscription->currency_name)) . ' / ' . $plan->interval . ')',
+            'description' => $this->lineProductDescription($product, $plan, $subscription->currency_name),
             'amount'      => $plan->amount * $subscription->quantity,
             'quantity'    => $subscription->quantity,
         ];
@@ -291,5 +291,25 @@ class Subscription extends ClientsController
         send_email_customer_subscribed_to_subscription_to_staff($subscription);
 
         redirect(site_url('subscription/' . $hash));
+    }
+
+    protected function lineProductDescription($product, $plan, $currency)
+    {
+        $intervals = ['day', 'week', 'month', 'year'];
+        $interval  = $plan->interval;
+
+        foreach ($intervals as $stripeInterval) {
+            if ($plan->interval === $stripeInterval && $plan->interval_count === 1) {
+                $interval = _l($stripeInterval);
+            } elseif ($plan->interval === $stripeInterval && $plan->interval_count > 1) {
+                $interval = _l('frequency_every', $plan->interval_count . ' ' . _($stripeInterval . 's'));
+            }
+        }
+
+        $productName = (!empty($plan->nickname) ? $plan->nickname : $product->name);
+
+        return $productName . ' (' . app_format_money(strcasecmp($plan->currency, 'JPY') == 0 ?
+                $plan->amount :
+                $plan->amount / 100, strtoupper($currency)) . ' / ' . $interval . ')';
     }
 }

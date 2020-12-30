@@ -198,6 +198,8 @@ class Payments_model extends App_Model
 
             if ($invoice->status == Invoices_model::STATUS_DRAFT) {
                 $force_update = true;
+                // update invoice number for invoice with draft - V2.7.2
+                $this->invoices_model->change_invoice_number_when_status_draft($invoice->id);
             }
 
             update_invoice_status($data['invoiceid'], $force_update);

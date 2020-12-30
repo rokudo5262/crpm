@@ -57,9 +57,11 @@ class Proposals extends AdminController
 
     public function table()
     {
-        if (!has_permission('proposals', '', 'view')
+        if (
+            !has_permission('proposals', '', 'view')
             && !has_permission('proposals', '', 'view_own')
-            && get_option('allow_staff_view_proposals_assigned') == 0) {
+            && get_option('allow_staff_view_proposals_assigned') == 0
+        ) {
             ajax_access_denied();
         }
 

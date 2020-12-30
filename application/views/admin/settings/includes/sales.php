@@ -64,6 +64,8 @@
       <hr />
       <?php render_yes_no_option('remove_tax_name_from_item_table','remove_tax_name_from_item_table','remove_tax_name_from_item_table_help'); ?>
       <hr />
+      <?php render_yes_no_option('items_table_amounts_exclude_currency_symbol','items_table_amounts_exclude_currency_symbol'); ?>
+      <hr />
       <?php
       $default_tax = unserialize(get_option('default_tax'));
       ?>

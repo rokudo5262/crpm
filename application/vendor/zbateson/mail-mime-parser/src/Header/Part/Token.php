@@ -7,6 +7,7 @@
 namespace ZBateson\MailMimeParser\Header\Part;
 
 use ZBateson\MailMimeParser\Header\Part\HeaderPart;
+use ZBateson\MbWrapper\MbWrapper;
 
 /**
  * Holds a string value token that will require additional processing by a
@@ -24,10 +25,12 @@ class Token extends HeaderPart
     /**
      * Initializes a token.
      * 
+     * @param MbWrapper $charsetConverter
      * @param string $value the token's value
      */
-    public function __construct($value)
+    public function __construct(MbWrapper $charsetConverter, $value)
     {
+        parent::__construct($charsetConverter);
         $this->value = $value;
     }
     
@@ -38,7 +41,7 @@ class Token extends HeaderPart
      */
     public function isSpace()
     {
-        return ($this->value === ' ');
+        return (preg_match('/^\s+$/', $this->value) === 1);
     }
     
     /**

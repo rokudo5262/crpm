@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<div class="panel_s">
+<div class="panel_s section-statement">
    <div class="panel-body">
       <h4 class="customer-statement-heading"><?php echo _l('customer_statement'); ?></h4>
       <div class="row">

@@ -8,6 +8,7 @@
 				<h4 class="no-margin section-text"><?php echo _l('clients_profile_heading'); ?></h4>
 			</div>
 		</div>
+		<?php hooks()->do_action('before_client_profile_form_loaded'); ?>
 		<div class="panel_s">
 			<div class="panel-body">
 				<div class="row">
@@ -107,6 +108,7 @@
 								</div>
 							<?php } ?>
 						<?php } ?>
+						<?php hooks()->do_action('after_client_profile_form_loaded'); ?>
 					</div>
 					<div class="row p15 contact-profile-save-section">
 						<div class="col-md-12 text-right mtop20">
@@ -156,6 +158,7 @@
 				</div>
 			<?php } ?>
 		</div>
+		<?php hooks()->do_action('after_client_profile_password_form_loaded'); ?>
 	</div>
 
 </div>

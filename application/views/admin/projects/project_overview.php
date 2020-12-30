@@ -147,6 +147,7 @@
    <div class="project-progress relative mtop15" data-value="<?php echo $percent_circle; ?>" data-size="150" data-thickness="22" data-reverse="true">
       <strong class="project-percent"></strong>
    </div>
+   <?php hooks()->do_action('admin_area_after_project_progress') ?>
 </div>
 </div>
 <?php $tags = get_tags_in($project->id,'project'); ?>

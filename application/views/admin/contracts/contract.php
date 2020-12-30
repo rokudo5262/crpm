@@ -147,6 +147,11 @@
                         </span>
                      </a>
                   </li>
+                  <li role="presentation" class="tab-separator">
+                  <a href="#tab_templates" onclick="get_templates('contracts', <?php echo $contract->id ?>); return false" aria-controls="tab_templates" role="tab" data-toggle="tab">
+                        <?php echo _l('templates'); ?>
+                     </a>
+                  </li>
                   <li role="presentation" data-toggle="tooltip" title="<?php echo _l('emails_tracking'); ?>" class="tab-separator">
                      <a href="#tab_emails_tracking" aria-controls="tab_emails_tracking" role="tab" data-toggle="tab">
                         <?php if(!is_mobile()){ ?>
@@ -431,6 +436,17 @@
 <div role="tabpanel" class="tab-pane" id="tab_tasks">
    <?php init_relation_tasks_table(array('data-new-rel-id'=>$contract->id,'data-new-rel-type'=>'contract')); ?>
 </div>
+<div role="tabpanel" class="tab-pane" id="tab_templates">
+   <div class="row contract-templates">
+      <div class="col-md-12">
+         <button type="button" class="btn btn-info" onclick="add_template('contracts', <?php echo $contract->id ?>);"><?php echo _l('add_template'); ?></button>
+         <hr>
+      </div>
+      <div class="col-md-12">
+         <div id="contract-templates" class="contract-templates-wrapper"></div>
+      </div>
+   </div>
+</div>
 </div>
 </div>
 </div>
@@ -439,6 +455,7 @@
 </div>
 </div>
 </div>
+<div id="modal-wrapper"></div>
 <?php init_tail(); ?>
 <?php if(isset($contract)){ ?>
    <!-- init table tasks -->

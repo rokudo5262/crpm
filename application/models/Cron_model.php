@@ -72,6 +72,7 @@ class Cron_model extends App_Model
             $this->check_leads_email_integration();
             $this->delete_activity_log();
             $this->send_scheduled_emails();
+            $this->delete_twocheckout_logs();
 
             /**
              * Finally send any emails in the email queue - if enabled and any
@@ -96,6 +97,17 @@ class Cron_model extends App_Model
             // For all cases try to release the lock after everything is finished
             $this->lockHandle();
         }
+    }
+
+    private function delete_twocheckout_logs()
+    {
+        $older_than_days = hooks()->apply_filters('delete_two_checkout_log_older_than_days',40);
+
+        if ($older_than_days == 0 || empty($older_than_days)) {
+            return;
+        }
+
+        $this->db->query('DELETE FROM ' . db_prefix() . 'twocheckout_log WHERE created_at < DATE_SUB(NOW(), INTERVAL ' . $this->db->escape_str($older_than_days) . ' DAY);');
     }
 
     private function events()
@@ -1123,8 +1135,10 @@ class Cron_model extends App_Model
                 return false;
             }
 
-            if ($mail->folder == '') {
-                $mail->folder = 'INBOX';
+            if (empty($mail->folder)) {
+                $mail->folder = stripos($mail->imap_server, 'outlook') !== false
+                    || stripos($mail->imap_server, 'microsoft')
+                    || stripos($mail->imap_server, 'office365') !== false ? 'Inbox' : 'INBOX';
             }
 
             $mailbox = $connection->getMailbox($mail->folder);
@@ -1169,15 +1183,33 @@ class Cron_model extends App_Model
                     unset($formFields[$key]);
                 }
 
-                $fromAddress = $message->getFrom()->getAddress();
-                $fromName    = $message->getFrom()->getName();
+                $fromAddress = null;
+                $fromName    = null;
 
-                $replyTo = $message->getReplyTo();
-                if (count($replyTo) === 1) {
-                    $fromAddress = $replyTo[0]->getAddress();
+                if ($message->getFrom()) {
+                    $fromAddress = $message->getFrom()->getAddress();
+                    $fromName    = $message->getFrom()->getName();
                 }
 
-                $fromAddress = isset($formFields['email']) ? $formFields['email'] : $fromAddress;
+                $replyTo = $message->getReplyTo();
+
+                if (count($replyTo) === 1) {
+                    $fromAddress = $replyTo[0]->getAddress();
+                    $fromName    = $replyTo[0]->getName() ?? $fromName;
+                }
+
+                $fromAddress = $formFields['email'] ?? $fromAddress;
+                $fromName    = $formFields['name'] ?? $fromName;
+
+                /**
+                 * Check the the fromAddress is null, perhaps invalid address?
+                 * @see https://github.com/ddeboer/imap/issues/370
+                 */
+                if (is_null($fromAddress)) {
+                    $message->markAsSeen();
+
+                    continue;
+                }
 
                 $mailstatus = $this->spam_filters_model->check($fromAddress, $message->getSubject(), $body, 'leads');
 
@@ -1202,6 +1234,7 @@ class Cron_model extends App_Model
 
                     // Set message to seen to in the next time we dont need to loop over this message
                     $message->markAsSeen();
+
                     if ($mail->create_task_if_customer == '1') {
                         load_admin_language($mail->responsible);
 
@@ -1379,7 +1412,7 @@ class Cron_model extends App_Model
 
     public function auto_import_imap_tickets()
     {
-        $this->db->select('host,encryption,password,email,delete_after_import,imap_username')
+        $this->db->select('host,encryption,password,email,delete_after_import,imap_username,folder')
             ->from(db_prefix() . 'departments')
             ->where('host !=', '')
             ->where('password !=', '')
@@ -1415,21 +1448,28 @@ class Cron_model extends App_Model
                 continue;
             }
 
-            $mailbox = $connection->getMailbox('INBOX');
-            $search  = new SearchExpression();
+            $mailbox = $connection->getMailbox(
+                empty($dept['folder']) ? 'INBOX' : $dept['folder']
+            );
+
+            $search = new SearchExpression();
             $search->addCondition(new Unseen);
 
             $messages = $mailbox->getMessages($search);
             $this->load->model('tickets_model');
 
             foreach ($messages as $message) {
-                $body = $message->getBodyText() ?? $message->getBodyHtml();
+                $body = $message->getBodyHtml() ?? $message->getBodyText();
+                // Some mail clients for the text/plain part add only Not set
+                // this is bad practice instead of leaving the text/pain part empty
+                // In this case, if it's Not set, we will use the HTML of the message
+                if ($body == 'Not set') {
+                    $body = $message->getBodyHtml();
+                }
 
                 if (empty($body)) {
                     $body = 'No message found';
                 }
-
-                $body = handle_google_drive_links_in_text($body);
 
                 if (
                     class_exists('EmailReplyParser\EmailReplyParser')
@@ -1444,7 +1484,7 @@ class Cron_model extends App_Model
 
                     // For some emails this is causing an issue and not returning the email, instead is returning empty string
                     // In this case, only use parsed email reply if not empty
-                    if (!empty($parsedBody)) {
+                    if (! empty($parsedBody)) {
                         $body = $parsedBody;
                     }
                 }
@@ -1474,17 +1514,35 @@ class Cron_model extends App_Model
                 }
 
                 $data['to']  = implode(',', $data['to']);
-                $fromAddress = $message->getFrom()->getAddress();
-                if (hooks()->apply_filters('imap_fetch_from_email_by_reply_to_header', 'true') == 'true') {
+                $fromAddress = null;
+                $fromName    = null;
+
+                if ($message->getFrom()) {
+                    $fromAddress = $message->getFrom()->getAddress();
+                    $fromName    = $message->getFrom()->getName();
+                }
+
+                if (hooks()->apply_filters('imap_fetch_from_email_by_reply_to_header', true)) {
                     $replyTo = $message->getReplyTo();
 
                     if (count($replyTo) === 1) {
                         $fromAddress = $replyTo[0]->getAddress();
+                        $fromName    = $replyTo[0]->getName() ?? $fromName;
                     }
                 }
 
+                /**
+                 * Check the the fromAddress is null, perhaps invalid address?
+                 * @see https://github.com/ddeboer/imap/issues/370
+                 */
+                if (is_null($fromAddress)) {
+                    $message->markAsSeen();
+
+                    continue;
+                }
+
                 $data['email']    = $fromAddress;
-                $data['fromname'] = $message->getFrom()->getName();
+                $data['fromname'] = $fromName;
 
                 $data = hooks()->apply_filters('imap_auto_import_ticket_data', $data, $message);
 

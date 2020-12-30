@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-12 section-client-dashboard">
 		<h3 id="greeting" class="no-mtop"></h3>
 		<?php if(has_contact_permission('projects')) { ?>
 			<div class="panel_s">
@@ -12,6 +12,7 @@
 				</div>
 			</div>
 		<?php } ?>
+		<?php hooks()->do_action('client_area_after_project_overview'); ?>
 		<div class="panel_s">
 			<?php
 			if(has_contact_permission('invoices')){ ?>

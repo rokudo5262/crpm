@@ -76,6 +76,8 @@ if($total_gateways > 1) { ?>
 </div>
 <?php } ?>
 <hr />
+<?php echo render_input('settings[bitly_access_token]', 'Bitly Access Token', get_option('bitly_access_token')); ?>
+<hr />
 <h4 class="mbot15">
     <i class="fa fa-question-circle pull-left" data-toggle="tooltip" data-title="<?php echo _l('sms_trigger_disable_tip'); ?>"></i>
     <?php echo _l('triggers'); ?>

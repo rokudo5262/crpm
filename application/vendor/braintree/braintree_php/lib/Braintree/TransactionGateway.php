@@ -84,6 +84,7 @@ class TransactionGateway
             'orderId',
             'paymentMethodNonce',
             'paymentMethodToken',
+            'productSku',
             'purchaseOrderNumber',
             'recurring',
             'serviceFeeAmount',
@@ -104,7 +105,10 @@ class TransactionGateway
             'discountAmount',
             'shipsFromPostalCode',
             ['riskData' =>
-                ['customerBrowser', 'customerIp', 'customer_browser', 'customer_ip']
+                [
+                    //NEXT_MAJOR_VERSION remove snake case parameters, PHP should only accept camel case
+                    'customerBrowser', 'customerIp', 'customer_browser', 'customer_ip',
+                    'customerDeviceId', 'customerLocationZip', 'customerTenure'],
             ],
             ['creditCard' =>
                 ['token', 'cardholderName', 'cvv', 'expirationDate', 'expirationMonth', 'expirationYear', 'number'],
@@ -118,15 +122,15 @@ class TransactionGateway
                 [
                     'firstName', 'lastName', 'company', 'countryName',
                     'countryCodeAlpha2', 'countryCodeAlpha3', 'countryCodeNumeric',
-                    'extendedAddress', 'locality', 'postalCode', 'region',
+                    'extendedAddress', 'locality', 'phoneNumber', 'postalCode', 'region',
                     'streetAddress'],
             ],
             ['shipping' =>
                 [
                     'firstName', 'lastName', 'company', 'countryName',
                     'countryCodeAlpha2', 'countryCodeAlpha3', 'countryCodeNumeric',
-                    'extendedAddress', 'locality', 'postalCode', 'region',
-                    'streetAddress'],
+                    'extendedAddress', 'locality', 'phoneNumber', 'postalCode', 'region',
+                    'shippingMethod', 'streetAddress'],
             ],
             ['threeDSecurePassThru' =>
                 [
@@ -253,7 +257,9 @@ class TransactionGateway
             ['lineItems' => ['quantity', 'name', 'description', 'kind', 'unitAmount', 'unitTaxAmount', 'totalAmount', 'discountAmount', 'taxAmount', 'unitOfMeasure', 'productCode', 'commodityCode', 'url']],
             ['externalVault' =>
                 ['status' , 'previousNetworkTransactionId'],
-            ]
+            ],
+            // NEXT_MAJOR_VERSION rename Android Pay to Google Pay
+            ['androidPayCard' => ['number', 'cryptogram', 'expirationMonth', 'expirationYear', 'eciIndicator', 'sourceCardType', 'sourceCardLastFour', 'googleTransactionId']]
         ];
     }
 
@@ -324,11 +330,14 @@ class TransactionGateway
     }
     /**
      * new sale
-     * @param array $attribs
+     * @param array $attribs (Note: $recurring param is deprecated. Use $transactionSource instead)
      * @return Result\Successful|Result\Error
      */
     public function sale($attribs)
     {
+        if (array_key_exists('recurring', $attribs)) {
+            trigger_error('$recurring is deprecated, use $transactionSource instead', E_USER_DEPRECATED);
+        }
         return $this->create(array_merge(['type' => Transaction::SALE], $attribs));
     }
 

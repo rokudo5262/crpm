@@ -350,7 +350,7 @@ function render_admin_js_variables()
         'enable_google_picker'                        => get_option('enable_google_picker'),
         'google_client_id'                            => get_option('google_client_id'),
         'google_api'                                  => get_option('google_api_key'),
-        'has_permission_create_task'                  => staff_can('create', 'task'),
+        'has_permission_create_task'                  => staff_can('create', 'tasks'),
     ];
 
     // by remove it means do not prefix it

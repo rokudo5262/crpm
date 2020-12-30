@@ -1,6 +1,44 @@
 <?php
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+
 defined('BASEPATH') or exit('No direct script access allowed');
+
+/**
+ * Get contract short_url
+ * @since  Version 2.7.3
+ * @param  object $contract
+ * @return string Url
+ */
+function get_contract_shortlink($contract)
+{
+    $long_url = site_url("invoice/{$contract->id}/{$contract->hash}");
+    if (!get_option('bitly_access_token')) {
+        return $long_url;
+    }
+
+    // Check if contract has short link, if yes return short link
+    if (!empty($contract->short_link)) {
+        return $contract->short_link;
+    }
+
+    // Create short link and return the newly created short link
+    $short_link = app_generate_short_link([
+        'long_url'  => $long_url,
+        'title'     => 'Contract #'. $contract->id
+    ]);
+
+    if ($short_link) {
+        $CI = &get_instance();
+        $CI->db->where('id', $contract->id);
+        $CI->db->update(db_prefix() . 'contracts', [
+            'short_link' => $short_link
+        ]);
+        return $short_link;
+    }
+    return $long_url;
+}
 
 /**
  * Check the contract view restrictions
@@ -12,7 +50,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 function check_contract_restrictions($id, $hash)
 {
-    $CI = & get_instance();
+    $CI = &get_instance();
     $CI->load->model('contracts_model');
 
     if (!$hash || !$id) {
@@ -43,11 +81,11 @@ function check_contract_restrictions($id, $hash)
 }
 
 /**
-* Function that will search possible contracts templates in applicaion/views/admin/contracts/templates
-* Will return any found files and user will be able to add new template
-*
-* @return array
-*/
+ * Function that will search possible contracts templates in applicaion/views/admin/contracts/templates
+ * Will return any found files and user will be able to add new template
+ *
+ * @return array
+ */
 function get_contract_templates()
 {
     $contract_templates = [];
@@ -107,13 +145,13 @@ function send_contract_signed_notification_to_staff($contract_id)
 }
 
 /**
-* Get the recently created contracts in the given days
-*
-* @param  integer $days
-* @param  integer|null $staffId
-*
-* @return integer
-*/
+ * Get the recently created contracts in the given days
+ *
+ * @param  integer $days
+ * @param  integer|null $staffId
+ *
+ * @return integer
+ */
 function count_recently_created_contracts($days = 7, $staffId = null)
 {
     $diff1     = date('Y-m-d', strtotime('-' . $days . ' days'));
@@ -121,7 +159,7 @@ function count_recently_created_contracts($days = 7, $staffId = null)
     $staffId   = is_null($staffId) ? get_staff_user_id() : $staffId;
     $where_own = [];
 
-    if (! staff_can('view', 'contracts')) {
+    if (!staff_can('view', 'contracts')) {
         $where_own = ['addedfrom' => $staffId];
     }
 
@@ -129,18 +167,18 @@ function count_recently_created_contracts($days = 7, $staffId = null)
 }
 
 /**
-* Get total number of active contracts
-*
-* @param integer|null $staffId
-*
-* @return integer
-*/
+ * Get total number of active contracts
+ *
+ * @param integer|null $staffId
+ *
+ * @return integer
+ */
 function count_active_contracts($staffId = null)
 {
     $where_own = [];
     $staffId   = is_null($staffId) ? get_staff_user_id() : $staffId;
 
-    if (! has_permission('contracts', '', 'view')) {
+    if (!has_permission('contracts', '', 'view')) {
         $where_own = ['addedfrom' => $staffId];
     }
 
@@ -148,18 +186,18 @@ function count_active_contracts($staffId = null)
 }
 
 /**
-* Get total number of expired contracts
-*
-* @param integer|null $staffId
-*
-* @return integer
-*/
+ * Get total number of expired contracts
+ *
+ * @param integer|null $staffId
+ *
+ * @return integer
+ */
 function count_expired_contracts($staffId = null)
 {
     $where_own = [];
     $staffId   = is_null($staffId) ? get_staff_user_id() : $staffId;
 
-    if (! has_permission('contracts', '', 'view')) {
+    if (!has_permission('contracts', '', 'view')) {
         $where_own = ['addedfrom' => $staffId];
     }
 
@@ -167,18 +205,18 @@ function count_expired_contracts($staffId = null)
 }
 
 /**
-* Get total number of trash contracts
-*
-* @param integer|null $staffId
-*
-* @return integer
-*/
+ * Get total number of trash contracts
+ *
+ * @param integer|null $staffId
+ *
+ * @return integer
+ */
 function count_trash_contracts($staffId = null)
 {
     $where_own = [];
     $staffId   = is_null($staffId) ? get_staff_user_id() : $staffId;
 
-    if (! has_permission('contracts', '', 'view')) {
+    if (!has_permission('contracts', '', 'view')) {
         $where_own = ['addedfrom' => $staffId];
     }
 

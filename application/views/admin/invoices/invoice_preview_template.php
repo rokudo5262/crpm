@@ -126,11 +126,11 @@
          <div class="row mtop10">
             <div class="col-md-3">
                <?php echo format_invoice_status($invoice->status,'mtop5'); ?>
-               <?php if($invoice->status == Invoices_model::STATUS_PARTIALLY || $invoice->status == Invoices_model::STATUS_OVERDUE){
-                  if($invoice->duedate && date('Y-m-d') > date('Y-m-d',strtotime(to_sql_date($invoice->duedate)))){
-                    echo '<p class="text-danger mtop15 no-mbot">'._l('invoice_is_overdue',floor((abs(time() - strtotime(to_sql_date($invoice->duedate))))/(60*60*24))).'</p>';
-                  }
-                  } ?>
+               <?php
+                  if(is_invoice_overdue($invoice)){
+                       echo '<p class="text-danger mtop15 no-mbot">'._l('invoice_is_overdue', get_total_days_overdue($invoice->duedate)).'</p>';
+                     }
+               ?>
             </div>
             <div class="col-md-9 _buttons">
                <div class="visible-xs">
@@ -174,10 +174,10 @@
                         <li><a href="<?php echo site_url('invoice/' . $invoice->id . '/' .  $invoice->hash) ?>" target="_blank"><?php echo _l('view_invoice_as_customer_tooltip'); ?></a></li>
                         <li>
                            <?php hooks()->do_action('after_invoice_view_as_client_link', $invoice); ?>
-                           <?php if(($invoice->status == Invoices_model::STATUS_OVERDUE
-                              || ($invoice->status == Invoices_model::STATUS_PARTIALLY && !empty($invoice->duedate) && $invoice->duedate && date('Y-m-d') > date('Y-m-d',strtotime(to_sql_date($invoice->duedate)))))
-                              && is_invoices_overdue_reminders_enabled()){ ?>
-                           <a href="<?php echo admin_url('invoices/send_overdue_notice/'.$invoice->id); ?>"><?php echo _l('send_overdue_notice_tooltip'); ?></a>
+                           <?php if(is_invoice_overdue($invoice) && is_invoices_overdue_reminders_enabled()){ ?>
+                              <a href="<?php echo admin_url('invoices/send_overdue_notice/'.$invoice->id); ?>">
+                                 <?php echo _l('send_overdue_notice_tooltip'); ?>
+                              </a>
                            <?php } ?>
                         </li>
                         <?php if($invoice->status != Invoices_model::STATUS_CANCELLED
@@ -231,6 +231,7 @@
                         </li>
                         <?php } ?>
                         <?php } ?>
+                        <?php hooks()->do_action('after_invoice_preview_more_menu'); ?>
                      </ul>
                   </div>
                   <?php if(has_permission('payments','','create') && abs($invoice->total) > 0){ ?>

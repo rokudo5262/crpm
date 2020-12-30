@@ -11,11 +11,11 @@ if (has_permission('items', '', 'delete')) {
 $aColumns = array_merge($aColumns, [
     'description',
     'long_description',
-    db_prefix() . 'items.rate',
+    db_prefix() . 'items.rate as rate',
     't1.taxrate as taxrate_1',
     't2.taxrate as taxrate_2',
     'unit',
-    db_prefix() . 'items_groups.name',
+    db_prefix() . 'items_groups.name as group_name',
     ]);
 
 $sIndexColumn = 'id';
@@ -56,47 +56,44 @@ $rResult = $result['rResult'];
 
 foreach ($rResult as $aRow) {
     $row = [];
-    for ($i = 0; $i < count($aColumns); $i++) {
-        if (strpos($aColumns[$i], 'as') !== false && !isset($aRow[$aColumns[$i]])) {
-            $_data = $aRow[strafter($aColumns[$i], 'as ')];
-        } else {
-            $_data = $aRow[$aColumns[$i]];
-        }
 
-        if ($aColumns[$i] == '1') {
-            $_data = '<div class="checkbox"><input type="checkbox" value="' . $aRow['id'] . '"><label></label></div>';
-        } elseif ($aColumns[$i] == 't1.taxrate as taxrate_1') {
-            if (!$aRow['taxrate_1']) {
-                $aRow['taxrate_1'] = 0;
-            }
-            $_data = '<span data-toggle="tooltip" title="' . $aRow['taxname_1'] . '" data-taxid="' . $aRow['tax_id_1'] . '">' . $aRow['taxrate_1'] . '%' . '</span>';
-        } elseif ($aColumns[$i] == 't2.taxrate as taxrate_2') {
-            if (!$aRow['taxrate_2']) {
-                $aRow['taxrate_2'] = 0;
-            }
-            $_data = '<span data-toggle="tooltip" title="' . $aRow['taxname_2'] . '" data-taxid="' . $aRow['tax_id_2'] . '">' . $aRow['taxrate_2'] . '%' . '</span>';
-        } elseif ($aColumns[$i] == 'description') {
-            $_data = '<a href="#" data-toggle="modal" data-target="#sales_item_modal" data-id="' . $aRow['id'] . '">' . $_data . '</a>';
-            $_data .= '<div class="row-options">';
+    $row[] = '<div class="checkbox"><input type="checkbox" value="' . $aRow['id'] . '"><label></label></div>';
 
-            if (has_permission('items', '', 'edit')) {
-                $_data .= '<a href="#" data-toggle="modal" data-target="#sales_item_modal" data-id="' . $aRow['id'] . '">' . _l('edit') . '</a>';
-            }
+    $descriptionOutput = '';
+    $descriptionOutput = '<a href="#" data-toggle="modal" data-target="#sales_item_modal" data-id="' . $aRow['id'] . '">' . $aRow['description'] . '</a>';
+    $descriptionOutput .= '<div class="row-options">';
 
-            if (has_permission('items', '', 'delete')) {
-                $_data .= ' | <a href="' . admin_url('invoice_items/delete/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
-            }
-            $_data .= '</div>';
-        } else {
-            if (startsWith($aColumns[$i], 'ctable_') && is_date($_data)) {
-                $_data = _d($_data);
-            }
-        }
-
-        $row[]              = $_data;
-        $row['DT_RowClass'] = 'has-row-options';
+    if (has_permission('items', '', 'edit')) {
+        $descriptionOutput .= '<a href="#" data-toggle="modal" data-target="#sales_item_modal" data-id="' . $aRow['id'] . '">' . _l('edit') . '</a>';
     }
 
+    if (has_permission('items', '', 'delete')) {
+        $descriptionOutput .= ' | <a href="' . admin_url('invoice_items/delete/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
+    }
+
+    $descriptionOutput .= '</div>';
+
+    $row[] = $descriptionOutput;
+
+    $row[] = $aRow['long_description'];
+
+    $row[] = app_format_money($aRow['rate'], get_base_currency());
+
+    $aRow['taxrate_1'] = $aRow['taxrate_1'] ?? 0;
+    $row[]             = '<span data-toggle="tooltip" title="' . $aRow['taxname_1'] . '" data-taxid="' . $aRow['tax_id_1'] . '">' . app_format_number($aRow['taxrate_1']) . '%' . '</span>';
+
+    $aRow['taxrate_2'] = $aRow['taxrate_2'] ?? 0;
+    $row[]             = '<span data-toggle="tooltip" title="' . $aRow['taxname_2'] . '" data-taxid="' . $aRow['tax_id_2'] . '">' . app_format_number($aRow['taxrate_2']) . '%' . '</span>';
+    $row[]             = $aRow['unit'];
+
+    $row[] = $aRow['group_name'];
+
+    // Custom fields add values
+    foreach ($customFieldsColumns as $customFieldColumn) {
+        $row[] = (strpos($customFieldColumn, 'date_picker_') !== false ? _d($aRow[$customFieldColumn]) : $aRow[$customFieldColumn]);
+    }
+
+    $row['DT_RowClass'] = 'has-row-options';
 
     $output['aaData'][] = $row;
 }

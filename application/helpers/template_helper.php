@@ -26,7 +26,9 @@ function html_purify($content)
     $config->set('HTML.DefinitionRev', $CI->config->item('migration_version'));
 
     // Disables cache
-   // $config->set('Cache.DefinitionImpl', null);
+    if(ENVIRONMENT !== 'production'){
+        $config->set('Cache.DefinitionImpl', null);
+    }
 
     $config->set('HTML.SafeIframe', true);
     $config->set('Attr.AllowedFrameTargets', ['_blank']);
@@ -49,6 +51,7 @@ function html_purify($content)
     if ($def) {
         $def->addAttribute('p', 'pagebreak', 'Text');
         $def->addAttribute('div', 'align', 'Enum#left,right,center');
+        $def->addAttribute('span', 'data-mention-id', 'Number');
         $def->addElement(
             'iframe',
             'Inline',

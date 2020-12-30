@@ -13,8 +13,7 @@ function load_pdf_language($clientid)
 {
     $CI = & get_instance();
 
-    $language = get_option('active_language');
-
+    $language       = get_option('active_language');
     $clientLanguage = get_client_default_language($clientid);
 
     // When cron or email sending pdf document the pdfs need to be on the client language
@@ -23,10 +22,8 @@ function load_pdf_language($clientid)
             $language = $clientLanguage;
         }
     } else {
-        if (get_option('output_client_pdfs_from_admin_area_in_client_language') == 1) {
-            if (!empty($clientLanguage)) {
-                $language = $clientLanguage;
-            }
+        if (!empty($clientLanguage) && get_option('output_client_pdfs_from_admin_area_in_client_language') == 1) {
+            $language = $clientLanguage;
         }
     }
 
@@ -50,22 +47,25 @@ function pdf_logo_url()
 {
     $custom_pdf_logo_image_url = get_option('custom_pdf_logo_image_url');
     $width                     = get_option('pdf_logo_width');
+    $companyUploadPath         = get_upload_path_by_type('company');
     $logoUrl                   = '';
 
     if ($width == '') {
         $width = 120;
     }
+
     if ($custom_pdf_logo_image_url != '') {
         $logoUrl = $custom_pdf_logo_image_url;
     } else {
-        if (get_option('company_logo_dark') != '' && file_exists(get_upload_path_by_type('company') . get_option('company_logo_dark'))) {
-            $logoUrl = get_upload_path_by_type('company') . get_option('company_logo_dark');
-        } elseif (get_option('company_logo') != '' && file_exists(get_upload_path_by_type('company') . get_option('company_logo'))) {
-            $logoUrl = get_upload_path_by_type('company') . get_option('company_logo');
+        if (get_option('company_logo_dark') != '' && file_exists($companyUploadPath . get_option('company_logo_dark'))) {
+            $logoUrl = $companyUploadPath . get_option('company_logo_dark');
+        } elseif (get_option('company_logo') != '' && file_exists($companyUploadPath . get_option('company_logo'))) {
+            $logoUrl = $companyUploadPath . get_option('company_logo');
         }
     }
 
     $logoImage = '';
+
     if ($logoUrl != '') {
         $logoImage = '<img width="' . $width . 'px" src="' . $logoUrl . '">';
     }
@@ -80,15 +80,17 @@ function pdf_logo_url()
 function get_pdf_fonts_list()
 {
     static $fontlist = null;
+
     if (!$fontlist) {
         $fontlist = [];
+
         if (($fontsdir = opendir(TCPDF_FONTS::_getfontpath())) !== false) {
             while (($file = readdir($fontsdir)) !== false) {
                 if (substr($file, -4) == '.php') {
                     $name = strtolower(basename($file, '.php'));
                     // Exclude ITALIC Fonts because are causing issue when they are set directly.
                     // Not sure if they work fine if it's set manually.
-                    if(!endsWith($name, 'i')) {
+                    if (!endsWith($name, 'i')) {
                         array_push($fontlist, $name);
                     }
                 }
@@ -118,7 +120,8 @@ function set_mailing_constant()
 function get_pdf_format($option_name)
 {
     $oFormat = strtoupper(get_option($option_name));
-    $data    = [
+
+    $data = [
         'orientation' => '',
         'format'      => '',
     ];
@@ -137,7 +140,7 @@ function get_pdf_format($option_name)
         $data['format']      = 'LETTER';
     }
 
-    return hooks()->apply_filters('pdf_format_array', $data);
+    return hooks()->apply_filters('pdf_format_array', $data, $option_name);
 }
 
 /**

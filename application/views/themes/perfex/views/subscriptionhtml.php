@@ -83,7 +83,7 @@
                      <?php echo _l('subscription_date'); ?>:
                   </span>
                   <?php
-                  echo !empty($subscription->stripe_subscription_id)
+                  echo !empty($subscription->stripe_subscription_id) && !empty($subscription->date_subscribed) // late webhook check
                   ? _d(date('Y-m-d', strtotime($subscription->date_subscribed)))
                   : _d(date('Y-m-d'));
                   ?>

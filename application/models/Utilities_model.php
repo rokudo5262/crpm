@@ -294,7 +294,7 @@ class Utilities_model extends App_Model
         if (get_option('show_tasks_on_calendar') == 1 && !$ff || $ff && array_key_exists('tasks', $filters)) {
             if ($client_data && !$has_contact_permission_projects) {
             } else {
-                $this->db->select(db_prefix() . 'tasks.name as title,id,' . tasks_rel_name_select_query() . ' as rel_name,rel_id,status,CASE WHEN duedate IS NULL THEN startdate ELSE duedate END as date', false);
+                $this->db->select(db_prefix() . 'tasks.name as title,id,' . tasks_rel_name_select_query() . ' as rel_name,rel_id,status,milestone,CASE WHEN duedate IS NULL THEN startdate ELSE duedate END as date', false);
                 $this->db->from(db_prefix() . 'tasks');
                 $this->db->where('status !=', 5);
 
@@ -334,6 +334,9 @@ class Utilities_model extends App_Model
                     } else {
                         $task['url'] = site_url('clients/project/' . $task['rel_id'] . '?group=project_tasks&taskid=' . $task['id']);
                     }
+
+                    $task['className'] = $task['milestone'] ? ['milestone-' . $task['milestone']] : '';
+
                     array_push($data, $task);
                 }
             }
@@ -386,8 +389,8 @@ class Utilities_model extends App_Model
                             } elseif ($key == 'ticket') {
                                 $url = admin_url('tickets/ticket/' . $reminder['rel_id']);
                             } elseif ($key == 'task') {
-                                // Not implemented yet
-                                $url = admin_url('tasks/view/' . $reminder['rel_id']);
+                                $url                  = '#';
+                                $_reminder['onclick'] = 'init_task_modal(' . $reminder['rel_id'] . '); return false;';
                             }
 
                             $_reminder['url'] = $url;

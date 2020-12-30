@@ -1,5 +1,5 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
-<div class="panel_s">
+<div class="panel_s section-knowledge-base">
 	<div class="panel-body">
 		<div class="row kb-article">
 			<div class="col-md-<?php if(count($related_articles) == 0){echo '12';}else{echo '8';} ?>">

@@ -22,6 +22,7 @@
    <?php } ?>
 </div>
 <div class="modal-body">
+   <input id="taskid" type="hidden" value="<?php echo $task->id?>">
    <div class="row">
       <div class="col-md-8 task-single-col-left">
          <?php if(total_rows(db_prefix().'taskstimers',array('end_time'=>NULL,'staff_id !='=>get_staff_user_id(),'task_id'=>$task->id)) > 0){

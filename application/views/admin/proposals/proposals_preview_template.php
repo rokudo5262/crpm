@@ -42,7 +42,7 @@
                   <?php echo _l('tasks'); ?>
                   </a>
                </li>
-                 <li role="presentation" class="tab-separator">
+               <li role="presentation" class="tab-separator">
                      <a href="#tab_notes" onclick="get_sales_notes(<?php echo $proposal->id; ?>,'proposals'); return false" aria-controls="tab_notes" role="tab" data-toggle="tab">
                      <?php echo _l('estimate_notes'); ?>
                      <span class="notes-total">
@@ -51,7 +51,12 @@
                         <?php } ?>
                      </span>
                      </a>
-                  </li>
+               </li>
+               <li role="presentation" class="tab-separator">
+                     <a href="#tab_templates" onclick="get_templates('proposals', <?php echo $proposal->id ?? '' ?>); return false" aria-controls="tab_templates" role="tab" data-toggle="tab">
+                        <?php echo _l('templates'); ?>
+                     </a>
+               </li>
                <li role="presentation" data-toggle="tooltip" title="<?php echo _l('emails_tracking'); ?>" class="tab-separator">
                   <a href="#tab_emails_tracking" aria-controls="tab_emails_tracking" role="tab" data-toggle="tab">
                     <?php if(!is_mobile()){ ?>
@@ -330,6 +335,17 @@
                   <div class="panel_s mtop20 no-shadow" id="sales_notes_area">
                   </div>
                </div>
+               <div role="tabpanel" class="tab-pane" id="tab_templates">
+                  <div class="row proposal-templates">
+                     <div class="col-md-12">
+                        <button type="button" class="btn btn-info" onclick="add_template('proposals',<?php echo $proposal->id ?? '' ?>);"><?php echo _l('add_template'); ?></button>
+                        <hr>
+                     </div>
+                     <div class="col-md-12">
+                        <div id="proposal-templates" class="proposal-templates-wrapper"></div>
+                     </div>
+                  </div>
+               </div>
                <div role="tabpanel" class="tab-pane" id="tab_emails_tracking">
                   <?php
                      $this->load->view('admin/includes/emails_tracking',array(
@@ -368,6 +384,7 @@
       </div>
    </div>
 </div>
+<div id="modal-wrapper"></div>
 <?php $this->load->view('admin/proposals/send_proposal_to_email_template'); ?>
 <script>
    init_btn_with_tooltips();

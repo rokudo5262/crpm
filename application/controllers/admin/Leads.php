@@ -1064,6 +1064,31 @@ class Leads extends AdminController
         echo json_encode(['leadView' => $this->_get_lead_data($rel_id), 'id' => $rel_id]);
     }
 
+    public function email_integration_folders()
+    {
+       if (!is_admin()) {
+            ajax_access_denied('Leads Test Email Integration');
+        }
+
+        app_check_imap_open_function();
+
+        $imap = new Imap(
+           $this->input->post('email'),
+           $this->input->post('password', false),
+           $this->input->post('imap_server'),
+           $this->input->post('encryption')
+        );
+
+        try {
+            echo json_encode($imap->getSelectableFolders());
+        } catch (ConnectionErrorException $e) {
+            echo json_encode([
+                'alert_type' => 'warning',
+                'message'    => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function test_email_integration()
     {
         if (!is_admin()) {
@@ -1135,8 +1160,9 @@ class Leads extends AdminController
             'is_not_staff' => 0,
         ]);
 
-        $data['title']     = _l('leads_email_integration');
-        $data['mail']      = $this->leads_model->get_email_integration();
+        $data['title']      = _l('leads_email_integration');
+        $data['mail']       = $this->leads_model->get_email_integration();
+
         $data['bodyclass'] = 'leads-email-integration';
         $this->load->view('admin/leads/email_integration', $data);
     }

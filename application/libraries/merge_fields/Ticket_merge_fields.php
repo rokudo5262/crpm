@@ -152,10 +152,8 @@ class Ticket_merge_fields extends App_merge_fields
             }
         }
 
-        $fields['{ticket_status}'] = ticket_status_translate($ticket->status);
-
+        $fields['{ticket_status}']   = ticket_status_translate($ticket->status);
         $fields['{ticket_priority}'] = ticket_priority_translate($ticket->priority);
-
 
         $custom_fields = get_custom_fields('tickets');
         foreach ($custom_fields as $field) {
@@ -170,6 +168,7 @@ class Ticket_merge_fields extends App_merge_fields
 
         $this->ci->db->where('serviceid', $ticket->service);
         $service = $this->ci->db->get(db_prefix() . 'services')->row();
+
         if ($service) {
             $fields['{ticket_service}'] = $service->name;
         }

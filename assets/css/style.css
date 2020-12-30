@@ -2380,6 +2380,10 @@ label,
     padding-top: 10px;
 }
 
+.ptop15 {
+    padding-top: 15px;
+}
+
 .p7 {
     padding: 7px;
 }
@@ -5200,12 +5204,12 @@ body.rtl a+.main-tasks-table-href-name {
 
 
 #task-comments .comment-wrapper {
-    display:block;
-    width:100%;
+    display: block;
+    width: 100%;
 }
 
 #task-comments .comment-content {
-   word-break: break-word;
+    word-break: break-word;
     overflow-x: scroll;
     overflow-wrap: break-word;
     overflow: auto;
@@ -5354,7 +5358,7 @@ textarea[name="checklist-description"] {
     padding: 0 5px 0px 5px;
     border: 0;
     outline: 0;
-    width:100%;
+    width: 100%;
 }
 
 textarea[name="checklist-description"]:focus,
@@ -6093,7 +6097,7 @@ body.rtl .hr-panel-heading.project-area-separation {
 @media(max-width:768px) {
     .jquery-comments ul.main li.comment .wrapper {
         overflow: visible;
-        margin-top:25px;
+        margin-top: 25px;
     }
 }
 
@@ -6103,7 +6107,7 @@ body.rtl .hr-panel-heading.project-area-separation {
 }
 
 .jquery-comments .textarea-wrapper .upload.inline-button {
-    display:none !important;
+    display: none !important;
 }
 
 .jquery-comments ul.navigation li,
@@ -6118,7 +6122,7 @@ body.rtl .hr-panel-heading.project-area-separation {
 }
 
 .jquery-comments ul.main {
-    list-style:none !important;
+    list-style: none !important;
 }
 
 .jquery-comments.tc-content ul.main ul {
@@ -7266,7 +7270,6 @@ div.dataTables_wrapper div.dataTables_length label,
 .tc-content ol {
     list-style: inherit;
     margin-left: 16px;
-    line-height: 10px;
 }
 
 .tc-content ol {
@@ -7289,6 +7292,10 @@ div.dataTables_wrapper div.dataTables_length label,
 .tc-content table[border="1"],
 .tc-content table[border="1"] td {
     border: 1px solid;
+}
+
+.tc-content em {
+    font-style: italic;
 }
 
 .task-modal-single .comment-content img {
@@ -9175,17 +9182,18 @@ body.gantt {
     display: -ms-flexbox !important;
     display: flex !important;
 }
+
 .flex-grow-1 {
     -webkit-box-flex: 1 !important;
-        -ms-flex-positive: 1 !important;
-            flex-grow: 1 !important;
+    -ms-flex-positive: 1 !important;
+    flex-grow: 1 !important;
 }
 
 .flex-column {
     -webkit-box-orient: vertical !important;
     -webkit-box-direction: normal !important;
-        -ms-flex-direction: column !important;
-            flex-direction: column !important;
+    -ms-flex-direction: column !important;
+    flex-direction: column !important;
 }
 
 .gantt .ganttGreen .bar {
@@ -9194,4 +9202,23 @@ body.gantt {
 
 .gantt .ganttRed .bar {
     fill: #cc5900;
+}
+
+.mce-content-body.tc-content ul,
+.mce-content-body.tc-content ol {
+    line-height: 18px;
+}
+
+.rte-autocomplete {
+    z-index: 999999 !important;
+}
+
+.rte-autocomplete>li.loading {
+    background: none !important;
+    height: 16px;
+}
+
+span.mention {
+    background-color: #eeeeee;
+    padding: 3px;
 }

@@ -1044,7 +1044,11 @@ class Estimates_model extends App_Model
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'estimates');
 
-        if ($this->db->affected_rows() > 0) {
+        if ($this->db->affected_rows() > 0) {          
+            if (!is_null($estimate->short_link)) {
+                app_archive_short_link($estimate->short_link);
+            }
+
             if (get_option('estimate_number_decrement_on_delete') == 1 && $simpleDelete == false) {
                 $current_next_estimate_number = get_option('next_estimate_number');
                 if ($current_next_estimate_number > 1) {

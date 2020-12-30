@@ -1,5 +1,7 @@
 <?php
 
+use app\services\utilities\Arr;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 function app_admin_sidebar_custom_options($items)
@@ -69,14 +71,15 @@ function _apply_menu_items_position($items, $options)
         // Has applied options
         $newItems          = [];
         $newItemsAddedKeys = [];
+
         foreach ($options as $key => $item) {
             // Check if the item is found because can be removed
             if ($newItem = $CI->app_menu->filter_item($items, $item->id)) {
-
                 $newItems[$key]      = $newItem;
                 $newItemsAddedKeys[] = $key;
 
                 $newItems[$key]['children'] = [];
+
                 if (isset($item->children)) {
                     foreach ($item->children as $child) {
                         if ($newChildItem = $CI->app_menu->filter_item($items, $child->id)) {
@@ -100,6 +103,8 @@ function _apply_menu_items_position($items, $options)
                         $newItems[$key]['children'][] = $child;
                     }
                 }
+
+                $newItems[$key]['children'] = Arr::uniqueByKey($newItems[$key]['children'], 'slug');
             }
         }
 
@@ -109,7 +114,6 @@ function _apply_menu_items_position($items, $options)
     // Finally apply the positions
     foreach ($items as $key => $item) {
         if (isset($options->{$item['slug']})) {
-
             $items[$key]['position'] = (int) $options->{$item['slug']}->position;
 
             foreach ($item['children'] as $childKey => $child) {

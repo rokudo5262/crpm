@@ -110,6 +110,27 @@ class Departments extends AdminController
         }
     }
 
+    public function folders()
+    {
+        app_check_imap_open_function();
+
+        $imap = new Imap(
+           $this->input->post('username') ? $this->input->post('username') : $this->input->post('email'),
+           $this->input->post('password', false),
+           $this->input->post('host'),
+           $this->input->post('encryption')
+        );
+
+        try {
+            echo json_encode($imap->getSelectableFolders());
+        } catch (ConnectionErrorException $e) {
+            echo json_encode([
+                'alert_type' => 'warning',
+                'message'    => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function test_imap_connection()
     {
         app_check_imap_open_function();
@@ -125,7 +146,9 @@ class Departments extends AdminController
             $connection = $imap->testConnection();
 
             try {
-                $connection->getMailbox('INBOX');
+                $folder = $this->input->post('folder');
+
+                $connection->getMailbox(empty($folder) ? 'INBOX' : $folder);
             } catch (MailboxDoesNotExistException $e) {
                 echo json_encode([
                     'alert_type' => 'warning',

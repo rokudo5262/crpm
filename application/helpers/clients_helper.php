@@ -671,7 +671,7 @@ function load_client_language($customer_id = '')
         $CI->load->helper('cookie');
     }
 
-    if (get_contact_language() != '' && !is_language_disabled()) {
+    if (defined('CLIENTS_AREA') && get_contact_language() != '' && !is_language_disabled()) {
         $language = get_contact_language();
     } else {
         $language = get_option('active_language');
@@ -685,13 +685,14 @@ function load_client_language($customer_id = '')
             }
         }
 
-        set_contact_language($language);
+        // set_contact_language($language);
     }
 
     $CI->lang->is_loaded = [];
     $CI->lang->language  = [];
 
     $CI->lang->load($language . '_lang', $language);
+
     if (file_exists(APPPATH . 'language/' . $language . '/custom_lang.php')) {
         $CI->lang->load('custom_lang', $language);
     }

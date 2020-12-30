@@ -105,7 +105,7 @@ class Tasks_merge_fields extends App_merge_fields
         $fields = [];
 
         $this->ci->db->where('id', $task_id);
-        $task = $this->ci->db->get(db_prefix().'tasks')->row();
+        $task = $this->ci->db->get(db_prefix() . 'tasks')->row();
 
         if (!$task) {
             return $fields;
@@ -131,7 +131,7 @@ class Tasks_merge_fields extends App_merge_fields
 
         if ($task->rel_type == 'project') {
             $this->ci->db->select('name, clientid');
-            $this->ci->db->from(db_prefix().'projects');
+            $this->ci->db->from(db_prefix() . 'projects');
             $this->ci->db->where('id', $task->rel_id);
             $project = $this->ci->db->get()->row();
             if ($project) {
@@ -190,7 +190,7 @@ class Tasks_merge_fields extends App_merge_fields
         $this->ci->db->where('taskid', $task_id);
         $this->ci->db->limit(1);
         $this->ci->db->order_by('dateadded', 'desc');
-        $comment = $this->ci->db->get(db_prefix().'task_comments')->row();
+        $comment = $this->ci->db->get(db_prefix() . 'task_comments')->row();
 
         if ($comment) {
             $fields['{task_comment}'] = $comment->content;

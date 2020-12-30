@@ -75,16 +75,18 @@ class Credit_notes extends AdminController
     {
         $isedit          = $this->input->post('isedit');
         $number          = $this->input->post('number');
+        $date            = $this->input->post('date');
         $original_number = $this->input->post('original_number');
         $number          = trim($number);
         $number          = ltrim($number, '0');
-        if ($isedit == 'true') {
+        if ($isedit == 'true') { 
             if ($number == $original_number) {
                 echo json_encode(true);
                 die;
             }
         }
         if (total_rows(db_prefix() . 'creditnotes', [
+            'YEAR(date)' => date('Y', strtotime(to_sql_date($date))),
             'number' => $number,
         ]) > 0) {
             echo 'false';

@@ -1,5 +1,7 @@
 <?php
 
+// File generated from our OpenAPI spec
+
 namespace Stripe;
 
 /**
@@ -125,10 +127,10 @@ class Account extends ApiResource
         foreach ($additionalOwners as $i => $v) {
             $update = ($v instanceof StripeObject) ? $v->serializeParameters() : $v;
 
-            if ($update !== []) {
-                if (!$originalValue ||
-                    !\array_key_exists($i, $originalValue) ||
-                    ($update !== $legalEntity->serializeParamsValue($originalValue[$i], null, false, true))) {
+            if ([] !== $update) {
+                if (!$originalValue
+                    || !\array_key_exists($i, $originalValue)
+                    || ($update !== $legalEntity->serializeParamsValue($originalValue[$i], null, false, true))) {
                     $updateArr[$i] = $update;
                 }
             }

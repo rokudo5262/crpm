@@ -40,7 +40,7 @@ class Payu_money extends App_Controller
             if (is_client_logged_in()) {
                 $contact = $this->clients_model->get_contact(get_contact_user_id());
             } else {
-                if (total_rows(db_prefix().'contacts', ['userid' => $invoice->clientid]) == 1) {
+                if (total_rows(db_prefix() . 'contacts', ['userid' => $invoice->clientid]) == 1) {
                     $contact = $this->clients_model->get_contact(get_primary_contact_user_id($invoice->clientid));
                 }
             }
@@ -70,9 +70,72 @@ class Payu_money extends App_Controller
         echo $this->get_html($data);
     }
 
+    public function success()
+    {
+        $invoiceid = $this->input->get('invoiceid');
+        $hash      = $this->input->get('hash');
+
+        check_invoice_restrictions($invoiceid, $hash);
+        $this->load->model('invoices_model');
+        $invoice = $this->invoices_model->get($this->input->get('invoiceid'));
+        load_client_language($invoice->clientid);
+
+        $hashInfo = $this->payu_money_gateway->get_valid_hash($_POST);
+        if (!$hashInfo) {
+            set_alert('warning', _l('invalid_transaction'));
+        } else {
+            if ($hashInfo['status'] == 'success') {
+                if (total_rows('invoicepaymentrecords', ['transactionid' => $hashInfo['txnid']]) === 0) {
+                  $success = $this->payu_money_gateway->addPayment([
+                    'amount'        => $hashInfo['amount'],
+                    'invoiceid'     => $invoiceid,
+                    'transactionid' => $hashInfo['txnid'],
+                    'paymentmethod' => $hashInfo['transaction_mode'],
+                    ]);
+                    if ($success) {
+                        set_alert('success', _l('online_payment_recorded_success'));
+                    } else {
+                        set_alert('danger', _l('online_payment_recorded_success_fail_database'));
+                    }
+                }
+            } else {
+                if ($this->payu_money_gateway->getSetting('test_mode_enabled') == '1') {
+                    log_activity('Payu Money Transaction Not With Status Success: ' . var_export($_POST, true));
+                }
+                set_alert('warning', 'Thank You. Your transaction status is ' . $hashInfo['status']);
+            }
+        }
+        $this->session->unset_userdata('payu_money_total');
+        redirect(site_url('invoice/' . $invoiceid . '/' . $hash));
+    }
+
+    public function failure()
+    {
+        $invoiceid = $this->input->get('invoiceid');
+        $hash      = $this->input->get('hash');
+
+        check_invoice_restrictions($invoiceid, $hash);
+        $this->load->model('invoices_model');
+        $invoice = $this->invoices_model->get($this->input->get('invoiceid'));
+        load_client_language($invoice->clientid);
+
+        $hashInfo = $this->payu_money_gateway->get_valid_hash($_POST);
+
+        if (!$hashInfo) {
+            set_alert('warning', _l('invalid_transaction'));
+        } else {
+            if ($hashInfo['unmappedstatus'] != 'userCancelled') {
+                set_alert('warning', $hashInfo['error_Message'] . ' - ' . $hashInfo['status']);
+            }
+        }
+
+        $this->session->unset_userdata('payu_money_total');
+
+        redirect(site_url('invoice/' . $invoiceid . '/' . $hash));
+    }
     public function get_html($data)
     {
-       ob_start(); ?>
+        ob_start(); ?>
        <?php echo payment_gateway_head(_l('payment_for_invoice') . ' ' . format_invoice_number($data['invoice']->id)); ?>
          <body onload="submitPayuForm()" class="gateway-payu-money">
            <div class="container">
@@ -116,11 +179,9 @@ class Payu_money extends App_Controller
                              <label for="phone"> <?php echo _l('client_phonenumber'); ?></label>
                              <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $data['phonenumber']; ?>" required>
                           </div>
-                          <?php if (!$data['hash']) {
-                             ?>
-                          <input type="submit" class="btn btn-info" value="<?php echo _l('submit_payment'); ?>" />
-                          <?php
-                             } ?>
+                          <?php if (!$data['hash']) { ?>
+                            <input type="submit" class="btn btn-info" value="<?php echo _l('submit_payment'); ?>" />
+                          <?php } ?>
                           </form>
                        </div>
                     </div>
@@ -152,67 +213,4 @@ class Payu_money extends App_Controller
         return $contents;
     }
 
-    public function success()
-    {
-        $invoiceid = $this->input->get('invoiceid');
-        $hash      = $this->input->get('hash');
-
-        check_invoice_restrictions($invoiceid, $hash);
-        $this->load->model('invoices_model');
-        $invoice = $this->invoices_model->get($this->input->get('invoiceid'));
-        load_client_language($invoice->clientid);
-
-        $hashInfo = $this->payu_money_gateway->get_valid_hash($_POST);
-        if (!$hashInfo) {
-            set_alert('warning', _l('invalid_transaction'));
-        } else {
-            if ($hashInfo['status'] == 'success') {
-                $success = $this->payu_money_gateway->addPayment(
-                [
-                  'amount'        => $hashInfo['amount'],
-                  'invoiceid'     => $invoiceid,
-                  'transactionid' => $hashInfo['txnid'],
-                  'paymentmethod' => $hashInfo['transaction_mode'],
-                  ]
-                );
-                if ($success) {
-                    set_alert('success', _l('online_payment_recorded_success'));
-                } else {
-                    set_alert('danger', _l('online_payment_recorded_success_fail_database'));
-                }
-            } else {
-                if ($this->payu_money_gateway->getSetting('test_mode_enabled') == '1') {
-                    log_activity('Payu Money Transaction Not With Status Success: ' . var_export($_POST, true));
-                }
-                set_alert('warning', 'Thank You. Your transaction status is ' . $hashInfo['status']);
-            }
-        }
-        $this->session->unset_userdata('payu_money_total');
-        redirect(site_url('invoice/' . $invoiceid . '/' . $hash));
-    }
-
-    public function failure()
-    {
-        $invoiceid = $this->input->get('invoiceid');
-        $hash      = $this->input->get('hash');
-
-        check_invoice_restrictions($invoiceid, $hash);
-        $this->load->model('invoices_model');
-        $invoice = $this->invoices_model->get($this->input->get('invoiceid'));
-        load_client_language($invoice->clientid);
-
-        $hashInfo = $this->payu_money_gateway->get_valid_hash($_POST);
-
-        if (!$hashInfo) {
-            set_alert('warning', _l('invalid_transaction'));
-        } else {
-            if ($hashInfo['unmappedstatus'] != 'userCancelled') {
-                set_alert('warning', $hashInfo['error_Message'] . ' - ' . $hashInfo['status']);
-            }
-        }
-
-        $this->session->unset_userdata('payu_money_total');
-
-        redirect(site_url('invoice/' . $invoiceid . '/' . $hash));
-    }
 }

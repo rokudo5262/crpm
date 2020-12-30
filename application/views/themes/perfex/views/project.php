@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <?php echo form_hidden('project_id',$project->id); ?>
-<div class="panel_s">
+<div class="panel_s section-heading section-project">
     <div class="panel-body">
        <h3 class="bold mtop10 project-name pull-left"><?php echo $project->name; ?>
             <span style="color:<?php echo $project_status['color']; ?>; font-size:16px;"><?php echo $project_status['name']; ?></span>

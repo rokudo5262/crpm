@@ -216,13 +216,57 @@
                       });
 
                       ed.on('Focus', function (e) {
-                        textarea.trigger('click');
+                        setTimeout(function(){
+                          textarea.trigger('click');
+                        }, 500)
                       });
 
                       ed.on('init', function() {
                         if (content) ed.setContent(content);
+
+                        if ($('#mention-autocomplete-css').length === 0) {
+                              $('<link>').appendTo('head').attr({
+                                 id: 'mention-autocomplete-css',
+                                 type: 'text/css',
+                                 rel: 'stylesheet',
+                                 href: site_url + 'assets/plugins/tinymce/plugins/mention/autocomplete.css'
+                              });
+                           }
+
+                           if ($('#mention-css').length === 0) {
+                              $('<link>').appendTo('head').attr({
+                                 type: 'text/css',
+                                 id: 'mention-css',
+                                 rel: 'stylesheet',
+                                 href: site_url + 'assets/plugins/tinymce/plugins/mention/rte-content.css'
+                              });
+                           }
                       })
                   }
+
+                  editorConfig.plugins[0] += ' mention';
+                  editorConfig.content_style = 'span.mention {\
+                     background-color: #eeeeee;\
+                     padding: 3px;\
+                  }';
+                  var projectUserMentions = [];
+                  editorConfig.mentions = {
+                     source: function (query, process, delimiter) {
+                           if (projectUserMentions.length < 1) {
+                              $.getJSON(admin_url + 'projects/get_staff_names_for_mentions/' + project_id, function (data) {
+                                 projectUserMentions = data;
+                                 process(data)
+                              });
+                           } else {
+                              process(projectUserMentions)
+                           }
+                     },
+                     insert: function(item) {
+                           return '<span class="mention" contenteditable="false" data-mention-id="'+ item.id + '">@'
+                           + item.name + '</span>&nbsp;';
+                     }
+                  };
+
                 var containerId = this.get_container_id(comment_index);
                 tinyMCE.remove('#'+containerId);
 

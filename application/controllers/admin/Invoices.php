@@ -397,9 +397,6 @@ class Invoices extends AdminController
             die;
         }
 
-        $invoice->date    = _d($invoice->date);
-        $invoice->duedate = _d($invoice->duedate);
-
         $template_name = 'invoice_send_to_customer';
 
         if ($invoice->sent == 1) {

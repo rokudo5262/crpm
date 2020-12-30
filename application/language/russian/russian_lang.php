@@ -3624,33 +3624,66 @@ $lang['leads_canban_lead_value']            = 'Значение лида: %s';
 $lang['lead_add_edit_lead_value']           = 'Значение лида';
 
 # Version 2.6.0
-$lang['gantt_view_day'] = 'Days View';
-$lang['gantt_view_week'] = 'Weeks View';
-$lang['gantt_view_month'] = 'Months View';
-$lang['gantt_view_year'] = 'Years View';
+$lang['gantt_view_day'] = 'Обзор за день';
+$lang['gantt_view_week'] = 'Обзор за неделю';
+$lang['gantt_view_month'] = 'Обзор за месяц';
+$lang['gantt_view_year'] = 'Обзор за год';
 
 # Version 2.7.0
-$lang['hour_of_day_perform_tasks_reminder_notification_help'] = '24 hours format eq. 9 for 9am or 15 for 3pm.I t Used for recurring Task, Task reminders etc.';
-$lang['clients_nav_contacts']                                 = 'Contacts';
-$lang['clients_my_contacts']                                  = 'Contacts';
-$lang['clients_my_contact']                                   = 'Contact';
-$lang['new_contact']                                          = 'New Contact';
-$lang['customer_contact']                                     = 'My Contacts';
-$lang['clients_contact_added']                                = 'Contact added successfuly';
-$lang['clients_contact_updated']                              = 'Contact updated successfuly';
-$lang['allow_primary_contact_to_manage_other_contacts']       = 'Allow primary contact to manage other customer contacts';
-$lang['contact_form_validation_is_unique']                    = 'Contact with this {field} already exists in our system';
-$lang['invoice_number_not_applied_on_draft']                  = 'If the invoice is saved as draft, the number won\'t be applied, instead, the next invoice number will be given when the invoice is sent to the customer or is marked as sent.';
 
-$lang['two_factor_authentication_disabed']                    = 'Disabled';
-$lang['enable_google_two_factor_authentication']              = 'Enable Googe Authenticator';
-$lang['set_google_two_factor_authentication_failed']          = 'Saving authentication failed, please try again';
-$lang['enter_two_factor_auth_code_from_mobile']               = 'Enter authentication code from the Authenticator app';
-$lang['staff_two_factor_authentication']                      = 'Two Factor Authentication';
-$lang['google_authentication_code']                           = 'Enter code from Authenticator app';
-$lang['set_two_factor_authentication_successful']             = 'Successfully updated two factor authentication settings';
-$lang['set_two_factor_authentication_failed']                 = 'Could not update two factor authentication settings';
-$lang['google_2fa_code_valid']                                = 'Successfuly verified the authentication';
-$lang['google_2fa_code_invalid']                              = 'Invalid authentication code entered, try again.';
-$lang['google_2fa_scan_qr_guide']                             = 'Scan the QR below with the Google Authenticator app on your mobile device, after that fill in the field below with the code generated in the app';
-$lang['google_2fa_manul_input_secret']                        = 'Secret key for manual input';
+$lang['hour_of_day_perform_tasks_reminder_notification_help'] = '24-часовой формат экв. 9 для 9 утра или 15 для 15:00. Используется для повторяющихся задач, напоминаний о задачах и т.д.';
+$lang['clients_nav_contacts']                                 = 'Контакты';
+$lang['clients_my_contacts']                                  = 'Контакты';
+$lang['clients_my_contact']                                   = 'Контакт';
+$lang['new_contact']                                          = 'Новый контакт';
+$lang['customer_contact']                                     = 'Мои контакты';
+$lang['clients_contact_added']                                = 'Контакт успешно добавлен';
+$lang['clients_contact_updated']                              = 'Контакт успешно обновлен';
+$lang['allow_primary_contact_to_manage_other_contacts']       = 'Разрешить основному контакту управлять другими контактами клиентов';
+$lang['contact_form_validation_is_unique']                    = 'Контакт с этим {field} уже существует';
+$lang['invoice_number_not_applied_on_draft']                  = 'Если счет сохранен как черновик, то номер не будет применен, вместо этого будет указан следующий номер счета, когда счет будет отправлен клиенту или помечен как отправленный.';
+
+$lang['two_factor_authentication_disabed']                    = 'Отключено';
+$lang['enable_google_two_factor_authentication']              = 'Включить Google Authenticator';
+$lang['set_google_two_factor_authentication_failed']          = 'Не удалось сохранить аутентификацию, попробуйте еще раз';
+$lang['enter_two_factor_auth_code_from_mobile']               = 'Введите код аутентификации из приложения Authenticator';
+$lang['staff_two_factor_authentication']                      = 'Двухфакторная аутентификация';
+$lang['google_authentication_code']                           = 'Введите код из приложения Authenticator';
+$lang['set_two_factor_authentication_successful']             = 'Успешно обновлены настройки двухфакторной аутентификации';
+$lang['set_two_factor_authentication_failed']                 = 'Не удалось обновить настройки двухфакторной аутентификации';
+$lang['google_2fa_code_valid']                                = 'Успешно проверена аутентификация';
+$lang['google_2fa_code_invalid']                              = 'Введен неверный код аутентификации, попробуйте еще раз.';
+$lang['google_2fa_scan_qr_guide']                             = 'Отсканируйте QR-код ниже с помощью приложения Google Authenticator на вашем мобильном устройстве, после чего заполните поле ниже кодом, сгенерированным в приложении.';
+$lang['google_2fa_manul_input_secret']                        = 'Секретный ключ для ручного ввода';
+
+
+# Version 2.7.1
+$lang['templates']                                   = 'Шаблоны';
+$lang['add_template']                                = 'Добавить шаблон';
+$lang['edit_template']                               = 'Редактировать шаблон';
+$lang['template_added']                              = 'Шаблон успешно добавлен';
+$lang['template_updated']                            = 'Шаблон успешно обновлен';
+$lang['template_name']                               = 'Название шаблона';
+$lang['template_content']                            = 'Содержимое шаблона';
+$lang['insert_template']                             = 'Вставить';
+$lang['items_table_amounts_exclude_currency_symbol'] = 'Исключить символ валюты из таблицы товаров Сумма';
+
+$lang['multiplies_of']               = 'Кратные';
+$lang['round_off_task_timer_option'] = 'Таймер округления задачи';
+$lang['task_timer_dont_round_off']   = 'Не округлять';
+$lang['task_timer_round_up']         = 'Округление в большую сторону';
+$lang['task_timer_round_down']       = 'Округление в меньшую сторону';
+$lang['task_timer_round_nearest']    = 'Округление до ближайшего';
+$lang['calendar_task_reminder']      = 'Напоминание о задаче';
+$lang['projects_chart']              = 'График проектов';
+$lang['overdue_by_days']             = 'ПРОСРОЧЕН НА %s ДНЕЙ';
+
+$lang['two_checkout_payment_processing'] = 'Платеж обработан, в случае успеха вы получите уведомление';
+$lang['two_checkout_payment_cancelled']  = 'Оплата отменена';
+$lang['two_checkout_merchant_code']      = 'Код продавца';
+$lang['two_checkout_secret_Key']         = 'Секретный код';
+$lang['two_gateway_webhook_notice']      = 'Конечная точка IPN для 2Checkout это ( %s )';
+$lang['something_went_wrong']            = 'Что-то пошло не так. Попробуй еще раз';
+$lang['imap_folder']                     = 'Папка';
+$lang['retrieve_folders']                = 'Получить папки';
+$lang['email_to_ticket_config']          = 'Эл. почта для настроки тикета';

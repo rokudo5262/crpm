@@ -52,6 +52,27 @@ class Imap
     }
 
     /**
+     * Get the selectable folder names
+     *
+     * @return array
+     */
+    public function getSelectableFolders()
+    {
+        $connection = $this->testConnection();
+        $folders    = $connection->getMailboxes();
+
+        foreach ($folders as $key => $folder) {
+            if ($folder->getAttributes() & \LATT_NOSELECT) {
+                unset($folders[$key]);
+            }
+        }
+
+        return array_keys(array_map(function ($folder) {
+            return $folder->getName();
+        }, $folders));
+    }
+
+    /**
      * Test the IMAP connection
      *
      * @return \Ddeboer\Imap\Connection

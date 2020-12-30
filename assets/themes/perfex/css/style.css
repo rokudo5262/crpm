@@ -2361,6 +2361,10 @@ div.dataTables_wrapper div.dataTables_length label,
     border: 1px solid;
 }
 
+.tc-content em {
+    font-style: italic;
+}
+
 .proposal-view .tc-content ul,
 .proposal-view .tc-content ol,
 .contract-view .tc-content ul,
@@ -2882,3 +2886,14 @@ body[dir="rtl"].safari .table-responsive .table {
     max-width: none;
     -webkit-overflow-scrolling: touch !important;
 }
+
+@media (max-width: 991px) {
+    .register-heading.text-right {
+        text-align: center;
+    }
+}
+
+.g-recaptcha > div{
+    margin:0 auto;
+}
+

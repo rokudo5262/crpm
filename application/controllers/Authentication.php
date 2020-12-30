@@ -156,6 +156,7 @@ class Authentication extends ClientsController
                       'zip'                 => $data['zip'],
                       'state'               => $data['state'],
                       'custom_fields'       => isset($data['custom_fields']) && is_array($data['custom_fields']) ? $data['custom_fields'] : [],
+                      'default_language'    => (get_contact_language() != '') ? get_contact_language() : get_option('active_language'),
                 ], true);
 
                 if ($clientid) {

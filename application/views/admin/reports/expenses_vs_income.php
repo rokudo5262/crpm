@@ -37,14 +37,13 @@
 <?php init_tail(); ?>
 <script>
     $(function(){
-        init_currency(<?php echo $base_currency->id; ?>);
-
-        chartExpenseVsIncome = new Chart($('#report-expense-vs-income'),{
+        init_currency(<?php echo $base_currency->id; ?>, function(){
+          chartExpenseVsIncome = new Chart($('#report-expense-vs-income'), {
             type: 'bar',
             data: <?php echo $chart_expenses_vs_income_values; ?>,
             options:{
                 maintainAspectRatio:false,
-                 tooltips: {
+                tooltips: {
                     callbacks: {
                         label: function(tooltipItem, data) {
                             return format_money(tooltipItem.yLabel)
@@ -52,16 +51,17 @@
                     }
                 },
                 scales: {
-                yAxes: [{
-                  ticks: {
-                    callback: function (value) {
-                        return format_money(value)
-                    },
-                    beginAtZero: true,
-                }
-            }]
-        },}
-    });
+                    yAxes: [{
+                      ticks: {
+                        callback: function (value) {
+                            return format_money(value)
+                        },
+                        beginAtZero: true,
+                    }
+                }]
+            },}
+        });
+      });
     });
     function change_expense_report_year(year){
         window.location.href = admin_url+'reports/expenses_vs_income/'+year;

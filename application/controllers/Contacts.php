@@ -90,6 +90,7 @@ class Contacts extends ClientsController
                 $data = $this->input->post();
 
                 $contact_data = [
+                    'is_primary'         => 0,
                     'firstname'          => $this->input->post('firstname'),
                     'lastname'           => $this->input->post('lastname'),
                     'title'              => $this->input->post('title'),

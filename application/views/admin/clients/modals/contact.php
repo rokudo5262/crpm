@@ -226,6 +226,7 @@
                 </div>
             </div>
         </div>
+        <?php hooks()->do_action('after_contact_modal_content_loaded'); ?>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo _l('close'); ?></button>
