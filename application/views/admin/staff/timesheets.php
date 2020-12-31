@@ -103,6 +103,8 @@
                            <?php } ?>
                            <th><?php echo _l('project_timesheet_task'); ?></th>
                            <th><?php echo _l('timesheet_tags'); ?></th>
+                           <th class="t-start-time"><?php echo _l('project_timesheet_start_time'); ?></th>
+                           <th class="t-end-time"><?php echo _l('project_timesheet_end_time'); ?></th>
                            <th width="150px;"><?php echo _l('note'); ?></th>
                            <th><?php echo _l('task_relation'); ?></th>
                            <th><?php echo _l('time_h'); ?></th>
@@ -115,6 +117,8 @@
                            <?php if(isset($view_all)){ ?>
                            <td></td>
                            <?php } ?>
+                           <td></td>
+                           <td></td>
                            <td></td>
                            <td></td>
                            <td></td>
