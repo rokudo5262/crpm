@@ -23,6 +23,8 @@ class Logger extends AdminController
             '70', // nami
             '64', // tacy
             '33', // mark
+            '66', //hildemar
+            '29', // vincent
 
         ];
         if(!in_array(get_staff_user_id(), $chosen_ones))
