@@ -2022,7 +2022,7 @@ class recruitment extends AdminController {
         $candidates = $this->recruitment_model->do_kanban_query($status, $this->input->get('search'), $page, false, []);
 
         foreach ($candidates as $candidate) {
-            $this->load->view('candidate_profile/_kan_ban_card', [
+            $this->load->view('candidate_profile/_kan_ban_card_advance', [
                 'candidate'   => $candidate,
                 'status' => $status,
             ]);

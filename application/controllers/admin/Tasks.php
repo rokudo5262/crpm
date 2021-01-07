@@ -85,7 +85,7 @@ class Tasks extends AdminController
         $tasks = $this->tasks_model->do_kanban_query($status, $this->input->get('search'), $page, false, $where);
 
         foreach ($tasks as $task) {
-            $this->load->view('admin/tasks/_kan_ban_card', [
+            $this->load->view('admin/tasks/_kan_ban_card_advance', [
                 'task'   => $task,
                 'status' => $status,
             ]);
