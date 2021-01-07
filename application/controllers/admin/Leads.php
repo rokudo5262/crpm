@@ -185,7 +185,7 @@ class Leads extends AdminController
         ]);
 
         foreach ($leads as $lead) {
-            $this->load->view('admin/leads/_kan_ban_card', [
+            $this->load->view('admin/leads/_kan_ban_card_advance', [
                 'lead'   => $lead,
                 'status' => $status,
             ]);

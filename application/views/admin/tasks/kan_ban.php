@@ -26,7 +26,7 @@ foreach ($task_statuses as $status) {
               $total_tasks = count($tasks);
               foreach ($tasks as $task) {
                 if ($task['status'] == $status['id']) {
-                  $this->load->view('admin/tasks/_kan_ban_card',array('task'=>$task,'status'=>$status['id']));
+                  $this->load->view('admin/tasks/_kan_ban_card_advance',array('task'=>$task,'status'=>$status['id']));
                 } } ?>
                 <?php if($total_tasks > 0 ){ ?>
                 <li class="text-center not-sortable kanban-load-more" data-load-status="<?php echo $status['id']; ?>">

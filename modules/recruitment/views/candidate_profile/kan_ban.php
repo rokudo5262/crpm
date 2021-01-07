@@ -99,7 +99,7 @@ foreach ($statuses as $status) {
               $total_candidates = count($candidates);
               foreach ($candidates as $candidate) {
                 if ($candidate['status'] == $status['id']) {
-                  $this->load->view('recruitment/candidate_profile/_kan_ban_card',array('candidate'=>$candidate,'status'=>$status['id']));
+                  $this->load->view('recruitment/candidate_profile/_kan_ban_card_advance',array('candidate'=>$candidate,'status'=>$status['id']));
                 } } ?>
                 <?php if($total_candidates > 0 ){ ?>
                 <li class="text-center not-sortable kanban-load-more" data-load-status="<?php echo html_entity_decode($status['id']); ?>">
