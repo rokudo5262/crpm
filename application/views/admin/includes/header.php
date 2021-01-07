@@ -95,6 +95,9 @@ ob_end_clean();
       </ul>
    </li>
    <?php if(is_staff_member()){ ?>
+      <li class="icon">
+         <a href="#" class="desktop text-uppercase" style="color: #84c529" onclick="new_task(); return false;" data-toggle="tooltip" title="<?php echo _l('new_task'); ?>" data-placement="bottom"><i class="fa fa-plus fa-fw fa-lg" aria-hidden="true"></i> <?php echo _l('new_task') ?></a>
+      </li>
       <li class="icon header-newsfeed">
          <a href="#" class="open_newsfeed desktop" data-toggle="tooltip" title="<?php echo _l('whats_on_your_mind'); ?>" data-placement="bottom"><i class="fa fa-share fa-fw fa-lg" aria-hidden="true"></i></a>
       </li>
