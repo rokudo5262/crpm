@@ -1,6 +1,9 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 ob_start();
 ?>
+<li>
+   <a href="#" class="desktop text-uppercase btn btn-info new" onclick="new_task(); return false;" data-toggle="tooltip" title="<?php echo _l('new_task'); ?>" data-placement="bottom"><?php echo _l('new_task') ?></a>
+</li>
 <li id="top_search" class="dropdown" data-toggle="tooltip" data-placement="bottom" data-title="<?php echo _l('search_by_tags'); ?>">
    <input type="search" id="search_input" class="form-control" placeholder="<?php echo _l('top_search_placeholder'); ?>">
    <div id="search_results">
@@ -69,6 +72,7 @@ ob_end_clean();
        echo $top_search_area;
     } ?>
     <?php hooks()->do_action('after_render_top_search'); ?>
+    
     <li class="icon header-user-profile" data-toggle="tooltip" title="<?php echo get_staff_full_name(); ?>" data-placement="bottom">
       <a href="#" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="false">
          <?php echo staff_profile_image($current_user->staffid,array('img','img-responsive','staff-profile-image-small','pull-left')); ?>
@@ -95,9 +99,6 @@ ob_end_clean();
       </ul>
    </li>
    <?php if(is_staff_member()){ ?>
-      <li class="icon">
-         <a href="#" class="desktop text-uppercase" style="color: #84c529" onclick="new_task(); return false;" data-toggle="tooltip" title="<?php echo _l('new_task'); ?>" data-placement="bottom"><i class="fa fa-plus fa-fw fa-lg" aria-hidden="true"></i> <?php echo _l('new_task') ?></a>
-      </li>
       <li class="icon header-newsfeed">
          <a href="#" class="open_newsfeed desktop" data-toggle="tooltip" title="<?php echo _l('whats_on_your_mind'); ?>" data-placement="bottom"><i class="fa fa-share fa-fw fa-lg" aria-hidden="true"></i></a>
       </li>
