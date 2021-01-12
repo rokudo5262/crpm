@@ -2,7 +2,7 @@
 $is_admin = is_admin();
 $i = 0;
 foreach ($statuses as $status) {
-  $total_pages = ceil($this->leads_model->do_kanban_query($status['id'],$this->input->get('search'),1,array(),true)/get_option('leads_kanban_limit'));
+  $total_pages = ceil($this->leads_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,array(),true)/get_option('leads_kanban_limit'));
 
   $settings = '';
   foreach(get_system_favourite_colors() as $color){
@@ -45,7 +45,7 @@ foreach ($statuses as $status) {
           <div class="kan-ban-content">
             <ul class="status leads-status sortable" data-lead-status-id="<?php echo $status['id']; ?>">
               <?php
-              $leads = $this->leads_model->do_kanban_query($status['id'],$this->input->get('search'),1,array('sort_by'=>$this->input->get('sort_by'),'sort'=>$this->input->get('sort')));
+              $leads = $this->leads_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,array('sort_by'=>$this->input->get('sort_by'),'sort'=>$this->input->get('sort')));
               $total_leads = count($leads);
               foreach ($leads as $lead) {
                 $this->load->view('admin/leads/_kan_ban_card_advance',array('lead'=>$lead,'status'=>$status,'base_currency'=>$base_currency));

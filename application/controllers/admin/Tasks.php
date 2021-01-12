@@ -49,7 +49,7 @@ class Tasks extends AdminController
 
     public function kanban()
     {
-        echo $this->load->view('admin/tasks/kan_ban', [], true);
+        echo $this->load->view('admin/tasks/kan_ban_advance', [], true);
     }
 
     public function ajax_search_assign_task_to_timer()
@@ -82,7 +82,7 @@ class Tasks extends AdminController
             $where['rel_type'] = 'project';
         }
 
-        $tasks = $this->tasks_model->do_kanban_query($status, $this->input->get('search'), $page, false, $where);
+        $tasks = $this->tasks_model->do_kanban_advance_query($status, $this->input->get('search'), $page, false, $where);
 
         foreach ($tasks as $task) {
             $this->load->view('admin/tasks/_kan_ban_card_advance', [

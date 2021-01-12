@@ -77,7 +77,7 @@ $statuses =  [
 
 foreach ($statuses as $status) { 
 
-  $total_pages = ceil($this->recruitment_model->do_kanban_query($status['id'],$this->input->get('search'),1,true,[])/50);
+  $total_pages = ceil($this->recruitment_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,true,[])/50);
   ?>
   <ul class="kan-ban-col tasks-kanban" data-col-status-id="<?php echo html_entity_decode($status['id']); ?>" data-total-pages="<?php echo html_entity_decode($total_pages); ?>">
     <li class="kan-ban-col-wrapper">
@@ -95,7 +95,7 @@ foreach ($statuses as $status) {
           <div class="kan-ban-content">
             <ul class="status tasks-status sortable relative" data-task-status-id="<?php echo html_entity_decode($status['id']); ?>">
               <?php
-              $candidates = $this->recruitment_model->do_kanban_query($status['id'],$this->input->get('search'),1,false,[]);
+              $candidates = $this->recruitment_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,false,[]);
               $total_candidates = count($candidates);
               foreach ($candidates as $candidate) {
                 if ($candidate['status'] == $status['id']) {

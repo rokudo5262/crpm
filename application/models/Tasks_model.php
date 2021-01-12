@@ -177,6 +177,90 @@ class Tasks_model extends App_Model
                 $this->db->limit(get_option('tasks_kanban_limit'));
             }
         }
+        
+        if ($count == false) {
+            return $this->db->get()->result_array();
+        }
+
+        return $this->db->count_all_results();
+    }
+
+    public function do_kanban_advance_query($status, $search = '', $page = 1, $count = false, $where = [])
+    {
+        $tasks_where = '';
+        if (!has_permission('tasks', '', 'view')) {
+            $tasks_where = get_tasks_where_string(false);
+        }
+
+        $this->db->select('id,' . tasks_rel_name_select_query() . ' as rel_name,rel_type,rel_id,id,priority,name,duedate,startdate,status,' . get_sql_select_task_total_checklist_items() . ',' . get_sql_select_task_total_finished_checklist_items() . ',(SELECT COUNT(id) FROM ' . db_prefix() . 'task_comments WHERE taskid=' . db_prefix() . 'tasks.id) as total_comments,(SELECT COUNT(id) FROM ' . db_prefix() . 'files WHERE rel_id=' . db_prefix() . 'tasks.id AND rel_type="task") as total_files,' . get_sql_select_task_asignees_full_names() . ' as assignees' . ',' . get_sql_select_task_assignees_ids() . ' as assignees_ids,(SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid=' . db_prefix() . 'tasks.id AND staffid=' . get_staff_user_id() . ') as current_user_is_assigned, (SELECT CASE WHEN addedfrom=' . get_staff_user_id() . ' AND is_added_from_contact=0 THEN 1 ELSE 0 END) as current_user_is_creator');
+
+        $this->db->from(db_prefix() . 'tasks');
+        $this->db->where('status', $status);
+
+        // If we are viewing this Kanban table in Project section
+        if(isset($where['rel_type'])) {
+            $this->db->where(['rel_id' => $where['rel_id'], 'rel_type' => $where['rel_type']]);
+        }
+
+        // Filter by "Task assigned by me"
+        if(isset($where['is_my_task_filter'])) {
+            $this->db->where($where['is_my_task_filter'] . ' IN (SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid = ' . db_prefix() . 'tasks.id)');
+        }
+
+        // Filter by "Departments"
+        if(isset($where['departments'])) {
+            $department_arr = explode(',', urldecode($where['departments']));
+            $department_where_query = 'SELECT task_assigned.taskid FROM ' . db_prefix() . 'task_assigned task_assigned JOIN ' . db_prefix() . 'staff_departments staff_departments ON task_assigned.staffid = staff_departments.staffid WHERE ';
+            $is_first = true;
+            foreach($department_arr as $department_id) {
+                if($is_first) {
+                    $is_first = false;
+                    $department_where_query .= 'staff_departments.departmentid = ' . $department_id;
+                } else {
+                    $department_where_query .= ' OR staff_departments.departmentid = ' . $department_id;
+                }
+            }
+            $this->db->where("id IN ( $department_where_query )", NULL, FALSE);
+        }
+
+        // Filter by "Assigned member"
+        if(isset($where['assigned'])) {
+            $assigned_arr = explode(',', $where['assigned']);
+            $this->db->group_start();
+            foreach($assigned_arr as $assigned) {
+
+                $this->db->or_where('id IN (SELECT taskid FROM ' . db_prefix() . 'task_assigned WHERE staffid=' . $this->db->escape_str($assigned) . ')');
+            }
+            $this->db->group_end();
+        }
+
+        if ($tasks_where != '') {
+            $this->db->where($tasks_where);
+        }
+
+        if ($search != '') {
+            if (!startsWith($search, '#')) {
+                $this->db->where('(' . db_prefix() . 'tasks.name LIKE "%' . $this->db->escape_like_str($search) . '%" ESCAPE \'!\'  OR ' . db_prefix() . 'tasks.description LIKE "%' . $this->db->escape_like_str($search) . '%" ESCAPE \'!\')');
+            } else {
+                $this->db->where(db_prefix() . 'tasks.id IN
+                (SELECT rel_id FROM ' . db_prefix() . 'taggables WHERE tag_id IN
+                (SELECT id FROM ' . db_prefix() . 'tags WHERE name="' . $this->db->escape_str(strafter($search, '#')) . '")
+                AND ' . db_prefix() . 'taggables.rel_type=\'task\' GROUP BY rel_id HAVING COUNT(tag_id) = 1)
+                ');
+            }
+        }
+
+        $this->db->order_by('kanban_order', 'asc');
+
+        if ($count == false) {
+            if ($page > 1) {
+                $page--;
+                $position = ($page * get_option('tasks_kanban_limit'));
+                $this->db->limit(get_option('tasks_kanban_limit'), $position);
+            } else {
+                $this->db->limit(get_option('tasks_kanban_limit'));
+            }
+        }
 
         if ($count == false) {
             return $this->db->get()->result_array();
