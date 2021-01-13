@@ -87,23 +87,25 @@ function kb_status_visibility(status_id) {
         status_li.removeClass('active');
         status_column.hide();
     } else {
-
         status_li.addClass('active');
         status_column.show();
     }
     update_storage_filter();
 }
 
-function kb_custom_view(value, custom_input_name, clear_other_filters) {
+function kb_show_all_tasks() {
+    let filters = $('._filter_data li.active').not('.clear-all-prevent');
+    filters.removeClass('active');
+    let all_tasks_li = $('._filter_data li.all_tasks');
+    if(all_tasks_li.hasClass('active'))
+        all_tasks_li.removeClass('active');
+    else
+        all_tasks_li.addClass('active');
+    tasks_kanban_advance();
+}
+
+function kb_custom_view(value, custom_input_name) {
 	var name = typeof (custom_input_name) == 'undefined' ? 'custom_view' : custom_input_name;
-    if (typeof (clear_other_filters) != 'undefined') {
-        var filters = $('._filter_data li.active').not('.clear-all-prevent');
-        filters.removeClass('active');
-        $.each(filters, function () {
-            var input_name = $(this).find('a').attr('data-cview');
-            $('._filters input[name="' + input_name + '"]').val('');
-        });
-    }
     var _cinput = do_filter_active(name);
     if (_cinput != name) {
         value = "";
