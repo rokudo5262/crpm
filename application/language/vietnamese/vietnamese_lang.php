@@ -3513,3 +3513,4 @@ $lang['retrieve_folders']                = 'Retrieve Folders';
 $lang['email_to_ticket_config']          = 'Email to ticket configuration';
 $lang['by_department']          		 = 'Theo phòng ban';
 $lang['filter_clear']          			 = 'Xóa bộ lọc';
+$lang['kanban_refresh']          		 = 'Tải lại bảng Kanban';

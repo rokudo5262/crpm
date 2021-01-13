@@ -27,7 +27,7 @@
 </div>
 
 <div class="btn-group pull-left mleft10 mbot25 btn-with-tooltip-group _filter_data" data-toggle="tooltip" data-title="<?php echo _l('filter_by'); ?>">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
        <i class="fa fa-filter" aria-hidden="true"></i>
    </button>
    <ul class="dropdown-menu width300">
@@ -82,8 +82,14 @@
 </div>
 
 <div class="pull-left mleft10 mbot25" data-toggle="tooltip" data-title="<?php echo _l('filter_clear'); ?>">
-    <button class="btn btn-default" onclick="kb_custom_view('','',true);">
+    <button class="btn btn-warning" onclick="kb_custom_view('','',true);">
         <i class="fa fa-filter"></i>
         <i class="fa fa-ban text-danger"></i>
+   </button>
+</div>
+
+<div class="pull-left mleft10 mbot25" data-toggle="tooltip" data-title="<?php echo _l('kanban_refresh'); ?>">
+    <button class="btn btn-primary" onclick="tasks_kanban_advance();">
+        <i class="fa fa-refresh"></i>
    </button>
 </div>

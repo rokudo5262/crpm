@@ -3689,3 +3689,4 @@ $lang['retrieve_folders']                = 'Retrieve Folders';
 $lang['email_to_ticket_config']          = 'Email to ticket configuration';
 $lang['by_department']          		 = 'By Department';
 $lang['filter_clear']          			 = 'Filter clear';
+$lang['kanban_refresh']          		 = 'Kanban refresh';
