@@ -24,7 +24,6 @@ $( document ).ready(function() {
 function load_saved_filter() {
     let filters = JSON.parse(localStorage.getItem("kanban_filter"));
     $.each(filters, function(index, value) {
-        console.log(typeof(value));
         if(typeof(value) == 'object') {
             $.each(value, function() {
                 $('li.' + $(this)[0]).addClass('active');
@@ -78,7 +77,6 @@ function update_storage_filter() {
         });
         filters["assigned"] = assigned_arr;
     }
-    console.log(JSON.stringify(filters));
     localStorage.setItem("kanban_filter", JSON.stringify(filters));
 }
 
@@ -111,7 +109,6 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
         value = "";
     }
     $('input[name="' + name + '"]').val(value);
-    console.log(name);
     update_storage_filter();
     tasks_kanban_advance();
 }
@@ -185,10 +182,7 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
 
     parameters['kanban'] = true;
     url = admin_url + url;
-    console.log(url);
     url = buildUrl(url, parameters);
-    console.log(url);
-    console.log(parameters);
     delay(function () {
         $("body").append('<div class="dt-loader"></div>');
         $('#kan-ban').load(url, function () {
