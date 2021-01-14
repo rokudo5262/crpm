@@ -18,6 +18,10 @@ if($this->input->get('assigned')) {
   $where['assigned'] = $this->input->get('assigned');
 }
 
+if($this->input->get('projects')) {
+  $where['projects'] = $this->input->get('projects');
+}
+
 foreach ($task_statuses as $status) {
   $total_pages = ceil($this->tasks_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,true,$where)/get_option('tasks_kanban_limit'));
   ?>

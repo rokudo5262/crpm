@@ -2,8 +2,10 @@
 <div class="_hidden_inputs _filters _tasks_filters">
     <?php
     $this->load->model('departments_model');
+    $this->load->model('projects_model');
     $tasks_filter_assignees = $this->misc_model->get_tasks_distinct_assignees();
     $tasks_filter_departments = $this->departments_model->get();
+    $tasks_filter_projects = $this->projects_model->get_undone_projects();
     hooks()->do_action('tasks_filters_hidden_html');
     echo form_hidden('my_tasks', (!has_permission('tasks', '', 'view') ? 'true' : ''));
 
@@ -26,8 +28,18 @@
     ?>
 </div>
 
+<div class="project-filter-wrapper btn-group pull-left mleft10 mbot25">
+    <select id="project-filter" data-width="300px" multiple>
+        <?php foreach($tasks_filter_projects as $index => $tf_project) {
+        ?>
+        <option class="display-order-<?php echo $index ?>" value="<?php echo $tf_project['id'] ?>"><?php echo $tf_project['name'] ?></option>
+        <?php } ?>
+    </select>
+</div>
+
 <div class="btn-group pull-left mleft10 mbot25 btn-with-tooltip-group _filter_data" data-toggle="tooltip"
      data-title="<?php echo _l('filter_by'); ?>">
+
     <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false">
         <i class="fa fa-filter" aria-hidden="true"></i>

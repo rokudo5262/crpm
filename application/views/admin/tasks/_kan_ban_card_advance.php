@@ -9,7 +9,7 @@
         <?php
           if ($task['rel_name']) {
               $relName = task_rel_name($task['rel_name'], $task['rel_id'], $task['rel_type']);
-              $relShortName = substr($relName, 0, 70) . ' ...';
+              $relShortName = substr($relName, 0, 70) . '...';
               $link = task_rel_link($task['rel_id'], $task['rel_type']);
 
               echo '<a class="text-muted" data-toggle="tooltip" title="' . _l('task_related_to') . ': ' . $relName . '" href="' . $link . '">' . $relShortName . '</a>';

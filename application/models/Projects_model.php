@@ -2798,4 +2798,12 @@ class Projects_model extends App_Model
         }
     }
 
+    public function get_undone_projects() {
+        $this->db->select('id, name, status');
+        $this->db->where('status !=', 1); // Not started
+        $this->db->where('status !=', 3); // On hold
+        $this->db->where('status !=', 4); // Cancelled
+        $this->db->where('status !=', 5); // Finished
+        return $this->db->get(db_prefix() . 'projects')->result_array();
+    }
 }
