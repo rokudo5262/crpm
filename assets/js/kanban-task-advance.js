@@ -19,6 +19,36 @@ $( document ).ready(function() {
         tasks_kanban_advance();
         filter_called = true;
      });
+
+    let project_filter_select_options = {
+        liveSearch: true,
+        actionsBox: true,
+        noneSelectedText: 'Projects Filter',
+        style: '',
+        styleBase: 'form-control'
+    };
+    $('#project-filter').selectpicker(project_filter_select_options);
+    $('.bs-select-all').hide();
+    // $('.bs-select-all').on('click', function() {
+    //     let option_el = $('#project-filter > option');
+    //     option_el.addClass('selected');
+    // });
+    $('.bs-deselect-all').width('78%');
+    $('.bs-deselect-all').on('click', function() {
+        let option_el = $('#project-filter > option');
+        option_el.removeClass('selected');
+    });
+
+    $('#project-filter').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+        let option_el = $('#project-filter > option.display-order-' + clickedIndex);
+        if(option_el.hasClass('selected')) {
+            option_el.removeClass('selected');
+        } else {
+            option_el.addClass('selected');
+        }
+        update_storage_filter();
+        tasks_kanban_advance();
+    });
 });
 
 function load_saved_filter() {
@@ -33,6 +63,10 @@ function load_saved_filter() {
                 $('li.department-filter').addClass('active');
             else if(index == 'assigned')
                 $('li.assigned-filter').addClass('active');
+            else if(index == 'projects') {
+                $('#project-filter').addClass('selected');
+                $('#project-filter').attr('selected', 'selected');
+            }
         } else {
             $('li.' + value).addClass('active');
         }
@@ -78,7 +112,17 @@ function update_storage_filter() {
         });
         filters["assigned"] = assigned_arr;
     }
-    console.log(JSON.stringify(filters));
+
+    // Update project filter
+    let projects = $('#project-filter > option.selected');
+    if(typeof (projects) != 'undefined' && projects.length > 0) {
+        projects_arr = [];
+        $.each(projects, function() {
+            projects_arr.push($(this).val());
+        });
+        filters["projects"] = projects_arr;
+    }
+    console.log(filters);
     localStorage.setItem("kanban_filter", JSON.stringify(filters));
 }
 
@@ -174,6 +218,14 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
     });
     if(assigned_ids.length > 0) {
         parameters['assigned'] = assigned_ids.join();
+    }
+
+    var project_ids = [];
+    $.each($('select#project-filter option.selected'), function() {
+        project_ids.push($(this).val());
+    });
+    if(project_ids.length > 0) {
+        parameters['projects'] = project_ids.join();
     }
 
     var sort_type = $('input[name="sort_type"]');

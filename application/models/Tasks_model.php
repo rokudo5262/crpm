@@ -202,6 +202,17 @@ class Tasks_model extends App_Model
             $this->db->where(['rel_id' => $where['rel_id'], 'rel_type' => $where['rel_type']]);
         }
 
+        // Filter by "Projects"
+        if(isset($where['projects'])) {
+            $this->db->where(["rel_type" => 'project']);
+            $projects_filter_arr = explode(",",urldecode($where['projects']));
+            $this->db->group_start();
+            foreach($projects_filter_arr as $project_filter) {
+                $this->db->or_where(["rel_id" => $project_filter]);
+            }
+            $this->db->group_end();
+        }
+
         // Filter by "Task assigned by me"
         if(isset($where['is_my_task_filter'])) {
             $this->db->where($where['is_my_task_filter'] . ' IN (SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid = ' . db_prefix() . 'tasks.id)');
@@ -251,6 +262,8 @@ class Tasks_model extends App_Model
         }
 
         $this->db->order_by('kanban_order', 'asc');
+        // print_r($this->db->get_compiled_select());
+        // die;
 
         if ($count == false) {
             if ($page > 1) {
