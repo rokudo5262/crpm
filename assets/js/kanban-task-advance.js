@@ -7,6 +7,7 @@ $( document ).ready(function() {
         });
     }
     $(document).ajaxComplete(function () {
+        $('.dt-loader').hide();
         if(filter_called) {
             let task_statuses_li = $('li.task-statuses-filter').not('.active');
             $.each(task_statuses_li, function() {
@@ -28,12 +29,13 @@ $( document ).ready(function() {
         styleBase: 'form-control'
     };
     $('#project-filter').selectpicker(project_filter_select_options);
-    $('.bs-select-all').hide();
-    // $('.bs-select-all').on('click', function() {
-    //     let option_el = $('#project-filter > option');
-    //     option_el.addClass('selected');
-    // });
-    $('.bs-deselect-all').width('78%');
+    // $('.bs-select-all').hide();
+    // $('.bs-deselect-all').width('78%');
+    $('.bs-select-all').on('click', function() {
+        let option_el = $('#project-filter > option');
+        option_el.addClass('selected');
+    });
+    
     $('.bs-deselect-all').on('click', function() {
         let option_el = $('#project-filter > option');
         option_el.removeClass('selected');
