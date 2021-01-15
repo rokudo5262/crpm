@@ -9222,3 +9222,7 @@ span.mention {
     background-color: #eeeeee;
     padding: 3px;
 }
+
+.dt-loader {
+    display: none !important;
+}

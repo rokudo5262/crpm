@@ -1671,13 +1671,14 @@ class Tasks_model extends App_Model
                 $this->projects_model->log_activity($task->rel_id, $project_activity_log, $project_activity_desc, $task->visible_to_client);
             }
 
-            // $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
+            
             $this->_send_task_responsible_users_notification($description, $task_id, false, '', serialize($not_data));
-
 
             $this->_send_task_responsible_users_notification_slack($task_id, $task_old_status);
 
-            // $this->_send_customer_contacts_notification($task_id, 'task_status_changed_to_customer');
+            $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
+
+            $this->_send_customer_contacts_notification($task_id, 'task_status_changed_to_customer');
             hooks()->do_action('task_status_changed', ['status' => $status, 'task_id' => $task_id]);
 
             return true;
