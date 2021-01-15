@@ -142,7 +142,18 @@ function kb_status_visibility(status_id) {
 
 function kb_custom_view(value, custom_input_name, clear_other_filters) {
 	var name = typeof (custom_input_name) == 'undefined' ? 'custom_view' : custom_input_name;
-    var _cinput = do_filter_active(name);
+    if (typeof (clear_other_filters) != 'undefined') {
+        var filters = $('._filter_data li.active').not('.task-statuses-filter');
+        
+        $.each(filters, function () {
+            if(!$(this).hasClass('.task-statuses-filter')) {
+                $(this).removeClass('active');
+            }
+            var input_name = $(this).find('a').attr('data-cview');
+            $('._filters input[name="' + input_name + '"]').val('');
+        });
+    }
+    var _cinput = kanban_do_filter_active(name);
     if (_cinput != name) {
         value = "";
     }
@@ -150,6 +161,46 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
     console.log(name);
     update_storage_filter();
     tasks_kanban_advance();
+}
+
+function kanban_do_filter_active(value, parent_selector) {
+    if (value !== '' && typeof (value) != 'undefined') {
+
+        $('[data-cview="all"]').parents('li').removeClass('active');
+        var selector = $('[data-cview="' + value + '"]');
+        if (typeof (parent_selector) != 'undefined') {
+            selector = $(parent_selector + ' [data-cview="' + value + '"]');
+        }
+        var parent = selector.parents('li');
+        if (parent.hasClass('filter-group')) {
+            var group = parent.data('filter-group');
+            $('[data-filter-group="' + group + '"]').not(parent).removeClass('active');
+            $.each($('[data-filter-group="' + group + '"]').not(parent), function () {
+                $('input[name="' + $(this).find('a').attr('data-cview') + '"]').val('');
+            });
+            //   $('input[name="' + value + '"]').val('');
+        }
+        if (!parent.not('.dropdown-submenu').hasClass('active')) {
+            parent.addClass('active');
+
+        } else {
+            parent.not('.dropdown-submenu').removeClass('active');
+            // Remove active class from the parent dropdown if nothing selected in the child dropdown
+            var parents_sub = selector.parents('li.dropdown-submenu');
+            if (parents_sub.length > 0) {
+                if (parents_sub.find('li.active').length === 0) {
+                    parents_sub.removeClass('active');
+                }
+            }
+            value = "";
+        }
+        return value;
+    } else {
+        $('._filters input').val('');
+        $('._filter_data li.active').not('.task-statuses-filter').removeClass('active');
+        $('[data-cview="all"]').parents('li').addClass('active');
+        return "";
+    }
 }
 
 // Cloned from assets/js/main.js

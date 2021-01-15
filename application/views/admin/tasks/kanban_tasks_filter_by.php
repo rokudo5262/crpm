@@ -46,7 +46,7 @@
     </button>
     <ul class="dropdown-menu width300">
         <li class="all_tasks">
-            <a href="#" data-cview="all" onclick="kb_show_all_tasks(); return false;">All</a>
+            <a href="#" data-cview="all" onclick="kb_custom_view('','',true); return false;">All</a>
         </li>
         <div class="clearfix"></div>
         <li class="divider"></li>
