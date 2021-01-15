@@ -142,14 +142,6 @@ function kb_status_visibility(status_id) {
 
 function kb_custom_view(value, custom_input_name, clear_other_filters) {
 	var name = typeof (custom_input_name) == 'undefined' ? 'custom_view' : custom_input_name;
-    if (typeof (clear_other_filters) != 'undefined') {
-        var filters = $('._filter_data li.active').not('.clear-all-prevent');
-        filters.removeClass('active');
-        $.each(filters, function () {
-            var input_name = $(this).find('a').attr('data-cview');
-            $('._filters input[name="' + input_name + '"]').val('');
-        });
-    }
     var _cinput = do_filter_active(name);
     if (_cinput != name) {
         value = "";
