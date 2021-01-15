@@ -241,6 +241,11 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
         parameters['is_my_task_filter'] = true;
     }
 
+    var is_filter_my_following_tasks = $('li.my_following_tasks.active').val();
+    if (typeof (is_filter_my_following_tasks) != 'undefined' && is_filter_my_tasks !== '') {
+        parameters['my_following_task_filter'] = true;
+    }
+
     var department_ids = [];
     $.each($('._filter_data .department-filter ul li.active'), function() {
         let department_li = $(this).find('a');

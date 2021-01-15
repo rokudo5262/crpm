@@ -10,6 +10,10 @@ if($this->input->get('is_my_task_filter')) {
   $where['is_my_task_filter'] = get_staff_user_id();
 }
 
+if($this->input->get('my_following_task_filter')) {
+  $where['my_following_task_filter'] = get_staff_user_id();
+}
+
 if($this->input->get('departments')) {
   $where['departments'] = $this->input->get('departments');
 }

@@ -218,6 +218,11 @@ class Tasks_model extends App_Model
             $this->db->where($where['is_my_task_filter'] . ' IN (SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid = ' . db_prefix() . 'tasks.id)');
         }
 
+        // Filter by "Task i'm following"
+        if(isset($where['my_following_task_filter'])) {
+            $this->db->where($where['my_following_task_filter'] . ' IN (SELECT staffid FROM ' . db_prefix() . 'task_followers WHERE taskid = ' . db_prefix() . 'tasks.id)');
+        }
+
         // Filter by "Departments"
         if(isset($where['departments'])) {
             $department_arr = explode(',', urldecode($where['departments']));

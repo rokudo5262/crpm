@@ -66,6 +66,11 @@
                 <?php echo _l('tasks_view_assigned_to_user'); ?>
             </a>
         </li>
+        <li class="my_following_tasks" data-filter-group="assigned-follower-not-assigned">
+            <a href="#" data-cview="my_following_tasks" onclick="kb_custom_view('my_following_tasks','my_following_tasks'); return false;">
+                <?php echo _l('tasks_view_follower_by_user'); ?>
+            </a>
+        </li>
         <?php if (has_permission('tasks', '', 'view')) { ?>
             <?php if (count($tasks_filter_departments)) { ?>
                 <li class="dropdown-submenu department-filter pull-left">
