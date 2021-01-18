@@ -1,9 +1,6 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
 ob_start();
 ?>
-<li>
-   <a href="#" class="desktop text-uppercase btn btn-info new" onclick="new_task(); return false;" data-toggle="tooltip" title="<?php echo _l('new_task'); ?>" data-placement="bottom"><?php echo _l('new_task') ?></a>
-</li>
 <li id="top_search" class="dropdown" data-toggle="tooltip" data-placement="bottom" data-title="<?php echo _l('search_by_tags'); ?>">
    <input type="search" id="search_input" class="form-control" placeholder="<?php echo _l('top_search_placeholder'); ?>">
    <div id="search_results">
