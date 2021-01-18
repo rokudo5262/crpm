@@ -45,14 +45,14 @@ class Tasks_model extends App_Model
                 'id'             => self::STATUS_IN_PROGRESS,
                 'color'          => '#03A9F4',
                 'name'           => _l('task_status_4'),
-                'order'          => 2,
+                'order'          => 3,
                 'filter_default' => true,
             ],
             [
                 'id'             => self::STATUS_TESTING,
-                'color'          => '#2d2d2d',
+                'color'          => '#ffaf05',
                 'name'           => _l('task_status_3'),
-                'order'          => 3,
+                'order'          => 2,
                 'filter_default' => true,
             ],
             [

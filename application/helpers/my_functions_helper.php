@@ -21,3 +21,20 @@ function generate_staff_url($user_id) {
 function generate_task_url($task_id) {
 	return site_url('admin/tasks/view/' . $task_id);
 }
+
+// Add new status for Tasks
+hooks()->add_filter('before_get_task_statuses','add_custom_task_status');
+
+function add_custom_task_status($current_statuses){
+    // Push new status to the current statuses
+    $current_statuses[] = array(
+    'id' => 6, // new status with id 50
+    'color' => '#000',
+    'name' => _l('task_status_6'),
+    'order' => 4,
+    'filter_default' => true, // true or false
+
+    );
+    // Return the statuses
+    return $current_statuses;
+}
