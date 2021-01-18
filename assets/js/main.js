@@ -5030,6 +5030,7 @@ function add_task_comment(task_id) {
     data.taskid = task_id;
     $.post(admin_url + 'tasks/add_task_comment', data).done(function (response) {
         try {
+            response = response.replace('ok{','{');
             response = JSON.parse(response);
         } catch (e) {
             response = response.replace('ok{','{');
