@@ -1046,7 +1046,7 @@ class Tasks_model extends App_Model
     {
         $this->db->select('addedfrom');
         $this->db->where('id', $taskid);
-        
+
         return $this->db->get(db_prefix() . 'tasks')->row()->addedfrom;
     }
 
@@ -1056,7 +1056,7 @@ class Tasks_model extends App_Model
      * @param string $content
      * @param bool $is_mentioned
      */
-    public function _send_task_comment_notification_slack($task_id, $content, $comment_id, $is_mentioned = false) {
+    public function _send_task_comment_notification_slack($task_id, $content, $comment_id, $is_mentioned = false, $mentioned_staffs = []) {
         // Get current staff id
         $current_staff_id = get_staff_user_id();
         $current_staff_name = get_staff_full_name();
@@ -1093,35 +1093,48 @@ class Tasks_model extends App_Model
         if(strlen($content) > 240)
             $content = strip_tags(substr($content, 0, 240)) . '...';
 
+        $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
+
+        if($is_mentioned) {
+            // Loop mentioned staff
+            foreach($mentioned_staffs as $staff) {
+                $this->db->select('staffid,firstname, lastname');
+                $this->db->where('staffid', $staff);
+                $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
+                $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> mentioned you in a task at `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
+                '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
+                '> ' . $content;
+                $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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");
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
+                curl_setopt($ch, CURLOPT_POST,           1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
+                curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
+                curl_exec ($ch);
+                curl_close($ch);
+            }
+        }
         // Loop notified staffs
         foreach($notified_staffs as $staff) {
             $this->db->select('staffid,firstname, lastname');
             $this->db->where('staffid', $staff["staffid"]);
             $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
-            $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
-
             // Send Slack notification to notified staffs
-            if($is_mentioned) {
-                $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> mentioned you in a task at `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
-                '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
-                '> ' . $content;
-                $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';;
-            } else {
-                $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> just commented on a task you are following in `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
-                '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
-                '> ' . $content;
-                $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
-            }
+            $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> just commented on a task you are following in `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
+            '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
+            '> ' . $content;
+            $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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" );
+            curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_POST,           1 );
+            curl_setopt($ch, CURLOPT_POST,           1);
             curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
             curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
             curl_exec ($ch);
             curl_close($ch);
         }
+        
         return true;
     }
 
@@ -1166,7 +1179,7 @@ class Tasks_model extends App_Model
 
             $regex = "/data\-mention\-id\=\"(\d+)\"/";
             if (preg_match_all($regex, $data['content'], $mentionedStaff, PREG_PATTERN_ORDER)) {
-                $this->_send_task_comment_notification_slack($data['taskid'], _strip_tags($data['content']), $insert_id, true);
+                $this->_send_task_comment_notification_slack($data['taskid'], _strip_tags($data['content']), $insert_id, true, $mentionedStaff[1]);
                 $this->_send_task_mentioned_users_notification($description,
                     $data['taskid'],
                     $mentionedStaff[1],
