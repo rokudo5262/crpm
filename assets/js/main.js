@@ -5029,7 +5029,13 @@ function add_task_comment(task_id) {
     }
     data.taskid = task_id;
     $.post(admin_url + 'tasks/add_task_comment', data).done(function (response) {
-        response = JSON.parse(response);
+        try {
+            response = JSON.parse(response);
+        } catch (e) {
+            response = response.replace('ok{','{');
+            response = JSON.parse(response);
+        }
+        
         _task_append_html(response.taskHtml);
         // Remove task comment editor instance
         // Causing error because of are you sure you want to leave this page, the plugin still sees as active and dirty.

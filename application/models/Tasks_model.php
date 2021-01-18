@@ -1046,8 +1046,83 @@ class Tasks_model extends App_Model
     {
         $this->db->select('addedfrom');
         $this->db->where('id', $taskid);
-
+        
         return $this->db->get(db_prefix() . 'tasks')->row()->addedfrom;
+    }
+
+    /**
+     * Slack notification for comments or mentions
+     * @param int $task_id
+     * @param string $content
+     * @param bool $is_mentioned
+     */
+    public function _send_task_comment_notification_slack($task_id, $content, $comment_id, $is_mentioned = false) {
+        // Get current staff id
+        $current_staff_id = get_staff_user_id();
+        $current_staff_name = get_staff_full_name();
+
+        // Get task info
+        $this->db->select('id,name,status');
+        $this->db->where('id', $task_id);
+        $task_info = $this->db->get(db_prefix() . 'tasks')->row_array();
+
+        // Get task assignees
+        $this->db->select('staffid');
+        $this->db->where('taskid', $task_id);
+        $this->db->where('staffid !=', get_staff_user_id());
+        $task_assignees = $this->db->get(db_prefix() . 'task_assigned')->result_array();
+
+        // Get task followers
+        $this->db->select('staffid');
+        $this->db->where('taskid', $task_id);
+        $this->db->where('staffid !=', get_staff_user_id());
+        $task_followers = $this->db->get(db_prefix() . 'task_followers')->result_array();
+
+        // Defined staffs that will be notified
+        $notified_staffs = [];
+        foreach($task_assignees as $staff) {
+            $notified_staffs[] = $staff;
+        }
+        foreach($task_followers as $staff) {
+            if(in_array($staff, $notified_staffs))
+                continue;
+            $notified_staffs[] = $staff;
+        }
+
+        // Minify content to 240 characters maximum
+        if(strlen($content) > 240)
+            $content = strip_tags(substr($content, 0, 240)) . '...';
+
+        // Loop notified staffs
+        foreach($notified_staffs as $staff) {
+            $this->db->select('staffid,firstname, lastname');
+            $this->db->where('staffid', $staff["staffid"]);
+            $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
+            $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
+
+            // Send Slack notification to notified staffs
+            if($is_mentioned) {
+                $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> mentioned you in a task at `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
+                '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
+                '> ' . $content;
+                $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';;
+            } else {
+                $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> just commented on a task you are following in `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
+                '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
+                '> ' . $content;
+                $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
+            }
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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" );
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_POST,           1 );
+            curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
+            curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
+            curl_exec ($ch);
+            curl_close($ch);
+        }
+        return true;
     }
 
     /**
@@ -1091,6 +1166,7 @@ class Tasks_model extends App_Model
 
             $regex = "/data\-mention\-id\=\"(\d+)\"/";
             if (preg_match_all($regex, $data['content'], $mentionedStaff, PREG_PATTERN_ORDER)) {
+                $this->_send_task_comment_notification_slack($data['taskid'], _strip_tags($data['content']), $insert_id, true);
                 $this->_send_task_mentioned_users_notification($description,
                     $data['taskid'],
                     $mentionedStaff[1],
@@ -1099,6 +1175,7 @@ class Tasks_model extends App_Model
                     $insert_id
                 );
             } else {
+                $this->_send_task_comment_notification_slack($data['taskid'], _strip_tags($data['content']), $insert_id);
                 $this->_send_task_responsible_users_notification($description,
                     $data['taskid'],
                     false,
@@ -1671,9 +1748,6 @@ class Tasks_model extends App_Model
                 $this->projects_model->log_activity($task->rel_id, $project_activity_log, $project_activity_desc, $task->visible_to_client);
             }
 
-            
-            $this->_send_task_responsible_users_notification($description, $task_id, false, '', serialize($not_data));
-
             $this->_send_task_responsible_users_notification_slack($task_id, $task_old_status);
 
             $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
@@ -1695,8 +1769,8 @@ class Tasks_model extends App_Model
     public function _send_task_responsible_users_notification_slack($task_id, $task_old_status) {
 
         // Get current staff id
-        $curent_staff_id = get_staff_user_id();
-        $curent_staff_name = get_staff_full_name();
+        $current_staff_id = get_staff_user_id();
+        $current_staff_name = get_staff_full_name();
 
         // Get task info
         $this->db->select('id,name,status');
@@ -1734,8 +1808,8 @@ class Tasks_model extends App_Model
             $this->db->select('staffid,firstname, lastname');
             $this->db->where('staffid', $staff["staffid"]);
             $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
-            $current_staff_url = site_url("admin/staff/member/" . $curent_staff_id);
-            $message = "*<" . $current_staff_url . "|@" . $curent_staff_name . "> transition a Task from `" . $task_old_status . "` ⟶ `" . $task_new_status . "`*\n" .
+            $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
+            $message = "*<" . $current_staff_url . "|@" . $current_staff_name . "> transition a Task from `" . $task_old_status . "` ⟶ `" . $task_new_status . "`*\n" .
                 "*<" . site_url('admin/tasks/view/') . $task_info['id'] . "|" . $task_info["name"] . ">*";
 
             // Send Slack notification to notified staffs
@@ -1786,6 +1860,8 @@ class Tasks_model extends App_Model
             }
 
             $description = 'not_task_unmarked_as_complete';
+
+            $this->_send_task_responsible_users_notification_slack($id, 5);
 
             $this->_send_task_responsible_users_notification('not_task_unmarked_as_complete', $id, false, 'task_status_changed_to_staff', serialize([
                 $task->name,

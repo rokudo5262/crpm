@@ -11,25 +11,13 @@ function init_assets_kanban_task_advance_filter() {
 }
 
 function generate_task_status_name($task_status_id) {
-	switch ($task_status_id) {
-        case '1':
-            $task_status_name = "Not started";
-            break;
-        case '2':
-            $task_status_name = "Awaiting Feedback";
-            break;
-        case '3':
-        	$task_status_name = "Testing";
-            break;
-        case '4':
-            $task_status_name = "In Progress";
-            break;
-        case '5':
-            $task_status_name = "Complete";
-            break;
-        default:
-            $task_status_name = "Unknown";
-            break;
-    }
-    return $task_status_name;
+    return _l("task_status_" . $task_status_id);
+}
+
+function generate_staff_url($user_id) {
+	return site_url('admin/profile/' . $user_id);
+}
+
+function generate_task_url($task_id) {
+	return site_url('admin/tasks/view/' . $task_id);
 }
