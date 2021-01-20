@@ -1,5 +1,4 @@
 let filter_called = false;
-
 $( document ).ready(function() {
     if(localStorage.getItem("kanban_filter")) {
         $.each($('li.task-statuses-filter'), function() {
@@ -29,8 +28,6 @@ $( document ).ready(function() {
         styleBase: 'form-control'
     };
     $('#project-filter').selectpicker(project_filter_select_options);
-    // $('.bs-select-all').hide();
-    // $('.bs-deselect-all').width('78%');
     $('.bs-select-all').on('click', function() {
         let option_el = $('#project-filter > option');
         option_el.addClass('selected');
