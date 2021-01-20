@@ -7,7 +7,7 @@ $( document ).ready(function() {
         });
     }
     $(document).ajaxComplete(function () {
-        $('.dt-loader').hide();
+        $('body.kan-ban-body .dt-loader').hide();
         if(filter_called) {
             let task_statuses_li = $('li.task-statuses-filter').not('.active');
             $.each(task_statuses_li, function() {

@@ -5029,14 +5029,7 @@ function add_task_comment(task_id) {
     }
     data.taskid = task_id;
     $.post(admin_url + 'tasks/add_task_comment', data).done(function (response) {
-        try {
-            response = JSON.parse(response);
-        } catch (e) {
-            response = response.replace('channel_not_found{','{');
-            response = response.replace('ok{','{');
-            response = JSON.parse(response);
-        }
-        
+        response = JSON.parse(response);
         _task_append_html(response.taskHtml);
         // Remove task comment editor instance
         // Causing error because of are you sure you want to leave this page, the plugin still sees as active and dirty.
@@ -5093,6 +5086,7 @@ function unmark_complete(task_id) {
 
 // Mark task status
 function task_mark_as(status, task_id, url) {
+    console.log('mark');
     url = typeof (url) == 'undefined' ? 'tasks/mark_as/' + status + '/' + task_id : url;
     var taskModalVisible = $('#task-modal').is(':visible');
     url += '?single_task=' + taskModalVisible;
@@ -5100,6 +5094,7 @@ function task_mark_as(status, task_id, url) {
     requestGetJSON(url).done(function (response) {
         $("body").find('.dt-loader').remove();
         if (response.success === true || response.success == 'true') {
+            console.log(response);
             reload_tasks_tables();
             if (taskModalVisible) {
                 _task_append_html(response.taskHtml);

@@ -9223,6 +9223,6 @@ span.mention {
     padding: 3px;
 }
 
-.dt-loader {
+body.kan-ban-body .dt-loader {
     display: none !important;
 }

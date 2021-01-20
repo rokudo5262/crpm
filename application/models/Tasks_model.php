@@ -14,6 +14,8 @@ class Tasks_model extends App_Model
 
     const STATUS_COMPLETE = 5;
 
+    const STATUS_BLOCKED = 6;
+
     public function __construct()
     {
         parent::__construct();
@@ -1107,7 +1109,7 @@ class Tasks_model extends App_Model
                 $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
                 $ch = curl_init();
                 curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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");
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
                 curl_setopt($ch, CURLOPT_POST,           1);
                 curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
                 curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
@@ -1127,15 +1129,13 @@ class Tasks_model extends App_Model
             $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 0);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_POST,           1);
             curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
             curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
             curl_exec ($ch);
             curl_close($ch);
         }
-        
-        return true;
     }
 
     /**
@@ -1829,13 +1829,13 @@ class Tasks_model extends App_Model
             $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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" );
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
             curl_setopt($ch, CURLOPT_POST,           1 );
             curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
             curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
             curl_exec ($ch);
             curl_close($ch);
         }
-        
     }
 
     /**
