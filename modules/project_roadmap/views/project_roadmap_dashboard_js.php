@@ -1,27 +1,31 @@
 <script>
   $(function(){
-     var circle = $('.project-progress').circleProgress({fill: {
-      gradient: ['#84c529', '#84c529']
-    }}).on('circle-animation-progress', function(event, progress, stepValue) {
-      $(this).find('strong.project-percent').html(parseInt(100 * stepValue) + '<i>%</i>');
-    });
-    var arrayValues = $('.list_project_id').map(function(){
-                      return $(this).val()
-                  }).get();
-      $.each(arrayValues, function() {
-        var pr_id = $(this)[0];
-        project_roadmap_tasks(pr_id);
+    try {
+      var circle = $('.project-progress').circleProgress({fill: {
+        gradient: ['#84c529', '#84c529']
+      }}).on('circle-animation-progress', function(event, progress, stepValue) {
+        $(this).find('strong.project-percent').html(parseInt(100 * stepValue) + '<i>%</i>');
+      });
+      var arrayValues = $('.list_project_id').map(function(){
+                        return $(this).val()
+                    }).get();
+        $.each(arrayValues, function() {
+          var pr_id = $(this)[0];
+          project_roadmap_tasks(pr_id);
 
-        $('select[name="milestones_'+pr_id+'"]').on('change', function() {
-            project_roadmap_tasks(pr_id);
-        });
-        $('select[name="members_'+pr_id+'"]').on('change', function() {
-            project_roadmap_tasks(pr_id);
-        });
-        $('select[name="task_status_'+pr_id+'"]').on('change', function() {
-            project_roadmap_tasks(pr_id);
-        });
-    });
+          $('select[name="milestones_'+pr_id+'"]').on('change', function() {
+              project_roadmap_tasks(pr_id);
+          });
+          $('select[name="members_'+pr_id+'"]').on('change', function() {
+              project_roadmap_tasks(pr_id);
+          });
+          $('select[name="task_status_'+pr_id+'"]').on('change', function() {
+              project_roadmap_tasks(pr_id);
+          });
+      });
+    } catch(e) {
+      
+    }
   });
   $('select[name="milestones"],select[name="members"],select[name="task_status"]').on('change', function() {
        project_roadmap_tasks();
