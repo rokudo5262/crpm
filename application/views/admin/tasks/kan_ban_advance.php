@@ -26,6 +26,26 @@ if($this->input->get('projects')) {
   $where['projects'] = $this->input->get('projects');
 }
 
+if($this->input->get('task_statuses')) {
+  $where['task_statuses'] = $this->input->get('task_statuses');
+}
+
+$this->session->set_userdata("kanban_filters", serialize($where));
+
+if(!empty($this->input->get('task_statuses'))) {
+  $save_task_statuses_ids = explode(',', $where['task_statuses']);
+  foreach($task_statuses as $index => $status) {
+    if(in_array($status['id'], $save_task_statuses_ids))
+      $task_statuses[$index]['active'] = true;
+    else
+      $task_statuses[$index]['active'] = false;
+  }
+} else {
+  foreach($task_statuses as $index => $status) {
+    $task_statuses[$index]['active'] = true;
+  }
+}
+
 foreach ($task_statuses as $status) {
   $total_pages = ceil($this->tasks_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,true,$where)/get_option('tasks_kanban_limit'));
   ?>

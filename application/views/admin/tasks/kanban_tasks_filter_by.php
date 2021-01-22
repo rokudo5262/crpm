@@ -25,6 +25,13 @@
         echo form_hidden('task_status_' . $status['id'], $val);
     }
 
+    if(!empty($this->input->get('task_statuses'))) {
+      $saved_statuses_arr = explode(',', $where['task_statuses']);
+      foreach($saved_statuses_arr as $status) {
+        $saved_task_statuses[] = get_task_status_by_id($status);
+      }
+    }
+
     ?>
 </div>
 
