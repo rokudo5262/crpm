@@ -40,11 +40,10 @@ $( document ).ready(function() {
 
     $('#project-filter').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         let option_el = $('#project-filter > option.display-order-' + clickedIndex);
-        if(option_el.hasClass('selected')) {
-            option_el.removeClass('selected');
-        } else {
-            option_el.addClass('selected');
-        }
+        if(isSelected)
+            option_el.addClass("selected");
+        else
+            option_el.removeClass("selected");
         update_storage_filter();
         tasks_kanban_advance();
     });
@@ -54,16 +53,22 @@ function load_saved_filter() {
     let filters = JSON.parse(localStorage.getItem("kanban_filter"));
     $.each(filters, function(index, value) {
         if(typeof(value) == 'object') {
-            $.each(value, function() {
-                $('li.' + $(this)[0]).addClass('active');
-            });
+            if(index == 'task_statuses')
+                $.each(value, function() {
+                    $('li.' + $(this)[0]).addClass('active');
+                });
             if(index == 'departments')
                 $('li.department-filter').addClass('active');
             else if(index == 'assigned')
                 $('li.assigned-filter').addClass('active');
+            else if(index == 'my_following_tasks')
+                $('li.my_following_tasks').addClass('active');
             else if(index == 'projects') {
-                $('#project-filter').addClass('selected');
-                $('#project-filter').attr('selected', 'selected');
+                $('#project-filter').selectpicker('val', value);
+                $.each(value, function() {
+                    let option_el = $('select#project-filter option[value=' + value + ']');
+                    option_el.addClass("selected");
+                });
             }
         } else {
             $('li.' + value).addClass('active');
@@ -91,6 +96,12 @@ function update_storage_filter() {
         filters["my_tasks"] = my_tasks;
     }
 
+    // Update my following task filter
+    let my_following_tasks = $('.my_following_tasks.active').find('a').attr('data-cview');
+    if(typeof (my_following_tasks) != 'undefined') {
+        filters["my_following_tasks"] = my_following_tasks;
+    }
+
     // Update department filter
     let departments = $('.department-filter li.active');
     if(typeof (departments) != 'undefined' && departments.length > 0) {
@@ -112,7 +123,7 @@ function update_storage_filter() {
     }
 
     // Update project filter
-    let projects = $('#project-filter > option.selected');
+    let projects = $('select#project-filter option.selected');
     if(typeof (projects) != 'undefined' && projects.length > 0) {
         projects_arr = [];
         $.each(projects, function() {
@@ -130,24 +141,34 @@ function kb_status_visibility(status_id) {
         status_li.removeClass('active');
         status_column.hide();
     } else {
-
         status_li.addClass('active');
         status_column.show();
     }
+
+    // Remove active class of "All" if one or more status is hidden
+    if($('li.task-statuses-filter').not('.active').length > 0)
+        $('li.all_tasks').removeClass("active");
+    // Add "active" class to "All" filter if condition met
+    if($('li.task-statuses-filter').not('.active').length == 0
+        && $('._filter_data li.active').not('.task-statuses-filter').length == 0)
+         $('li.all_tasks').addClass("active");
     update_storage_filter();
 }
 
 function kb_custom_view(value, custom_input_name, clear_other_filters) {
 	var name = typeof (custom_input_name) == 'undefined' ? 'custom_view' : custom_input_name;
     if (typeof (clear_other_filters) != 'undefined') {
-        var filters = $('._filter_data li.active').not('.task-statuses-filter');
-        
+        var filters = $('._filter_data li.active');
         $.each(filters, function () {
-            if(!$(this).hasClass('.task-statuses-filter')) {
+            if(!$(this).hasClass('task-statuses-filter')) {
                 $(this).removeClass('active');
             }
             var input_name = $(this).find('a').attr('data-cview');
             $('._filters input[name="' + input_name + '"]').val('');
+        });
+        // Display all "Status"
+        $.each($('.task-statuses-filter'), function() {
+            $(this).addClass('active');
         });
     }
     var _cinput = kanban_do_filter_active(name);
@@ -156,12 +177,16 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
     }
     $('input[name="' + name + '"]').val(value);
     update_storage_filter();
+    // Add "active" class to "All" filter if condition met
+    if($('li.task-statuses-filter').not('.active').length == 0
+        && $('._filter_data li.active').not('.task-statuses-filter').length == 0)
+         $('li.all_tasks').addClass("active");
+    // Reload Kanban
     tasks_kanban_advance();
 }
 
 function kanban_do_filter_active(value, parent_selector) {
     if (value !== '' && typeof (value) != 'undefined') {
-
         $('[data-cview="all"]').parents('li').removeClass('active');
         var selector = $('[data-cview="' + value + '"]');
         if (typeof (parent_selector) != 'undefined') {
@@ -174,7 +199,7 @@ function kanban_do_filter_active(value, parent_selector) {
             $.each($('[data-filter-group="' + group + '"]').not(parent), function () {
                 $('input[name="' + $(this).find('a').attr('data-cview') + '"]').val('');
             });
-            //   $('input[name="' + value + '"]').val('');
+            $('input[name="' + value + '"]').val('');
         }
         if (!parent.not('.dropdown-submenu').hasClass('active')) {
             parent.addClass('active');
@@ -270,6 +295,14 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
     });
     if(project_ids.length > 0) {
         parameters['projects'] = project_ids.join();
+    }
+
+    var task_status_ids = [];
+    $.each($('li.task-statuses-filter.active'), function() {
+        task_status_ids.push($(this).attr('data-id'));
+    });
+    if(task_status_ids.length > 0) {
+        parameters['task_statuses'] = task_status_ids.join();
     }
 
     var sort_type = $('input[name="sort_type"]');
