@@ -66,7 +66,7 @@ function load_saved_filter() {
             else if(index == 'projects') {
                 $('#project-filter').selectpicker('val', value);
                 $.each(value, function() {
-                    let option_el = $('select#project-filter option[value=' + value + ']');
+                    let option_el = $('select#project-filter option[value=' + $(this) + ']');
                     option_el.addClass("selected");
                 });
             }
