@@ -5290,7 +5290,7 @@ function task_form_handler(form) {
             init_task_modal(response.id);
             reload_tasks_tables();
             if ($('body').hasClass('kan-ban-body') && $('body').hasClass('tasks')) {
-                tasks_kanban();
+                tasks_kanban_advance();
             }
         } else {
             // reload page on project area
