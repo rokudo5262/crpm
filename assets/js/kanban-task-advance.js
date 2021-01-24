@@ -15,11 +15,14 @@ $( document ).ready(function() {
             });
             return;
         }
+        // Load saved filter after last ajax has been loaded
         load_saved_filter();
         tasks_kanban_advance();
+        // Flag to stop ajax.done loop
         filter_called = true;
      });
 
+    // Initialize "Project select" filter (Bootstrap Select)
     let project_filter_select_options = {
         liveSearch: true,
         actionsBox: true,
@@ -28,6 +31,7 @@ $( document ).ready(function() {
         styleBase: 'form-control'
     };
     $('#project-filter').selectpicker(project_filter_select_options);
+
     $('.bs-select-all').on('click', function() {
         let option_el = $('#project-filter > option');
         option_el.addClass('selected');
@@ -38,17 +42,23 @@ $( document ).ready(function() {
         option_el.removeClass('selected');
     });
 
+    // Event on project select and Project filter reload after page refresh
     $('#project-filter').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         let option_el = $('#project-filter > option.display-order-' + clickedIndex);
         if(isSelected)
             option_el.addClass("selected");
         else
             option_el.removeClass("selected");
-        update_storage_filter();
+        // If changed by saved filter (clickedIndex == null) then do not update storage filter
+        // If changed by click then update
+        if(clickedIndex != null) {
+            update_storage_filter();
+        }
         tasks_kanban_advance();
     });
 });
 
+/** Load saved filter from localStorage */
 function load_saved_filter() {
     let filters = JSON.parse(localStorage.getItem("kanban_filter"));
     $.each(filters, function(index, value) {
@@ -65,18 +75,19 @@ function load_saved_filter() {
                 $('li.my_following_tasks').addClass('active');
             else if(index == 'projects') {
                 $('#project-filter').selectpicker('val', value);
-                $.each(value, function() {
-                    let option_el = $('select#project-filter option[value=' + $(this)[0] + ']');
+                for(let i = 0; i < value.length; i++) {
+                    console.log(value[i]);
+                    let option_el = $('select#project-filter option[value=' + value[i] + ']');
                     option_el.addClass("selected");
-                });
+                }
             }
         } else {
             $('li.' + value).addClass('active');
         }
     });
-    
 }
 
+/** Save current state of filter to localStorage */
 function update_storage_filter() {
     localStorage.removeItem("kanban_filter");
     let filters = {};
@@ -131,9 +142,11 @@ function update_storage_filter() {
         });
         filters["projects"] = projects_arr;
     }
+    console.log(filters);
     localStorage.setItem("kanban_filter", JSON.stringify(filters));
 }
 
+/** Event when clicked on Kanban Status Columns filter */
 function kb_status_visibility(status_id) {
     let status_li = $('.task-statuses-filter-' + status_id);
     let status_column = $('ul[data-col-status-id=' + status_id + ']');
@@ -176,13 +189,13 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
         value = "";
     }
     $('input[name="' + name + '"]').val(value);
-    update_storage_filter();
     // Add "active" class to "All" filter if condition met
     if($('li.task-statuses-filter').not('.active').length == 0
         && $('._filter_data li.active').not('.task-statuses-filter').length == 0)
          $('li.all_tasks').addClass("active");
     // Reload Kanban
     tasks_kanban_advance();
+    update_storage_filter();
 }
 
 function kanban_do_filter_active(value, parent_selector) {

@@ -21,57 +21,58 @@ module.exports = function(grunt) {
         uglify: {
             my_target: {
                 files: {
-                    'assets/plugins/internal/google-picker/picker.min.js': ['assets/plugins/internal/google-picker/picker.js'],
-                    'assets/plugins/internal/validation/app-form-validation.min.js': ['assets/plugins/internal/validation/app-form-validation.js'],
-                    'assets/plugins/internal/highlight/highlight.min.js': ['assets/plugins/internal/highlight/highlight.js'],
-                    'assets/plugins/internal/hotkeys/hotkeys.min.js': ['assets/plugins/internal/hotkeys/hotkeys.js'],
-                    'assets/plugins/internal/desktop-notifications/notifications.min.js': ['assets/plugins/internal/desktop-notifications/notifications.js'],
-                    'assets/themes/perfex/js/clients.min.js': ['assets/themes/perfex/js/clients.js'],
-                    'assets/themes/perfex/js/global.min.js': ['assets/themes/perfex/js/global.js'],
+                    // 'assets/plugins/internal/google-picker/picker.min.js': ['assets/plugins/internal/google-picker/picker.js'],
+                    // 'assets/plugins/internal/validation/app-form-validation.min.js': ['assets/plugins/internal/validation/app-form-validation.js'],
+                    // 'assets/plugins/internal/highlight/highlight.min.js': ['assets/plugins/internal/highlight/highlight.js'],
+                    // 'assets/plugins/internal/hotkeys/hotkeys.min.js': ['assets/plugins/internal/hotkeys/hotkeys.js'],
+                    // 'assets/plugins/internal/desktop-notifications/notifications.min.js': ['assets/plugins/internal/desktop-notifications/notifications.js'],
+                    // 'assets/themes/perfex/js/clients.min.js': ['assets/themes/perfex/js/clients.js'],
+                    // 'assets/themes/perfex/js/global.min.js': ['assets/themes/perfex/js/global.js'],
                     'assets/js/main.min.js': ['assets/js/main.js'],
-                    'assets/js/map.min.js': ['assets/js/map.js'],
-                    'assets/js/projects.min.js': ['assets/js/projects.js'],
-                    'assets/js/tickets.min.js': ['assets/js/tickets.js'],
-                    'assets/builds/bootstrap-select.min.js': ['assets/builds/bootstrap-select.min.js'],
-                    'assets/builds/moment.min.js': ['assets/builds/moment.min.js'],
-                    'assets/plugins/tagsinput/js/tag-it.min.js': ['assets/plugins/tagsinput/js/tag-it.js'], // tag-it.js is modified
-                    'assets/builds/vendor-admin.js': ['assets/builds/vendor-admin.js'],
-                    'assets/builds/common.js': ['assets/builds/common.js'],
+                    // 'assets/js/map.min.js': ['assets/js/map.js'],
+                    // 'assets/js/projects.min.js': ['assets/js/projects.js'],
+                    // 'assets/js/tickets.min.js': ['assets/js/tickets.js'],
+                    // 'assets/builds/bootstrap-select.min.js': ['assets/builds/bootstrap-select.min.js'],
+                    // 'assets/builds/moment.min.js': ['assets/builds/moment.min.js'],
+                    // 'assets/plugins/tagsinput/js/tag-it.min.js': ['assets/plugins/tagsinput/js/tag-it.js'], // tag-it.js is modified
+                    // 'assets/builds/vendor-admin.js': ['assets/builds/vendor-admin.js'],
+                    // 'assets/builds/common.js': ['assets/builds/common.js'],
                 }
             }
         },
         cssmin: {
             target: {
-                files: [{
-                        src: ['assets/themes/perfex/css/style.css'],
-                        dest: 'assets/themes/perfex/css/style.min.css',
-                        ext: '.min.css'
-                    },
-                    {
-                        src: ['assets/css/bs-overides.css'],
-                        dest: 'assets/css/bs-overides.min.css',
-                        ext: '.min.css'
-                    },
-                    {
-                        src: ['assets/css/forms.css'],
-                        dest: 'assets/css/forms.min.css',
-                        ext: '.min.css'
-                    },
+                files: [
+                    // {
+                    //     src: ['assets/themes/perfex/css/style.css'],
+                    //     dest: 'assets/themes/perfex/css/style.min.css',
+                    //     ext: '.min.css'
+                    // },
+                    // {
+                    //     src: ['assets/css/bs-overides.css'],
+                    //     dest: 'assets/css/bs-overides.min.css',
+                    //     ext: '.min.css'
+                    // },
+                    // {
+                    //     src: ['assets/css/forms.css'],
+                    //     dest: 'assets/css/forms.min.css',
+                    //     ext: '.min.css'
+                    // },
                     {
                         src: ['assets/css/style.css'],
                         dest: 'assets/css/style.min.css',
                         ext: '.min.css'
                     },
-                    {
-                        src: ['assets/css/reset.css'],
-                        dest: 'assets/css/reset.min.css',
-                        ext: '.min.css'
-                    },
-                    {
-                        src: ['assets/builds/vendor-admin.css'],
-                        dest: 'assets/builds/vendor-admin.css',
-                        ext: '.css'
-                    },
+                    // {
+                    //     src: ['assets/css/reset.css'],
+                    //     dest: 'assets/css/reset.min.css',
+                    //     ext: '.min.css'
+                    // },
+                    // {
+                    //     src: ['assets/builds/vendor-admin.css'],
+                    //     dest: 'assets/builds/vendor-admin.css',
+                    //     ext: '.css'
+                    // },
                 ]
             }
         },
