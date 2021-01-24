@@ -7,17 +7,17 @@ $( document ).ready(function() {
     }
     $(document).ajaxComplete(function () {
         $('body.kan-ban-body .dt-loader').hide();
-        if(filter_called >= 3) {
+        if(filter_called >= 2) {
             let task_statuses_li = $('li.task-statuses-filter').not('.active');
             $.each(task_statuses_li, function() {
                 task_status_li = $(this).attr('data-id');
                 $('ul[data-col-status-id=' + task_status_li + ']').hide();
             });
-            // Load saved filter after last ajax has been loaded
-            load_saved_filter();
-            tasks_kanban_advance();
             return;
         }
+        // Load saved filter after last ajax has been loaded
+        load_saved_filter();
+        tasks_kanban_advance();
         // Flag to stop ajax.done loop
         filter_called++;
      });
