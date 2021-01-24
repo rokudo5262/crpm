@@ -76,7 +76,6 @@ function load_saved_filter() {
             else if(index == 'projects') {
                 $('#project-filter').selectpicker('val', value);
                 for(let i = 0; i < value.length; i++) {
-                    console.log(value[i]);
                     let option_el = $('select#project-filter option[value=' + value[i] + ']');
                     option_el.addClass("selected");
                 }
@@ -142,7 +141,6 @@ function update_storage_filter() {
         });
         filters["projects"] = projects_arr;
     }
-    console.log(filters);
     localStorage.setItem("kanban_filter", JSON.stringify(filters));
 }
 
