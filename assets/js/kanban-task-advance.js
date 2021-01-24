@@ -67,10 +67,18 @@ function load_saved_filter() {
                 $.each(value, function() {
                     $('li.' + $(this)[0]).addClass('active');
                 });
-            if(index == 'departments')
+            if(index == 'departments') {
                 $('li.department-filter').addClass('active');
-            else if(index == 'assigned')
+                for(let i = 0; i < value.length; i++) {
+                    $('li.' + value[i]).addClass('active');
+                }
+            }
+            else if(index == 'assigned') {
                 $('li.assigned-filter').addClass('active');
+                for(let i = 0; i < value.length; i++) {
+                    $('li.' + value[i]).addClass('active');
+                }
+            }
             else if(index == 'my_following_tasks')
                 $('li.my_following_tasks').addClass('active');
             else if(index == 'projects') {
