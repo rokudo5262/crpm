@@ -35,11 +35,13 @@ $( document ).ready(function() {
     $('.bs-select-all').on('click', function() {
         let option_el = $('#project-filter > option');
         option_el.addClass('selected');
+        update_storage_filter();
     });
     
     $('.bs-deselect-all').on('click', function() {
         let option_el = $('#project-filter > option');
         option_el.removeClass('selected');
+        update_storage_filter();
     });
 
     // Event on project select and Project filter reload after page refresh
