@@ -1071,13 +1071,13 @@ class Tasks_model extends App_Model
         // Get task assignees
         $this->db->select('staffid');
         $this->db->where('taskid', $task_id);
-        $this->db->where('staffid !=', get_staff_user_id());
+        // $this->db->where('staffid !=', get_staff_user_id());
         $task_assignees = $this->db->get(db_prefix() . 'task_assigned')->result_array();
 
         // Get task followers
         $this->db->select('staffid');
         $this->db->where('taskid', $task_id);
-        $this->db->where('staffid !=', get_staff_user_id());
+        // $this->db->where('staffid !=', get_staff_user_id());
         $task_followers = $this->db->get(db_prefix() . 'task_followers')->result_array();
 
         // Defined staffs that will be notified
@@ -1093,7 +1093,8 @@ class Tasks_model extends App_Model
 
         // Minify content to 240 characters maximum
         if(strlen($content) > 240)
-            $content = html_entity_decode(strip_tags(substr($content, 0, 240))) . '...';
+            $content = strip_tags(substr($content, 0, 240)) . '...';
+        $content = html_entity_decode($content);
 
         $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
 
