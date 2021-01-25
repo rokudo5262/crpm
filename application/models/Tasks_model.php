@@ -1071,13 +1071,13 @@ class Tasks_model extends App_Model
         // Get task assignees
         $this->db->select('staffid');
         $this->db->where('taskid', $task_id);
-        // $this->db->where('staffid !=', get_staff_user_id());
+        $this->db->where('staffid !=', get_staff_user_id());
         $task_assignees = $this->db->get(db_prefix() . 'task_assigned')->result_array();
 
         // Get task followers
         $this->db->select('staffid');
         $this->db->where('taskid', $task_id);
-        // $this->db->where('staffid !=', get_staff_user_id());
+        $this->db->where('staffid !=', get_staff_user_id());
         $task_followers = $this->db->get(db_prefix() . 'task_followers')->result_array();
 
         // Defined staffs that will be notified
