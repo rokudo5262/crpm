@@ -1093,7 +1093,7 @@ class Tasks_model extends App_Model
 
         // Minify content to 240 characters maximum
         if(strlen($content) > 240)
-            $content = strip_tags(substr($content, 0, 240)) . '...';
+            $content = html_entity_decode(strip_tags(substr($content, 0, 240))) . '...';
 
         $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
 
