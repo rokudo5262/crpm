@@ -5,6 +5,7 @@ application/config/config.php
 /application/logs
 /uploads
 /media/.tmb
+/media
 *.iml
 /node_modules
 /package-lock.json
