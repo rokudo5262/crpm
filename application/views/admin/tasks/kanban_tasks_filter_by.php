@@ -68,16 +68,23 @@
         <?php } ?>
         <div class="clearfix"></div>
         <li class="divider"></li>
-        <li class="<?php echo(!has_permission('tasks', '', 'view') ? ' active' : ''); ?> my_tasks">
+        <li class="<?php echo(!has_permission('tasks', '', 'view') ? ' active' : ''); ?> my_tasks" data-filter-group="assigned-following-unassigned">
             <a href="#" data-cview="my_tasks" onclick="kb_custom_view('my_tasks','my_tasks'); return false;">
                 <?php echo _l('tasks_view_assigned_to_user'); ?>
             </a>
         </li>
-        <li class="my_following_tasks" data-filter-group="assigned-follower-not-assigned">
+        <li class="my_following_tasks" data-filter-group="assigned-following-unassigned">
             <a href="#" data-cview="my_following_tasks" onclick="kb_custom_view('my_following_tasks','my_following_tasks'); return false;">
                 <?php echo _l('tasks_view_follower_by_user'); ?>
             </a>
         </li>
+        <li class="not_assigned" data-filter-group="assigned-following-unassigned">
+            <a href="#" data-cview="not_assigned" onclick="kb_custom_view('not_assigned','not_assigned'); return false;">
+                <?php echo _l('task_list_not_assigned'); ?>
+            </a>
+        </li>
+        <div class="clearfix"></div>
+        <li class="divider"></li>
         <?php if (has_permission('tasks', '', 'view')) { ?>
             <?php if (count($tasks_filter_departments)) { ?>
                 <li class="dropdown-submenu department-filter pull-left">
@@ -93,11 +100,9 @@
                 </li>
             <?php } ?>
         <?php } ?>
-
+        <div class="clearfix"></div>
         <?php if (has_permission('tasks', '', 'view')) { ?>
             <?php if (count($tasks_filter_assignees)) { ?>
-                <div class="clearfix"></div>
-                <li class="divider"></li>
                 <li class="dropdown-submenu assigned-filter pull-left">
                     <a href="#" tabindex="-1"><?php echo _l('filter_by_assigned'); ?></a>
                     <ul class="dropdown-menu dropdown-menu-left">

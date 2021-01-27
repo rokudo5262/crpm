@@ -215,6 +215,11 @@ class Tasks_model extends App_Model
             $this->db->group_end();
         }
 
+        // Filter by "Unassigned tasks"
+        if(isset($where['not_assigned'])) {
+            $this->db->where('(SELECT GROUP_CONCAT(staffid SEPARATOR ", ") FROM ' . db_prefix() . 'task_assigned WHERE taskid=tbltasks.id ORDER BY ' . db_prefix() . 'task_assigned.staffid) IS NULL');
+        }
+
         // Filter by "Task assigned by me"
         if(isset($where['is_my_task_filter'])) {
             $this->db->where($where['is_my_task_filter'] . ' IN (SELECT staffid FROM ' . db_prefix() . 'task_assigned WHERE taskid = ' . db_prefix() . 'tasks.id)');

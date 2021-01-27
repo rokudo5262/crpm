@@ -22,6 +22,10 @@ if($this->input->get('assigned')) {
   $where['assigned'] = $this->input->get('assigned');
 }
 
+if($this->input->get('not_assigned')) {
+  $where['not_assigned'] = $this->input->get('not_assigned');
+}
+
 if($this->input->get('projects')) {
   $where['projects'] = $this->input->get('projects');
 }

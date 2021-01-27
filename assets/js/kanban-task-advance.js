@@ -1,4 +1,4 @@
-let filter_called = 0;
+var filter_called = 0;
 $( document ).ready(function() {
     if(localStorage.getItem("kanban_filter")) {
         $.each($('li.task-statuses-filter'), function() {
@@ -8,7 +8,7 @@ $( document ).ready(function() {
     $(document).ajaxComplete(function () {
         $('body.kan-ban-body .dt-loader').hide();
         if(filter_called >= 2) {
-            let task_statuses_li = $('li.task-statuses-filter').not('.active');
+            var task_statuses_li = $('li.task-statuses-filter').not('.active');
             $.each(task_statuses_li, function() {
                 task_status_li = $(this).attr('data-id');
                 $('ul[data-col-status-id=' + task_status_li + ']').hide();
@@ -23,7 +23,7 @@ $( document ).ready(function() {
      });
 
     // Initialize "Project select" filter (Bootstrap Select)
-    let project_filter_select_options = {
+    var project_filter_select_options = {
         liveSearch: true,
         actionsBox: true,
         noneSelectedText: 'Projects Filter',
@@ -33,20 +33,20 @@ $( document ).ready(function() {
     $('#project-filter').selectpicker(project_filter_select_options);
 
     $('.bs-select-all').on('click', function() {
-        let option_el = $('#project-filter > option');
+        var option_el = $('#project-filter > option');
         option_el.addClass('selected');
         update_storage_filter();
     });
     
     $('.bs-deselect-all').on('click', function() {
-        let option_el = $('#project-filter > option');
+        var option_el = $('#project-filter > option');
         option_el.removeClass('selected');
         update_storage_filter();
     });
 
     // Event on project select and Project filter reload after page refresh
     $('#project-filter').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
-        let option_el = $('#project-filter > option.display-order-' + clickedIndex);
+        var option_el = $('#project-filter > option.display-order-' + clickedIndex);
         if(isSelected)
             option_el.addClass("selected");
         else
@@ -62,7 +62,7 @@ $( document ).ready(function() {
 
 /** Load saved filter from localStorage */
 function load_saved_filter() {
-    let filters = JSON.parse(localStorage.getItem("kanban_filter"));
+    var filters = JSON.parse(localStorage.getItem("kanban_filter"));
     $.each(filters, function(index, value) {
         if(typeof(value) == 'object') {
             if(index == 'task_statuses')
@@ -71,13 +71,13 @@ function load_saved_filter() {
                 });
             if(index == 'departments') {
                 $('li.department-filter').addClass('active');
-                for(let i = 0; i < value.length; i++) {
+                for(var i = 0; i < value.length; i++) {
                     $('li.' + value[i]).addClass('active');
                 }
             }
             else if(index == 'assigned') {
                 $('li.assigned-filter').addClass('active');
-                for(let i = 0; i < value.length; i++) {
+                for(var i = 0; i < value.length; i++) {
                     $('li.' + value[i]).addClass('active');
                 }
             }
@@ -85,8 +85,8 @@ function load_saved_filter() {
                 $('li.my_following_tasks').addClass('active');
             else if(index == 'projects') {
                 $('#project-filter').selectpicker('val', value);
-                for(let i = 0; i < value.length; i++) {
-                    let option_el = $('select#project-filter option[value=' + value[i] + ']');
+                for(var i = 0; i < value.length; i++) {
+                    var option_el = $('select#project-filter option[value=' + value[i] + ']');
                     option_el.addClass("selected");
                 }
             }
@@ -99,11 +99,11 @@ function load_saved_filter() {
 /** Save current state of filter to localStorage */
 function update_storage_filter() {
     localStorage.removeItem("kanban_filter");
-    let filters = {};
+    var filters = {};
     // Update task statues filter
-    let task_statuses = $('.task-statuses-filter.active');
+    var task_statuses = $('.task-statuses-filter.active');
     if(task_statuses.length > 0) {
-        let task_status_arr = [];
+        var task_status_arr = [];
         $.each(task_statuses, function() {  
             task_status_arr.push([$(this).find('a').attr('data-cview')]);
         });
@@ -111,19 +111,19 @@ function update_storage_filter() {
     }
     
     // Update task assigned to me filter
-    let my_tasks = $('.my_tasks.active').find('a').attr('data-cview');
+    var my_tasks = $('.my_tasks.active').find('a').attr('data-cview');
     if(typeof (my_tasks) != 'undefined') {
         filters["my_tasks"] = my_tasks;
     }
 
     // Update my following task filter
-    let my_following_tasks = $('.my_following_tasks.active').find('a').attr('data-cview');
+    var my_following_tasks = $('.my_following_tasks.active').find('a').attr('data-cview');
     if(typeof (my_following_tasks) != 'undefined') {
         filters["my_following_tasks"] = my_following_tasks;
     }
 
     // Update department filter
-    let departments = $('.department-filter li.active');
+    var departments = $('.department-filter li.active');
     if(typeof (departments) != 'undefined' && departments.length > 0) {
         departments_arr = [];
         $.each(departments, function() {
@@ -133,7 +133,7 @@ function update_storage_filter() {
     }
 
     // Update assigned member filter
-    let assigned = $('.assigned-filter li.active');
+    var assigned = $('.assigned-filter li.active');
     if(typeof (assigned) != 'undefined' && assigned.length > 0) {
         assigned_arr = [];
         $.each(assigned, function() {
@@ -142,8 +142,14 @@ function update_storage_filter() {
         filters["assigned"] = assigned_arr;
     }
 
+    // Update unassigned tasks filter
+    var unassigned = $('.not_assigned.active').val();
+    if(typeof (unassigned) != 'undefined' && assigned.length !== '') {
+        filters["not_assigned"] = 'not_assigned';
+    }
+
     // Update project filter
-    let projects = $('select#project-filter option.selected');
+    var projects = $('select#project-filter option.selected');
     if(typeof (projects) != 'undefined' && projects.length > 0) {
         projects_arr = [];
         $.each(projects, function() {
@@ -151,13 +157,14 @@ function update_storage_filter() {
         });
         filters["projects"] = projects_arr;
     }
+    console.log(filters);
     localStorage.setItem("kanban_filter", JSON.stringify(filters));
 }
 
 /** Event when clicked on Kanban Status Columns filter */
 function kb_status_visibility(status_id) {
-    let status_li = $('.task-statuses-filter-' + status_id);
-    let status_column = $('ul[data-col-status-id=' + status_id + ']');
+    var status_li = $('.task-statuses-filter-' + status_id);
+    var status_column = $('ul[data-col-status-id=' + status_id + ']');
     if(status_li.hasClass('active')) {
         status_li.removeClass('active');
         status_column.hide();
@@ -197,10 +204,19 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
         value = "";
     }
     $('input[name="' + name + '"]').val(value);
+
+    // Only active one filter in "assigned-following-unassigned" (afu) filter group
+    var afu_filter_group_lis = $('li[data-filter-group=assigned-following-unassigned].active');
+    $.each(afu_filter_group_lis, function() {
+        if(!$(this).hasClass(custom_input_name))
+            $(this).removeClass('active');
+    })
+
     // Add "active" class to "All" filter if condition met
     if($('li.task-statuses-filter').not('.active').length == 0
         && $('._filter_data li.active').not('.task-statuses-filter').length == 0)
          $('li.all_tasks').addClass("active");
+
     // Reload Kanban
     tasks_kanban_advance();
     update_storage_filter();
@@ -284,14 +300,19 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
     }
 
     var is_filter_my_following_tasks = $('li.my_following_tasks.active').val();
-    if (typeof (is_filter_my_following_tasks) != 'undefined' && is_filter_my_tasks !== '') {
+    if (typeof (is_filter_my_following_tasks) != 'undefined' && is_filter_my_following_tasks !== '') {
         parameters['my_following_task_filter'] = true;
+    }
+
+    var not_assigned = $('li.not_assigned.active').val();
+    if (typeof (not_assigned) != 'undefined' && not_assigned !== '') {
+        parameters['not_assigned'] = true;
     }
 
     var department_ids = [];
     $.each($('._filter_data .department-filter ul li.active'), function() {
-        let department_li = $(this).find('a');
-        let department_id = department_li.attr('data-cview');
+        var department_li = $(this).find('a');
+        var department_id = department_li.attr('data-cview');
         department_id = department_id.replace("department_", "");
         department_ids.push(department_id);
     });
@@ -301,8 +322,8 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
 
     var assigned_ids = [];
     $.each($('._filter_data .assigned-filter ul li.active'), function() {
-        let assigned_li = $(this).find('a');
-        let assigned_id = assigned_li.attr('data-cview');
+        var assigned_li = $(this).find('a');
+        var assigned_id = assigned_li.attr('data-cview');
         assigned_id = assigned_id.replace("task_assigned_", "");
         assigned_ids.push(assigned_id);
     });
