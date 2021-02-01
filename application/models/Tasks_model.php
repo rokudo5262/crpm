@@ -1823,18 +1823,35 @@ class Tasks_model extends App_Model
             $this->db->where('staffid', $staff["staffid"]);
             $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
             $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
-            $message = "*<" . $current_staff_url . "|@" . $current_staff_name . "> transition a Task from `" . $task_old_status . "` ⟶ `" . $task_new_status . "`*\n" .
-                "*<" . site_url('admin/tasks/view/') . $task_info['id'] . "|" . $task_info["name"] . ">*";
+            // $message = "*<" . $current_staff_url . "|@" . $current_staff_name . "> transition a Task from `" . $task_old_status . "` ⟶ `" . $task_new_status . "`*\n" .
+            //     "*<" . site_url('admin/tasks/view/') . $task_info['id'] . "|" . $task_info["name"] . ">*";
 
             // Send Slack notification to notified staffs
-            $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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" );
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
-            curl_setopt($ch, CURLOPT_POST,           1 );
-            curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
-            curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
-            curl_exec ($ch);
+            //  $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
+            // $ch = curl_init();
+            // curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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" );
+            // curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
+            // curl_setopt($ch, CURLOPT_POST,           1 );
+            // curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
+            // curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
+            // curl_exec ($ch);
+            // curl_close($ch);
+
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . $task_old_status . ' ⟶ ' . $task_new_status . ' '
+            . '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' ;
+            $website = "https://api.telegram.org/bot1581709132:AAF8IV5lp5GBM-ZZYIK9jyX5f4mHQqU5QYk/sendMessage";
+            $chatId = 1508492501; 
+            $params = [
+                'chat_id' => $chatId, 
+                'parse_mode' => 'html', 
+                'text' => $text,
+            ];
+            $ch = curl_init($website);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+            $result = curl_exec($ch);
             curl_close($ch);
         }
     }
