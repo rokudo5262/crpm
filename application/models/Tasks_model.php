@@ -1101,11 +1101,9 @@ class Tasks_model extends App_Model
         if($is_mentioned) {
             // Loop mentioned staff
             foreach($mentioned_staffs as $staff) {
-                $this->db->select('staffid,firstname, lastname');
-                $this->db->where('staffid', $staff);
                 $telegram_id = get_user_telegram_id($staff["staffid"]);
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' . $content .
-                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' ;
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' .
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' .  $content;
                 $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
                 $params = [
                     'chat_id' => $telegram_id,
@@ -1123,8 +1121,6 @@ class Tasks_model extends App_Model
         }
         // Loop notified staffs
         foreach($notified_staffs as $staff) {
-            $this->db->select('staffid,firstname, lastname');
-            $this->db->where('staffid', $staff["staffid"]);
             $telegram_id = get_user_telegram_id($staff["staffid"]);
             $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' .
                  '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' . $content ;
@@ -1747,7 +1743,6 @@ class Tasks_model extends App_Model
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'task_followers');            
         if ($this->db->affected_rows() > 0) {
-         // $this->_send_task_responsible_users_notification_telegram($taskid,'remove_follow',$id);
             return true;
         }
 
@@ -1867,13 +1862,11 @@ class Tasks_model extends App_Model
 
         // Loop notified staffs
         foreach($notified_staffs as $staff) {
-            $this->db->select('staffid,firstname, lastname');
-            $this->db->where('staffid', $staff["staffid"]);
             $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
             $telegram_id = get_user_telegram_id($staff["staffid"]);
-            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . $task_old_status . ' ⟶ ' . $task_new_status . '.'.
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . '<u>' . $task_old_status . '</u>' . ' ⟶ ' . '<u>' .$task_new_status . '/<u>' .
            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';
-            $website = "https://api.telegram.org/bot1550514615:AAHNJ8D3qYcjRQ7MODPi8TgMIxGKimkEWUc/sendMessage";
+            $website = "https://api.telegram.org/bot1550514615:AAHNJ8D3qYcjRQ7MODPi8TgMIxGKimkEWUc/sendMessage"; 
             $params = [
                 'chat_id' => $telegram_id, 
                 'parse_mode' => 'html', 
