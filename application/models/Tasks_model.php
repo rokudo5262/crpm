@@ -1068,7 +1068,7 @@ class Tasks_model extends App_Model
      * @param string $content
      * @param bool $is_mentioned
      */
-    public function _send_task_comment_notification_slack($task_id, $content, $comment_id, $is_mentioned = false, $mentioned_staffs = []) {
+    public function _send_task_comment_notification_telegram($task_id, $content, $comment_id, $is_mentioned = false, $mentioned_staffs = []) {
         // Get current staff id
         $current_staff_id = get_staff_user_id();
         $current_staff_name = get_staff_full_name();
@@ -1113,18 +1113,21 @@ class Tasks_model extends App_Model
             foreach($mentioned_staffs as $staff) {
                 $this->db->select('staffid,firstname, lastname');
                 $this->db->where('staffid', $staff);
-                $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
-                $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> mentioned you in a task at `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
-                '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
-                '> ' . $content;
-                $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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");
+                $telegram_id = get_user_telegram_id($staff["staffid"]);
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' . $content .
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' ;
+                $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
+                $params = [
+                    'chat_id' => $telegram_id,
+                    'parse_mode' => 'html', 
+                    'text' => $text,
+                ];
+                $ch = curl_init($website);
+                curl_setopt($ch, CURLOPT_HEADER, false);
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_POST,           1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
-                curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
-                curl_exec ($ch);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+                $result = curl_exec($ch);
                 curl_close($ch);
             }
         }
@@ -1132,20 +1135,22 @@ class Tasks_model extends App_Model
         foreach($notified_staffs as $staff) {
             $this->db->select('staffid,firstname, lastname');
             $this->db->where('staffid', $staff["staffid"]);
-            $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
-            // Send Slack notification to notified staffs
-            $message = '*<' . $current_staff_url . '|@'. $current_staff_name .'> just commented on a task you are following in `' . generate_task_status_name($task_info["status"]) . '`.*\n' .
-            '*<' . generate_task_url($task_id) . '#comment_' . $comment_id . '|' . $task_info['name'] . '>*\n' .
-            '> ' . $content;
-            $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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");
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_POST,           1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
-            curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
-            curl_exec ($ch);
-            curl_close($ch);
+            $telegram_id = get_user_telegram_id($staff["staffid"]);
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' .
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' . $content ;
+                $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
+                $params = [
+                    'chat_id' => $telegram_id, 
+                    'parse_mode' => 'html', 
+                    'text' => $text,
+                ];
+                $ch = curl_init($website);
+                curl_setopt($ch, CURLOPT_HEADER, false);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+                $result = curl_exec($ch);
+                curl_close($ch);
         }
     }
 
@@ -1190,7 +1195,7 @@ class Tasks_model extends App_Model
 
             $regex = "/data\-mention\-id\=\"(\d+)\"/";
             if (preg_match_all($regex, $data['content'], $mentionedStaff, PREG_PATTERN_ORDER)) {
-                $this->_send_task_comment_notification_slack($data['taskid'], _strip_tags($data['content']), $insert_id, true, $mentionedStaff[1]);
+                $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id, true, $mentionedStaff[1]);
                 $this->_send_task_mentioned_users_notification($description,
                     $data['taskid'],
                     $mentionedStaff[1],
@@ -1199,7 +1204,7 @@ class Tasks_model extends App_Model
                     $insert_id
                 );
             } else {
-                $this->_send_task_comment_notification_slack($data['taskid'], _strip_tags($data['content']), $insert_id);
+                $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id);
                 $this->_send_task_responsible_users_notification($description,
                     $data['taskid'],
                     false,
@@ -1278,7 +1283,7 @@ class Tasks_model extends App_Model
                 'staff_id' => $data['follower'],
                 'task_id'  => $data['taskid'],
             ]);
-
+            $this->_send_task_responsible_users_notification_telegram($data['taskid'],'follow',$data['follower']);
             return true;
         }
 
@@ -1363,13 +1368,55 @@ class Tasks_model extends App_Model
                 'staff_id' => $assigneeId,
                 'task_id'  => $data['taskid'],
             ]);
-
+            $this->_send_task_responsible_users_notification_telegram($data['taskid'],'assigned',$data['assignee']);             
             return $assigneeId;
         }
 
         return false;
     }
+    public function _send_task_responsible_users_notification_telegram($task_id,$type,$staff_id) {
+          // Get current staff id
+         $current_staff_id = get_staff_user_id();
+         $current_staff_name = get_staff_full_name();
+ 
+         // Get task info
+         $this->db->select('id,name,status');
+         $this->db->where('id', $task_id);
+         $task_info = $this->db->get(db_prefix() . 'tasks')->row_array();
+         
+         // Get telegram ID 
+         $chatId = get_user_telegram_id($staff_id);
 
+         $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
+                         
+            if($type == 'assigned') {
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>' .
+            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';         
+            } elseif ($type == 'remove_assignee') {
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you from a task </strong>' .
+                '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
+            } elseif ($type == 'follow') {
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> added you to follow a task </strong>' .
+                '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
+            } elseif ($type == 'remove_follow') {
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you to follow a task </strong>' .
+                '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
+            }
+
+             $params = [
+                 'chat_id' => $chatId, 
+                 'parse_mode' => 'html', 
+                 'text' => $text,
+             ];
+             $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
+             $ch = curl_init($website);
+             curl_setopt($ch, CURLOPT_HEADER, false);
+             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+             curl_setopt($ch, CURLOPT_POST, 1);
+             curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+             $result = curl_exec($ch);
+             curl_close($ch);         
+    }
     /**
      * Get all task attachments
      * @param  mixed $taskid taskid
@@ -1692,7 +1739,7 @@ class Tasks_model extends App_Model
             if ($task->rel_type == 'project') {
                 $this->projects_model->log_activity($task->rel_id, 'project_activity_task_assignee_removed', $task->name . ' - ' . get_staff_full_name($assignee_data->staffid), $task->visible_to_client);
             }
-
+           $this->_send_task_responsible_users_notification_telegram($taskid,'remove_assignee',$assignee_data->staffid);
             return true;
         }
 
@@ -1708,8 +1755,9 @@ class Tasks_model extends App_Model
     public function remove_follower($id, $taskid)
     {
         $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'task_followers');
+        $this->db->delete(db_prefix() . 'task_followers');            
         if ($this->db->affected_rows() > 0) {
+         // $this->_send_task_responsible_users_notification_telegram($taskid,'remove_follow',$id);
             return true;
         }
 
@@ -1772,7 +1820,7 @@ class Tasks_model extends App_Model
                 $this->projects_model->log_activity($task->rel_id, $project_activity_log, $project_activity_desc, $task->visible_to_client);
             }
 
-            $this->_send_task_responsible_users_notification_slack($task_id, $task_old_status);
+            $this->_send_task_responsible_staff_notification_telegram($task_id, $task_old_status);
 
             $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
 
@@ -1790,7 +1838,7 @@ class Tasks_model extends App_Model
      * @param  mixed $task_id Task ID
      * @param mixed $task_old_status Old task status ID
      */
-    public function _send_task_responsible_users_notification_slack($task_id, $task_old_status) {
+    public function _send_task_responsible_staff_notification_telegram($task_id, $task_old_status) {
 
         // Get current staff id
         $current_staff_id = get_staff_user_id();
@@ -1831,20 +1879,22 @@ class Tasks_model extends App_Model
         foreach($notified_staffs as $staff) {
             $this->db->select('staffid,firstname, lastname');
             $this->db->where('staffid', $staff["staffid"]);
-            $staff_info = $this->db->get(db_prefix() . 'staff')->row_array();
             $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
-            $message = "*<" . $current_staff_url . "|@" . $current_staff_name . "> transition a Task from `" . $task_old_status . "` ⟶ `" . $task_new_status . "`*\n" .
-                "*<" . site_url('admin/tasks/view/') . $task_info['id'] . "|" . $task_info["name"] . ">*";
-
-            // Send Slack notification to notified staffs
-            $request_json = '{"channel": "@' . $staff_info["firstname"] . '", "username": "RA CRPM BOT", "text": "' . $message . '", "icon_emoji": ":ra-crpm:"}';
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL,            "https://hooks.slack.com/services/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" );
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
-            curl_setopt($ch, CURLOPT_POST,           1 );
-            curl_setopt($ch, CURLOPT_POSTFIELDS,     $request_json ); 
-            curl_setopt($ch, CURLOPT_HTTPHEADER,     array('Content-Type: application/json')); 
-            curl_exec ($ch);
+            $telegram_id = get_user_telegram_id($staff["staffid"]);
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . $task_old_status . ' ⟶ ' . $task_new_status . '.'.
+           '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';
+            $website = "https://api.telegram.org/bot1550514615:AAHNJ8D3qYcjRQ7MODPi8TgMIxGKimkEWUc/sendMessage";
+            $params = [
+                'chat_id' => $telegram_id, 
+                'parse_mode' => 'html', 
+                'text' => $text,
+            ];
+            $ch = curl_init($website);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+            $result = curl_exec($ch);
             curl_close($ch);
         }
     }
@@ -1885,7 +1935,7 @@ class Tasks_model extends App_Model
 
             $description = 'not_task_unmarked_as_complete';
 
-            $this->_send_task_responsible_users_notification_slack($id, 5);
+            $this->_send_task_responsible_staff_notification_telegram($id, 5);
 
             $this->_send_task_responsible_users_notification('not_task_unmarked_as_complete', $id, false, 'task_status_changed_to_staff', serialize([
                 $task->name,
