@@ -1102,8 +1102,8 @@ class Tasks_model extends App_Model
             // Loop mentioned staff
             foreach($mentioned_staffs as $staff) {
                 $telegram_id = get_user_telegram_id($staff["staffid"]);
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' .
-                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' .  $content;
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just mentioned you in a task </strong>' . PHP_EOL.
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' . PHP_EOL.  $content;
                 $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
                 $params = [
                     'chat_id' => $telegram_id,
@@ -1122,8 +1122,8 @@ class Tasks_model extends App_Model
         // Loop notified staffs
         foreach($notified_staffs as $staff) {
             $telegram_id = get_user_telegram_id($staff["staffid"]);
-            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' .
-                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' . $content ;
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' . PHP_EOL.
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'. PHP_EOL . $content ;
                 $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
                 $params = [
                     'chat_id' => $telegram_id, 
@@ -1376,16 +1376,16 @@ class Tasks_model extends App_Model
          $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
                          
             if($type == 'assigned') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>' .
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>' . PHP_EOL.
             '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';         
             } elseif ($type == 'remove_assignee') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you from a task </strong>' .
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you from a task </strong>' . PHP_EOL.
                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
             } elseif ($type == 'follow') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> added you to follow a task </strong>' .
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> added you to follow a task </strong>' . PHP_EOL.
                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
             } elseif ($type == 'remove_follow') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you to follow a task </strong>' .
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you to follow a task </strong>' . PHP_EOL.
                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
             }
 
@@ -1864,7 +1864,7 @@ class Tasks_model extends App_Model
         foreach($notified_staffs as $staff) {
             $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
             $telegram_id = get_user_telegram_id($staff["staffid"]);
-            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . '<u>' . $task_old_status . '</u>' . ' ⟶ ' . '<u>' .$task_new_status . '/<u>' .
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . '<u>' . $task_old_status . '</u>' . ' ⟶ ' . '<u>' .$task_new_status . '/<u>'. PHP_EOL.
            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';
             $website = "https://api.telegram.org/bot1550514615:AAHNJ8D3qYcjRQ7MODPi8TgMIxGKimkEWUc/sendMessage"; 
             $params = [
