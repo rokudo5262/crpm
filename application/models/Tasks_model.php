@@ -1386,11 +1386,10 @@ class Tasks_model extends App_Model
             } elseif ($type == 'follow') {
                 $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> added you to follow a task </strong>' . PHP_EOL.
                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
-            } elseif ($type == 'remove_follow') {
+            } elseif ($type == 'remove_follower') {
                 $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you to follow a task </strong>' . PHP_EOL.
                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
             }
-
              $params = [
                  'chat_id' => $chatId, 
                  'parse_mode' => 'html', 
@@ -1742,9 +1741,14 @@ class Tasks_model extends App_Model
      */
     public function remove_follower($id, $taskid)
     {
-        $this->db->where('id', $id);
-        $this->db->delete(db_prefix() . 'task_followers');            
+        // Get user id
+        $this->db->where('taskid', $taskid);
+        $task = $this->db->get(db_prefix() . 'task_followers')->row();
+        
+         $this->db->where('id', $id);
+         $this->db->delete(db_prefix() . 'task_followers'); 
         if ($this->db->affected_rows() > 0) {
+            $this->_send_task_responsible_users_notification_telegram($taskid,'remove_follower',$task->staffid);
             return true;
         }
 
