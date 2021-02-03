@@ -37,9 +37,10 @@
 
 <div class="project-filter-wrapper btn-group pull-left mleft10 mbot25">
     <select id="project-filter" data-width="300px" multiple>
+        <option class="none_project_related display-order-0" value="-1"><?php echo strtoupper(_l('task_none_project_related')) ?></option>
         <?php foreach($tasks_filter_projects as $index => $tf_project) {
         ?>
-        <option class="display-order-<?php echo $index ?>" value="<?php echo $tf_project['id'] ?>"><?php echo $tf_project['name'] ?></option>
+        <option class="display-order-<?php echo $index+1 ?>" value="<?php echo $tf_project['id'] ?>"><?php echo $tf_project['name'] ?></option>
         <?php } ?>
     </select>
 </div>
@@ -81,11 +82,6 @@
         <li class="not_assigned" data-filter-group="assigned-following-unassigned">
             <a href="#" data-cview="not_assigned" onclick="kb_custom_view('not_assigned','not_assigned'); return false;">
                 <?php echo _l('task_list_not_assigned'); ?>
-            </a>
-        </li>
-        <li class="none_project_related" data-filter-group="assigned-following-unassigned">
-            <a href="#" data-cview="none_project_related" onclick="kb_custom_view('none_project_related','none_project_related'); return false;">
-                <?php echo _l('task_none_project_related'); ?>
             </a>
         </li>
         <div class="clearfix"></div>

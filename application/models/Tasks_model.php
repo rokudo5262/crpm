@@ -206,13 +206,20 @@ class Tasks_model extends App_Model
 
         // Filter by "Projects"
         if(isset($where['projects'])) {
-            $this->db->where(["rel_type" => 'project']);
             $projects_filter_arr = explode(",",urldecode($where['projects']));
             $this->db->group_start();
             foreach($projects_filter_arr as $project_filter) {
+                // Check if there is non-related project filter included
+                if($project_filter == -1) {
+                    $this->db->or_where(["rel_id" => NULL]);
+                    continue;
+                }
                 $this->db->or_where(["rel_id" => $project_filter]);
             }
             $this->db->group_end();
+            // If there is non-related project filter included then rel_type will eventually will be NULL
+            if(!in_array(-1, $projects_filter_arr))
+                $this->db->where(["rel_type" => 'project']);
         }
 
         // Filter by "Unassigned tasks"
@@ -228,11 +235,6 @@ class Tasks_model extends App_Model
         // Filter by "Task i'm following"
         if(isset($where['my_following_task_filter'])) {
             $this->db->where($where['my_following_task_filter'] . ' IN (SELECT staffid FROM ' . db_prefix() . 'task_followers WHERE taskid = ' . db_prefix() . 'tasks.id)');
-        }
-
-        // Filter by "None project related"
-        if(isset($where['none_project_related'])) {
-            $this->db->where('rel_id IS NULL', NULL, FALSE);
         }
 
         // Filter by "Departments"
@@ -279,8 +281,8 @@ class Tasks_model extends App_Model
         }
 
         $this->db->order_by('kanban_order', 'asc');
-        // print_r($this->db->get_compiled_select());
-        // die;
+//        print_r($this->db->get_compiled_select());
+//        die;
 
         if ($count == false) {
             if ($page > 1) {

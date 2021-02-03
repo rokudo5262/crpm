@@ -23,14 +23,15 @@ $( document ).ready(function() {
      });
 
     // Initialize "Project select" filter (Bootstrap Select)
-    var project_filter_select_options = {
+    const project_filter_select_options = {
         liveSearch: true,
         actionsBox: true,
         noneSelectedText: 'Projects Filter',
         style: '',
         styleBase: 'form-control'
     };
-    $('#project-filter').selectpicker(project_filter_select_options);
+    const project_filter = $('#project-filter');
+    project_filter.selectpicker(project_filter_select_options);
 
     $('.bs-select-all').on('click', function() {
         var option_el = $('#project-filter > option');
@@ -45,7 +46,7 @@ $( document ).ready(function() {
     });
 
     // Event on project select and Project filter reload after page refresh
-    $('#project-filter').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+    project_filter.on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
         var option_el = $('#project-filter > option.display-order-' + clickedIndex);
         if(isSelected)
             option_el.addClass("selected");
@@ -65,25 +66,25 @@ function load_saved_filter() {
     var filters = JSON.parse(localStorage.getItem("kanban_filter"));
     $.each(filters, function(index, value) {
         if(typeof(value) == 'object') {
-            if(index == 'task_statuses')
+            if(index === 'task_statuses')
                 $.each(value, function() {
                     $('li.' + $(this)[0]).addClass('active');
                 });
-            if(index == 'departments') {
+            if(index === 'departments') {
                 $('li.department-filter').addClass('active');
                 for(var i = 0; i < value.length; i++) {
                     $('li.' + value[i]).addClass('active');
                 }
             }
-            else if(index == 'assigned') {
+            else if(index === 'assigned') {
                 $('li.assigned-filter').addClass('active');
                 for(var i = 0; i < value.length; i++) {
                     $('li.' + value[i]).addClass('active');
                 }
             }
-            else if(index == 'my_following_tasks')
+            else if(index === 'my_following_tasks')
                 $('li.my_following_tasks').addClass('active');
-            else if(index == 'projects') {
+            else if(index === 'projects') {
                 $('#project-filter').selectpicker('val', value);
                 for(var i = 0; i < value.length; i++) {
                     var option_el = $('select#project-filter option[value=' + value[i] + ']');
@@ -153,7 +154,10 @@ function update_storage_filter() {
     if(typeof (projects) != 'undefined' && projects.length > 0) {
         projects_arr = [];
         $.each(projects, function() {
-            projects_arr.push($(this).val());
+            if($(this).hasClass('none_project_related'))
+                projects_arr.push(-1);
+            else
+                projects_arr.push($(this).val());
         });
         filters["projects"] = projects_arr;
     }
@@ -205,11 +209,8 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
     $('input[name="' + name + '"]').val(value);
 
     // Only active one filter in "assigned-following-unassigned" (afu) filter group
-    // var afu_filter_group_lis = $('li[data-filter-group=assigned-following-unassigned].active').not('.none_project_related');
-    // $.each(afu_filter_group_lis, function() {
-    //     if(!$(this).hasClass(custom_input_name))
-    //         $(this).removeClass('active');
-    // })
+    var afu_filter_group_lis = $('li[data-filter-group=assigned-following-unassigned].active').not('.' + custom_input_name);
+    afu_filter_group_lis.removeClass('active');
 
     // Add "active" class to "All" filter if condition met
     if($('li.task-statuses-filter').not('.active').length == 0
@@ -306,11 +307,6 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
     var not_assigned = $('li.not_assigned.active').val();
     if (typeof (not_assigned) != 'undefined' && not_assigned !== '') {
         parameters['not_assigned'] = true;
-    }
-
-    var none_project_related = $('li.none_project_related.active').val();
-    if (typeof (none_project_related) != 'undefined' && none_project_related !== '') {
-        parameters['none_project_related'] = true;
     }
 
     var department_ids = [];
