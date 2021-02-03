@@ -40,21 +40,9 @@ function add_custom_task_status($current_statuses){
 }
 
 function get_user_telegram_id($staff_id) {
-    $CI = & get_instance();
-    // Check if Telegram ID custom field exists
-    $CI->db->where('slug', 'staff_telegram_user_id');
-    $telegram_customfield_row = $CI->db->get( db_prefix() . 'customfields' )->first_row();
-    if(!empty($telegram_customfield_row)) {
-        $telegram_customfield_id = $telegram_customfield_row->id;
-    } else {
-        return 0;
-    }
-    
-    // Get user telegram ID
-    $CI->db->where(['fieldid' => $telegram_customfield_id, 'relid' => get_staff_user_id()]);
-    $telegram_staff_row = $CI->db->get( db_prefix() . 'customfieldsvalues')->first_row();
-    if(!empty($telegram_staff_row)) {
-        return $telegram_staff_row->value;
-    }
-    return 0;
+    return get_custom_field_value($staff_id, 'staff_telegram_user_id', 'staff');
+}
+function get_telegram_url(){
+    $url = 'https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage';
+    return $url;
 }

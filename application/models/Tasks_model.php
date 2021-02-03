@@ -1102,9 +1102,10 @@ class Tasks_model extends App_Model
             // Loop mentioned staff
             foreach($mentioned_staffs as $staff) {
                 $telegram_id = get_user_telegram_id($staff["staffid"]);
+                $hr = '_____';
                 $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just mentioned you in a task </strong>' . PHP_EOL.
-                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' . PHP_EOL.  $content;
-                $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' . PHP_EOL. $hr . PHP_EOL . $content;
+                $website = get_telegram_url();
                 $params = [
                     'chat_id' => $telegram_id,
                     'parse_mode' => 'html', 
@@ -1122,9 +1123,10 @@ class Tasks_model extends App_Model
         // Loop notified staffs
         foreach($notified_staffs as $staff) {
             $telegram_id = get_user_telegram_id($staff["staffid"]);
+            $hr = '_____';
             $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' . PHP_EOL.
-                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'. PHP_EOL . $content ;
-                $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'. PHP_EOL . $hr . PHP_EOL .$content ;
+                $website = get_telegram_url();
                 $params = [
                     'chat_id' => $telegram_id, 
                     'parse_mode' => 'html', 
@@ -1376,7 +1378,7 @@ class Tasks_model extends App_Model
          $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
                          
             if($type == 'assigned') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>' . PHP_EOL.
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>'. PHP_EOL.
             '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';         
             } elseif ($type == 'remove_assignee') {
                 $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you from a task </strong>' . PHP_EOL.
@@ -1394,7 +1396,7 @@ class Tasks_model extends App_Model
                  'parse_mode' => 'html', 
                  'text' => $text,
              ];
-             $website = "https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage";
+             $website = get_telegram_url();
              $ch = curl_init($website);
              curl_setopt($ch, CURLOPT_HEADER, false);
              curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1865,8 +1867,8 @@ class Tasks_model extends App_Model
             $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
             $telegram_id = get_user_telegram_id($staff["staffid"]);
             $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . '<u>' . $task_old_status . '</u>' . ' ⟶ ' . '<u>' .$task_new_status . '/<u>'. PHP_EOL.
-           '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';
-            $website = "https://api.telegram.org/bot1550514615:AAHNJ8D3qYcjRQ7MODPi8TgMIxGKimkEWUc/sendMessage"; 
+           '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'; 
+            $website = get_telegram_url();
             $params = [
                 'chat_id' => $telegram_id, 
                 'parse_mode' => 'html', 
