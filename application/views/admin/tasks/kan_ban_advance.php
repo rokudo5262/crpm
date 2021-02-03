@@ -34,6 +34,10 @@ if($this->input->get('task_statuses')) {
   $where['task_statuses'] = $this->input->get('task_statuses');
 }
 
+if($this->input->get('none_project_related')) {
+  $where['none_project_related'] = $this->input->get('none_project_related');
+}
+
 $this->session->set_userdata("kanban_filters", serialize($where));
 
 if(!empty($this->input->get('task_statuses'))) {

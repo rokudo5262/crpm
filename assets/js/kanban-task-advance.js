@@ -205,11 +205,11 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
     $('input[name="' + name + '"]').val(value);
 
     // Only active one filter in "assigned-following-unassigned" (afu) filter group
-    var afu_filter_group_lis = $('li[data-filter-group=assigned-following-unassigned].active');
-    $.each(afu_filter_group_lis, function() {
-        if(!$(this).hasClass(custom_input_name))
-            $(this).removeClass('active');
-    })
+    // var afu_filter_group_lis = $('li[data-filter-group=assigned-following-unassigned].active').not('.none_project_related');
+    // $.each(afu_filter_group_lis, function() {
+    //     if(!$(this).hasClass(custom_input_name))
+    //         $(this).removeClass('active');
+    // })
 
     // Add "active" class to "All" filter if condition met
     if($('li.task-statuses-filter').not('.active').length == 0
@@ -306,6 +306,11 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
     var not_assigned = $('li.not_assigned.active').val();
     if (typeof (not_assigned) != 'undefined' && not_assigned !== '') {
         parameters['not_assigned'] = true;
+    }
+
+    var none_project_related = $('li.none_project_related.active').val();
+    if (typeof (none_project_related) != 'undefined' && none_project_related !== '') {
+        parameters['none_project_related'] = true;
     }
 
     var department_ids = [];

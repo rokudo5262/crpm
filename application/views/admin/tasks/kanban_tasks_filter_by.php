@@ -83,6 +83,11 @@
                 <?php echo _l('task_list_not_assigned'); ?>
             </a>
         </li>
+        <li class="none_project_related" data-filter-group="assigned-following-unassigned">
+            <a href="#" data-cview="none_project_related" onclick="kb_custom_view('none_project_related','none_project_related'); return false;">
+                <?php echo _l('task_none_project_related'); ?>
+            </a>
+        </li>
         <div class="clearfix"></div>
         <li class="divider"></li>
         <?php if (has_permission('tasks', '', 'view')) { ?>

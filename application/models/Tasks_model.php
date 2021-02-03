@@ -230,6 +230,11 @@ class Tasks_model extends App_Model
             $this->db->where($where['my_following_task_filter'] . ' IN (SELECT staffid FROM ' . db_prefix() . 'task_followers WHERE taskid = ' . db_prefix() . 'tasks.id)');
         }
 
+        // Filter by "None project related"
+        if(isset($where['none_project_related'])) {
+            $this->db->where('rel_id IS NULL', NULL, FALSE);
+        }
+
         // Filter by "Departments"
         if(isset($where['departments'])) {
             $department_arr = explode(',', urldecode($where['departments']));
