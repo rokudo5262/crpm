@@ -1101,7 +1101,7 @@ class Tasks_model extends App_Model
         if($is_mentioned) {
             // Loop mentioned staff
             foreach($mentioned_staffs as $staff) {
-                $telegram_id = get_user_telegram_id($staff["staffid"]);
+                $telegram_id = get_user_telegram_id($staff);
                 $hr = '_____';
                 $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just mentioned you in a task </strong>' . PHP_EOL.
                  '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>' . PHP_EOL. $hr . PHP_EOL . $content;
@@ -1870,7 +1870,7 @@ class Tasks_model extends App_Model
         foreach($notified_staffs as $staff) {
             $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
             $telegram_id = get_user_telegram_id($staff["staffid"]);
-            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . '<u>' . $task_old_status . '</u>' . ' ⟶ ' . '<u>' .$task_new_status . '/<u>'. PHP_EOL.
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> transition a Task from </strong>' . '<u>' . $task_old_status . '</u>' . ' ⟶ ' . '<u>' .$task_new_status . '</u>'. PHP_EOL.
            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'; 
             $website = get_telegram_url();
             $params = [
