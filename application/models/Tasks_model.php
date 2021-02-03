@@ -1053,7 +1053,7 @@ class Tasks_model extends App_Model
     }
 
     /**
-     * Slack notification for comments or mentions
+     * Telegram notification for comments or mentions
      * @param int $task_id
      * @param string $content
      * @param bool $is_mentioned
@@ -1363,46 +1363,45 @@ class Tasks_model extends App_Model
         return false;
     }
     public function _send_task_responsible_users_notification_telegram($task_id,$type,$staff_id) {
-          // Get current staff id
-         $current_staff_id = get_staff_user_id();
-         $current_staff_name = get_staff_full_name();
- 
-         // Get task info
-         $this->db->select('id,name,status');
-         $this->db->where('id', $task_id);
-         $task_info = $this->db->get(db_prefix() . 'tasks')->row_array();
-         
-         // Get telegram ID 
-         $chatId = get_user_telegram_id($staff_id);
+        // Get current staff id
+        $current_staff_id = get_staff_user_id();
+        $current_staff_name = get_staff_full_name();
 
-         $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
-                         
-            if($type == 'assigned') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>'. PHP_EOL.
-            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';         
-            } elseif ($type == 'remove_assignee') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you from a task </strong>' . PHP_EOL.
-                '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
-            } elseif ($type == 'follow') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> added you to follow a task </strong>' . PHP_EOL.
-                '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
-            } elseif ($type == 'remove_follower') {
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you to follow a task </strong>' . PHP_EOL.
-                '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
-            }
-             $params = [
-                 'chat_id' => $chatId, 
-                 'parse_mode' => 'html', 
-                 'text' => $text,
-             ];
-             $website = get_telegram_url();
-             $ch = curl_init($website);
-             curl_setopt($ch, CURLOPT_HEADER, false);
-             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-             curl_setopt($ch, CURLOPT_POST, 1);
-             curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
-             $result = curl_exec($ch);
-             curl_close($ch);         
+        // Get task info
+        $this->db->select('id,name,status');
+        $this->db->where('id', $task_id);
+        $task_info = $this->db->get(db_prefix() . 'tasks')->row_array();
+
+        // Get telegram ID 
+        $chatId = get_user_telegram_id($staff_id);
+
+        $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
+        if($type == 'assigned') {
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>'. PHP_EOL.
+        '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';         
+        } elseif ($type == 'remove_assignee') {
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you from a task </strong>' . PHP_EOL.
+            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
+        } elseif ($type == 'follow') {
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> added you to follow a task </strong>' . PHP_EOL.
+            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
+        } elseif ($type == 'remove_follower') {
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you to follow a task </strong>' . PHP_EOL.
+            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
+        }
+        $params = [
+            'chat_id' => $chatId, 
+            'parse_mode' => 'html', 
+            'text' => $text,
+        ];
+        $website = get_telegram_url();
+        $ch = curl_init($website);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+        $result = curl_exec($ch);
+        curl_close($ch);
     }
     /**
      * Get all task attachments
