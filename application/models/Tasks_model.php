@@ -212,6 +212,7 @@ class Tasks_model extends App_Model
                 // Check if there is non-related project filter included
                 if($project_filter == -1) {
                     $this->db->or_where(["rel_id" => NULL]);
+                    $this->db->or_where("rel_type != 'project'");
                     continue;
                 }
                 $this->db->or_where(["rel_id" => $project_filter]);
