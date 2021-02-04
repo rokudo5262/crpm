@@ -1283,7 +1283,14 @@ class Tasks_model extends App_Model
                 'staff_id' => $data['follower'],
                 'task_id'  => $data['taskid'],
             ]);
-            $this->_send_task_responsible_users_notification_telegram($data['taskid'],'follow',$data['follower']);
+
+            // Get current user id
+            $current_staff_id = get_staff_user_id();
+            
+            if($current_staff_id != $data['follower']) {
+                $this->_send_task_responsible_users_notification_telegram($data['taskid'],'follow',$data['follower']);
+            }
+            
             return true;
         }
 
@@ -1368,7 +1375,13 @@ class Tasks_model extends App_Model
                 'staff_id' => $assigneeId,
                 'task_id'  => $data['taskid'],
             ]);
-            $this->_send_task_responsible_users_notification_telegram($data['taskid'],'assigned',$data['assignee']);             
+
+            // Get current user id
+            $current_staff_id = get_staff_user_id();
+            
+            if($current_staff_id != $data['assignee']) {
+                $this->_send_task_responsible_users_notification_telegram($data['taskid'],'assigned',$data['assignee']);
+            }                         
             return $assigneeId;
         }
 
@@ -1731,14 +1744,21 @@ class Tasks_model extends App_Model
         $this->db->where('end_time IS NULL');
         $this->db->update(db_prefix() . 'taskstimers', ['end_time' => time()]);
 
+        // Get current user id
+        $current_staff_id = get_staff_user_id();
+
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'task_assigned');
         if ($this->db->affected_rows() > 0) {
             if ($task->rel_type == 'project') {
                 $this->projects_model->log_activity($task->rel_id, 'project_activity_task_assignee_removed', $task->name . ' - ' . get_staff_full_name($assignee_data->staffid), $task->visible_to_client);
             }
-           $this->_send_task_responsible_users_notification_telegram($taskid,'remove_assignee',$assignee_data->staffid);
-            return true;
+
+            if($current_staff_id != $assignee_data->staffid) {
+                $this->_send_task_responsible_users_notification_telegram($taskid,'remove_assignee',$assignee_data->staffid);
+            }
+            
+           return true;
         }
 
         return false;
@@ -1755,11 +1775,16 @@ class Tasks_model extends App_Model
         // Get user id
         $this->db->where('taskid', $taskid);
         $task = $this->db->get(db_prefix() . 'task_followers')->row();
-        
+
+        // Get current user id
+        $current_staff_id = get_staff_user_id();
+
          $this->db->where('id', $id);
          $this->db->delete(db_prefix() . 'task_followers'); 
         if ($this->db->affected_rows() > 0) {
-            $this->_send_task_responsible_users_notification_telegram($taskid,'remove_follower',$task->staffid);
+            if($current_staff_id != $task->staffid) {
+                $this->_send_task_responsible_users_notification_telegram($taskid,'remove_follower',$task->staffid);
+            }
             return true;
         }
 
