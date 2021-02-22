@@ -148,73 +148,7 @@ class Tasks extends AdminController
             hooks()->do_action('after_update_task', $id);
 
             // Send notification via telegram
-            $this->_send_task_decription_notification_telegram($id);
-        }
-    }
-
-    public function _send_task_decription_notification_telegram($task_id) {
-        // Get current staff id
-        $current_staff_id = get_staff_user_id();
-        $current_staff_name = get_staff_full_name();
-
-        // Get task info
-        $this->db->select('id,name,status,description');
-        $this->db->where('id', $task_id);
-        $task_info = $this->db->get(db_prefix() . 'tasks')->row_array();
-        $content = $task_info['description'];
-
-        // Get task assignees
-        $this->db->select('staffid');
-        $this->db->where('taskid', $task_id);
-        $this->db->where('staffid !=', get_staff_user_id());
-        $task_assignees = $this->db->get(db_prefix() . 'task_assigned')->result_array();
-
-        // Get task followers
-        $this->db->select('staffid');
-        $this->db->where('taskid', $task_id);
-        $this->db->where('staffid !=', get_staff_user_id());
-        $task_followers = $this->db->get(db_prefix() . 'task_followers')->result_array();
-
-        // Defined staffs that will be notified
-        $notified_staffs = [];
-        foreach($task_assignees as $staff) {
-            $notified_staffs[] = $staff;
-        }
-        foreach($task_followers as $staff) {
-            if(in_array($staff, $notified_staffs))
-                continue;
-            $notified_staffs[] = $staff;
-        }
-
-        // Minify content to 240 characters maximum
-        if(strlen($content) > 240)
-            $content = strip_tags(substr($content, 0, 240)) . '...';
-        $content = html_entity_decode($content);
-
-        $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
-
-        // Loop notified staffs
-        foreach($notified_staffs as $staff) {      
-            
-            $telegram_id = get_user_telegram_id($staff["staffid"]);
-            $hr = '_____';
-                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has updated decription on a task </strong>' . PHP_EOL.
-                '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'. PHP_EOL . $hr . PHP_EOL . strip_tags($content) ;
-            
-                $website = get_telegram_url();
-                $params = [
-                    'chat_id' => $telegram_id,
-                    'parse_mode' => 'html', 
-                    'text' => $text,
-                ];
-                $ch = curl_init($website);
-                curl_setopt($ch, CURLOPT_HEADER, false);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
-                $result = curl_exec($ch);
-                curl_close($ch);
-            
+            $this->tasks_model->_send_task_update_notification_telegram($id);
         }
     }
 
@@ -419,6 +353,7 @@ class Tasks extends AdminController
                 $message = '';
                 if ($success) {
                     $message = _l('updated_successfully', _l('task'));
+                    $this->tasks_model->_send_task_update_notification_telegram($id);
                 }
                 echo json_encode([
                     'success' => $success,
@@ -626,6 +561,11 @@ class Tasks extends AdminController
         $this->db->update(db_prefix() . 'task_checklist_items', [
             'finished' => $value,
         ]);
+        
+        // Get task info
+        $this->db->select('id,taskid');
+        $this->db->where('id', $listid);
+        $task_info = $this->db->get(db_prefix() . 'task_checklist_items')->row_array();
 
         if ($this->db->affected_rows() > 0) {
             if ($value == 1) {
@@ -634,6 +574,11 @@ class Tasks extends AdminController
                     'finished_from' => get_staff_user_id(),
                 ]);
                 hooks()->do_action('task_checklist_item_finished', $listid);
+                // send a notification when checklist
+                $this->tasks_model->_send_task_update_notification_telegram($task_info['taskid']);               
+            } else {
+                 // send a notification when undo checklist
+                $this->tasks_model->_send_task_update_notification_telegram($task_info['taskid']);
             }
         }
     }
