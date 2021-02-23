@@ -1064,14 +1064,78 @@ class Tasks_model extends App_Model
 
         return $this->db->get(db_prefix() . 'tasks')->row()->addedfrom;
     }
+    
+    public function _send_task_update_notification_telegram($task_id) {
+        // Get current staff id
+        $current_staff_id = get_staff_user_id();
+        $current_staff_name = get_staff_full_name();
 
+        // Get task info
+        $this->db->select('id,name,status,description');
+        $this->db->where('id', $task_id);
+        $task_info = $this->db->get(db_prefix() . 'tasks')->row_array();
+        $content = $task_info['description'];
+
+        // Get task assignees
+        $this->db->select('staffid');
+        $this->db->where('taskid', $task_id);
+        $this->db->where('staffid !=', get_staff_user_id());
+        $task_assignees = $this->db->get(db_prefix() . 'task_assigned')->result_array();
+
+        // Get task followers
+        $this->db->select('staffid');
+        $this->db->where('taskid', $task_id);
+        $this->db->where('staffid !=', get_staff_user_id());
+        $task_followers = $this->db->get(db_prefix() . 'task_followers')->result_array();
+
+        // Defined staffs that will be notified
+        $notified_staffs = [];
+        foreach($task_assignees as $staff) {
+            $notified_staffs[] = $staff;
+        }
+        foreach($task_followers as $staff) {
+            if(in_array($staff, $notified_staffs))
+                continue;
+            $notified_staffs[] = $staff;
+        }
+
+        // Minify content to 240 characters maximum
+        if(strlen($content) > 240)
+            $content = strip_tags(substr($content, 0, 240)) . '...';
+        $content = html_entity_decode($content);
+
+        $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
+
+        // Loop notified staffs
+        foreach($notified_staffs as $staff) {      
+            
+            $telegram_id = get_user_telegram_id($staff["staffid"]);
+            $hr = '_____';
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has updated a task </strong>' . PHP_EOL.
+            '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';            
+            $website = get_telegram_url();
+            $params = [
+                'chat_id' => $telegram_id,
+                'parse_mode' => 'html', 
+                'text' => $text,
+                ];
+                $ch = curl_init($website);
+                curl_setopt($ch, CURLOPT_HEADER, false);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
+                $result = curl_exec($ch);
+                curl_close($ch);
+            
+        }
+    }
     /**
      * Telegram notification for comments or mentions
      * @param int $task_id
      * @param string $content
      * @param bool $is_mentioned
      */
-    public function _send_task_comment_notification_telegram($task_id, $content, $comment_id, $is_mentioned = false, $mentioned_staffs = []) {
+    public function _send_task_comment_notification_telegram($task_id, $content, $comment_id, $is_mentioned = false, $mentioned_staffs = [],$type) {
         // Get current staff id
         $current_staff_id = get_staff_user_id();
         $current_staff_name = get_staff_full_name();
@@ -1137,8 +1201,18 @@ class Tasks_model extends App_Model
         foreach($notified_staffs as $staff) {
             $telegram_id = get_user_telegram_id($staff["staffid"]);
             $hr = '_____';
-            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' . PHP_EOL.
+            if($type == 'update_comment') {
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has updated comment on a task </strong>' . PHP_EOL.
                  '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'. PHP_EOL . $hr . PHP_EOL .$content ;
+            } else if($type == 'add_comment') {
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> just commented on a task </strong>' . PHP_EOL.
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>'. PHP_EOL . $hr . PHP_EOL .$content ;
+            } elseif ($type == 'remove_comment') {
+                $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed a comment on a task </strong>' . PHP_EOL.
+                 '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';
+            }
+            
+            if($type != 'mention' && $type != 'update_comment_mention') {
                 $website = get_telegram_url();
                 $params = [
                     'chat_id' => $telegram_id, 
@@ -1152,6 +1226,7 @@ class Tasks_model extends App_Model
                 curl_setopt($ch, CURLOPT_POSTFIELDS, ($params));
                 $result = curl_exec($ch);
                 curl_close($ch);
+            }
         }
     }
 
@@ -1196,7 +1271,7 @@ class Tasks_model extends App_Model
 
             $regex = "/data\-mention\-id\=\"(\d+)\"/";
             if (preg_match_all($regex, $data['content'], $mentionedStaff, PREG_PATTERN_ORDER)) {
-                $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id, true, $mentionedStaff[1]);
+                $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id, true, $mentionedStaff[1], 'mention');
                 $this->_send_task_mentioned_users_notification($description,
                     $data['taskid'],
                     $mentionedStaff[1],
@@ -1205,7 +1280,8 @@ class Tasks_model extends App_Model
                     $insert_id
                 );
             } else {
-                $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id);
+                $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id, false,$mentionedStaff =[],'add_comment');
+
                 $this->_send_task_responsible_users_notification($description,
                     $data['taskid'],
                     false,
@@ -1403,7 +1479,7 @@ class Tasks_model extends App_Model
 
         $current_staff_url = site_url("admin/staff/member/" . $current_staff_id);
         if($type == 'assigned') {
-            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you. </strong>'. PHP_EOL.
+            $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> assigned a task to you </strong>'. PHP_EOL.
         '<a href="' .site_url('admin/tasks/view/') . $task_info['id'] . '">' . $task_info["name"] . '</a>';         
         } elseif ($type == 'remove_assignee') {
             $text = '<a href="' . $current_staff_url . '">@' . $current_staff_name . '</a>' . '<strong> has removed you from a task </strong>' . PHP_EOL.
@@ -1662,7 +1738,14 @@ class Tasks_model extends App_Model
                         'comment_id' => $comment->id,
                         'task_id'    => $comment->taskid,
                     ]);
-
+                    $regex = "/data\-mention\-id\=\"(\d+)\"/";
+                    if (preg_match_all($regex, $data['content'], $mentionedStaff, PREG_PATTERN_ORDER)) {
+                        $this->_send_task_comment_notification_telegram($comment->taskid, _strip_tags($data['content']), $comment->id, true, $mentionedStaff[1], 'update_comment_mention');
+                        
+                    } else {
+                        $this->_send_task_comment_notification_telegram($comment->taskid,$data['content'],$comment->id,false,$mentioned_staffs = [],'update_comment');
+                    }
+                    
                     return true;
                 }
             } else {
@@ -1708,6 +1791,8 @@ class Tasks_model extends App_Model
                     }
 
                     hooks()->do_action('task_comment_deleted', ['task_id' => $comment->taskid, 'comment_id' => $id]);
+
+                    $this->_send_task_comment_notification_telegram($comment->taskid, 'remove', $comment->taskid, false, $mentioned_staffs = [],'remove_comment');
 
                     return true;
                 }
