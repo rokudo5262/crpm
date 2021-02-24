@@ -209,9 +209,11 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
     $('input[name="' + name + '"]').val(value);
 
     // Only active one filter in "assigned-following-unassigned" (afu) filter group
-    var afu_filter_group_lis = $('li[data-filter-group=assigned-following-unassigned].active').not('.' + custom_input_name);
-    afu_filter_group_lis.removeClass('active');
-
+    if(custom_input_name !== '') {
+        var afu_filter_group_lis = $('li[data-filter-group=assigned-following-unassigned].active').not('.' + custom_input_name);
+        afu_filter_group_lis.removeClass('active');
+    }
+    
     // Add "active" class to "All" filter if condition met
     if($('li.task-statuses-filter').not('.active').length == 0
         && $('._filter_data li.active').not('.task-statuses-filter').length == 0)
