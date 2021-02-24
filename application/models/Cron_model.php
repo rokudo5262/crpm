@@ -1443,7 +1443,7 @@ class Cron_model extends App_Model
             try {
                 $connection = $imap->testConnection();
             } catch (ConnectionErrorException $e) {
-                log_activity('Failed to connect to IMAP auto importing tickets for department ' . $dept['email'] . '.');
+//                log_activity('Failed to connect to IMAP auto importing tickets for department ' . $dept['email'] . '.');
 
                 continue;
             }

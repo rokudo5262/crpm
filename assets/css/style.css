@@ -9226,3 +9226,8 @@ span.mention {
 body.kan-ban-body .dt-loader {
     display: none !important;
 }
+
+body.kan-ban-body .row._buttons {
+    margin-top: 10px;
+    margin-bottom: -10px;
+}

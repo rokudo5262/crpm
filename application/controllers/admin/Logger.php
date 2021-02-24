@@ -13,22 +13,23 @@ class Logger extends AdminController
 
     public function index($param = '')
     {
-        $chosen_ones = [
-            '41', // troy
-            '43', // khane
-            '47', // thomas
-            '51', // wall
-            '68', // leo
-            '79', // pobby
-            '70', // nami
-            '64', // tacy
-            '33', // mark
-            '66', //hildemar
-            '29', // vincent
+        // $chosen_ones = [
+        //     '41', // troy
+        //     '43', // khane
+        //     '47', // thomas
+        //     '51', // wall
+        //     '68', // leo
+        //     '79', // pobby
+        //     '70', // nami
+        //     '64', // tacy
+        //     '33', // mark
+        //     '66', //hildemar
+        //     '29', // vincent
+        //     '71' // Nora
 
-        ];
-        if(!in_array(get_staff_user_id(), $chosen_ones))
-            redirect(site_url('/admin'));
+        // ];
+        // if(!in_array(get_staff_user_id(), $chosen_ones))
+        //     redirect(site_url('/admin'));
 
         close_setup_menu();
 

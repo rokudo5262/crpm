@@ -38,3 +38,11 @@ function add_custom_task_status($current_statuses){
     // Return the statuses
     return $current_statuses;
 }
+
+function get_user_telegram_id($staff_id) {
+    return get_custom_field_value($staff_id, 'staff_telegram_user_id', 'staff');
+}
+function get_telegram_url(){
+    $url = 'https://api.telegram.org/bot1605810631:AAEK-7MQK1VVNkJq334IeQgOCfIi-OhmKZM/sendMessage';
+    return $url;
+}

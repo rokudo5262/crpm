@@ -17,10 +17,10 @@
         ?>
       </div>
 
-      <div class="col-md-4 text-muted mtop10" style="padding-right:0">
+      <div class="col-md-4 text-muted mtop10" style="padding-right:0; font-size:12px;">
         <span data-toggle="tooltip" data-title="Start date"><i class="fa fa-circle text-success"></i> <?php echo empty($task["startdate"]) ? "---" : $task["startdate"] ?></span>
      </div>
-     <div class="col-md-4 text-muted mtop10" style="padding-right:0; padding-left:10px;">
+     <div class="col-md-4 text-muted mtop10" style="padding-right:0; padding-left:10px; font-size:12px;">
       <span data-toggle="tooltip" data-title="Due date"><i class="fa fa-flag text-warning"></i> <?php echo empty($task["duedate"]) ? "---" : $task["duedate"] ?></span>
      </div>
      <div class="col-md-4 text-right text-muted mtop10">

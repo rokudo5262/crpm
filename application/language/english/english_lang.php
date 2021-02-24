@@ -3691,3 +3691,4 @@ $lang['email_to_ticket_config']          = 'Email to ticket configuration';
 $lang['by_department']          		 = 'By Department';
 $lang['filter_clear']          			 = 'Filter clear';
 $lang['kanban_refresh']          		 = 'Kanban refresh';
+$lang['task_none_project_related']		 = 'None Project related';

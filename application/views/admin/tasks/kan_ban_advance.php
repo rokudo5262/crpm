@@ -22,12 +22,20 @@ if($this->input->get('assigned')) {
   $where['assigned'] = $this->input->get('assigned');
 }
 
+if($this->input->get('not_assigned')) {
+  $where['not_assigned'] = $this->input->get('not_assigned');
+}
+
 if($this->input->get('projects')) {
   $where['projects'] = $this->input->get('projects');
 }
 
 if($this->input->get('task_statuses')) {
   $where['task_statuses'] = $this->input->get('task_statuses');
+}
+
+if($this->input->get('none_project_related')) {
+  $where['none_project_related'] = $this->input->get('none_project_related');
 }
 
 $this->session->set_userdata("kanban_filters", serialize($where));

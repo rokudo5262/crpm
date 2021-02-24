@@ -5086,7 +5086,6 @@ function unmark_complete(task_id) {
 
 // Mark task status
 function task_mark_as(status, task_id, url) {
-    console.log('mark');
     url = typeof (url) == 'undefined' ? 'tasks/mark_as/' + status + '/' + task_id : url;
     var taskModalVisible = $('#task-modal').is(':visible');
     url += '?single_task=' + taskModalVisible;
@@ -5094,7 +5093,6 @@ function task_mark_as(status, task_id, url) {
     requestGetJSON(url).done(function (response) {
         $("body").find('.dt-loader').remove();
         if (response.success === true || response.success == 'true') {
-            console.log(response);
             reload_tasks_tables();
             if (taskModalVisible) {
                 _task_append_html(response.taskHtml);
@@ -5292,7 +5290,7 @@ function task_form_handler(form) {
             init_task_modal(response.id);
             reload_tasks_tables();
             if ($('body').hasClass('kan-ban-body') && $('body').hasClass('tasks')) {
-                tasks_kanban();
+                tasks_kanban_advance();
             }
         } else {
             // reload page on project area

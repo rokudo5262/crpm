@@ -146,6 +146,9 @@ class Tasks extends AdminController
             $this->db->update(db_prefix() . 'tasks', $data);
 
             hooks()->do_action('after_update_task', $id);
+
+            // Send notification via telegram
+            $this->tasks_model->_send_task_update_notification_telegram($id);
         }
     }
 
@@ -350,6 +353,7 @@ class Tasks extends AdminController
                 $message = '';
                 if ($success) {
                     $message = _l('updated_successfully', _l('task'));
+                    $this->tasks_model->_send_task_update_notification_telegram($id);
                 }
                 echo json_encode([
                     'success' => $success,
@@ -557,6 +561,11 @@ class Tasks extends AdminController
         $this->db->update(db_prefix() . 'task_checklist_items', [
             'finished' => $value,
         ]);
+        
+        // Get task info
+        $this->db->select('id,taskid');
+        $this->db->where('id', $listid);
+        $task_info = $this->db->get(db_prefix() . 'task_checklist_items')->row_array();
 
         if ($this->db->affected_rows() > 0) {
             if ($value == 1) {
@@ -565,6 +574,11 @@ class Tasks extends AdminController
                     'finished_from' => get_staff_user_id(),
                 ]);
                 hooks()->do_action('task_checklist_item_finished', $listid);
+                // send a notification when checklist
+                $this->tasks_model->_send_task_update_notification_telegram($task_info['taskid']);               
+            } else {
+                 // send a notification when undo checklist
+                $this->tasks_model->_send_task_update_notification_telegram($task_info['taskid']);
             }
         }
     }
