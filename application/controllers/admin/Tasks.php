@@ -310,7 +310,8 @@ class Tasks extends AdminController
         }
         if ($this->input->post()) {
             $data                = $this->input->post();
-            $data['description'] = html_purify($this->input->post('description', false));
+            $data['description'] = $this->input->post('description', false);
+            $data['description'] = $this->save_image_and_replace_base64($data['description']);
             if ($id == '') {
                 if (!has_permission('tasks', '', 'create')) {
                     header('HTTP/1.0 400 Bad error');
@@ -349,6 +350,7 @@ class Tasks extends AdminController
                     ]);
                     die;
                 }
+                $data['description'] = $this->save_image_and_replace_base64($data['description']);
                 $success = $this->tasks_model->update($data, $id);
                 $message = '';
                 if ($success) {
@@ -651,20 +653,41 @@ class Tasks extends AdminController
             );
         }
     }
-
+    public function save_image_and_replace_base64($data)
+    {
+        $imgtag='/<img src="data:image[^>]+>/i';
+        if(preg_match_all($imgtag,$data)) {  
+            while(preg_match_all($imgtag, $data,$matchs, PREG_OFFSET_CAPTURE)) {
+                $el = $matchs[0][0];
+                list($value, $pos) = $el;
+                list(,$value) = explode('src="', $value);
+                list($first, $value) = explode('base64,', $value);
+                list($value, $last) = explode('"', $value);
+                $staff_data=$this->staff_model->get(get_staff_user_id(),['active'=>1]);
+                $folder=strtolower($staff_data->firstname).'-'.strtolower($staff_data->lastname);
+                if (!is_dir('./media/'.$folder)) {
+                    mkdir('./media/'.$folder);
+                }
+                $file = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),0,10);
+                $save = './media/'.$folder.'/'.$file.'.png';
+                file_put_contents($save, base64_decode($value));
+                $link = base_url().'media/'.$folder.'/'.$file.'.png';
+                $data = substr_replace($data, $link, $pos + 10, strlen($value) + strlen($first) + 7);
+            }
+        }
+        return $data;
+    } 
     /* Add new task comment / ajax */
     public function add_task_comment()
     {
         $data            = $this->input->post();
-        $data['content'] = html_purify($this->input->post('content', false));
+        $data['content'] = $this->input->post('content', false);
         if ($this->input->post('no_editor')) {
             $data['content'] = nl2br($this->input->post('content'));
         }
         $comment_id = false;
-        if (
-            $data['content'] != ''
-            || (isset($_FILES['file']['name']) && is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)
-        ) {
+        if ( $data['content'] != ''|| (isset($_FILES['file']['name']) && is_array($_FILES['file']['name']) && count($_FILES['file']['name']) > 0)) {
+            $data['content']=$this->save_image_and_replace_base64($data['content']);
             $comment_id = $this->tasks_model->add_task_comment($data);
             if ($comment_id) {
                 $commentAttachments = handle_task_attachments_array($data['taskid'], 'file');
@@ -673,7 +696,6 @@ class Tasks extends AdminController
                         $file['task_comment_id'] = $comment_id;
                         $this->misc_model->add_attachment_to_database($data['taskid'], 'task', [$file]);
                     }
-
                     if (count($commentAttachments) > 0) {
                         $this->db->query('UPDATE ' . db_prefix() . "task_comments SET content = CONCAT(content, '[task_attachment]')
                             WHERE id = " . $this->db->escape_str($comment_id));
@@ -743,10 +765,11 @@ class Tasks extends AdminController
     {
         if ($this->input->post()) {
             $data            = $this->input->post();
-            $data['content'] = html_purify($this->input->post('content', false));
+            $data['content'] = $this->input->post('content',false);
             if ($this->input->post('no_editor')) {
                 $data['content'] = nl2br(clear_textarea_breaks($this->input->post('content')));
             }
+            $data['content'] = $this->save_image_and_replace_base64($data['content']);
             $success = $this->tasks_model->edit_comment($data);
             $message = '';
             if ($success) {
