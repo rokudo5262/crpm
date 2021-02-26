@@ -658,21 +658,22 @@ class Tasks extends AdminController
         $imgtag='/<img src="data:image[^>]+>/i';
         if(preg_match_all($imgtag,$data)) {  
             while(preg_match_all($imgtag, $data,$matchs, PREG_OFFSET_CAPTURE)) {
-                $el = $matchs[0][0];
-                list($value, $pos) = $el;
-                list(,$value) = explode('src="', $value);
-                list($first, $value) = explode('base64,', $value);
-                list($value, $last) = explode('"', $value);
+                // save
+                list($value, $position) = $matchs[0][0];
+                list($first,$base64)= explode('base64,', $value);
+                list($base64,$last)= explode('"', $base64);
                 $staff_data=$this->staff_model->get(get_staff_user_id(),['active'=>1]);
                 $folder=strtolower($staff_data->firstname).'-'.strtolower($staff_data->lastname);
                 if (!is_dir('./media/'.$folder)) {
                     mkdir('./media/'.$folder);
                 }
-                $file = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),0,10);
-                $save = './media/'.$folder.'/'.$file.'.png';
-                file_put_contents($save, base64_decode($value));
-                $link = base_url().'media/'.$folder.'/'.$file.'.png';
-                $data = substr_replace($data, $link, $pos + 10, strlen($value) + strlen($first) + 7);
+                $file_name = substr(str_shuffle('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),0,15);
+                $save = './media/'.$folder.'/'.$file_name.'.png';
+                file_put_contents($save, base64_decode($base64));
+                // replace
+                $link = base_url().'media/'.$folder.'/'.$file_name.'.png';
+                $img = '<a href='.$link.' data-lightbox=kb-attachment><img src='.$link.'></a>';
+                $data = substr_replace($data, $img, $position, strlen($value));
             }
         }
         return $data;
@@ -704,6 +705,8 @@ class Tasks extends AdminController
             }
         }
         echo json_encode([
+            '1'=> $data['content'],
+            '2'=>$data['content'] ? true : false,
             'success'  => $comment_id ? true : false,
             'taskHtml' => $this->get_task_data($data['taskid'], true),
         ]);
