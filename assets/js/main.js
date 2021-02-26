@@ -3187,6 +3187,7 @@ function init_editor(selector, settings) {
     var _settings = {
         branding: false,
         selector: selector,
+        paste_data_images: true,
         browser_spellcheck: true,
         height: 400,
         theme: 'modern',
@@ -3223,7 +3224,7 @@ function init_editor(selector, settings) {
         ],
         toolbar1: 'fontselect fontsizeselect | forecolor backcolor | bold italic | alignleft aligncenter alignright alignjustify | image link | bullist numlist | restoredraft',
         file_browser_callback: elFinderBrowser,
-        contextmenu: "link image inserttable | cell row column deletetable | paste",
+        contextmenu: "link image inserttable | cell row column deletetable ",
     };
 
     // Add the rtl to the settings if is true
@@ -5602,6 +5603,7 @@ function edit_task_inline_description(e, id) {
     $.Shortcuts.stop();
     tinymce.init({
         selector: '#task_view_description',
+        paste_data_images: true,
         theme: 'inlite',
         skin: 'perfex',
         auto_focus: "task_view_description",
