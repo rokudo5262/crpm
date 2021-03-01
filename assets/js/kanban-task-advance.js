@@ -71,10 +71,15 @@ function load_saved_filter() {
                     $('li.' + $(this)[0]).addClass('active');
                 });
             if(index === 'departments') {
+                var department_ids = [];
                 $('li.department-filter').addClass('active');
                 for(var i = 0; i < value.length; i++) {
                     $('li.' + value[i]).addClass('active');
+                    var tmp = value[i][0];
+                    var department_id = tmp.replace('department_', '');
+                    department_ids.push(department_id);
                 }
+                load_assignee_list_by_departments(department_ids);
             }
             else if(index === 'assigned') {
                 $('li.assigned-filter').addClass('active');
@@ -207,6 +212,18 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
         value = "";
     }
     $('input[name="' + name + '"]').val(value);
+
+    // Reload assignee list according to Departments selected
+    if(custom_input_name.includes('department_')) {
+        var department_ids = [];
+        $.each($('._filter_data .department-filter ul li.active'), function() {
+            var department_li = $(this).find('a');
+            var department_id = department_li.attr('data-cview');
+            department_id = department_id.replace("department_", "");
+            department_ids.push(department_id);
+        });
+        load_assignee_list_by_departments(department_ids);
+    }
 
     // Only active one filter in "assigned-following-unassigned" (afu) filter group
     if(custom_input_name !== '') {
@@ -428,4 +445,13 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
         });
 
     }, 200);
+}
+
+function load_assignee_list_by_departments(department_ids = []) {
+    var url = admin_url + 'tasks/kanban_load_assigned_member/';
+    if(department_ids.length > 0) {
+        url += encodeURIComponent(department_ids.join());
+    }
+    console.log(url);
+    $('#assigned_member_list').load(url);
 }
