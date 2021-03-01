@@ -106,7 +106,7 @@
             <?php if (count($tasks_filter_assignees)) { ?>
                 <li class="dropdown-submenu assigned-filter pull-left">
                     <a href="#" tabindex="-1"><?php echo _l('filter_by_assigned'); ?></a>
-                    <ul class="dropdown-menu dropdown-menu-left">
+                    <ul class="dropdown-menu dropdown-menu-left" id="assigned_member_list">
                         <?php foreach ($tasks_filter_assignees as $as) { ?>
                             <li class="task_assigned_<?php echo $as['assigneeid']; ?>">
                                 <a href="#" data-cview="task_assigned_<?php echo $as['assigneeid']; ?>"

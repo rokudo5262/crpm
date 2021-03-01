@@ -10,6 +10,7 @@ class Tasks extends AdminController
     {
         parent::__construct();
         $this->load->model('projects_model');
+        $this->load->model('misc_model');
     }
 
     /* Open also all taks if user access this /tasks url */
@@ -1233,6 +1234,28 @@ class Tasks extends AdminController
             }, $members);
 
             echo json_encode($members);
+        }
+    }
+
+    public function kanban_load_assigned_member($department_ids_string = '') {
+        $department_ids = explode(',', urldecode($department_ids_string));
+        if(empty($department_ids_string)) {
+            $all_staffs = $this->misc_model->get_tasks_distinct_assignees();
+            $this->load->view('admin/tasks/assigned_member_list', ['tasks_filter_assignees' => $all_staffs]);
+        } else {
+            $where_condition = '';
+            if(count($department_ids) >= 1) {
+                $where_condition .= 'WHERE ';
+                $where_condition .= db_prefix() . "staff_departments.departmentid = " . $department_ids[0];
+                if(count($department_ids) > 1) {
+                    for($i = 1; $i < count($department_ids); $i++) {
+                        $where_condition .= " OR " . db_prefix() . "staff_departments.departmentid = " . $department_ids[$i];
+                    }
+                }
+            }
+            $query = "SELECT DISTINCT " . db_prefix() . "staff.staffid AS assigneeid, CONCAT(" . db_prefix() . "staff.firstname, ' ', " . db_prefix() . "staff.lastname) as full_name FROM " . db_prefix() . "staff JOIN " . db_prefix() . "staff_departments ON " . db_prefix() . "staff.staffid = " . db_prefix() . "staff_departments.staffid " . $where_condition . " ORDER BY tblstaff.firstname ASC";
+            $department_staffs = $this->db->query($query)->result_array();
+            $this->load->view('admin/tasks/assigned_member_list', ['tasks_filter_assignees' => $department_staffs, 'query' => $query]);
         }
     }
 }
