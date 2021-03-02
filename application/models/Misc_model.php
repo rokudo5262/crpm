@@ -399,7 +399,7 @@ class Misc_model extends App_Model
 
     public function get_tasks_distinct_assignees()
     {
-        return $this->db->query('SELECT DISTINCT(' . db_prefix() . "task_assigned.staffid) as assigneeid, CONCAT(firstname,' ',lastname) as full_name FROM " . db_prefix() . 'task_assigned JOIN ' . db_prefix() . 'staff ON ' . db_prefix() . 'staff.staffid=' . db_prefix() . 'task_assigned.staffid')->result_array();
+        return $this->db->query('SELECT DISTINCT(' . db_prefix() . "task_assigned.staffid) as assigneeid, CONCAT(firstname,' ',lastname) as full_name FROM " . db_prefix() . 'task_assigned JOIN ' . db_prefix() . 'staff ON ' . db_prefix() . 'staff.staffid=' . db_prefix() . 'task_assigned.staffid ORDER BY firstname ASC')->result_array();
     }
 
     public function get_google_calendar_ids()
