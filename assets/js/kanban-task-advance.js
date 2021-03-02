@@ -452,6 +452,5 @@ function load_assignee_list_by_departments(department_ids = []) {
     if(department_ids.length > 0) {
         url += encodeURIComponent(department_ids.join());
     }
-    console.log(url);
     $('#assigned_member_list').load(url);
 }
