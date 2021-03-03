@@ -201,7 +201,8 @@ class assets_model extends App_Model
             $data['unit_price'] = reformat_currency_asset($data['unit_price']);
         }
         if (!empty($data['date_buy'])) {
-            $data['date_buy']   = to_sql_date($data['date_buy']);
+            // $data['date_buy']   = to_sql_date($data['date_buy']);
+            $data['date_buy']=date('Y-m-d', strtotime($data['date_buy']));
         }
         $this->db->where('id', $id);
         $this->db->update(db_prefix().'assets', $data);

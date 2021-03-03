@@ -13,14 +13,14 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-3  ">
+                    <div class="col-sm-3 col-md-3">
                         <?php if (has_permission('recruitment', '', 'create') || is_admin()) {?>
                         <a href="#" onclick="new_campaign(); return false;" class="btn btn-info pull-left display-block">
                             <?php echo _l('new_campaign'); ?>
                         </a>
                         <?php }?>
                     </div>
-                    <div class=" col-md-3">
+                    <div class="col-sm-3 col-md-3">
                       <select name="department_filter[]" id="department_filter" class="selectpicker" multiple="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('filter_by_department'); ?>">
 
                           <?php foreach ($departments as $s) {?>
@@ -28,7 +28,7 @@
                             <?php }?>
                         </select>
                     </div>
-                    <div class=" col-md-3">
+                    <div class="col-sm-3 col-md-3">
                       <select name="position_filter[]" id="position_filter" class="selectpicker" data-live-search="true" multiple="true" data-width="100%" data-none-selected-text="<?php echo _l('filter_by_position'); ?>">
 
                           <?php foreach ($positions as $s) {?>
@@ -36,7 +36,7 @@
                             <?php }?>
                         </select>
                     </div>
-                    <div class=" col-md-2">
+                    <div class="col-sm-2 col-md-2">
                       <div class="form">
                       <select name="status_filter[]" id="status_filter" class="selectpicker" data-live-search="true" multiple="true" data-width="100%" data-none-selected-text="<?php echo _l('filter_by_status'); ?>">
 
