@@ -18,9 +18,9 @@
         </div>
         <?php $manager = explode(',', $campaigns->cp_manager);?>
 
-
     	</div>
 
+        <?php if(in_array(get_staff_user_id(), $manager) || is_admin()) : ?>
         <div class=" col-md-3 pull-right">
           <select name="change_status" id="change_status" class="selectpicker dropdown bootstrap-select show-tick bs3" onchange="change_status_campaign(this,<?php echo html_entity_decode($campaigns->cp_id); ?>); return false;" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('change_status_to'); ?>">
 
@@ -32,6 +32,7 @@
 
           </select>
         </div>
+        <?php endif; ?>
 
       <div class="col-md-12"><hr class="general-infor-hr" /></div>
       <div class="row">
