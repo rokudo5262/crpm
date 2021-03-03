@@ -12,15 +12,17 @@
                         <a href="#" onclick="new_task(<?php if($this->input->get('project_id')){ echo "'".admin_url('tasks/task?rel_id='.$this->input->get('project_id').'&rel_type=project')."'";} ?>); return false;" class="btn btn-info pull-left new"><?php echo _l('new_task'); ?></a>
                         <?php } ?>
                         <a href="<?php if(!$this->input->get('project_id')){ echo admin_url('tasks/switch_kanban/'.$switch_kanban); } else { echo admin_url('projects/view/'.$this->input->get('project_id').'?group=project_tasks'); }; ?>" class="btn btn-default mleft10 pull-left hidden-xs">
-                           <?php if($switch_kanban == 1){ echo _l('switch_to_list_view');}else{echo _l('leads_switch_to_kanban');}; ?>
+                           <?php if($this->input->cookie('tasks_kanban_view') && $this->input->cookie('tasks_kanban_view') == 'true'){ echo _l('switch_to_list_view');}else{echo _l('leads_switch_to_kanban');}; ?>
                         </a>
 
-                        <?php if($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true') 
+                        <?php //if($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true')
+                              if($this->input->cookie('tasks_kanban_view') && $this->input->cookie('tasks_kanban_view') == 'true') 
                            $this->load->view('admin/tasks/kanban_tasks_filter_by',array('view_table_name'=>'.table-tasks')); 
                         ?>
                      </div>
                      <div class="col-md-4">
-                        <?php if($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true') { ?>
+                        <?php //if($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true') { ?>
+                        <?php if($this->input->cookie('tasks_kanban_view') && $this->input->cookie('tasks_kanban_view') == 'true') { ?>
                         <div data-toggle="tooltip" data-placement="bottom" data-title="<?php echo _l('search_by_tags'); ?>">
                            <?php echo render_input('search','','','search',array('data-name'=>'search','onkeyup'=>'tasks_kanban_advance();','placeholder'=>_l('search_tasks')),array(),'no-margin') ?>
                         </div>
@@ -33,7 +35,9 @@
                   <hr class="hr-panel-heading hr-10" />
                   <div class="clearfix"></div>
                   <?php
-                  if($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true') { ?>
+                  // if($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true') { ?>
+                  <?php
+                  if($this->input->cookie('tasks_kanban_view') && $this->input->cookie('tasks_kanban_view') == 'true') { ?>
                   <div class="kan-ban-tab" id="kan-ban-tab" style="overflow:auto;">
                      <div class="row">
                         <div id="kanban-params">
