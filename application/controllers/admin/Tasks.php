@@ -653,11 +653,12 @@ class Tasks extends AdminController
             );
         }
     }
+    
     public function save_image_and_replace_base64($data)
     {
-        $imgtag='/<img src="data:image[^>]+>/i';
-        if(preg_match_all($imgtag,$data)) {  
-            while(preg_match_all($imgtag, $data,$matchs, PREG_OFFSET_CAPTURE)) {
+        $image_tag='/<img src="data:image[^>]+>/i';
+        if(preg_match_all($image_tag,$data)) {  
+            while(preg_match_all($image_tag, $data, $matchs, PREG_OFFSET_CAPTURE)) {
                 // save
                 list($value, $position) = $matchs[0][0];
                 list($first,$base64)= explode('base64,', $value);
@@ -672,12 +673,42 @@ class Tasks extends AdminController
                 file_put_contents($save, base64_decode($base64));
                 // replace
                 $link = base_url().'media/'.$folder.'/'.$file_name.'.png';
-                $img = '<a href='.$link.' data-lightbox=kb-attachment><img src='.$link.'></a>';
+                $img = '<img src="'.$link.'">';
                 $data = substr_replace($data, $img, $position, strlen($value));
             }
         }
+        $data = $this->remove_a_tag($data);
+        $data = $this->add_a_tag($data);
         return $data;
     } 
+
+    public function remove_a_tag($data) {
+        $image_tag='/<a[^>]+><img src="http[^>]+><\/a>/i';
+        if(preg_match_all($image_tag,$data)) { 
+            while(preg_match_all($image_tag, $data,$matchs,PREG_OFFSET_CAPTURE)) {
+                list($values,$position) = $matchs[0][0];
+                list(,$url)= explode('src="', $values);
+                list($url,)= explode('"', $url);
+                $image = '<img src="'.$url.'">';
+                $data = substr_replace($data, $image, $position, strlen($values));
+            }
+        }
+        return $data;
+    }
+    public function add_a_tag($data) {
+        $image_tag='/<img src="[^>]+>/i';
+        if(preg_match_all($image_tag,$data)) { 
+            while(preg_match_all($image_tag, $data,$matchs,PREG_OFFSET_CAPTURE)) {
+                list($values,$position) = $matchs[0][0];
+                list(,$url)= explode('src="', $values);
+                list($url,)= explode('"', $url);
+                $image = '<a href='.$url.' data-lightbox=kb-attachment><img src='.$url.'></a>';
+                $data = substr_replace($data, $image, $position, strlen($values));
+            }
+        }
+        return $data;
+    }
+
     /* Add new task comment / ajax */
     public function add_task_comment()
     {
