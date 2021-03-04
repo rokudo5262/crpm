@@ -19,7 +19,6 @@ class Assets extends AdminController
             access_denied('assets');
         }
         $data['group'] = $this->input->get('group');
-
         $data['title']                 = _l('setting');
         $data['tab'][]                 = 'asset_group';
         $data['tab'][]                 = 'asset_unit';

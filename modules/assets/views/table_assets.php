@@ -15,6 +15,8 @@ $aColumns = [
     'unit',
     'department',
     'belongs_to',
+    'warranty_period',
+    'depreciation',
     ];
 $sIndexColumn = 'id';
 $sTable       = db_prefix().'assets';
@@ -47,9 +49,12 @@ $output  = $result['output'];
 $rResult = $result['rResult'];
 
 foreach ($rResult as $aRow) {
+    $month   = (strtotime(date('Y-m-d')) - strtotime($aRow['date_buy'])) / (60 * 60 * 24 * 31);
     $row = [];
     for ($i = 0; $i < count($aColumns); ++$i) {
         $_data = $aRow[$aColumns[$i]];
+        $d_per_month = ($aRow['unit_price'] * $aRow['amount']) / $aRow['depreciation'];
+
         if ('date_buy' == $aColumns[$i]) {
             $_data = _d($aRow['date_buy']);
         } elseif ('unit_price' == $aColumns[$i]) {
@@ -111,8 +116,13 @@ foreach ($rResult as $aRow) {
                 $_data = trim($_data,", <br>");
             }
         }
+        elseif ('warranty_period' == $aColumns[$i]) {
+                $_data      = app_format_money($month*$d_per_month,'');
+            }
+            elseif ('depreciation' == $aColumns[$i]) {
+                $_data      = app_format_money($aRow['unit_price'] * $aRow['amount'] - $month * $d_per_month,'');
+                }
         $row[] = $_data;
     }
-
     $output['aaData'][] = $row;
 }
