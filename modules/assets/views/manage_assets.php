@@ -96,6 +96,8 @@
                             _l('unit'),
                             _l('department'),
                             _l('assigned_to_customer'),
+                            _l('depreciation_value'),
+                            _l('residual_value'),
                             ]);
                         render_datatable($table_data, 'table_assets1', ['asset_sm' => 'asset_sm']);
                         ?>
@@ -119,6 +121,8 @@
                             _l('unit'),
                             _l('department'),
                             _l('assigned_to_customer'),
+                            _l('depreciation_value'),
+                            _l('residual_value'),
                             ]);
                         render_datatable($table_data, 'table_assets2', ['asset_sm' => 'asset_sm']);
                         ?>
@@ -142,6 +146,8 @@
                             _l('unit'),
                             _l('department'),
                             _l('assigned_to_customer'),
+                            _l('depreciation_value'),
+                            _l('residual_value'),
                             ]);
                         render_datatable($table_data, 'table_assets3', ['asset_sm' => 'asset_sm']);
                         ?>
@@ -165,6 +171,8 @@
                             _l('unit'),
                             _l('department'),
                             _l('assigned_to_customer'),
+                            _l('depreciation_value'),
+                            _l('residual_value'),
                             ]);
                         render_datatable($table_data, 'table_assets4', ['asset_sm' => 'asset_sm']);
                         ?>
@@ -188,6 +196,8 @@
                             _l('unit'),
                             _l('department'),
                             _l('assigned_to_customer'),
+                            _l('depreciation_value'),
+                            _l('residual_value'),
                             ]);
                         render_datatable($table_data, 'table_assets5', ['asset_sm' => 'asset_sm']);
                         ?>
@@ -211,6 +221,8 @@
                             _l('unit'),
                             _l('department'),
                             _l('assigned_to_customer'),
+                            _l('depreciation_value'),
+                            _l('residual_value'),
                             ]);
                         render_datatable($table_data, 'table_assets6', ['asset_sm' => 'asset_sm']);
                         ?>
@@ -234,6 +246,8 @@
                             _l('unit'),
                             _l('department'),
                             _l('assigned_to_customer'),
+                            _l('depreciation_value'),
+                            _l('residual_value'),
                             ]);
                         render_datatable($table_data, 'table_assets7', ['asset_sm' => 'asset_sm']);
                         ?>
