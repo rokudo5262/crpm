@@ -232,8 +232,6 @@ class Assets extends AdminController
         if ($this->input->post()) {
             $message          = '';
             $data             = $this->input->post();
-            $data             = $this->input->post();
-
             if (!$this->input->post('id')) {
                 $id = $this->assets_model->add_asset($data);
                 if ($id) {

@@ -257,7 +257,7 @@ function render_textarea($name, $label = '', $value = '', $textarea_attrs = [], 
     }
 
     $v = clear_textarea_breaks($value);
-    if (strpos($textarea_class, 'tinymce') !== false) {
+    if (strpos($textarea_class, 'tinymce') !== false && strpos($textarea_class, 'mindmap') == false ) {
         $v = html_purify($value);
     }
     $textarea .= '<textarea id="' . $name . '" name="' . $name . '" class="form-control' . $textarea_class . '" ' . $_textarea_attrs . '>' . set_value($name, $v) . '</textarea>';
