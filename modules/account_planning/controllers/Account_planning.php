@@ -35,7 +35,7 @@ class Account_planning extends AdminController
         if(!has_permission('account_planning','','create')){
                 access_denied('account_planning');
         }
-        $data['month'] = $this->account_planning_model->get_month();
+         $data['month'] = $this->account_planning_model->get_month();
     	$data['priorities'] = $this->tickets_model->get_priority();
         $data['title']     = _l('new_account');
         $this->load->view('account_planning/new_account', $data);

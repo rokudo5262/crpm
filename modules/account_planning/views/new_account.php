@@ -19,7 +19,7 @@
                   $date_1 = mktime(0, 0, 0, $date['mon'], 1, $date['year']);
                   $value = date('d/m/Y', $date_1);
                   ?>
-                  <?php 
+                  <?php
                   echo render_select('date', $month,array('id','name'), 'Period', $value, array(), array(), 'col-md-6'); ?>
                </div>
                <div class="row">
