@@ -136,7 +136,6 @@
                       </div>
                     </div>
 
-
                     <div class="col-md-6">
                       <label for="position"><small class="req text-danger">* </small> <?php echo _l('position'); ?></label>
                         <select name="cp_position" id="position" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" required>
@@ -210,6 +209,11 @@ echo render_input('cp_salary_from', 'starting_salary_from', '', 'text', $attr);?
 
                     <div class="col-md-6"> <?php echo render_date_input('cp_from_date', 'from_date', ''); ?></div>
                     <div class="col-md-6"> <?php echo render_date_input('cp_to_date', 'to_date', ''); ?></div>
+
+                    <div class="col-md-12">
+                      <p class="control-label">Position JD File</p>
+                      <p id="lastest_jd_file_download_url"></p>
+                    </div>
 
                     <div class="col-md-12"> <?php echo render_textarea('cp_reason_recruitment', 'reason_recruitment', '') ?></div>
                     <div class="col-md-12"> <?php echo render_textarea('cp_job_description', 'job_description', '', array(), array(), '', 'tinymce') ?></div>
