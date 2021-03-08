@@ -51,8 +51,84 @@ class recruitment extends AdminController {
 
 		$data['industry_list'] = $this->recruitment_model->get_industry();
 
+		foreach($data['positions'] as $position) {
+			$jd_file_data = $this->get_lastest_job_position_jd_file($position['position_id']);
+			if($jd_file_data == '') {
+				unset($jd_file_data);
+				$jd_file_data = ['name' => '', 'url' => ''];
+			}
+			$data['positions_files'][$position['position_id']] = $jd_file_data;
+		}
 
 		$this->load->view('manage_setting', $data);
+	}
+
+	public function get_lastest_job_position_jd_file($position_id) {
+		date_default_timezone_set('Asia/Ho_Chi_Minh');
+		$this->load->helper('file');
+		$position_jd_folder_path = RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $position_id;
+		if(!empty(get_filenames($position_jd_folder_path))) {
+			$file_names = get_filenames($position_jd_folder_path);
+			$lastest_file_name = '';
+			$lastest_date = '';
+			foreach($file_names as $index => $file_name) {
+				$file_info = get_file_info($position_jd_folder_path. '/' . $file_name);
+				if($index == 0) {
+					$lastest_date = $file_info['date'];
+					$lastest_file_name = $file_info['name'];
+				} else {
+					if($file_info['date'] > $lastest_date) {
+						$lastest_date =  $file_info['date'];
+						$lastest_file_name = $file_info['name'];
+					}
+				}
+			}
+			$lastest_file_download_url = base_url() . 'modules/recruitment/uploads/hr_jd/' . $position_id . '/' . $lastest_file_name;
+			return ['name' => $lastest_file_name, 'url' => $lastest_file_download_url];
+		} else {
+			return '';
+		}
+	}
+
+	public function get_lastest_job_position_jd_file_ajax($position_id) {
+		date_default_timezone_set('Asia/Ho_Chi_Minh');
+		$this->load->helper('file');
+		$position_jd_folder_path = RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $position_id;
+		if(!empty(get_filenames($position_jd_folder_path))) {
+			$file_names = get_filenames($position_jd_folder_path);
+			$lastest_file_name = '';
+			$lastest_date = '';
+			foreach($file_names as $index => $file_name) {
+				$file_info = get_file_info($position_jd_folder_path. '/' . $file_name);
+				if($index == 0) {
+					$lastest_date = $file_info['date'];
+					$lastest_file_name = $file_info['name'];
+				} else {
+					if($file_info['date'] > $lastest_date) {
+						$lastest_date =  $file_info['date'];
+						$lastest_file_name = $file_info['name'];
+					}
+				}
+			}
+			$lastest_file_download_url = base_url() . 'modules/recruitment/uploads/hr_jd/' . $position_id . '/' . $lastest_file_name;
+			echo json_encode(['name' => $lastest_file_name, 'url' => $lastest_file_download_url]);
+		} else {
+			echo '';
+		}
+	}
+
+	public function remove_job_jd_files($position_id) {
+		if($this->input->is_ajax_request()) {
+			$dir_path = RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $position_id;
+			$this->load->helper('file');
+			if(delete_files($dir_path)) {
+				echo 1;
+			} else {
+				echo 0;
+			}
+		} else {
+			redirect(admin_url('recruitment/setting?group=job_position'));
+		}
 	}
 
 	/**
@@ -63,9 +139,26 @@ class recruitment extends AdminController {
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
+			if(!is_dir('uploads/hr_jd')) {
+				mkdir('uploads/hr_jd', 775, TRUE);
+			}
+			
 			if (!$this->input->post('id')) {
 				$id = $this->recruitment_model->add_job_position($data);
 				if ($id) {
+					if(!is_dir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id)) {
+						mkdir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 775, TRUE);
+					}
+					if(isset($_FILES)) {
+						$original_file_name = $_FILES['job_jd_file']['name'];
+						$config['upload_path']          = RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id;
+		                $config['allowed_types']        = 'pdf|doc|docx|txt';
+		                $config['overwrite']			= TRUE;
+		                $config['file_name'] = $original_file_name;
+		                $this->load->library('upload', $config);
+		                $this->upload->do_upload('job_jd_file');
+		                unset($data['job_jd_file']);	
+					}
 					$success = true;
 					$message = _l('added_successfully', _l('job_position'));
 					set_alert('success', $message);
@@ -74,6 +167,22 @@ class recruitment extends AdminController {
 			} else {
 				$id = $data['id'];
 				unset($data['id']);
+
+				if(!is_dir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id)) {
+					mkdir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 775, TRUE);
+				}
+
+				if(isset($_FILES)) {
+					$original_file_name = $_FILES['job_jd_file']['name'];
+					$config['upload_path']          = RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id;
+	                $config['allowed_types']        = 'pdf|doc|docx|txt';
+	                $config['overwrite']			= TRUE;
+	                $config['file_name'] = $original_file_name;
+	                $this->load->library('upload', $config);
+	                $this->upload->do_upload('job_jd_file');
+	                unset($data['job_jd_file']);	
+				}
+
 				$success = $this->recruitment_model->update_job_position($data, $id);
 				if ($success) {
 					$message = _l('updated_successfully', _l('job_position'));
@@ -382,6 +491,7 @@ class recruitment extends AdminController {
 		$this->load->model('departments_model');
 		$data['id'] = $id;
 		$data['campaigns'] = $this->recruitment_model->get_rec_campaign($id);
+		$data['position_jd'] = $this->get_lastest_job_position_jd_file($id);
 		$data['campaign_file'] = $this->recruitment_model->get_campaign_file($id);
 		$data['departments'] = $this->departments_model->get();
 		$data['rec_channel_form'] = $this->recruitment_model->get_recruitment_channel($data['campaigns']->rec_channel_form_id);
