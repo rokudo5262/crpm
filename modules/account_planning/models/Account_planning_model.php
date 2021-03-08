@@ -53,7 +53,7 @@ class Account_planning_model extends App_Model
     	}
 
         if(isset($data['date'])){
-            $data['date'] = to_sql_date($data['date']);
+            $data['date'] = date('Y-m-d', strtotime($data['date']));
         }
         
         $data['latest_update'] = date('Y-m-d H:i:s');
@@ -267,7 +267,7 @@ class Account_planning_model extends App_Model
             unset($data['todo_list']);
         }
         if(isset($data['date'])){
-            $data['date'] = to_sql_date($data['date']);
+            $data['date'] = date('Y-m-d', strtotime($data['date']));
         }
         $data['data_tree']     = nl2br($data['data_tree']);
         $data['objectives']     = nl2br($data['objectives']);
@@ -275,8 +275,13 @@ class Account_planning_model extends App_Model
         $data['opportunity']     = nl2br($data['opportunity']);
         $data['criteria_to_success']     = nl2br($data['criteria_to_success']);
         $data['constraints']     = nl2br($data['constraints']);
-
         $data['revenue_next_year'] = reformat_currency($data['revenue_next_year']);
+        if(empty($data['objectives'])) {
+            $data['objectives'] = NULL;
+        } 
+        if(empty($data['revenue_next_year'])) {
+            $data['revenue_next_year'] = NULL;
+        } 
         if(isset($data['DataTables_Table_0_length'])){
             unset($data['DataTables_Table_0_length']);
         }
@@ -649,7 +654,7 @@ class Account_planning_model extends App_Model
         unset($_new_data['company']);
         unset($_new_data['client_name']);
         $_new_data['client_id'] = $data['client_id'];
-        $_new_data['date'] = to_sql_date($data['date']);
+        $_new_data['date'] = date('Y-m-d', strtotime($data['date']));
         $_new_data['subject'] = $data['subject'];
         $_new_data['latest_update'] = date('Y-m-d H:i:s');
 

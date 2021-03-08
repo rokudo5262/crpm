@@ -16,10 +16,9 @@
                         <?php 
                       $date = getdate();
                       $date_1 = mktime(0, 0, 0, $date['mon'], 1, $date['year']);
-                      $value = date('d/m/Y', $date_1);
+                      $value = date('F - Y', $date_1);
                       ?>
-                      <?php 
-                      echo render_select('date', $month,array('id','name'), 'time', $value); ?>
+                      <?php echo render_select('date', $month,array('id','name'), 'time', $month['6']) ?>
                         <div class="form-group select-placeholder" id="rel_id_wrapper">
                         <label for="client_id" class="control-label"><span class="text-danger">* </span><?php echo htmlspecialchars(_l('client')); ?></label>
                         <select id="clientid" name="client_id" data-live-search="true" data-width="100%" class="ajax-search" data-none-selected-text="<?php echo htmlspecialchars(_l('dropdown_non_selected_tex')); ?>" required></select>

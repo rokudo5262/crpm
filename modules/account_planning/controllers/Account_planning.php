@@ -35,7 +35,7 @@ class Account_planning extends AdminController
         if(!has_permission('account_planning','','create')){
                 access_denied('account_planning');
         }
-        $data['month'] = $this->account_planning_model->get_month();
+         $data['month'] = $this->account_planning_model->get_month();
     	$data['priorities'] = $this->tickets_model->get_priority();
         $data['title']     = _l('new_account');
         $this->load->view('account_planning/new_account', $data);
@@ -135,7 +135,6 @@ class Account_planning extends AdminController
         $data['opportunity'] = $this->input->post('opportunity', false);
         $data['criteria_to_success'] = $this->input->post('criteria_to_success', false);
         $data['constraints'] = $this->input->post('constraints', false);
-
         $response = $this->account_planning_model->update_planning($id, $data);
         if ($response == true) {
             set_alert('success', _l('updated_successfully', _l('account_planning')));

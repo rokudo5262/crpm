@@ -30,7 +30,7 @@ if(!is_dir($checkfolder)){
     <div class="row">
       <?php $value = (isset($account->subject) ? $account->subject : '') ?>
       <?php echo render_input('subject', 'subject',$value, 'text', array(), array(),'col-md-6'); ?>
-      <?php $value = (isset($account->date) ? _d($account->date) : '') ?>
+      <?php $value = (isset($account->date) ? $account->date : '') ?>
       <?php echo render_select('date', $month,array('id','name'), 'time', $value, array(), array(), 'col-md-6'); ?>
     </div>
     <h4 class="bold"><?php echo htmlspecialchars(_l('planning_a')); ?></h4>
