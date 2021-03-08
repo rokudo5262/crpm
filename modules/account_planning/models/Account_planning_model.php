@@ -275,8 +275,13 @@ class Account_planning_model extends App_Model
         $data['opportunity']     = nl2br($data['opportunity']);
         $data['criteria_to_success']     = nl2br($data['criteria_to_success']);
         $data['constraints']     = nl2br($data['constraints']);
-
         $data['revenue_next_year'] = reformat_currency($data['revenue_next_year']);
+        if(empty($data['objectives'])) {
+            $data['objectives'] = NULL;
+        } 
+        if(empty($data['revenue_next_year'])) {
+            $data['revenue_next_year'] = NULL;
+        } 
         if(isset($data['DataTables_Table_0_length'])){
             unset($data['DataTables_Table_0_length']);
         }

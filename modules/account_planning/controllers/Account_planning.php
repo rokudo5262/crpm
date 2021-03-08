@@ -135,9 +135,6 @@ class Account_planning extends AdminController
         $data['opportunity'] = $this->input->post('opportunity', false);
         $data['criteria_to_success'] = $this->input->post('criteria_to_success', false);
         $data['constraints'] = $this->input->post('constraints', false);
-        if(empty($data['objectives'])) {
-            $data['objectives'] = '';
-        } 
         $response = $this->account_planning_model->update_planning($id, $data);
         if ($response == true) {
             set_alert('success', _l('updated_successfully', _l('account_planning')));
