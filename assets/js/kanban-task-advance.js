@@ -62,7 +62,7 @@ $( document ).ready(function() {
 });
 
 /** Load saved filter from localStorage */
-function load_saved_filter() {
+function load_saved_filter(reload = false) {
     var filters = JSON.parse(localStorage.getItem("kanban_filter"));
     $.each(filters, function(index, value) {
         if(typeof(value) == 'object') {
@@ -79,7 +79,8 @@ function load_saved_filter() {
                     var department_id = tmp.replace('department_', '');
                     department_ids.push(department_id);
                 }
-                load_assignee_list_by_departments(department_ids);
+                if(!reload)
+                    load_assignee_list_by_departments(department_ids, false);
             }
             else if(index === 'assigned') {
                 $('li.assigned-filter').addClass('active');
@@ -166,6 +167,7 @@ function update_storage_filter() {
         });
         filters["projects"] = projects_arr;
     }
+    console.log(filters);
     localStorage.setItem("kanban_filter", JSON.stringify(filters));
 }
 
@@ -212,6 +214,15 @@ function kb_custom_view(value, custom_input_name, clear_other_filters) {
         value = "";
     }
     $('input[name="' + name + '"]').val(value);
+
+    if(custom_input_name == 'task_assigned_all') {
+        $('ul#assigned_member_list li.active').not('.task_assigned_all').removeClass('active');
+    } else if(custom_input_name.includes('task_assigned_')) {
+        $('ul#assigned_member_list .task_assigned_all').removeClass('active');
+        if($('ul#assigned_member_list li.active').length == 0) {
+            $('ul#assigned_member_list .task_assigned_all a').click();
+        }
+    }
 
     // Reload assignee list according to Departments selected
     if(custom_input_name.includes('department_')) {
@@ -344,6 +355,8 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
         var assigned_li = $(this).find('a');
         var assigned_id = assigned_li.attr('data-cview');
         assigned_id = assigned_id.replace("task_assigned_", "");
+        if(assigned_id == 'all')
+            return;
         assigned_ids.push(assigned_id);
     });
     if(assigned_ids.length > 0) {
@@ -447,10 +460,16 @@ function init_kanban_advance(url, callbackUpdate, connect_with, column_px, conta
     }, 200);
 }
 
-function load_assignee_list_by_departments(department_ids = []) {
+function load_assignee_list_by_departments(department_ids = [], isClicked = true) {
     var url = admin_url + 'tasks/kanban_load_assigned_member/';
     if(department_ids.length > 0) {
         url += encodeURIComponent(department_ids.join());
     }
-    $('#assigned_member_list').load(url);
+
+    $('#assigned_member_list').load(url, function() {
+        if(isClicked) {
+            $('ul#assigned_member_list .task_assigned_all a').click();
+        }
+        load_saved_filter(true);
+    });
 }
