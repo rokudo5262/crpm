@@ -167,7 +167,6 @@ function update_storage_filter() {
         });
         filters["projects"] = projects_arr;
     }
-    console.log(filters);
     localStorage.setItem("kanban_filter", JSON.stringify(filters));
 }
 
