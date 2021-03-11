@@ -35,15 +35,15 @@ if(isset($client)){ ?>
     }
 </style>
 <div class="col-md-4">
-        <label for="website">Iframe daily report</label>
+        <label for="website">Daily Report Embed</label>
         <div class="input-group">
-        <input type="text" name="ifame_report" id="ifame_report" value="<?php echo $client->ifame_report; ?>" class="form-control">
+        <input type="text" name="ifame_report" id="ifame_report" value="<?php echo $client->daily_report_embed; ?>" class="form-control">
         <button class="btn btn-info label-margin" onclick="save_ifame_report(<?php echo $client->userid; ?>); return false;">
     <?php echo _l('submit'); ?></button>
 </div>
 <br/>
 <div class="responsive">
-<iframe src="<?php echo $client->ifame_report; ?>" frameborder="0" style="border:0" allowfullscreen>
+<iframe src="<?php echo $client->daily_report_embed; ?>" frameborder="0" style="border:0" allowfullscreen>
 </iframe>
 </div>
 <?php } ?>
