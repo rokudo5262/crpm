@@ -1478,4 +1478,15 @@ class Clients extends ClientsController
     {
         return total_rows(db_prefix() . 'contacts', 'id !=' . get_contact_user_id() . ' AND email="' . get_instance()->db->escape_str($email) . '"') > 0 ? false : true;
     }
+
+    // daily report
+    public function dailyreport()
+    {
+        
+        $data['title']         = _l('clients_tickets_heading');
+        $this->data($data);
+        $this->view('dailyreport');
+        $this->layout();
+    }
+
 }

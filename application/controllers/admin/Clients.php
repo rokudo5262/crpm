@@ -302,6 +302,25 @@ class Clients extends AdminController
         }
     }
 
+    public function save_ifame_report($client_id)
+    {
+        if (!has_permission('customers', '', 'edit')) {
+            if (!is_customer_admin($client_id)) {
+                ajax_access_denied();
+            }
+        }
+
+        $this->db->where('userid', $client_id);
+        $this->db->update(db_prefix() . 'clients', [
+            'ifame_report' => $this->input->post('ifame_report'),
+        ]);
+        if ($this->db->affected_rows() > 0) {
+            echo 'success';
+        } else {
+            echo 'false';
+        }
+    }
+
     public function form_contact($customer_id, $contact_id = '')
     {
         if (!has_permission('customers', '', 'view')) {
