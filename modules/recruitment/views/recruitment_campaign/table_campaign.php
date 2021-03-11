@@ -87,11 +87,11 @@ foreach ($rResult as $aRow) {
 
 			$name .= '<a href="' . admin_url('recruitment/recruitment_campaign/' . $aRow['cp_id']) . '" onclick="init_recruitment_campaign(' . $aRow['cp_id'] . '); return false;">' . _l('view') . '</a>';
 
-			if (has_permission('recruitment', '', 'edit') || is_admin()) {
+			if (check_approver(get_staff_user_id()) || has_permission('recruitment', '', 'edit') || is_admin()) {
 				$name .= ' | <a href="#" onclick=' . '"' . 'edit_campaign(this,' . $aRow['cp_id'] . '); return false;' . '"' . ' data-campaign_code="' . $aRow['campaign_code'] . '" data-campaign_name="' . $aRow['campaign_name'] . '" data-position="' . $aRow['cp_position'] . '" data-form_work="' . $aRow['cp_form_work'] . '" data-department="' . $aRow['cp_department'] . '" data-amount_recruiment="' . $aRow['cp_amount_recruiment'] . '" data-workplace="' . $aRow['cp_workplace'] . '" data-salary_from="' . app_format_money($aRow['cp_salary_from'], '') . '" data-salary_to="' . app_format_money($aRow['cp_salary_to'], '') . '" data-from_date="' . _d($aRow['cp_from_date']) . '" data-to_date="' . _d($aRow['cp_to_date']) . '" data-ages_to="' . $aRow['cp_ages_to'] . '" data-ages_from="' . $aRow['cp_ages_from'] . '" data-height="' . $aRow['cp_height'] . '" data-weight="' . $aRow['cp_weight'] . '" data-reason_recruitment="' . $aRow['cp_reason_recruitment'] . '" data-gender="' . $aRow['cp_gender'] . '" data-literacy="' . $aRow['cp_literacy'] . '" data-experience="' . $aRow['cp_experience'] . '" data-proposal="' . $aRow['cp_proposal'] . '" data-manager="' . $aRow['cp_manager'] . '" data-follower="' . $aRow['cp_follower'] . '" data-rec_channel_form_id="' . $aRow['rec_channel_form_id'] . '" data-display_salary="' . $aRow['display_salary'] . '" data-company_id="' . $aRow['company_id'] . '" >' . _l('edit') . '</a>';
 			}
 
-			if (has_permission('recruitment', '', 'delete') || is_admin()) {
+			if (check_approver(get_staff_user_id()) || has_permission('recruitment', '', 'delete') || is_admin()) {
 				$name .= ' | <a href="' . admin_url('recruitment/delete_recruitment_campaign/' . $aRow['cp_id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
 			}
 

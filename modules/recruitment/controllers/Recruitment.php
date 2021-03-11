@@ -51,6 +51,9 @@ class recruitment extends AdminController {
 
 		$data['industry_list'] = $this->recruitment_model->get_industry();
 
+		$data['default_approver'] = $this->recruitment_model->get_default_approver();
+
+		$data['staffs'] = $this->staff_model->get();
 
 		$this->load->view('manage_setting', $data);
 	}
@@ -295,12 +298,13 @@ class recruitment extends AdminController {
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
-			$data = $this->input->post();
 			$data['cp_job_description'] = $this->input->post('cp_job_description', false);
 			if ($this->input->post('no_editor')) {
 				$data['cp_job_description'] = nl2br(clear_textarea_breaks($this->input->post('cp_job_description')));
 			}
 			if (!$this->input->post('cp_id')) {
+				$data['cp_created_by'] = get_staff_user_id();
+				$data['cp_approver'] = $this->recruitment_model->get_default_approver();
 				$id = $this->recruitment_model->add_recruitment_campaign($data);
 				if ($id) {
 					handle_rec_campaign_file($id);
@@ -312,6 +316,7 @@ class recruitment extends AdminController {
 			} else {
 				$id = $data['cp_id'];
 				unset($data['cp_id']);
+				$data['cp_approver'] = $this->recruitment_model->get_default_approver();
 				$success = $this->recruitment_model->update_recruitment_campaign($data, $id);
 				handle_rec_campaign_file($id);
 				if ($success) {
@@ -2144,7 +2149,24 @@ class recruitment extends AdminController {
             die;
         }
     }
-
+	public function default_approver(){
+        $data = $this->input->post();
+        if($data != 'null') {
+            $value = $this->recruitment_model->default_approver($data);
+            if($value) {
+                $success = true;
+                $message = _l('updated_successfully');
+            } else {
+                $success = false;
+                $message = _l('updated_false');
+            }
+            echo json_encode([
+                'message' => $message,
+                'success' => $success,
+            ]);
+            die;
+        }
+    }
 
     /**
      * company add edit
@@ -2348,11 +2370,5 @@ class recruitment extends AdminController {
 		}
 		redirect(admin_url('recruitment/setting?group=industry_list'));
 	}
-
-
-
-
-
-
 
 }
