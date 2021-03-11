@@ -32,7 +32,7 @@
     <h4 class="no-margin section-text"> Daily Report</h4><br/>
     <!-- </div> -->
     <div class="responsive">
-        <iframe width= "100%" src="<?php echo $client->ifame_report; ?>" frameborder="0" style="border:0" allowfullscreen> </iframe>
+        <iframe width= "100%" src="<?php echo $client->daily_report_embed; ?>" frameborder="0" style="border:0" allowfullscreen> </iframe>
     </div>
 </div>
 
