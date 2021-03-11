@@ -298,7 +298,6 @@ class Recruitment_model extends App_Model {
 		if (isset($data['cp_follower'])) {
 			$data['cp_follower'] = implode(',', $data['cp_follower']);
 		}
-
 		$data['cp_salary_from'] = reformat_currency_rec($data['cp_salary_from']);
 		$data['cp_salary_to'] = reformat_currency_rec($data['cp_salary_to']);
 		$data['cp_from_date'] = to_sql_date($data['cp_from_date']);
@@ -3142,8 +3141,24 @@ class Recruitment_model extends App_Model {
                 return false;
             }
     }
-
-
+	public function default_approver($data) {
+			$value = $data['selected_value'];
+            $this->db->where('name','default_approver');
+            $this->db->update(db_prefix() . 'options', [
+                    'value' => $value,
+                ]);
+            if ($this->db->affected_rows() > 0) {
+                return true;
+            } else {
+                return false;
+            }
+    }
+	public function get_default_approver() {
+		$this->db->select('value');
+    	$this->db->from(db_prefix() . 'options');
+    	$this->db->where('name','default_approver');
+		return $this->db->get()->row('value');
+	}
     /**
 	 * get skill
 	 * @param  boolean $id 
