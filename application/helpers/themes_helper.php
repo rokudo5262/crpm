@@ -90,6 +90,12 @@ function add_default_theme_menu_items()
                     'position' => 45,
                 ]);
         }
+        // daily report
+            add_theme_menu_item('dailyreport', [
+                    'name'     => _l('Daily Report'),
+                    'href'     => site_url('clients/dailyreport'),
+                    'position' => 45,
+                ]);
     }
 }
 
