@@ -1,5 +1,5 @@
-function default_approver(sel) {
-    var selected_value=sel.value;
+function default_approver() {
+    var selected_value=$('#default_approver').val();
     console.log(selected_value);
     var data = {};
         data.selected_value = selected_value;

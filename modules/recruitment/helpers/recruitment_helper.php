@@ -952,10 +952,10 @@ function is_rtl_rec($client_area = false)
 
     return false;
 }
-function check_approver($id) {
+function check_approver($data,$id) {
     $CI = & get_instance();
-    $approver = $CI->recruitment_model->get_default_approver();
-    if($id=$approver) {
+    $approver = $CI->recruitment_model->get_rec_campaign_approver($id);
+    if(in_array($data,explode(',',$approver))) {
         return true;
     } else {
         return false;

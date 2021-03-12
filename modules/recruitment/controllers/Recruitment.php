@@ -28,6 +28,7 @@ class recruitment extends AdminController {
 		$data['tab'][] = 'company_list';
 		$data['tab'][] = 'industry_list';
 		$data['tab'][] = 'recruitment_campaign_setting';
+		$data['tab'][] = 'default_approver';
 
 
 		if ($data['group'] == '') {
@@ -285,7 +286,7 @@ class recruitment extends AdminController {
 		$data['campaign_id'] = $id;
 		$data['rec_channel_form']	= $this->recruitment_model->get_recruitment_channel();
 		$data['company_list'] = $this->recruitment_model->get_company();
-		
+		$data['default_approver'] = $this->recruitment_model->get_default_approver();
 		$data['title'] = _l('recruitment_campaign');
 		$this->load->view('recruitment_campaign/recruitment_campaign', $data);
 	}
@@ -304,7 +305,6 @@ class recruitment extends AdminController {
 			}
 			if (!$this->input->post('cp_id')) {
 				$data['cp_created_by'] = get_staff_user_id();
-				$data['cp_approver'] = $this->recruitment_model->get_default_approver();
 				$id = $this->recruitment_model->add_recruitment_campaign($data);
 				if ($id) {
 					handle_rec_campaign_file($id);
@@ -316,7 +316,6 @@ class recruitment extends AdminController {
 			} else {
 				$id = $data['cp_id'];
 				unset($data['cp_id']);
-				$data['cp_approver'] = $this->recruitment_model->get_default_approver();
 				$success = $this->recruitment_model->update_recruitment_campaign($data, $id);
 				handle_rec_campaign_file($id);
 				if ($success) {
