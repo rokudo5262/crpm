@@ -2,35 +2,55 @@
 if(isset($client)){ ?>
 <?php if(has_permission('customers', '', 'edit')) { ?>
 <style type="text/css">
-    @media screen and (min-device-width: 1024px)  and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) { 
+    @media screen and (min-device-width: 1024px)  and (max-device-width: 1399px) { 
         .responsive iframe {
-            width: 700px; height:950px;
+            width: 650px !important;
+            height:900px !important;
         }        
     }
-    @media only screen and (min-device-width: 320px) and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 3) { 
+    @media screen and (min-device-width: 1400px)  and (max-device-width: 1599px) { 
         .responsive iframe {
-            width: 280px; height:350px;
+            width: 850px !important;
+            height:1200px !important;
+        }        
+    }
+    @media only screen and (min-device-width: 320px) and (max-device-width: 374px) { 
+        .responsive iframe {
+            width: 100% !important;
+            height:300px !important;
         } 
-    }
-    @media only screen and (min-device-width: 375px) and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2) { 
-        .responsive iframe {
-            width: 280px; height:350px;
-        } 
-    }
-    @media only screen and (min-device-width: 768px) and (max-device-width: 1024px){
-        .responsive iframe {
-            width: 600px; height:1200px;
-        }
-    }
-    @media only screen and (min-device-width: 320px) and (max-device-width: 568px) and (-webkit-min-device-pixel-ratio: 2) {
-        .responsive iframe {
-            width: 230px; height:320px;
-        }
     }
     @media only screen and (min-device-width: 411px) and (max-device-width: 665px) { 
         .responsive iframe {
             width: 100% !important;
-            height:500px !important;
+            height:450px !important;
+        } 
+    }
+    @media only screen and (min-device-width: 375px) and (max-device-width: 410px) { 
+        .responsive iframe {
+            width: 100% !important;
+            height:370px !important;
+        } 
+    }
+    @media only screen and (min-device-width: 768px) and (max-device-width: 1023px){
+        .responsive iframe {
+            width: 100% !important;
+            height:950px !important;
+        }
+    }
+    @media screen and (min-width: 4001px) {
+        .responsive iframe {
+            width: 1700px !important; height:2300px !important;
+        } 
+    }
+    @media screen and (min-width: 2501px) and (max-width: 4000px) {
+        .responsive iframe {
+            width: 1500px !important; height:2050px !important;
+        } 
+    }
+    @media screen and (min-width: 1600px) and (max-width: 2500px) {
+        .responsive iframe {
+            width: 1000px !important; height:1500px !important;
         } 
     }
 </style>
