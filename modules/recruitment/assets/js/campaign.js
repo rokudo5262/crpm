@@ -68,6 +68,7 @@ function new_campaign(){
   $('#recruitment_campaign textarea[name="cp_reason_recruitment"]').val('');
   $('#recruitment_campaign select[id="proposal"]').val('').change();
   $('#recruitment_campaign select[name="cp_follower[]"]').val();
+  $('#recruitment_campaign select[name="cp_approver[]"]').val();
   $('#recruitment_campaign select[id="manager"]').val('');
   $('#recruitment_campaign select[name="cp_position"]').val('');
   $('#recruitment_campaign select[name="cp_position"]').change();
@@ -157,7 +158,14 @@ function edit_campaign(invoker,id){
          $('#recruitment_campaign select[name="cp_follower[]"]').val($(invoker).data('follower')).change();
 
       }
+      var _recruitment_campaign_approver = $(invoker).data('approver');
 
+      if(typeof(_recruitment_campaign_approver) == "string"){
+          $('#recruitment_campaign select[name="cp_approver[]"]').val( ($(invoker).data('approver')).split(',')).change();
+      }else{
+         $('#recruitment_campaign select[name="cp_approver[]"]').val($(invoker).data('approver')).change();
+
+      }
   $('#recruitment_campaign select[name="cp_position"]').val($(invoker).data('position'));
   $('#recruitment_campaign select[name="cp_position"]').change();
 
@@ -298,3 +306,16 @@ function view_campaign_file(id, rel_id) {
 function close_modal_preview(){
  $('._project_file').modal('hide');
 }
+
+$('#position').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+  var download_url_el = $('#lastest_jd_file_download_url');
+  var position_id = $(this).val();
+  $.get(admin_url + 'recruitment/get_lastest_job_position_jd_file_ajax/' + position_id, function(data) {
+    if('' !== data) {
+      data = JSON.parse(data);
+      download_url_el.html('<p><a href="' + data.url + '" target="_blank" download>' + data.name + '</a></p>');
+    } else {
+      download_url_el.html('No file uploaded...');
+    }
+  });
+});

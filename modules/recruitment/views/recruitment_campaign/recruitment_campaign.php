@@ -136,7 +136,6 @@
                       </div>
                     </div>
 
-
                     <div class="col-md-6">
                       <label for="position"><small class="req text-danger">* </small> <?php echo _l('position'); ?></label>
                         <select name="cp_position" id="position" class="selectpicker" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" required>
@@ -211,9 +210,14 @@ echo render_input('cp_salary_from', 'starting_salary_from', '', 'text', $attr);?
                     <div class="col-md-6"> <?php echo render_date_input('cp_from_date', 'from_date', ''); ?></div>
                     <div class="col-md-6"> <?php echo render_date_input('cp_to_date', 'to_date', ''); ?></div>
 
+                    <div class="col-md-12">
+                      <p class="control-label">Position JD File</p>
+                      <p id="lastest_jd_file_download_url"></p>
+                    </div>
+
                     <div class="col-md-12"> <?php echo render_textarea('cp_reason_recruitment', 'reason_recruitment', '') ?></div>
                     <div class="col-md-12"> <?php echo render_textarea('cp_job_description', 'job_description', '', array(), array(), '', 'tinymce') ?></div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                       <label for="cp_manager"><?php echo _l('manager'); ?></label>
                       <select name="cp_manager[]" id="manager" class="selectpicker" multiple="true" data-actions-box="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 
@@ -222,7 +226,7 @@ echo render_input('cp_salary_from', 'starting_salary_from', '', 'text', $attr);?
                           <?php }?>
                       </select>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                       <label for="cp_follower"><?php echo _l('follower'); ?></label>
                       <select name="cp_follower[]" id="follower" class="selectpicker" multiple="true" data-actions-box="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 
@@ -231,7 +235,16 @@ echo render_input('cp_salary_from', 'starting_salary_from', '', 'text', $attr);?
                           <?php }?>
                       </select>
                     </div>
+                    <div class="col-md-12">
+                      <label for="cp_approver"><?php echo _l('approver'); ?></label>
+                      <?php $approver = explode(',',$default_approver)?>
+                      <select name="cp_approver[]" id="approver" class="selectpicker" multiple="true" data-actions-box="true" data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>">
 
+                        <?php foreach ($staffs as $s) {?>
+                          <option <?php if(in_array($s['staffid'],$approver)) { echo 'selected';};?> value="<?php echo html_entity_decode($s['staffid']); ?>"><?php echo html_entity_decode($s['firstname'] . ' ' . $s['lastname']); ?></option>
+                          <?php }?>
+                      </select>
+                    </div>
                   </div>
 
                   <div role="tabpanel" class="tab-pane" id="candidate_request">

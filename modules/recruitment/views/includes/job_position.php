@@ -13,6 +13,7 @@
     <th><?php echo _l('id'); ?></th>
     <th><?php echo _l('job_position'); ?></th>
     <th><?php echo _l('industry'); ?></th>
+    <th>JD File</th>
     <th><?php echo _l('options'); ?></th>
  </thead>
  <tbody>
@@ -21,6 +22,9 @@
        <td><?php echo html_entity_decode($job['position_id']); ?></td>
        <td><?php echo html_entity_decode($job['position_name']); ?></td>
        <td><?php echo html_entity_decode(get_rec_industry_name($job['industry_id'])); ?></td>
+       <td>
+        <?php echo '<a id="download_' . html_entity_decode($job['position_id']) . '" href="'. $positions_files[$job['position_id']]['url'] .'" download target="_blank">' . $positions_files[$job['position_id']]['name'] . '</a>' ?>
+       </td>
        <td>
          <a href="#" onclick="edit_job_position(this,<?php echo html_entity_decode($job['position_id']); ?>); return false" data-name="<?php echo html_entity_decode($job['position_name']); ?>" data-position_description="<?php echo html_entity_decode($job['position_description']); ?>" data-industry_id="<?php echo html_entity_decode($job['industry_id']); ?>"  data-job_skill="<?php echo html_entity_decode($job['job_skill']); ?>" class="btn btn-default btn-icon"><i class="fa fa-pencil-square-o"></i></a>
           <a href="<?php echo admin_url('recruitment/delete_job_position/' . $job['position_id']); ?>" class="btn btn-danger btn-icon _delete"><i class="fa fa-remove"></i></a>
@@ -31,7 +35,7 @@
 </table>
 <div class="modal fade" id="job_position" tabindex="-1" role="dialog">
     <div class="modal-dialog">
-        <?php echo form_open(admin_url('recruitment/job_position')); ?>
+        <?php echo form_open_multipart(admin_url('recruitment/job_position')); ?>
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -68,6 +72,15 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label for="job_jd_file"><?php echo 'JD File (Allow: pdf, doc, docx, txt)' ?></label>
+                        <div class="row job_jd_file_wrapper">
+                          <div class="col-md-12 jd_file_upload">
+                            <p class="lastest_jd_file_download_url"></p>
+                            <input type="file" name="job_jd_file" size="20" id="job_jd_file" class="form-control">
+                          </div>
+                        </div>
+                    </div>
 
                         <?php echo render_textarea('position_description', 'description', '') ?>
                     </div>

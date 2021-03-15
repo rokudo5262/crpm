@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /*
 Module Name: Recruitment
 Description: Recruitment Management module
-Version: 1.1.5
+Version: 1.1.6
 Requires at least: 2.3.*
 Author: GreenTech_Solutions
 Author URI: https://codecanyon.net/user/greentech_solutions
@@ -250,11 +250,13 @@ function recruitment_add_footer_components() {
 	if (!(strpos($viewuri, '/admin/recruitment/setting?group=recruitment_campaign_setting') === false)) {	
 		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/recruitment_campaign_setting.js') . '"></script>';
 	}
+	if (!(strpos($viewuri, '/admin/recruitment/setting?group=default_approver') === false)) {	
+		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/default_approver.js') . '"></script>';
+	}
 
 	if (!(strpos($viewuri, '/admin/recruitment/setting?group=industry_list') === false)) {	
 		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/industry.js') . '"></script>';
 	}
-	
 
 }
 
