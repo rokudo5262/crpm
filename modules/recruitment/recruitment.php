@@ -249,6 +249,8 @@ function recruitment_add_footer_components() {
 	
 	if (!(strpos($viewuri, '/admin/recruitment/setting?group=recruitment_campaign_setting') === false)) {	
 		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/recruitment_campaign_setting.js') . '"></script>';
+	}
+	if (!(strpos($viewuri, '/admin/recruitment/setting?group=default_approver') === false)) {	
 		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/default_approver.js') . '"></script>';
 	}
 

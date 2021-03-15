@@ -298,6 +298,10 @@ class Recruitment_model extends App_Model {
 		if (isset($data['cp_follower'])) {
 			$data['cp_follower'] = implode(',', $data['cp_follower']);
 		}
+
+		if (isset($data['cp_approver'])) {
+			$data['cp_approver'] = implode(',', $data['cp_approver']);
+		}
 		$data['cp_salary_from'] = reformat_currency_rec($data['cp_salary_from']);
 		$data['cp_salary_to'] = reformat_currency_rec($data['cp_salary_to']);
 		$data['cp_from_date'] = to_sql_date($data['cp_from_date']);
@@ -336,6 +340,10 @@ class Recruitment_model extends App_Model {
 
 		if (isset($data['cp_follower'])) {
 			$data['cp_follower'] = implode(',', $data['cp_follower']);
+		}
+
+		if (isset($data['cp_approver'])) {
+			$data['cp_approver'] = implode(',', $data['cp_approver']);
 		}
 		$data['cp_salary_from'] = reformat_currency_rec($data['cp_salary_from']);
 		$data['cp_salary_to'] = reformat_currency_rec($data['cp_salary_to']);
@@ -383,7 +391,12 @@ class Recruitment_model extends App_Model {
 			return $this->db->get(db_prefix() . 'rec_campaign')->result_array();
 		}
 	}
-
+	public function get_rec_campaign_approver($id) {
+		$this->db->select('cp_approver');
+    	$this->db->from(db_prefix() . 'rec_campaign');
+    	$this->db->where('cp_id',$id);
+		return $this->db->get()->row('cp_approver');
+	}
 	/**
 	 * get campaign_file
 	 * @param  object $proposal
@@ -3142,12 +3155,12 @@ class Recruitment_model extends App_Model {
             }
     }
 	public function default_approver($data) {
-			$value = $data['selected_value'];
+			$value = implode(",",$data['selected_value']);
             $this->db->where('name','default_approver');
-            $this->db->update(db_prefix() . 'options', [
+            $check=$this->db->update(db_prefix() . 'options', [
                     'value' => $value,
                 ]);
-            if ($this->db->affected_rows() > 0) {
+            if ($check) {
                 return true;
             } else {
                 return false;

@@ -68,6 +68,7 @@ function new_campaign(){
   $('#recruitment_campaign textarea[name="cp_reason_recruitment"]').val('');
   $('#recruitment_campaign select[id="proposal"]').val('').change();
   $('#recruitment_campaign select[name="cp_follower[]"]').val();
+  $('#recruitment_campaign select[name="cp_approver[]"]').val();
   $('#recruitment_campaign select[id="manager"]').val('');
   $('#recruitment_campaign select[name="cp_position"]').val('');
   $('#recruitment_campaign select[name="cp_position"]').change();
@@ -157,7 +158,14 @@ function edit_campaign(invoker,id){
          $('#recruitment_campaign select[name="cp_follower[]"]').val($(invoker).data('follower')).change();
 
       }
+      var _recruitment_campaign_approver = $(invoker).data('approver');
 
+      if(typeof(_recruitment_campaign_approver) == "string"){
+          $('#recruitment_campaign select[name="cp_approver[]"]').val( ($(invoker).data('approver')).split(',')).change();
+      }else{
+         $('#recruitment_campaign select[name="cp_approver[]"]').val($(invoker).data('approver')).change();
+
+      }
   $('#recruitment_campaign select[name="cp_position"]').val($(invoker).data('position'));
   $('#recruitment_campaign select[name="cp_position"]').change();
 
