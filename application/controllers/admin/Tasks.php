@@ -109,7 +109,7 @@ class Tasks extends AdminController
         $this->session->set_userdata([
             'tasks_kanban_view' => $set,
         ]);
-        $this->input->set_cookie('tasks_kanban_view', $set, 0);
+        $this->input->set_cookie('tasks_kanban_view', $set, 31556952);
         if ($manual == false) {
             // clicked on VIEW KANBAN from projects area and will redirect again to the same view
             if (strpos($_SERVER['HTTP_REFERER'], 'project_id') !== false) {

@@ -437,6 +437,22 @@ function save_longitude_and_latitude(clientid) {
     });
 }
 
+function save_ifame_report(clientid) {
+    "use strict"; 
+    var data = {};
+    data.ifame_report = $('#ifame_report').val();
+    $.post(admin_url + 'clients/save_ifame_report/'+clientid, data).done(function(response) {
+       if(response == 'success') {
+            alert_float('success', "<?php echo _l('updated_successfully', _l('client')); ?>");
+       }
+        setTimeout(function(){
+            window.location.reload();
+        },1200);
+    }).fail(function(error) {
+        alert_float('danger', error.responseText);
+    });
+}
+
 function fetch_lat_long_from_google_cprofile() {
     "use strict"; 
     var data = {};

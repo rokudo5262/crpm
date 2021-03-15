@@ -306,3 +306,16 @@ function view_campaign_file(id, rel_id) {
 function close_modal_preview(){
  $('._project_file').modal('hide');
 }
+
+$('#position').on('changed.bs.select', function (e, clickedIndex, isSelected, previousValue) {
+  var download_url_el = $('#lastest_jd_file_download_url');
+  var position_id = $(this).val();
+  $.get(admin_url + 'recruitment/get_lastest_job_position_jd_file_ajax/' + position_id, function(data) {
+    if('' !== data) {
+      data = JSON.parse(data);
+      download_url_el.html('<p><a href="' + data.url + '" target="_blank" download>' + data.name + '</a></p>');
+    } else {
+      download_url_el.html('No file uploaded...');
+    }
+  });
+});
