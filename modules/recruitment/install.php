@@ -566,3 +566,13 @@ if (recruitment_row_options_exist('"recruitment_create_campaign_with_plan "') ==
     ADD COLUMN `company_id` int(15) null
     ;');            
   }
+  if (!$CI->db->field_exists('approver', 'rec_campaign')) {
+    $CI->db->query('ALTER TABLE `'.db_prefix() . 'rec_campaign` ADD COLUMN `cp_approver` Text null;');            
+}
+if (!$CI->db->field_exists('created_by', 'rec_campaign')) {
+    $CI->db->query('ALTER TABLE `'.db_prefix() . 'rec_campaign` ADD COLUMN `cp_created_by` Text null;');            
+}  
+if (recruitment_row_options_exist('"default_approver "') == 0){
+  $CI->db->query('INSERT INTO `tbloptions` (`name`,`value`, `autoload`) VALUES ("default_approver", "", "1");
+');
+}
