@@ -86,7 +86,7 @@ class recruitment extends AdminController {
 			$lastest_file_download_url = base_url() . 'modules/recruitment/uploads/hr_jd/' . $position_id . '/' . $lastest_file_name;
 			return ['name' => $lastest_file_name, 'url' => $lastest_file_download_url];
 		} else {
-			return ['name' => '', 'url' => ''];
+			return null;
 		}
 	}
 
