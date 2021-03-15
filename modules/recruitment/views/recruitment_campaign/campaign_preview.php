@@ -206,7 +206,9 @@ foreach ($approvers as $approver) {
              </table>
     	</div>
       <div class="col-md-12 padding-left-10">
-        <p id="campaign_preview_jd_download"><strong class="text-muted">Position JD File:</strong> <a href="<?php echo $position_jd['url'] ?>"><?php echo $position_jd['name'] ?></a></p>
+        <?php if (isset($position_jd)) : ?>
+          <p id="campaign_preview_jd_download"><strong class="text-muted">Position JD File:</strong> <a href="<?php echo $position_jd['url'] ?>"> <?php echo $position_jd['name'] ?></a></p>
+        <?php endif; ?>
         <p class="bold text-muted"><?php echo _l('job_description') . ': ' . $campaigns->cp_job_description; ?></p>
         </div>
     	<div class="row col-md-12">
