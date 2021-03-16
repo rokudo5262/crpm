@@ -1207,8 +1207,8 @@ class Clients extends ClientsController
             $this->stripe_core->update_customer($session->setup_intent->metadata->customer_id, [
                 'invoice_settings' => [
                     'default_payment_method' => $session->setup_intent->payment_method->id,
-                  ],
-              ]);
+                ],
+            ]);
 
             set_alert('success', _l('updated_successfully', _l('credit_card')));
         } catch (Exception $e) {
