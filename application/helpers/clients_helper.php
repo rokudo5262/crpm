@@ -315,14 +315,6 @@ function app_init_customer_profile_tabs()
         'view'     => 'admin/clients/groups/map',
         'position' => 95,
     ]);
-    
-    /// Daily Report 
-    $CI->app_tabs->add_customer_profile_tab('daily report', [
-        'name'     => _l('Daily Report'),
-        'icon'     => 'fa fa-file-text-o',
-        'view'     => 'admin/clients/groups/daily_report',
-        'position' => 15,
-    ]);
 }
 
 /**

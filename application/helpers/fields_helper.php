@@ -257,7 +257,7 @@ function render_textarea($name, $label = '', $value = '', $textarea_attrs = [], 
     }
 
     $v = clear_textarea_breaks($value);
-    if (strpos($textarea_class, 'tinymce') !== false && strpos($textarea_class, 'mindmap') == false ) {
+    if (strpos($textarea_class, 'tinymce') !== false) {
         $v = html_purify($value);
     }
     $textarea .= '<textarea id="' . $name . '" name="' . $name . '" class="form-control' . $textarea_class . '" ' . $_textarea_attrs . '>' . set_value($name, $v) . '</textarea>';
@@ -463,11 +463,15 @@ if (!function_exists('render_form_builder_field')) {
          <input' . (isset($field->required) ? ' required="true"': '') . ' placeholder="' . (isset($field->placeholder) ? $field->placeholder : '') . '" type="text"' . (isset($field->value) ? ' value="' . $field->value . '"' : '') . ' name="' . $field->name . '" id="' . $field->name . '" class="' . (isset($field->className) ? $field->className : '') . '" />
              <span class="input-group-addon"><i></i></span>
          </div>';
-            } elseif ($type == 'file' || $type == 'text' || $type == 'number') {
+            } elseif ($type == 'text' || $type == 'number') {
                 $ftype = isset($field->subtype) ? $field->subtype : $type;
-                echo '<input' . (isset($field->required) ? ' required="true"': '') . (isset($field->placeholder) ? ' placeholder="' . $field->placeholder . '"' : '') . ' type="' . $ftype . '" name="' . $field->name . '" id="' . $field->name . '" class="' . (isset($field->className) ? $field->className : '') . '" value="' . (isset($field->value) ? $field->value : '') . '"' . ($field->type == 'file' ? ' accept="' . get_form_accepted_mimes() . '" filesize="' . file_upload_max_size() . '"' : '') . '>';
+                echo '<input' . (isset($field->required) ? ' required="true"': '') . (isset($field->placeholder) ? ' placeholder="' . $field->placeholder . '"' : '') . ' type="' . $ftype . '" name="' . $field->name . '" id="' . $field->name . '" class="' . (isset($field->className) ? $field->className : '') . '" value="' . (isset($field->value) ? $field->value : '') . '"' . ($field->type == 'file' ? ' accept="' . get_form_accepted_mimes() . '" filesize="' . file_upload_max_size() . '"' : '') . (isset($field->step) ? 'step="'. $field->step.'"' : '')  . (isset($field->min) ? 'min="'. $field->min.'"' : '') . (isset($field->max) ? 'max="'. $field->max.'"' : '')  . (isset($field->maxlength) ? 'maxlength="'. $field->maxlength.'"' : '') . '>';
+            } elseif ($type == 'file') {
+                $ftype = isset($field->subtype) ? $field->subtype : $type;
+                echo '<input' . (isset($field->required) ? ' required="true"': '') . (isset($field->placeholder) ? ' placeholder="' . $field->placeholder . '"' : '') . ' type="' . $ftype . '" name="' . (isset($field->multiple) ? $field->name . "[]" : $field->name ) . '" id="' . $field->name . '" class="' . (isset($field->className) ? $field->className : '') . '" value="' . (isset($field->value) ? $field->value : '') . '"' . ($field->type == 'file' ? ' accept="' . get_form_accepted_mimes() . '" filesize="' . file_upload_max_size() . '"' : '') . (isset($field->step) ? 'step="'. $field->step.'"' : ''). (isset($field->multiple) ? 'multiple="'. $field->multiple.'"' : '').'>';
             } elseif ($type == 'textarea') {
-                echo '<textarea' . (isset($field->required) ? ' required="true"': '') . ' id="' . $field->name . '" name="' . $field->name . '" rows="' . (isset($field->rows) ? $field->rows : '4') . '" class="' . (isset($field->className) ? $field->className : '') . '" placeholder="' . (isset($field->placeholder) ? $field->placeholder : '') . '">' . (isset($field->value) ? $field->value : '') . '</textarea>';
+                echo '<textarea' . (isset($field->required) ? ' required="true"': '') . ' id="' . $field->name . '" name="' . $field->name . '" rows="' . (isset($field->rows) ? $field->rows : '4') . '" class="' . (isset($field->className) ? $field->className : '') . '" placeholder="' . (isset($field->placeholder) ? $field->placeholder : '') . '"'. (isset($field->maxlength) ? 'maxlength="'. $field->maxlength.'"' : '') . '>'
+                 . (isset($field->value) ? $field->value : '') . '</textarea>';
             } elseif ($type == 'date') {
                 echo '<input' . (isset($field->required) ? ' required="true"': '') . ' placeholder="' . (isset($field->placeholder) ? $field->placeholder : '') . '" type="text" class="' . (isset($field->className) ? $field->className : '') . ' datepicker" name="' . $field->name . '" id="' . $field->name . '" value="' . (isset($field->value) ? _d($field->value) : '') . '">';
             } elseif ($type == 'datetime-local') {
@@ -497,7 +501,23 @@ if (!function_exists('render_form_builder_field')) {
                     }
                     echo '</div>';
                 }
+            } elseif ($type == 'radio-group') {
+                if (isset($field->values) && count($field->values) > 0) {
+                    $i = 0;
+                    foreach ($field->values as $radio) {
+                        echo '<div class="radio ' . ((isset($field->inline) && $field->inline == true) || (isset($field->className) && strpos($field->className, 'form-inline-radio') !== false) ? ' radio-inline' : '') . '">';
+                        echo '  <input '. (isset($field->required) ? ' required="true"': '') . ' class="' . (isset($field->className) ? $field->className : '') . '" type="radio"';
+                        echo 'name="' . $field->name . '" id="radio_' . $field->name . '_' . $i . '"';
+                        echo 'value="' . $radio->value . '"' . (isset($radio->selected) ? ' checked' : '') . '>';
+                       echo '<label for="radio_' . $field->name . '_' . $i . '">';
+                        echo $radio->label;
+                        echo '</label>';
+                        echo '</div>';
+                        $i++;
+                    }
+                }
             }
+
             echo '</div>';
         }
         echo '</div>';
@@ -582,4 +602,21 @@ function format_external_form_custom_fields($custom_fields)
     }
 
     return $cfields;
+}
+
+
+/**
+ * Render Estimate request status select
+ */
+function render_estimate_request_status_select($statuses, $selected = '', $lang_key = '', $name = 'status', $select_attrs = [])
+{
+    if ($selected == '') {
+        foreach ($statuses as $key => $status) {
+            if ($status['flag'] == 'processing') {
+            $selected = $status['id'];
+                break;
+            }
+        }
+    }
+    return render_select($name, $statuses, ['id', 'name'], $lang_key, $selected, $select_attrs);
 }

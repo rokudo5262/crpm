@@ -188,6 +188,20 @@ class Payments extends AdminController
                             'type'       => 'application/pdf',
                         ]);
 
+                        
+                    if (get_option('attach_invoice_to_payment_receipt_email') == 1) {
+                        $invoice_number = format_invoice_number($payment->invoiceid);
+                        set_mailing_constant();
+                        $pdfInvoice           = invoice_pdf($payment->invoice_data);
+                        $pdfInvoiceAttachment = $pdfInvoice->Output($invoice_number . '.pdf', 'S');
+                        
+                        $template->add_attachment([
+                            'attachment' => $pdfInvoiceAttachment,
+                            'filename'   => str_replace('/', '-', $invoice_number) . '.pdf',
+                            'type'       => 'application/pdf',
+                        ]);
+                    }
+
                     if ($template->send()) {
                         $sent = true;
                     }

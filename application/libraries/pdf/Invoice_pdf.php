@@ -12,7 +12,7 @@ class Invoice_pdf extends App_pdf
 
     public function __construct($invoice, $tag = '')
     {
-
+        $this->load_language($invoice->clientid);
         $invoice                = hooks()->apply_filters('invoice_html_pdf_data', $invoice);
         $GLOBALS['invoice_pdf'] = $invoice;
 
@@ -25,7 +25,7 @@ class Invoice_pdf extends App_pdf
         $this->tag            = $tag;
         $this->invoice        = $invoice;
         $this->invoice_number = format_invoice_number($this->invoice->id);
-        $this->load_language($this->invoice->clientid);
+
         $this->SetTitle($this->invoice_number);
     }
 

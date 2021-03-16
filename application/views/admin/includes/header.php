@@ -69,7 +69,6 @@ ob_end_clean();
        echo $top_search_area;
     } ?>
     <?php hooks()->do_action('after_render_top_search'); ?>
-    
     <li class="icon header-user-profile" data-toggle="tooltip" title="<?php echo get_staff_full_name(); ?>" data-placement="bottom">
       <a href="#" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="false">
          <?php echo staff_profile_image($current_user->staffid,array('img','img-responsive','staff-profile-image-small','pull-left')); ?>

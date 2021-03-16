@@ -24,7 +24,10 @@ class App_Security extends CI_Security
             die;
         }
 
-        parent::csrf_show_error();
+        // parent::csrf_show_error();
+        $heading = ' 419 Page Expired!';
+        $message = 'Sorry, the page has expired, return to previous page and refresh to continue.';
+        show_error($message, 403, $heading);
     }
 
     public function xss_clean($str, $is_image = false)
@@ -228,5 +231,55 @@ class App_Security extends CI_Security
         }
 
         return $str;
+    }
+
+    /**
+     * CSRF Set Cookie
+     *
+     * @codeCoverageIgnore
+     * @return  CI_Security
+     */
+    public function csrf_set_cookie()
+    {
+        $expire        = time() + $this->_csrf_expire;
+        $secure_cookie = (bool) config_item('cookie_secure');
+        $samesite      = config_item('sess_cookie_samesite');
+        $path          = config_item('cookie_path');
+        $domain        = config_item('cookie_domain');
+
+        if ($secure_cookie && ! is_https()) {
+            return false;
+        }
+
+        if (PHP_VERSION_ID < 70300) {
+            // In PHP < 7.3.0, there is a "hacky" way to set the samesite parameter
+            $samesite = '';
+
+            if (! empty($samesite)) {
+                $samesite = '; samesite=' . $samesite;
+            }
+
+            setcookie($this->_csrf_cookie_name, $this->_csrf_hash, $expire, $path . $samesite, $domain, $secure_cookie, true);
+        } else {
+
+            // PHP 7.3 adds another function signature allowing setting of samesite
+            $params = [
+                'expires'  => $expire,
+                'path'     => $path,
+                'domain'   => $domain,
+                'secure'   => $secure_cookie,
+                'httponly' => true, // Enforce HTTP only cookie for security
+            ];
+
+            if (! empty($samesite)) {
+                $params['samesite'] = $samesite;
+            }
+
+            setcookie($this->_csrf_cookie_name, $this->_csrf_hash, $params);
+        }
+
+        log_message('info', 'CSRF cookie sent');
+
+        return $this;
     }
 }

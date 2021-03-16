@@ -25,7 +25,7 @@ class App_Controller extends CI_Controller
             require_once(APPPATH . 'vendor/autoload.php');
         }
 
-        if (is_dir(FCPATH . 'install') && ENVIRONMENT != 'development') {
+        if (is_dir(FCPATH . 'install') && ENVIRONMENT === 'production') {
             die('<h3>Delete the install folder</h3>');
         }
 

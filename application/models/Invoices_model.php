@@ -16,6 +16,8 @@ class Invoices_model extends App_Model
 
     const STATUS_DRAFT = 6;
 
+    const STATUS_DRAFT_NUMBER = 1000000000;
+
     private $statuses = [
         self::STATUS_UNPAID,
         self::STATUS_PAID,
@@ -340,6 +342,10 @@ class Invoices_model extends App_Model
 
         $data['billing_street'] = trim($data['billing_street']);
         $data['billing_street'] = nl2br($data['billing_street']);
+
+        if (isset($data['status']) && $data['status'] == self::STATUS_DRAFT) {
+            $data['number'] = self::STATUS_DRAFT_NUMBER;
+        }
 
         $hook = hooks()->apply_filters('before_invoice_added', [
             'data'  => $data,
@@ -1334,7 +1340,8 @@ class Invoices_model extends App_Model
             'last_overdue_reminder' => date('Y-m-d'),
         ]);
 
-        $contacts = $this->clients_model->get_contacts($invoice->clientid, ['active' => 1, 'invoice_emails' => 1]);
+        $contacts = $this->get_contacts_for_invoice_emails($invoice->clientid);
+
         foreach ($contacts as $contact) {
             $template = mail_template('invoice_overdue_notice', $invoice, $contact);
 
@@ -1387,6 +1394,90 @@ class Invoices_model extends App_Model
     }
 
     /**
+     * Send due notice to client for the given invoice
+     *
+     * @param  mxied  $id   invoiceid
+     *
+     * @return boolean
+     */
+    public function send_invoice_due_notice($id)
+    {
+        $invoice        = $this->get($id);
+        $invoice_number = format_invoice_number($invoice->id);
+
+        set_mailing_constant();
+
+        $pdf = invoice_pdf($invoice);
+
+        if ($attach_pdf = hooks()->apply_filters('invoice_due_notice_attach_pdf', true) === true) {
+            $attach = $pdf->Output($invoice_number . '.pdf', 'S');
+        }
+
+        $emails_sent      = [];
+        $email_sent       = false;
+        $sms_sent         = false;
+        $sms_reminder_log = [];
+
+        // For all cases update this to prevent sending multiple reminders eq on fail
+        $this->db->where('id', $id);
+        $this->db->update(db_prefix() . 'invoices', [
+            'last_due_reminder' => date('Y-m-d'),
+        ]);
+
+        $contacts = $this->get_contacts_for_invoice_emails($invoice->clientid);
+
+        foreach ($contacts as $contact) {
+            $template = mail_template('invoice_due_notice', $invoice, $contact);
+
+            if ($attach_pdf === true) {
+                $template->add_attachment([
+                    'attachment' => $attach,
+                    'filename'   => str_replace('/', '-', $invoice_number . '.pdf'),
+                    'type'       => 'application/pdf',
+                ]);
+            }
+
+            $merge_fields = $template->get_merge_fields();
+
+            if ($template->send()) {
+                array_push($emails_sent, $contact['email']);
+                $email_sent = true;
+            }
+
+            if (can_send_sms_based_on_creation_date($invoice->datecreated)
+                && $this->app_sms->trigger(SMS_TRIGGER_INVOICE_DUE, $contact['phonenumber'], $merge_fields)) {
+                $sms_sent = true;
+                array_push($sms_reminder_log, $contact['firstname'] . ' (' . $contact['phonenumber'] . ')');
+            }
+        }
+
+        if ($email_sent || $sms_sent) {
+            if ($email_sent) {
+                $this->log_invoice_activity($id, 'activity_due_reminder_is_sent', false, serialize([
+                    '<custom_data>' . implode(', ', $emails_sent) . '</custom_data>',
+                    defined('CRON') ? ' ' : get_staff_full_name(),
+                ]));
+            }
+
+            if ($sms_sent) {
+                $this->log_invoice_activity($id, 'sms_reminder_sent_to', false, serialize([
+                   implode(', ', $sms_reminder_log),
+                ]));
+            }
+
+            hooks()->do_action('invoice_due_reminder_sent', [
+                'invoice_id' => $id,
+                'sent_to'    => $emails_sent,
+                'sms_send'   => $sms_sent,
+            ]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Send invoice to client
      * @param  mixed  $id        invoiceid
      * @param  string  $template  email template to sent
@@ -1424,10 +1515,7 @@ class Invoices_model extends App_Model
         } elseif (isset($GLOBALS['scheduled_email_contacts'])) {
             $send_to = $GLOBALS['scheduled_email_contacts'];
         } else {
-            $contacts = $this->clients_model->get_contacts(
-                $invoice->clientid,
-                ['active' => 1, 'invoice_emails' => 1]
-            );
+            $contacts = $this->get_contacts_for_invoice_emails($invoice->clientid);
 
             foreach ($contacts as $contact) {
                 array_push($send_to, $contact['id']);
@@ -1684,5 +1772,19 @@ class Invoices_model extends App_Model
         $this->db->where('name', 'next_invoice_number');
         $this->db->set('value', 'value-1', false);
         $this->db->update(db_prefix() . 'options');
+    }
+
+    /**
+     * Get the contacts that should receive invoice related emails
+     *
+     * @param  int $client_id
+     *
+     * @return array
+     */
+    protected function get_contacts_for_invoice_emails($client_id)
+    {
+        return $this->clients_model->get_contacts($client_id, [
+            'active' => 1, 'invoice_emails' => 1,
+        ]);
     }
 }

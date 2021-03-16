@@ -126,6 +126,12 @@ class Proposals_model extends App_Model
             unset($data['custom_fields']);
         }
 
+        $estimateRequestID = false;
+        if (isset($data['estimate_request_id'])) {
+            $estimateRequestID = $data['estimate_request_id'];
+            unset($data['estimate_request_id']);
+        }
+
         $data['address'] = trim($data['address']);
         $data['address'] = nl2br($data['address']);
 
@@ -165,6 +171,15 @@ class Proposals_model extends App_Model
         $insert_id = $this->db->insert_id();
 
         if ($insert_id) {
+            if ($estimateRequestID !== false && $estimateRequestID != '') {
+                $this->load->model('estimate_request_model');
+                $completedStatus = $this->estimate_request_model->get_status_by_flag('completed');
+                $this->estimate_request_model->update_request_status([
+                    'requestid' => $estimateRequestID,
+                    'status' => $completedStatus->id,
+                ]);
+            }
+
             if (isset($custom_fields)) {
                 handle_custom_fields_post($insert_id, $custom_fields);
             }

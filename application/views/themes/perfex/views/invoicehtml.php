@@ -246,7 +246,7 @@
             <?php if (!empty($invoice->terms)) { ?>
                <div class="col-md-12 invoice-html-terms-and-conditions">
                   <hr />
-                  <b><?php echo _l('terms_and_conditions'); ?></b><br /><br /><?php echo $invoice->terms; ?>
+                  <b><?php echo _l('terms_and_conditions'); ?>:</b><br /><br /><?php echo $invoice->terms; ?>
                </div>
             <?php } ?>
             <div class="col-md-12">
@@ -256,7 +256,7 @@
                <?php
                $total_payments = count($invoice->payments);
                if ($total_payments > 0) { ?>
-                  <p class="bold mbot15 font-medium"><?php echo _l('invoice_received_payments'); ?></p>
+                  <p class="bold mbot15 font-medium"><?php echo _l('invoice_received_payments'); ?>:</p>
                   <table class="table table-hover invoice-payments-table">
                      <thead>
                         <tr>
@@ -350,7 +350,7 @@
                                                                   } else {
                                                                      echo 'col-md-12';
                                                                   }; ?>">
-                           <p class="bold mbot15 font-medium"><?php echo _l('invoice_html_offline_payment'); ?></p>
+                           <p class="bold mbot15 font-medium"><?php echo _l('invoice_html_offline_payment'); ?>:</p>
                            <?php foreach ($payment_modes as $mode) {
                               if (is_numeric($mode['id'])) {
                                  if (!is_payment_mode_allowed_for_invoice($mode['id'], $invoice->id)) {

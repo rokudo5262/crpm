@@ -71,6 +71,10 @@ foreach ($rResult as $aRow) {
         $descriptionOutput .= ' | <a href="' . admin_url('invoice_items/delete/' . $aRow['id']) . '" class="text-danger _delete">' . _l('delete') . '</a>';
     }
 
+    if (has_permission('items', '', 'create')) {
+        $descriptionOutput .= '<a href="' . admin_url('invoice_items/copy/' . $aRow['id']) . '" class=" _edit_item">' . _l('copy') . '</a>';
+    }
+    
     $descriptionOutput .= '</div>';
 
     $row[] = $descriptionOutput;

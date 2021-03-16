@@ -120,6 +120,11 @@ class Emails extends AdminController
             'language' => 'english',
         ]);
 
+        $data['estimate_request'] = $this->emails_model->get([
+            'type'     => 'estimate_request',
+            'language' => 'english',
+        ]);
+
         $data['title'] = _l('email_templates');
 
         $data['hasPermissionEdit'] = has_permission('email_templates', '', 'edit');

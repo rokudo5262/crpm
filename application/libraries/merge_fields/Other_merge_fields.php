@@ -20,6 +20,7 @@ class Other_merge_fields extends App_merge_fields
                         'credit_note',
                         'subscriptions',
                         'gdpr',
+                        'estimate_request'
                     ];
 
         $available_for = hooks()->apply_filters('other_merge_fields_available_for', $available_for);

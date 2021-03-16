@@ -12,6 +12,7 @@ class Credit_note_pdf extends App_pdf
 
     public function __construct($credit_note, $tag = '')
     {
+        $this->load_language($credit_note->clientid);
         $GLOBALS['credit_note_pdf'] = $credit_note;
 
         parent::__construct();
@@ -19,7 +20,7 @@ class Credit_note_pdf extends App_pdf
         $this->tag                = $tag;
         $this->credit_note        = $credit_note;
         $this->credit_note_number = format_credit_note_number($this->credit_note->id);
-        $this->load_language($this->credit_note->clientid);
+
         $this->SetTitle($this->credit_note_number);
     }
 

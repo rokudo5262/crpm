@@ -10,19 +10,21 @@ class Statement_pdf extends App_pdf
 
     public function __construct($statement)
     {
+        $this->load_language($statement['client_id']);
+
         $GLOBALS['statement_pdf'] = $statement;
 
         parent::__construct();
 
-        $this->statement        = $statement;
-        $this->load_language($this->statement['client_id']);
+        $this->statement = $statement;
+
         $this->SetTitle(_l('account_summary'));
     }
 
     public function prepare()
     {
         $this->set_view_vars([
-            'statement'        => $this->statement,
+            'statement' => $this->statement,
         ]);
 
         return $this->build();

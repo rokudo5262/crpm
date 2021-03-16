@@ -25,18 +25,20 @@ function get_invoice_shortlink($invoice)
 
     // Create short link and return the newly created short link
     $short_link = app_generate_short_link([
-        'long_url'  => $long_url,
-        'title'     => format_invoice_number($invoice->id)
+        'long_url' => $long_url,
+        'title'    => format_invoice_number($invoice->id),
     ]);
 
     if ($short_link) {
         $CI = &get_instance();
         $CI->db->where('id', $invoice->id);
         $CI->db->update(db_prefix() . 'invoices', [
-            'short_link' => $short_link
+            'short_link' => $short_link,
         ]);
+
         return $short_link;
     }
+
     return $long_url;
 }
 
@@ -99,6 +101,18 @@ function is_invoices_email_overdue_notice_enabled()
 }
 
 /**
+ * Check if invoice email template for due notices is enabled
+ *
+ * @since  2.8.0
+ *
+ * @return boolean
+ */
+function is_invoices_email_due_notice_enabled()
+{
+    return total_rows(db_prefix() . 'emailtemplates', ['slug' => 'invoice-due-notice', 'active' => 1]) > 0;
+}
+
+/**
  * Check if there are sources for sending invoice overdue notices
  * Will be either email or SMS
  * @return boolean
@@ -106,6 +120,19 @@ function is_invoices_email_overdue_notice_enabled()
 function is_invoices_overdue_reminders_enabled()
 {
     return is_invoices_email_overdue_notice_enabled() || is_sms_trigger_active(SMS_TRIGGER_INVOICE_OVERDUE);
+}
+
+/**
+ * Check if there are sources for sending invoice due notices
+ * Will be either email or SMS
+ *
+ * @since  2.8.0
+ *
+ * @return boolean
+ */
+function is_invoices_due_reminders_enabled()
+{
+    return is_invoices_email_due_notice_enabled() || is_sms_trigger_active(SMS_TRIGGER_INVOICE_DUE);
 }
 
 /**

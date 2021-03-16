@@ -92,19 +92,21 @@ class Invoice_items extends AdminController
 
         $this->load->library('import/import_items', [], 'import');
 
-        $this->import->setDatabaseFields($this->db->list_fields(db_prefix().'items'))
-                     ->setCustomFields(get_custom_fields('items'));
+        $this->import->setDatabaseFields($this->db->list_fields(db_prefix() . 'items'))
+            ->setCustomFields(get_custom_fields('items'));
 
         if ($this->input->post('download_sample') === 'true') {
             $this->import->downloadSample();
         }
 
-        if ($this->input->post()
-            && isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != '') {
+        if (
+            $this->input->post()
+            && isset($_FILES['file_csv']['name']) && $_FILES['file_csv']['name'] != ''
+        ) {
             $this->import->setSimulation($this->input->post('simulate'))
-                          ->setTemporaryFileLocation($_FILES['file_csv']['tmp_name'])
-                          ->setFilename($_FILES['file_csv']['name'])
-                          ->perform();
+                ->setTemporaryFileLocation($_FILES['file_csv']['tmp_name'])
+                ->setFilename($_FILES['file_csv']['name'])
+                ->perform();
 
             $data['total_rows_post'] = $this->import->totalRows();
 
@@ -219,5 +221,25 @@ class Invoice_items extends AdminController
 
             echo json_encode($item);
         }
+    }
+
+    /* Copy Item */
+    public function copy($id)
+    {
+        if (!has_permission('items', '', 'create')) {
+            access_denied('Create Item');
+        }
+
+        $data = (array) $this->invoice_items_model->get($id);
+
+        $id = $this->invoice_items_model->copy($data);
+
+        if ($id) {
+            set_alert('success', _l('item_copy_success'));
+            return redirect(admin_url('invoice_items?id=' . $id));
+        }
+
+        set_alert('warning', _l('item_copy_fail'));
+        return redirect(admin_url('invoice_items'));
     }
 }

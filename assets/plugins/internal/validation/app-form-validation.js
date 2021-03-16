@@ -97,9 +97,8 @@ if (typeof($.validator) == 'undefined') {
         self.validateCustomFields = function($form) {
 
             $.each($form.find($.fn.appFormValidator.internal_options.required_custom_fields_selector), function() {
-
                 // for custom fields in tr.main, do not validate those
-                if (!$(this).parents('tr.main').length) {
+                if (!$(this).parents('tr.main').length && !$(this).hasClass('do-not-validate')) {
 
                     $(this).rules("add", { required: true });
                     if ($.fn.appFormValidator.internal_options.on_required_add_symbol) {

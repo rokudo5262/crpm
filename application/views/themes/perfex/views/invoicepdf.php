@@ -34,14 +34,14 @@ $organization_info .= format_organization_info();
 $organization_info .= '</div>';
 
 // Bill to
-$invoice_info = '<b>' . _l('invoice_bill_to') . '</b>';
+$invoice_info = '<b>' . _l('invoice_bill_to') . ':</b>';
 $invoice_info .= '<div style="color:#424242;">';
     $invoice_info .= format_customer_info($invoice, 'invoice', 'billing');
 $invoice_info .= '</div>';
 
 // ship to to
 if ($invoice->include_shipping == 1 && $invoice->show_shipping_on_invoice == 1) {
-    $invoice_info .= '<br /><b>' . _l('ship_to') . '</b>';
+    $invoice_info .= '<br /><b>' . _l('ship_to') . ':</b>';
     $invoice_info .= '<div style="color:#424242;">';
     $invoice_info .= format_customer_info($invoice, 'invoice', 'shipping');
     $invoice_info .= '</div>';
@@ -171,7 +171,7 @@ if (count($invoice->payments) > 0 && get_option('show_transactions_on_invoice_pd
     $pdf->Ln(4);
     $border = 'border-bottom-color:#000000;border-bottom-width:1px;border-bottom-style:solid; 1px solid black;';
     $pdf->SetFont($font_name, 'B', $font_size);
-    $pdf->Cell(0, 0, _l('invoice_received_payments'), 0, 1, 'L', 0, '', 0);
+    $pdf->Cell(0, 0, _l('invoice_received_payments') . ":", 0, 1, 'L', 0, '', 0);
     $pdf->SetFont($font_name, '', $font_size);
     $pdf->Ln(4);
     $tblhtml = '<table width="100%" bgcolor="#fff" cellspacing="0" cellpadding="5" border="0">
@@ -204,7 +204,7 @@ if (count($invoice->payments) > 0 && get_option('show_transactions_on_invoice_pd
 if (found_invoice_mode($payment_modes, $invoice->id, true, true)) {
     $pdf->Ln(4);
     $pdf->SetFont($font_name, 'B', $font_size);
-    $pdf->Cell(0, 0, _l('invoice_html_offline_payment'), 0, 1, 'L', 0, '', 0);
+    $pdf->Cell(0, 0, _l('invoice_html_offline_payment') . ":", 0, 1, 'L', 0, '', 0);
     $pdf->SetFont($font_name, '', $font_size);
 
     foreach ($payment_modes as $mode) {
@@ -234,7 +234,7 @@ if (!empty($invoice->clientnote)) {
 if (!empty($invoice->terms)) {
     $pdf->Ln(4);
     $pdf->SetFont($font_name, 'B', $font_size);
-    $pdf->Cell(0, 0, _l('terms_and_conditions'), 0, 1, 'L', 0, '', 0);
+    $pdf->Cell(0, 0, _l('terms_and_conditions') . ":", 0, 1, 'L', 0, '', 0);
     $pdf->SetFont($font_name, '', $font_size);
     $pdf->Ln(2);
     $pdf->writeHTMLCell('', '', '', '', $invoice->terms, 0, 1, false, true, 'L', true);

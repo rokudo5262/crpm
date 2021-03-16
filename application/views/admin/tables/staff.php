@@ -10,13 +10,13 @@ $custom_fields = get_custom_fields('staff', [
 $aColumns = [
     'firstname',
     'email',
-    db_prefix().'roles.name',
+    db_prefix() . 'roles.name',
     'last_login',
     'active',
     ];
 $sIndexColumn = 'staffid';
-$sTable       = db_prefix().'staff';
-$join         = ['LEFT JOIN '.db_prefix().'roles ON '.db_prefix().'roles.roleid = '.db_prefix().'staff.role'];
+$sTable       = db_prefix() . 'staff';
+$join         = ['LEFT JOIN ' . db_prefix() . 'roles ON ' . db_prefix() . 'roles.roleid = ' . db_prefix() . 'staff.role'];
 $i            = 0;
 foreach ($custom_fields as $field) {
     $select_as = 'cvalue_' . $i;
@@ -24,7 +24,7 @@ foreach ($custom_fields as $field) {
         $select_as = 'date_picker_cvalue_' . $i;
     }
     array_push($aColumns, 'ctable_' . $i . '.value as ' . $select_as);
-    array_push($join, 'LEFT JOIN '.db_prefix().'customfieldsvalues as ctable_' . $i . ' ON '.db_prefix().'staff.staffid = ctable_' . $i . '.relid AND ctable_' . $i . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $i . '.fieldid=' . $field['id']);
+    array_push($join, 'LEFT JOIN ' . db_prefix() . 'customfieldsvalues as ctable_' . $i . ' ON ' . db_prefix() . 'staff.staffid = ctable_' . $i . '.relid AND ctable_' . $i . '.fieldto="' . $field['fieldto'] . '" AND ctable_' . $i . '.fieldid=' . $field['id']);
     $i++;
 }
             // Fix for big queries. Some hosting have max_join_limit
@@ -97,5 +97,8 @@ foreach ($rResult as $aRow) {
     }
 
     $row['DT_RowClass'] = 'has-row-options';
+
+    $row = hooks()->apply_filters('staff_table_row', $row, $aRow);
+
     $output['aaData'][] = $row;
 }

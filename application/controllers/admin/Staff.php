@@ -205,6 +205,8 @@ class Staff extends AdminController
     /* When staff edit his profile */
     public function edit_profile()
     {
+        hooks()->do_action('edit_logged_in_staff_profile');
+
         if ($this->input->post()) {
             handle_staff_profile_image_upload();
             $data = $this->input->post();
