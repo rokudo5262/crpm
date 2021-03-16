@@ -95,7 +95,7 @@ function add_default_theme_menu_items()
                     'name'     => _l('Daily Report'),
                     'href'     => site_url('clients/dailyreport'),
                     'position' => 45,
-                ]);
+                ]); 
     }
 }
 
