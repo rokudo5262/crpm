@@ -303,7 +303,7 @@
         var row = [];
         $.each($(this).find('td'), function() {
             var data = $(this);
-            row.push($(data).text());
+            row.push(stripTags($(data).text().trim()));
         });
        body.push(row);
     });
@@ -316,13 +316,13 @@
         "alignment":"center",
         content: [
         {
-            text: '<?php echo _l("expenses_report_for"); ?> <?php echo $current_year; ?>:',
+            text: "<?php echo _l("expenses_report_for"); ?> <?php echo $current_year; ?>:",
             bold: true,
             fontSize: 25,
             margin: [0, 5]
         },
         {
-            text:'<?php echo get_option("companyname"); ?>',
+            text:"<?php echo get_option("companyname"); ?>",
             margin: [2,5]
         },
         {
@@ -334,7 +334,7 @@
         }
         ],
         defaultStyle: {
-            alignment: 'justify',
+            alignment: 'left',
             fontSize: 10,
         }
     };

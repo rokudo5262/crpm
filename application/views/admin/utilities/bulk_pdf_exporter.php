@@ -81,10 +81,10 @@
                                 </div>
                             <?php } ?>
                         </div>
-                        <div class="form-group hide shifter payments_shifter">
+                        <div class="form-group hide shifter payments_shifter expenses_shifter">
                             <?php
                             array_unshift($payment_modes,array('id'=>'','name'=>_l('bulk_export_status_all')));
-                            echo render_select('paymentmode',$payment_modes,array('id','name'),'bulk_export_zip_payment_modes');
+                            echo render_select('paymentmode',$payment_modes,array('id','name'),'payment_modes');
                             ?>
                         </div>
                         <?php hooks()->do_action('after_bulk_pdf_export_options'); ?>

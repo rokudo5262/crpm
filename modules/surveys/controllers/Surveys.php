@@ -603,7 +603,7 @@ class Surveys extends AdminController
         $temp_url = TEMP_FOLDER . $filename;
         if (move_uploaded_file($_FILES['file_xls']['tmp_name'], $temp_url)) {
             try {
-                $xls_emails = new SpreadsheetReader($temp_url);
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($temp_url);
             } catch (Exception $e) {
                 die('Error loading file "' . pathinfo($temp_url, PATHINFO_BASENAME) . '": ' . $e->getMessage());
             }
@@ -612,7 +612,8 @@ class Surveys extends AdminController
             $total_added_emails     = 0;
             $mails_failed_to_insert = 0;
             $listid                 = $this->input->post('listid');
-            foreach ($xls_emails as $email) {
+
+            foreach ($spreadsheet->getActiveSheet()->toArray() as $email) {
                 if (isset($email[0]) && $email[0] !== '') {
                     $data['email'] = $email[0];
                     if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
@@ -626,7 +627,7 @@ class Surveys extends AdminController
                         $total_custom_fields = count($custom_fields);
                         for ($i = 0; $i < $total_custom_fields; $i++) {
                             if ($email[$i + 1] !== '') {
-                                $data['customfields'][$custom_fields[$i]['customfieldid']] = $email[$i + 1];
+                                $data['customfields'][$custom_fields[$i]['customfieldid']] = $email[$i + 1] ?? '';
                             }
                         }
                     }

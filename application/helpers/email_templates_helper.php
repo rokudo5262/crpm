@@ -194,6 +194,8 @@ function create_email_template($subject, $message, $type, $name, $slug, $active 
     $data['language']  = 'english';
     $data['active']    = $active;
     $data['plaintext'] = 0;
+    $data['fromname'] = '{companyname} | CRM';
+
     $CI                = &get_instance();
     $CI->load->model('emails_model');
 

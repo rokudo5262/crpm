@@ -1710,7 +1710,7 @@ div.proposal-wrapper img:not(.media-object) {
     list-style:none !important;
 }
 
-.jquery-comments.tc-content ul.main ul {
+.jquery-comments.tc-content ul.main ul:not(.child-comments) {
     list-style: initial !important;
 }
 

@@ -110,6 +110,7 @@ function get_leads_summary()
 
     foreach ($statuses as $status) {
         $sql .= ' SELECT COUNT(*) as total';
+        $sql .= ',SUM(lead_value) as value';
         $sql .= ' FROM ' . db_prefix() . 'leads';
 
         if (isset($status['lost'])) {
@@ -144,6 +145,7 @@ function get_leads_summary()
         }
 
         $statuses[$key]['total'] = $result[$key]->total;
+        $statuses[$key]['value'] = $result[$key]->value;
     }
 
     return $statuses;

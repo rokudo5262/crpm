@@ -486,11 +486,11 @@ class CI_Profiler {
 		{
 			$pre       = '';
 			$pre_close = '';
-                        
+
 			if (is_array($val) OR is_object($val))
 			{
 				$val = print_r($val, TRUE);
-                                
+
 				$pre       = '<pre>' ;
  				$pre_close = '</pre>';
 			}
@@ -524,11 +524,11 @@ class CI_Profiler {
 		{
 			$pre       = '';
 			$pre_close = '';
-                        
+
 			if (is_array($val) OR is_object($val))
 			{
 				$val = print_r($val, TRUE);
-                                
+
 				$pre       = '<pre>' ;
  				$pre_close = '</pre>';
 			}

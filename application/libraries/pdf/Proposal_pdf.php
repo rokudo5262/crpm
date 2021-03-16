@@ -12,6 +12,10 @@ class Proposal_pdf extends App_pdf
 
     public function __construct($proposal, $tag = '')
     {
+        if ($proposal->rel_id != null && $proposal->rel_type == 'customer') {
+            $this->load_language($proposal->rel_id);
+        }
+
         $proposal                = hooks()->apply_filters('proposal_html_pdf_data', $proposal);
         $GLOBALS['proposal_pdf'] = $proposal;
 
@@ -21,10 +25,6 @@ class Proposal_pdf extends App_pdf
         $this->proposal = $proposal;
 
         $this->proposal_number = format_proposal_number($this->proposal->id);
-
-        if ($proposal->rel_id != null && $proposal->rel_type == 'customer') {
-            $this->load_language($proposal->rel_id);
-        }
 
         $this->SetTitle($this->proposal_number);
         $this->SetDisplayMode('default', 'OneColumn');

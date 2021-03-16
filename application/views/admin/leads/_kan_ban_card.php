@@ -39,6 +39,7 @@ if ($lead['status'] == $status['id']) { ?>
                     </span>
                  </span>
               </small><br />
+              <?php hooks()->do_action('before_leads_kanban_card_icons', $lead); ?>
               <span class="mright5 mtop5 inline-block text-muted" data-toggle="tooltip" data-placement="left" data-title="<?php echo _l('leads_canban_notes',$lead['total_notes']); ?>">
                <i class="fa fa-sticky-note-o"></i> <?php echo $lead['total_notes']; ?>
             </span>
@@ -46,6 +47,7 @@ if ($lead['status'] == $status['id']) { ?>
                <i class="fa fa-paperclip"></i>
                <?php echo $lead['total_files']; ?>
             </span>
+            <?php hooks()->do_action('after_leads_kanban_card_icons', $lead); ?>
          </div>
          <?php if($lead['tags']){ ?>
          <div class="col-md-12">

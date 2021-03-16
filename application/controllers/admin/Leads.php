@@ -60,6 +60,7 @@ class Leads extends AdminController
         }
         $data['statuses']      = $this->leads_model->get_status();
         $data['base_currency'] = get_base_currency();
+        $data['summary'] = get_leads_summary();
         echo $this->load->view('admin/leads/kan-ban', $data, true);
     }
 
@@ -185,7 +186,7 @@ class Leads extends AdminController
         ]);
 
         foreach ($leads as $lead) {
-            $this->load->view('admin/leads/_kan_ban_card_advance', [
+            $this->load->view('admin/leads/_kan_ban_card', [
                 'lead'   => $lead,
                 'status' => $status,
             ]);
@@ -220,8 +221,8 @@ class Leads extends AdminController
             redirect(admin_url('leads'));
         }
 
-        if (!is_lead_creator($id) && !has_permission('leads', '', 'delete')) {
-            access_denied('Delte Lead');
+        if (!has_permission('leads', '', 'delete')) {
+            access_denied('Delete Lead');
         }
 
         $response = $this->leads_model->delete($id);

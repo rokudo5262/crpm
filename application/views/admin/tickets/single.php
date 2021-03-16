@@ -55,6 +55,7 @@
                               <?php echo _l('ticket_single_settings'); ?>
                            </a>
                         </li>
+                        <?php hooks()->do_action('add_single_ticket_tab_menu_item', $ticket); ?>
                      </ul>
                   </div>
                </div>
@@ -383,6 +384,7 @@
                      <?php echo render_custom_fields('tickets',$ticket->ticketid); ?>
                   </div>
                </div>
+               <?php hooks()->do_action('add_single_ticket_tab_menu_content', $ticket); ?>
                <div class="row">
                   <div class="col-md-12 text-center">
                      <hr />

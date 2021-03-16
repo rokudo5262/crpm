@@ -910,7 +910,7 @@ function get_datatable_buttons(table) {
                             for (i = 0; i < total_visible_columns; i++) {
                                 pdf_widths.push((735 / total_visible_columns));
                             }
-                            alert('test')
+
                             doc.content[1].table.widths = pdf_widths;
                         }
                     }, 10);

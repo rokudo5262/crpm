@@ -4,6 +4,8 @@ use app\services\imap\Imap;
 use Ddeboer\Imap\SearchExpression;
 use Ddeboer\Imap\Search\Flag\Unseen;
 use app\services\imap\ConnectionErrorException;
+use Ddeboer\Imap\Exception\UnexpectedEncodingException;
+use Ddeboer\Imap\Exception\MessageDoesNotExistException;
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
@@ -62,6 +64,7 @@ class Cron_model extends App_Model
             $this->recurring_tasks();
             $this->proposals();
             $this->invoice_overdue();
+            $this->invoice_due();
             $this->estimate_expiration();
             $this->contracts_expiration_check();
             $this->autoclose_tickets();
@@ -101,7 +104,7 @@ class Cron_model extends App_Model
 
     private function delete_twocheckout_logs()
     {
-        $older_than_days = hooks()->apply_filters('delete_two_checkout_log_older_than_days',40);
+        $older_than_days = hooks()->apply_filters('delete_two_checkout_log_older_than_days', 40);
 
         if ($older_than_days == 0 || empty($older_than_days)) {
             return;
@@ -963,9 +966,9 @@ class Cron_model extends App_Model
         $this->db->select('id,date,status,last_overdue_reminder,duedate,cancel_overdue_reminders');
         $this->db->from(db_prefix() . 'invoices');
         $this->db->where('duedate IS NOT NULL'); // We dont need invoices with no duedate
-        $this->db->where('status !=', 2); // We dont need paid status
-        $this->db->where('status !=', 5); // We dont need cancelled status
-        $this->db->where('status !=', 6); // We dont need draft status
+        $this->db->where('status !=', Invoices_model::STATUS_PAID); // We dont need paid status
+        $this->db->where('status !=', Invoices_model::STATUS_CANCELLED); // We dont need cancelled status
+        $this->db->where('status !=', Invoices_model::STATUS_DRAFT); // We dont need draft status
         $invoices = $this->db->get()->result_array();
 
         $now = time();
@@ -1006,6 +1009,48 @@ class Cron_model extends App_Model
                         if ($days_diff >= get_option('automatically_send_invoice_overdue_reminder_after')) {
                             $this->invoices_model->send_invoice_overdue_notice($invoice['id']);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private function invoice_due()
+    {
+        if (!$this->shouldRunAutomations(get_option('invoice_auto_operations_hour'))) {
+            return;
+        }
+
+        $reminder_before = get_option('invoice_due_notice_before');
+        $resend_days     = get_option('invoice_due_notice_resend_after');
+
+        $this->load->model('invoices_model');
+
+        $this->db->select('id,date,status,last_due_reminder,duedate');
+        $this->db->from(db_prefix() . 'invoices');
+        // We dont need invoices with no duedate and where the duedate is less the current date
+        // e.q. is already overdue and partially paid invoice
+        $this->db->where('(duedate IS NOT NULL and duedate != "" and duedate > "' . date('Y-m-d') . '")')
+                ->where_in('status', [Invoices_model::STATUS_UNPAID, Invoices_model::STATUS_PARTIALLY])
+                ->where('cancel_overdue_reminders', 0);
+
+        $invoices = $this->db->get()->result_array();
+
+        foreach ($invoices as $invoice) {
+            if (!$invoice['last_due_reminder']) {
+                $due_date               = new DateTime($invoice['duedate']);
+                $diff                   = $due_date->diff(new DateTime(date('Y-m-d')))->format('%a');
+                $date_and_due_date_diff = floor((strtotime($invoice['duedate']) - strtotime($invoice['date'])) / (60 * 60 * 24));
+
+                if ($diff <= $reminder_before && $date_and_due_date_diff > $reminder_before) {
+                    $this->invoices_model->send_invoice_due_notice($invoice['id']);
+                }
+            } else {
+                if ($resend_days != 0) { // If resend_days from options is 0 means that the admin dont want to resend the mails.
+                    $datediff  = time() - strtotime($invoice['last_due_reminder']);
+                    $days_diff = floor($datediff / (60 * 60 * 24));
+                    if ($days_diff >= $resend_days) {
+                        $this->invoices_model->send_invoice_due_notice($invoice['id']);
                     }
                 }
             }
@@ -1231,10 +1276,6 @@ class Cron_model extends App_Model
                 $this->db->where('email', $fromAddress);
                 $contact = $this->db->get(db_prefix() . 'contacts')->row();
                 if ($contact) {
-
-                    // Set message to seen to in the next time we dont need to loop over this message
-                    $message->markAsSeen();
-
                     if ($mail->create_task_if_customer == '1') {
                         load_admin_language($mail->responsible);
 
@@ -1266,8 +1307,16 @@ class Cron_model extends App_Model
                             $this->handleLeadsEmailIntegrationAttachments($message, false, $task_id);
                             hooks()->do_action('after_add_task', $task_id);
                         }
-                    }
 
+                        if ($mail->delete_after_import == 1) {
+                            $message->delete();
+                            $connection->expunge();
+                        } else {
+                            $message->markAsSeen();
+                        }
+                    } else {
+                        $message->markAsSeen();
+                    }
                     // Exists no need to do anything
                     continue;
                 }
@@ -1312,8 +1361,12 @@ class Cron_model extends App_Model
                     ]);
 
                     $inserted_email_id = $this->db->insert_id();
-                    // Set message to seen to in the next time we dont need to loop over this message
-                    $message->markAsSeen();
+                    if ($mail->delete_after_import == 1) {
+                        $message->delete();
+                        $connection->expunge();
+                    } else {
+                        $message->markAsSeen();
+                    }
                     $this->_notification_lead_email_integration('not_received_one_or_more_messages_lead', $mail, $lead->id);
                     $this->handleLeadsEmailIntegrationAttachments($message, $lead->id);
                     hooks()->do_action('existing_lead_email_inserted_from_email_integration', [
@@ -1443,7 +1496,7 @@ class Cron_model extends App_Model
             try {
                 $connection = $imap->testConnection();
             } catch (ConnectionErrorException $e) {
-//                log_activity('Failed to connect to IMAP auto importing tickets for department ' . $dept['email'] . '.');
+                log_activity('Failed to connect to IMAP auto importing tickets for department ' . $dept['email'] . '.');
 
                 continue;
             }
@@ -1459,110 +1512,118 @@ class Cron_model extends App_Model
             $this->load->model('tickets_model');
 
             foreach ($messages as $message) {
-                $body = $message->getBodyHtml() ?? $message->getBodyText();
-                // Some mail clients for the text/plain part add only Not set
-                // this is bad practice instead of leaving the text/pain part empty
-                // In this case, if it's Not set, we will use the HTML of the message
-                if ($body == 'Not set') {
-                    $body = $message->getBodyHtml();
-                }
+                try {
+                    $body = $message->getBodyHtml() ?? $message->getBodyText();
+                    // Some mail clients for the text/plain part add only Not set
+                    // this is bad practice instead of leaving the text/pain part empty
+                    // In this case, if it's Not set, we will use the HTML of the message
+                    if ($body == 'Not set') {
+                        $body = $message->getBodyHtml();
+                    }
 
-                if (empty($body)) {
-                    $body = 'No message found';
-                }
+                    if (empty($body)) {
+                        $body = 'No message found';
+                    }
 
-                if (
+                    if (
                     class_exists('EmailReplyParser\EmailReplyParser')
                     && get_option('ticket_import_reply_only') === '1'
                     && (mb_substr_count($message->getSubject(), 'FWD:') == 0 && mb_substr_count($message->getSubject(), 'FW:') == 0)
                 ) {
-                    $parsedBody = \EmailReplyParser\EmailReplyParser::parseReply(
+                        $parsedBody = \EmailReplyParser\EmailReplyParser::parseReply(
                         $this->prepare_imap_email_body_html($body)
                     );
 
-                    $parsedBody = trim($parsedBody);
+                        $parsedBody = trim($parsedBody);
 
-                    // For some emails this is causing an issue and not returning the email, instead is returning empty string
-                    // In this case, only use parsed email reply if not empty
-                    if (! empty($parsedBody)) {
-                        $body = $parsedBody;
+                        // For some emails this is causing an issue and not returning the email, instead is returning empty string
+                        // In this case, only use parsed email reply if not empty
+                        if (! empty($parsedBody)) {
+                            $body = $parsedBody;
+                        }
                     }
-                }
 
-                $body                = $this->prepare_imap_email_body_html($body);
-                $data['attachments'] = [];
+                    $body                = $this->prepare_imap_email_body_html($body);
+                    $data['attachments'] = [];
 
-                foreach ($message->getAttachments() as $attachment) {
-                    $data['attachments'][] = [
+                    foreach ($message->getAttachments() as $attachment) {
+                        $data['attachments'][] = [
                         'filename' => $attachment->getFilename(),
                         'data'     => $attachment->getDecodedContent(),
                     ];
-                }
-
-                $data['subject'] = $message->getSubject();
-                $data['body']    = $body;
-
-                $data['to'] = [];
-                // To is the department name
-                $data['to'][] = $dept['email'];
-
-                // Check for CC
-                if (count($message->getCc()) > 0) {
-                    foreach ($message->getCc() as $recipient) {
-                        $data['to'][] = $recipient->getAddress();
                     }
-                }
 
-                $data['to']  = implode(',', $data['to']);
-                $fromAddress = null;
-                $fromName    = null;
+                    $data['subject'] = $message->getSubject();
+                    $data['body']    = $body;
 
-                if ($message->getFrom()) {
-                    $fromAddress = $message->getFrom()->getAddress();
-                    $fromName    = $message->getFrom()->getName();
-                }
+                    $data['to'] = [];
+                    // To is the department name
+                    $data['to'][] = $dept['email'];
 
-                if (hooks()->apply_filters('imap_fetch_from_email_by_reply_to_header', true)) {
-                    $replyTo = $message->getReplyTo();
-
-                    if (count($replyTo) === 1) {
-                        $fromAddress = $replyTo[0]->getAddress();
-                        $fromName    = $replyTo[0]->getName() ?? $fromName;
-                    }
-                }
-
-                /**
-                 * Check the the fromAddress is null, perhaps invalid address?
-                 * @see https://github.com/ddeboer/imap/issues/370
-                 */
-                if (is_null($fromAddress)) {
-                    $message->markAsSeen();
-
-                    continue;
-                }
-
-                $data['email']    = $fromAddress;
-                $data['fromname'] = $fromName;
-
-                $data = hooks()->apply_filters('imap_auto_import_ticket_data', $data, $message);
-
-                try {
-                    $status = $this->tickets_model->insert_piped_ticket($data);
-
-                    if ($status == 'Ticket Imported Successfully' || $status == 'Ticket Reply Imported Successfully') {
-                        if ($dept['delete_after_import'] == 0) {
-                            $message->markAsSeen();
-                        } else {
-                            $message->delete();
-                            $connection->expunge();
+                    // Check for CC
+                    if (count($message->getCc()) > 0) {
+                        foreach ($message->getCc() as $recipient) {
+                            $data['to'][] = $recipient->getAddress();
                         }
-                    } else {
+                    }
+
+                    $data['to']  = implode(',', $data['to']);
+                    $fromAddress = null;
+                    $fromName    = null;
+
+                    if ($message->getFrom()) {
+                        $fromAddress = $message->getFrom()->getAddress();
+                        $fromName    = $message->getFrom()->getName();
+                    }
+
+                    if (hooks()->apply_filters('imap_fetch_from_email_by_reply_to_header', true)) {
+                        $replyTo = $message->getReplyTo();
+
+                        if (count($replyTo) === 1) {
+                            $fromAddress = $replyTo[0]->getAddress();
+                            $fromName    = $replyTo[0]->getName() ?? $fromName;
+                        }
+                    }
+
+                    /**
+                     * Check the the fromAddress is null, perhaps invalid address?
+                     * @see https://github.com/ddeboer/imap/issues/370
+                     */
+                    if (is_null($fromAddress)) {
+                        $message->markAsSeen();
+
+                        continue;
+                    }
+
+                    $data['email']    = $fromAddress;
+                    $data['fromname'] = $fromName;
+
+                    $data = hooks()->apply_filters('imap_auto_import_ticket_data', $data, $message);
+
+                    try {
+                        $status = $this->tickets_model->insert_piped_ticket($data);
+
+                        if ($status == 'Ticket Imported Successfully' || $status == 'Ticket Reply Imported Successfully') {
+                            if ($dept['delete_after_import'] == 0) {
+                                $message->markAsSeen();
+                            } else {
+                                $message->delete();
+                                $connection->expunge();
+                            }
+                        } else {
+                            // Set unseen message in all cases to prevent looping throught the message again
+                            $message->markAsSeen();
+                        }
+                    } catch (\Exception $e) {
                         // Set unseen message in all cases to prevent looping throught the message again
                         $message->markAsSeen();
                     }
-                } catch (\Exception $e) {
-                    // Set unseen message in all cases to prevent looping throught the message again
+                } catch (MessageDoesNotExistException $e) {
+                    continue;
+                } catch (UnexpectedEncodingException $e) {
                     $message->markAsSeen();
+
+                    continue;
                 }
             }
         }

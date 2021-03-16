@@ -47,6 +47,16 @@
                       'name'
                    ), 'task_milestone');
                 } ?>
+
+                <div class="form-group">
+                 <label for="task_bulk_billable" class="control-label"><?php echo _l('task_billable'); ?></label>
+                 <select name="task_bulk_billable" class="selectpicker" id="task_bulk_billable" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
+                  <option value=""></option>
+                  <option value="billable"><?php echo _l('settings_yes'); ?></option>
+                  <option value="not_billable"><?php echo _l('settings_no'); ?></option>
+                </select>
+              </div>
+
                 <div class="form-group">
                   <?php echo '<p><b><i class="fa fa-tag" aria-hidden="true"></i> ' . _l('tags') . ':</b></p>'; ?>
                   <input type="text" class="tagsinput" id="tags_bulk" name="tags_bulk" value="" data-role="tagsinput">

@@ -1,14 +1,33 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
+<?php
+$canViewInvoices = (staff_can('view', 'invoices') || staff_can('view_own', 'invoices') || (get_option('allow_staff_view_invoices_assigned') == 1 && staff_has_assigned_invoices()));
+$canViewProposals = (staff_can('view', 'proposals') || staff_can('view_own', 'proposals') || (get_option('allow_staff_view_proposals_assigned') == 1 && staff_has_assigned_proposals()));
+$canViewEstimates = (staff_can('view', 'estimates') || staff_can('view_own', 'estimates') || (get_option('allow_staff_view_estimates_assigned') == 1 && staff_has_assigned_estimates()));
+
+switch(count(array_filter([$canViewInvoices, $canViewEstimates,$canViewProposals]))) {
+   case 3:
+   $totalColumnsLg = 4;
+   break;
+   case 2:
+   $totalColumnsLg = 6;
+   break;
+   case 1:
+   $totalColumnsLg = 12;
+   break;
+   default:
+   $totalColumnsLg = 0;
+   break;
+}
+?>
 <div class="widget" id="widget-<?php echo create_widget_id(); ?>" data-name="<?php echo _l('finance_overview'); ?>">
-   <?php if(has_permission('invoices','','view') || has_permission('invoices','','view_own') || (get_option('allow_staff_view_invoices_assigned') == 1 && staff_has_assigned_invoices()) || has_permission('proposals','','view') || has_permission('estimates','','view') || has_permission('estimates','','view_own') || (get_option('allow_staff_view_estimates_assigned') == 1 && staff_has_assigned_estimates()) || has_permission('proposals','','view_own') || (get_option('allow_staff_view_proposals_assigned') == 1 && staff_has_assigned_proposals())){ ?>
+   <?php if($canViewInvoices || $canViewEstimates || $canViewProposals ){ ?>
    <div class="finance-summary">
       <div class="panel_s">
          <div class="panel-body">
             <div class="widget-dragger"></div>
             <div class="row home-summary">
-               <?php if(has_permission('invoices','','view') || has_permission('invoices','','view_own') || get_option('allow_staff_view_invoices_assigned') == 1 && staff_has_assigned_invoices()){
-                  ?>
-                  <div class="col-md-6 col-lg-4 col-sm-6">
+               <?php if($canViewInvoices){ ?>
+                  <div class="col-md-6 col-lg-<?php echo $totalColumnsLg; ?> col-sm-6">
                      <div class="row">
                         <div class="col-md-12">
                            <p class="text-dark text-uppercase"><?php echo _l('home_invoice_overview'); ?></p>
@@ -95,8 +114,8 @@
                      </div>
                   </div>
                   <?php } ?>
-                  <?php if(has_permission('estimates','','view') || has_permission('estimates','','view_own') || (get_option('allow_staff_view_estimates_assigned') == 1 && staff_has_assigned_estimates())){ ?>
-                  <div class="col-md-6 col-lg-4 col-sm-6">
+                  <?php if($canViewEstimates){ ?>
+                  <div class="col-md-6 col-lg-<?php echo $totalColumnsLg; ?> col-sm-6">
                      <div class="row">
                         <div class="col-md-12 text-stats-wrapper">
                            <p class="text-dark text-uppercase"><?php echo _l('home_estimate_overview'); ?></p>
@@ -129,8 +148,8 @@
                      </div>
                   </div>
                   <?php } ?>
-                  <?php if(has_permission('proposals','','view') || has_permission('proposals','','view_own') || get_option('allow_staff_view_proposals_assigned') == 1 && staff_has_assigned_proposals()){ ?>
-                  <div class="col-md-12 col-sm-6 col-lg-4">
+                  <?php if($canViewProposals){ ?>
+                  <div class="col-md-12 col-sm-6 col-lg-<?php echo $totalColumnsLg; ?>">
                      <div class="row">
                         <div class="col-md-12 text-stats-wrapper">
                            <p class="text-dark text-uppercase"><?php echo _l('home_proposal_overview'); ?></p>

@@ -3,7 +3,6 @@
         "php" : "^7.2.5",
         "twilio/sdk": "^5.16",
         "cocur/slugify": "^3.0",
-        "nuovo/spreadsheet-reader": "^0.5.11",
         "neitanod/forceutf8": "~2.0",
         "pusher/pusher-php-server": "^3.0",
         "tecnickcom/tcpdf": "^6.2",

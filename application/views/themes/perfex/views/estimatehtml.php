@@ -102,13 +102,13 @@
                <?php } ?>
                <p class="no-mbot estimate-html-date">
                   <span class="bold">
-                  <?php echo _l('estimate_data_date'); ?>
+                  <?php echo _l('estimate_data_date'); ?>:
                   </span>
                   <?php echo _d($estimate->date); ?>
                </p>
                <?php if(!empty($estimate->expirydate)){ ?>
                <p class="no-mbot estimate-html-expiry-date">
-                  <span class="bold"><?php echo _l('estimate_data_expiry_date'); ?></span>
+                  <span class="bold"><?php echo _l('estimate_data_expiry_date'); ?></span>:
                   <?php echo _d($estimate->expirydate); ?>
                </p>
                <?php } ?>
@@ -234,7 +234,7 @@
             <?php if(!empty($estimate->terms)){ ?>
             <div class="col-md-12 estimate-html-terms-and-conditions">
                <hr />
-               <b><?php echo _l('terms_and_conditions'); ?></b><br /><br /><?php echo $estimate->terms; ?>
+               <b><?php echo _l('terms_and_conditions'); ?>:</b><br /><br /><?php echo $estimate->terms; ?>
             </div>
             <?php } ?>
          </div>

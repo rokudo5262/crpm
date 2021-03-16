@@ -137,6 +137,10 @@ function get_available_staff_permissions($data = [])
                 'delete' => _l('permission_delete'),
             ],
         ],
+        'estimate_request' => [
+            'name'         => _l('estimate_request'),
+            'capabilities' => $allPermissionsArray,
+        ],
     ];
 
     $addLeadsPermission = true;

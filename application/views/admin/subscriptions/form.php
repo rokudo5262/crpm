@@ -144,20 +144,25 @@
            <select class="selectpicker" data-width="100%" name="stripe_tax_id" data-none-selected-text="<?php echo _l('no_tax'); ?>">
             <option value=""></option>
             <?php foreach($stripe_tax_rates->data as $tax){
-              if($tax->inclusive) {
-                continue;
-              }
-              if(!$tax->active) {
-                if(!isset($subscription)) {
+                if($tax->inclusive) {
                   continue;
-                } else {
-                  if($subscription->stripe_tax_id != $tax->id) {
+                }
+                if(!$tax->active) {
+                  if(!isset($subscription)) {
                     continue;
+                  } else {
+                    if($subscription->stripe_tax_id != $tax->id) {
+                      continue;
+                    }
                   }
                 }
-            }
               ?>
-              <option value="<?php echo $tax->id; ?>" data-subtext="<?php echo $tax->display_name; ?>"<?php if(isset($subscription) && $subscription->stripe_tax_id == $tax->id){echo ' selected';} ?>><?php echo $tax->percentage; ?>%</option>
+              <option value="<?php echo $tax->id; ?>"
+                data-subtext="<?php echo !empty($tax->country) ? $tax->country : ''; ?>"
+                <?php if(isset($subscription) && $subscription->stripe_tax_id == $tax->id){echo ' selected';} ?>>
+                <?php echo $tax->display_name; ?>
+                <?php echo !empty($tax->jurisdiction) ? ' - ' . $tax->jurisdiction.' ' : ''; ?> (<?php echo $tax->percentage; ?>%)
+              </option>
             <?php } ?>
           </select>
         </div>
@@ -182,7 +187,12 @@
               }
             }
             ?>
-            <option value="<?php echo $tax->id; ?>" data-subtext="<?php echo $tax->display_name; ?>"<?php if(isset($subscription) && $subscription->stripe_tax_id_2 == $tax->id){echo ' selected';} ?>><?php echo $tax->percentage; ?>%</option>
+             <option value="<?php echo $tax->id; ?>"
+                data-subtext="<?php echo !empty($tax->country) ? $tax->country : ''; ?>"
+                <?php if(isset($subscription) && $subscription->stripe_tax_id_2 == $tax->id){echo ' selected';} ?>>
+                <?php echo $tax->display_name; ?>
+                <?php echo !empty($tax->jurisdiction) ? ' - ' . $tax->jurisdiction.' ' : ''; ?> (<?php echo $tax->percentage; ?>%)
+              </option>
           <?php } ?>
         </select>
       </div>

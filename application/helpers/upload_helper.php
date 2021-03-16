@@ -1,6 +1,80 @@
 <?php
 
 defined('BASEPATH') or exit('No direct script access allowed');
+
+
+/**
+ * Handle lead attachments if any
+ * @param  mixed $leadid
+ * @return boolean
+ */
+function handle_estimate_request_attachments($estimateRequestId, $index_name = 'file')
+{
+    $totalUploaded = 0;
+    if (
+        (isset($_FILES[$index_name]['name']) && !empty($_FILES[$index_name]['name'])) ||
+        (isset($_FILES[$index_name]) && is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)
+    ) {
+        if (!is_array($_FILES[$index_name]['name'])) {
+            $_FILES[$index_name]['name']     = [$_FILES[$index_name]['name']];
+            $_FILES[$index_name]['type']     = [$_FILES[$index_name]['type']];
+            $_FILES[$index_name]['tmp_name'] = [$_FILES[$index_name]['tmp_name']];
+            $_FILES[$index_name]['error']    = [$_FILES[$index_name]['error']];
+            $_FILES[$index_name]['size']     = [$_FILES[$index_name]['size']];
+        }
+
+        for ($i = 0; $i < count($_FILES[$index_name]['name']); $i++) {
+            if (isset($_FILES[$index_name]) && empty($_FILES[$index_name]['name'][$i])) {
+                continue;
+            }
+
+            if (isset($_FILES[$index_name][$i]) && _perfex_upload_error($_FILES[$index_name]['error'][$i])) {
+                header('HTTP/1.0 400 Bad error');
+                echo _perfex_upload_error($_FILES[$index_name]['error'][$i]);
+                die;
+            }
+
+            $CI = & get_instance();
+            if (isset($_FILES[$index_name]['name'][$i]) && $_FILES[$index_name]['name'][$i] != '') {
+                hooks()->do_action('before_upload_estimate_request_attachment', $estimateRequestId);
+                $path = get_upload_path_by_type('estimate_request') . $estimateRequestId . '/';
+                // Get the temp file path
+                $tmpFilePath = $_FILES[$index_name]['tmp_name'][$i];
+                // Make sure we have a filepath
+
+                if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                    if (!_upload_extension_allowed($_FILES[$index_name]['name'][$i])) {
+                        continue;
+                    }
+
+                    _maybe_create_upload_path($path);
+
+                    $filename    = unique_filename($path, $_FILES[$index_name]['name'][$i]);
+                    $newFilePath = $path . $filename;
+                    // Upload the file into the company uploads dir
+                    if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                        $CI = & get_instance();
+                        $CI->load->model('estimate_request_model');
+                        $data   = [];
+                        $data[] = [
+                            'file_name' => $filename,
+                            'filetype'  => $_FILES[$index_name]['type'][$i],
+                            ];
+                        $CI->estimate_request_model->add_attachment_to_database($estimateRequestId, $data, false);
+                        $totalUploaded++;
+                    }
+                }
+            }
+        }
+    }
+
+    if ($totalUploaded > 0) {
+        return true;
+    }
+
+    return false;
+}
+
 /**
  * Handles uploads error with translation texts
  * @param  mixed $error type of error
@@ -231,49 +305,51 @@ function handle_contract_attachment($id)
  */
 function handle_lead_attachments($leadid, $index_name = 'file', $form_activity = false)
 {
-    if (isset($_FILES[$index_name]) && empty($_FILES[$index_name]['name']) && $form_activity) {
-        return;
-    }
+    $uploaded_files = [];
+    $path           = get_upload_path_by_type('lead') . $leadid . '/';
+    $CI             = &get_instance();
+    $CI->load->model('leads_model');
 
-    if (isset($_FILES[$index_name]) && _perfex_upload_error($_FILES[$index_name]['error'])) {
-        header('HTTP/1.0 400 Bad error');
-        echo _perfex_upload_error($_FILES[$index_name]['error']);
-        die;
-    }
+    if (isset($_FILES[$index_name]['name'])
+        && ($_FILES[$index_name]['name'] != ''
+                || is_array($_FILES[$index_name]['name']) && count($_FILES[$index_name]['name']) > 0)) {
+        if (!is_array($_FILES[$index_name]['name'])) {
+            $_FILES[$index_name]['name']     = [$_FILES[$index_name]['name']];
+            $_FILES[$index_name]['type']     = [$_FILES[$index_name]['type']];
+            $_FILES[$index_name]['tmp_name'] = [$_FILES[$index_name]['tmp_name']];
+            $_FILES[$index_name]['error']    = [$_FILES[$index_name]['error']];
+            $_FILES[$index_name]['size']     = [$_FILES[$index_name]['size']];
+        }
 
-    $CI = & get_instance();
-    if (isset($_FILES[$index_name]['name']) && $_FILES[$index_name]['name'] != '') {
-        hooks()->do_action('before_upload_lead_attachment', $leadid);
-        $path = get_upload_path_by_type('lead') . $leadid . '/';
-        // Get the temp file path
-        $tmpFilePath = $_FILES[$index_name]['tmp_name'];
-        // Make sure we have a filepath
-        if (!empty($tmpFilePath) && $tmpFilePath != '') {
-            if (!_upload_extension_allowed($_FILES[$index_name]['name'])) {
-                return false;
-            }
+        _file_attachments_index_fix($index_name);
 
-            _maybe_create_upload_path($path);
+        for ($i = 0; $i < count($_FILES[$index_name]['name']); $i++) {
+            // Get the temp file path
+            $tmpFilePath = $_FILES[$index_name]['tmp_name'][$i];
 
-            $filename    = unique_filename($path, $_FILES[$index_name]['name']);
-            $newFilePath = $path . $filename;
-            // Upload the file into the company uploads dir
-            if (move_uploaded_file($tmpFilePath, $newFilePath)) {
-                $CI = & get_instance();
-                $CI->load->model('leads_model');
-                $data   = [];
-                $data[] = [
-                    'file_name' => $filename,
-                    'filetype'  => $_FILES[$index_name]['type'],
-                    ];
-                $CI->leads_model->add_attachment_to_database($leadid, $data, false, $form_activity);
+            // Make sure we have a filepath
+            if (!empty($tmpFilePath) && $tmpFilePath != '') {
+                if (_perfex_upload_error($_FILES[$index_name]['error'][$i])
+                    || !_upload_extension_allowed($_FILES[$index_name]['name'][$i])) {
+                    continue;
+                }
 
-                return true;
+                _maybe_create_upload_path($path);
+                $filename = unique_filename($path, $_FILES[$index_name]['name'][$i]);
+
+                $newFilePath = $path . $filename;
+
+                if (move_uploaded_file($tmpFilePath, $newFilePath)) {
+                    $CI->leads_model->add_attachment_to_database($leadid, [[
+                        'file_name' => $filename,
+                        'filetype'  => $_FILES[$index_name]['type'][$i],
+                    ]], false, $form_activity);
+                }
             }
         }
     }
 
-    return false;
+    return true;
 }
 
 /**
@@ -1060,6 +1136,10 @@ function get_upload_path_by_type($type)
 
         break;
         case 'newsfeed':
+        $path = NEWSFEED_FOLDER;
+
+        break;
+        case 'estimate_request':
         $path = NEWSFEED_FOLDER;
 
         break;

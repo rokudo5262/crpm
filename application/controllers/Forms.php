@@ -10,6 +10,241 @@ class Forms extends ClientsController
     }
 
     /**
+     * Estimate request form
+     * User no need to see anything like estimate request in the url, this is the reason the method is named quote
+     * @param  string $key Estimate request form key identifier
+     * @return mixed
+     */
+    public function quote($key)
+    {
+        $this->load->model('estimate_request_model');
+        $form = $this->estimate_request_model->get_form([
+            'form_key' => $key,
+        ]);
+
+        if (!$form) {
+            show_404();
+        }
+
+        // Change the locale so the validation loader function can load
+        // the proper localization file
+        $GLOBALS['locale'] = get_locale_key($form->language);
+
+        $data['form_fields'] = json_decode($form->form_data);
+        if (!$data['form_fields']) {
+            $data['form_fields'] = [];
+        }
+
+        //TODO: Submit form logic
+        if ($this->input->post('key')) {
+            // TODO: CREATE/SEND EMAIL TEMPLATE FOR NEW ESTIMATE REQUEST AND ASSIGNED
+
+            if ($this->input->post('key') == $key) {
+                $post_data  = $this->input->post();
+                $required   = [];
+                $submission = [];
+
+                foreach ($data['form_fields'] as $index => $field) {
+                    if (isset($field->name)) {
+                        if ($field->name == 'file-input') {
+                            $submission[] = [
+                            'label' => $field->label,
+                            'name'  => $field->name,
+                            'value' => null,
+                            ];
+
+                            continue;
+                        }
+
+                        if (!isset($post_data[$field->name])) {
+                            $submission[] = [
+                            'label' => $field->label,
+                            'name'  => $field->name,
+                            'value' => '',
+                            ];
+
+                            continue;
+                        }
+
+                        if ($field->type == 'radio-group') {
+                            $index        = array_search($post_data[$field->name], array_column($field->values, 'value'));
+                            $submission[] = [
+                                'label' => $field->label,
+                                'name'  => $field->name,
+                                'value' => $field->values[$index]->label,
+                            ];
+                        } elseif (in_array($field->type, ['select', 'checkbox-group'])) {
+                            if (is_array($post_data[$field->name])) {
+                                $value = '';
+                                foreach ($post_data[$field->name] as $selected) {
+                                    $index = array_search($selected, array_column($field->values, 'value'));
+                                    $value .= $field->values[$index]->label . '<br>';
+                                }
+                            } else {
+                                $index = array_search($post_data[$field->name], array_column($field->values, 'value'));
+                                $value = $field->values[$index]->label;
+                            }
+
+                            $submission[] = [
+                                'label' => $field->label,
+                                'name'  => $field->name,
+                                'value' => $value,
+                            ];
+                        } elseif ($field->type == 'date') {
+                            $submission[] = [
+                                'label' => $field->label,
+                                'name'  => $field->name,
+                                'value' => $post_data[$field->name],
+                            ];
+                        } else {
+                            $submission[] = [
+                                'label' => $field->label,
+                                'name'  => $field->name,
+                                'value' => $post_data[$field->name],
+                            ];
+                        }
+                    }
+
+                    if (isset($field->required)) {
+                        $required[] = $field->name;
+                    }
+                }
+
+                if (is_gdpr() && get_option('gdpr_enable_terms_and_conditions_estimate_request_form') == 1) {
+                    $required[] = 'accept_terms_and_conditions';
+                }
+
+                foreach ($required as $field) {
+                    if ($field == 'file-input') {
+                        continue;
+                    }
+                    if (!isset($post_data[$field]) || isset($post_data[$field]) && empty($post_data[$field])) {
+                        $this->output->set_status_header(422);
+                        die;
+                    }
+                }
+
+
+                if (show_recaptcha() && $form->recaptcha == 1) {
+                    if (!do_recaptcha_validation($post_data['g-recaptcha-response'])) {
+                        echo json_encode(['success' => false,
+                            'message'               => _l('recaptcha_error'),
+                        ]);
+                        die;
+                    }
+                }
+
+                if (isset($post_data['g-recaptcha-response'])) {
+                    unset($post_data['g-recaptcha-response']);
+                }
+
+                unset($post_data['key']);
+                $success      = false;
+                $insert_to_db = true;
+            }
+
+            if ($insert_to_db == true) {
+                $regular_fields['email']        = $post_data['email'];
+                $regular_fields['status']       = $form->status;
+                $regular_fields['assigned']     = $form->responsible;
+                $regular_fields['date_added']   = date('Y-m-d H:i:s');
+                $regular_fields['from_form_id'] = $form->id;
+                $regular_fields['submission']   = json_encode($submission);
+
+                $this->db->insert(db_prefix() . 'estimate_requests', $regular_fields);
+                $estimate_request_id = $this->db->insert_id();
+
+                hooks()->do_action('estimate_requests_created', [
+                    'estimate_request_id'   => $estimate_request_id,
+                    'estimate_request_form' => true,
+                ]);
+
+                $success = false;
+                if ($estimate_request_id) {
+                    $success = true;
+
+                    $this->estimate_request_model->assigned_member_notification($estimate_request_id, $form->responsible, true);
+
+                    handle_estimate_request_attachments($estimate_request_id, 'file-input', $form->name);
+
+                    if ($form->notify_request_submitted != 0) {
+                        if ($form->notify_type == 'assigned') {
+                            $to_responsible = true;
+                        } else {
+                            $ids            = @unserialize($form->notify_ids);
+                            $to_responsible = false;
+                            if ($form->notify_type == 'specific_staff') {
+                                $field = 'staffid';
+                            } elseif ($form->notify_type == 'roles') {
+                                $field = 'role';
+                            }
+                        }
+
+                        if (
+                            $to_responsible == false && is_array($ids) && count($ids) > 0
+                        ) {
+                            $this->db->where('active', 1);
+                            $this->db->where_in($field, $ids);
+                            $staff = $this->db->get(db_prefix() . 'staff')->result_array();
+                        } else {
+                            $staff = [
+                                [
+                                    'staffid' => $form->responsible,
+                                    'email'   => get_staff($form->responsible)->email,
+                                ],
+                            ];
+                        }
+
+                        $notifiedUsers = [];
+                        foreach ($staff as $member) {
+                            if ($member['staffid'] != 0) {
+                                $notified = add_notification([
+                                    'description'     => 'new_estimate_request_submitted_from_form',
+                                    'touserid'        => $member['staffid'],
+                                    'fromcompany'     => 1,
+                                    'fromuserid'      => 0,
+                                    'additional_data' => serialize([
+                                        $form->name,
+                                    ]),
+                                    'link' => 'estimate_request/view/' . $estimate_request_id,
+                                ]);
+
+                                if ($notified) {
+                                    array_push($notifiedUsers, $member['staffid']);
+                                }
+
+                                send_mail_template('estimate_request_form_submitted', $estimate_request_id, $member['email']);
+                            }
+                        }
+                        pusher_trigger_notification($notifiedUsers);
+                    }
+
+                    send_mail_template('estimate_request_received_to_user', $estimate_request_id, $regular_fields['email']);
+                }
+            }
+            // end insert_to_db
+            if ($success == true) {
+                if (!isset($estimate_request_id)) {
+                    $estimate_request_id = 0;
+                }
+
+                hooks()->do_action('estimate_request_form_submitted', [
+                    'estimate_request_id' => $estimate_request_id,
+                    'form_id'             => $form->id,
+                ]);
+            }
+
+            echo json_encode([
+                'success' => $success,
+                'message' => $form->success_submit_msg,
+            ]);
+            die;
+        }
+        $data['form'] = $form;
+        $this->load->view('forms/estimate_request', $data);
+    }
+
+    /**
      * Web to lead form
      * User no need to see anything like LEAD in the url, this is the reason the method is named wtl
      * @param  string $key web to lead form key identifier
@@ -20,7 +255,7 @@ class Forms extends ClientsController
         $this->load->model('leads_model');
         $form = $this->leads_model->get_form([
             'form_key' => $key,
-            ]);
+        ]);
 
         if (!$form) {
             show_404();
@@ -63,7 +298,7 @@ class Forms extends ClientsController
                         echo json_encode([
                             'success' => false,
                             'message' => _l('recaptcha_error'),
-                            ]);
+                        ]);
                         die;
                     }
                 }
@@ -81,7 +316,7 @@ class Forms extends ClientsController
                         array_push($custom_fields, [
                             'name'  => $name,
                             'value' => $val,
-                            ]);
+                        ]);
                     } else {
                         if ($this->db->field_exists($name, db_prefix() . 'leads')) {
                             if ($name == 'country') {
@@ -194,7 +429,7 @@ class Forms extends ClientsController
                                     'addedfrom'   => $form->responsible,
                                     'status'      => 1,
                                     'description' => $description,
-                                    ];
+                                ];
 
                                 $task_data = hooks()->apply_filters('before_add_task', $task_data);
                                 $this->db->insert(db_prefix() . 'tasks', $task_data);
@@ -209,7 +444,7 @@ class Forms extends ClientsController
                                     $assignee_data = [
                                         'taskid'   => $task_id,
                                         'assignee' => $form->responsible,
-                                        ];
+                                    ];
                                     $this->tasks_model->add_task_assignees($assignee_data, true);
 
                                     hooks()->do_action('after_add_task', $task_id);
@@ -240,7 +475,7 @@ class Forms extends ClientsController
                     hooks()->do_action('lead_created', [
                         'lead_id'          => $lead_id,
                         'web_to_lead_form' => true,
-                        ]);
+                    ]);
 
                     $success = false;
                     if ($lead_id) {
@@ -248,7 +483,7 @@ class Forms extends ClientsController
 
                         $this->leads_model->log_lead_activity($lead_id, 'not_lead_imported_from_form', true, serialize([
                             $form->name,
-                            ]));
+                        ]));
                         // /handle_custom_fields_post
                         $custom_fields_build['leads'] = [];
                         foreach ($custom_fields as $cf) {
@@ -281,10 +516,10 @@ class Forms extends ClientsController
                                 $staff = $this->db->get(db_prefix() . 'staff')->result_array();
                             } else {
                                 $staff = [
-                                            [
-                                                'staffid' => $form->responsible,
-                                                ],
-                                        ];
+                                    [
+                                        'staffid' => $form->responsible,
+                                    ],
+                                ];
                             }
                             $notifiedUsers = [];
                             foreach ($staff as $member) {
@@ -296,9 +531,9 @@ class Forms extends ClientsController
                                         'fromuserid'      => 0,
                                         'additional_data' => serialize([
                                             $form->name,
-                                            ]),
+                                        ]),
                                         'link' => '#leadid=' . $lead_id,
-                                        ]);
+                                    ]);
                                     if ($notified) {
                                         array_push($notifiedUsers, $member['staffid']);
                                     }
@@ -323,12 +558,12 @@ class Forms extends ClientsController
                         'lead_id' => $lead_id,
                         'form_id' => $form->id,
                         'task_id' => $task_id,
-                        ]);
+                    ]);
                 }
                 echo json_encode([
                     'success' => $success,
                     'message' => $form->success_submit_msg,
-                    ]);
+                ]);
                 die;
             }
         }
@@ -439,7 +674,7 @@ class Forms extends ClientsController
         $data['single_ticket_view'] = $this->load->view($this->createThemeViewPath('single_ticket'), $data, true);
 
         $navigationDisabled = hooks()->apply_filters('disable_navigation_on_public_ticket_view', true);
-        if($navigationDisabled) {
+        if ($navigationDisabled) {
             $this->disableNavigation();
         }
 
@@ -486,26 +721,26 @@ class Forms extends ClientsController
             if (show_recaptcha() && $form->recaptcha == 1) {
                 if (!do_recaptcha_validation($post_data['g-recaptcha-response'])) {
                     echo json_encode([
-                            'success' => false,
-                            'message' => _l('recaptcha_error'),
-                            ]);
+                        'success' => false,
+                        'message' => _l('recaptcha_error'),
+                    ]);
                     die;
                 }
             }
 
             $post_data = [
-                    'email'      => $post_data['email'],
-                    'name'       => $post_data['name'],
-                    'subject'    => $post_data['subject'],
-                    'department' => $post_data['department'],
-                    'priority'   => $post_data['priority'],
-                    'service'    => isset($post_data['service']) && is_numeric($post_data['service'])
+                'email'      => $post_data['email'],
+                'name'       => $post_data['name'],
+                'subject'    => $post_data['subject'],
+                'department' => $post_data['department'],
+                'priority'   => $post_data['priority'],
+                'service'    => isset($post_data['service']) && is_numeric($post_data['service'])
                     ? $post_data['service']
                     : null,
-                    'custom_fields' => isset($post_data['custom_fields']) && is_array($post_data['custom_fields'])
+                'custom_fields' => isset($post_data['custom_fields']) && is_array($post_data['custom_fields'])
                     ? $post_data['custom_fields']
                     : [],
-                    'message' => $post_data['message'],
+                'message' => $post_data['message'],
             ];
 
             $success = false;
@@ -531,14 +766,14 @@ class Forms extends ClientsController
 
             if ($success == true) {
                 hooks()->do_action('ticket_form_submitted', [
-                        'ticket_id' => $ticket_id,
-                     ]);
+                    'ticket_id' => $ticket_id,
+                ]);
             }
 
             echo json_encode([
-                    'success' => $success,
-                    'message' => $form->success_submit_msg,
-                    ]);
+                'success' => $success,
+                'message' => $form->success_submit_msg,
+            ]);
 
             die;
         }

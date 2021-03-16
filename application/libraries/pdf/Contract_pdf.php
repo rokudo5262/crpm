@@ -10,14 +10,13 @@ class Contract_pdf extends App_pdf
 
     public function __construct($contract)
     {
+        $this->load_language($contract->client);
         $contract                = hooks()->apply_filters('contract_html_pdf_data', $contract);
         $GLOBALS['contract_pdf'] = $contract;
 
         parent::__construct();
 
         $this->contract = $contract;
-
-        $this->load_language($this->contract->client);
         $this->SetTitle($this->contract->subject);
 
         # Don't remove these lines - important for the PDF layout

@@ -125,5 +125,8 @@ foreach ($rResult as $aRow) {
         $row['Data_Title']  = _l('customer_requires_registration_confirmation');
         $row['Data_Toggle'] = 'tooltip';
     }
+
+    $row = hooks()->apply_filters('all_contacts_table_row', $row, $aRow);
+
     $output['aaData'][] = $row;
 }

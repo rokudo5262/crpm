@@ -9,6 +9,66 @@ class Invoice_items_model extends App_Model
         parent::__construct();
     }
 
+
+    /**
+     * Copy invoice item
+     * @param array $data Invoice item data
+     * @return boolean
+     */
+    public function copy($_data)
+    {
+        $custom_fields_items = get_custom_fields('items');
+
+        $data = [
+            'description' => $_data['description'] . ' - Copy',
+            'rate' => $_data['rate'],
+            'tax' => $_data['taxid'],
+            'tax2' => $_data['taxid_2'],
+            'group_id' => $_data['group_id'],
+            'unit' => $_data['unit'],
+            'long_description' => $_data['long_description'],
+        ];
+
+        foreach ($_data as $column  => $value) {
+            if (strpos($column, 'rate_currency_') !== false) {
+                $data[$column] = $value;
+            }
+        }
+
+        $columns = $this->db->list_fields(db_prefix() . 'items');
+        $this->load->dbforge();
+        foreach ($data as $column) {
+            if (!in_array($column, $columns) && strpos($column, 'rate_currency_') !== false) {
+                $field = [
+                    $column => [
+                        'type' => 'decimal(15,' . get_decimal_places() . ')',
+                        'null' => true,
+                    ],
+                ];
+                $this->dbforge->add_column('items', $field);
+            }
+        }
+
+        foreach ($custom_fields_items as $cf) {
+            $data['custom_fields']['items'][$cf['id']] = get_custom_field_value($_data['itemid'], $cf['id'], 'items_pr', false);
+            if (!defined('COPY_CUSTOM_FIELDS_LIKE_HANDLE_POST')) {
+                define('COPY_CUSTOM_FIELDS_LIKE_HANDLE_POST', true);
+            }
+        }
+
+        $insert_id = $this->add($data);
+
+        if ($insert_id) {
+            hooks()->do_action('item_coppied', $insert_id);
+
+            log_activity('Copied Item  [ID:' . $_data['itemid'] . ', ' . $data['description'] . ']');
+
+            return $insert_id;
+        }
+
+        return false;
+    }
+
     /**
      * Get invoice item by ID
      * @param  mixed $id
@@ -77,7 +137,7 @@ class Invoice_items_model extends App_Model
     public function add($data)
     {
         unset($data['itemid']);
-        if ($data['tax'] == '') {
+        if (isset($data['tax']) && $data['tax'] == '') {
             unset($data['tax']);
         }
 
@@ -99,10 +159,10 @@ class Invoice_items_model extends App_Model
         foreach ($data as $column => $itemData) {
             if (!in_array($column, $columns) && strpos($column, 'rate_currency_') !== false) {
                 $field = [
-                        $column => [
-                            'type' => 'decimal(15,' . get_decimal_places() . ')',
-                            'null' => true,
-                        ],
+                    $column => [
+                        'type' => 'decimal(15,' . get_decimal_places() . ')',
+                        'null' => true,
+                    ],
                 ];
                 $this->dbforge->add_column('items', $field);
             }
@@ -158,10 +218,10 @@ class Invoice_items_model extends App_Model
         foreach ($data as $column => $itemData) {
             if (!in_array($column, $columns) && strpos($column, 'rate_currency_') !== false) {
                 $field = [
-                        $column => [
-                            'type' => 'decimal(15,' . get_decimal_places() . ')',
-                            'null' => true,
-                        ],
+                    $column => [
+                        'type' => 'decimal(15,' . get_decimal_places() . ')',
+                        'null' => true,
+                    ],
                 ];
                 $this->dbforge->add_column('items', $field);
             }

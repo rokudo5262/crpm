@@ -242,6 +242,90 @@ class App_bulk_pdf_export
     }
 
     /**
+     * Create payment export
+     * @return object
+     */
+    protected function expenses()
+    {
+        $this->ci->load->model('payment_modes_model');
+        $payment_gateways = $this->ci->payment_modes_model->get_payment_gateways(true);
+
+        $this->ci->db->select('*,' . db_prefix() . 'expenses.id as id,' . db_prefix() . 'expenses_categories.name as category_name,' . db_prefix() . 'payment_modes.name as payment_mode_name,' . db_prefix() . 'taxes.name as tax_name, ' . db_prefix() . 'taxes.taxrate as taxrate,' . db_prefix() . 'taxes_2.name as tax_name2, ' . db_prefix() . 'taxes_2.taxrate as taxrate2, ' . db_prefix() . 'expenses.id as expenseid,' . db_prefix() . 'expenses.addedfrom as addedfrom');
+        $this->ci->db->from('expenses');
+        $this->ci->db->join(db_prefix() . 'clients', '' . db_prefix() . 'clients.userid = ' . db_prefix() . 'expenses.clientid', 'left');
+        $this->ci->db->join(db_prefix() . 'payment_modes', '' . db_prefix() . 'payment_modes.id = ' . db_prefix() . 'expenses.paymentmode', 'left');
+        $this->ci->db->join(db_prefix() . 'taxes', '' . db_prefix() . 'taxes.id = ' . db_prefix() . 'expenses.tax', 'left');
+        $this->ci->db->join(db_prefix() . 'taxes as ' . db_prefix() . 'taxes_2', '' . db_prefix() . 'taxes_2.id = ' . db_prefix() . 'expenses.tax2', 'left');
+
+        $this->ci->db->join(db_prefix() . 'expenses_categories', '' . db_prefix() . 'expenses_categories.id = ' . db_prefix() . 'expenses.category');
+
+        if (!$this->can_view) {
+            $this->ci->db->where('addedfrom', get_staff_user_id());
+        }
+
+        if ($this->payment_mode) {
+            $this->ci->db->where('paymentmode', $this->payment_mode);
+        }
+
+        $data = $this->finalize();
+
+        $expensesIds = array_column($data, 'expenseid');
+
+        $this->ci->db->select('file_name, filetype, staffid, rel_id')
+        ->where_in('rel_id', $expensesIds)
+        ->where('rel_type', 'expense');
+
+        $files = $this->ci->db->get('files')->result_array();
+
+        $projectIds = array_filter(array_column($data, 'project_id'));
+        $projects   = [];
+
+        if (count($projectIds) > 0) {
+            $this->ci->db->select('id, name')->where_in('id', $projectIds);
+            $projects = $this->ci->db->get('projects')->result_array();
+        }
+
+        foreach ($data as $expense) {
+            $expense   = array_to_object($expense);
+            $fileIndex = array_search($expense->expenseid, array_column($files, 'rel_id'));
+
+            if ($fileIndex !== false) {
+                $expense->attachment            = $files[$fileIndex]['file_name'];
+                $expense->filetype              = $files[$fileIndex]['filetype'];
+                $expense->attachment_added_from = $files[$fileIndex]['staffid'];
+            }
+
+            if ($expense->project_id != 0) {
+                $expense->project_data = array_to_object(
+                    $projects[array_search($expense->project_id, array_column($projects, 'id'))]
+                );
+            }
+
+            if (is_null($expense->payment_mode_name)) {
+                // is online payment mode
+                $expense->payment_mode_name = $payment_gateways[
+                    array_search($expense->paymentmode, array_column($payment_gateways, 'id'))
+                ] ?? null;
+            }
+
+            $expense->currency_data = get_currency($expense->currency);
+            $slug                   = sanitize_file_name(slug_it($expense->category_name . '_' . _d($expense->date)));
+            $pdf                    = app_pdf('expense', LIBSPATH . 'pdf/Expense_pdf', $expense, $this->pdf_tag);
+
+            $dir = $this->save_to_dir($expense, $pdf, $slug . '.pdf', isset($expense->attachment) ? $slug : '');
+
+            if (isset($expense->attachment)) {
+                xcopy(
+                    get_upload_path_by_type('expense') . $expense->expenseid . '/' . $expense->attachment,
+                    $dir . '/' . $expense->attachment
+                );
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * Create estimates export
      * @return object
      */
@@ -419,30 +503,45 @@ class App_bulk_pdf_export
 
     /**
      * Save the PDF to the temporary directory to zip later
-     * @param  object $object    the data object, e.q. invoice, estimate
-     * @param  mixed $pdf       the actual PDF
-     * @param  string file name for thee PDF file
-     * @return null
+     * @param  object $object     the data object, e.q. invoice, estimate
+     * @param  mixed $pdf         the actual PDF
+     * @param  string file name   for the PDF file
+     * @param string $folderName  additional folder for storage
+     *
+     * @return string
      */
-    protected function save_to_dir($object, $pdf, $file_name)
+    protected function save_to_dir($object, $pdf, $file_name, $folderName = '')
     {
         $dir = $this->dir . '/';
+
         if ($this->in_folder) {
             $dir .= $this->in_folder . '/';
         }
+
         $dateColumn = str_replace('`', '', $this->get_date_column());
 
         if (strpos($dateColumn, '.') !== false) {
             $dateColumn = strafter($dateColumn, '.');
         }
+
         if (!empty($object->{$dateColumn})) {
             $dir .= date('Y', strtotime($object->{$dateColumn})) . '/';
         }
 
-        $dir .= $file_name;
+        if ($folderName !== '') {
+            $dir .= $folderName . '/';
+
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755);
+            }
+        }
+
+        $path = $dir . $file_name;
 
         $this->pdf_zip = $pdf;
-        $this->pdf_zip->Output($dir, 'F');
+        $this->pdf_zip->Output($path, 'F');
+
+        return $dir;
     }
 
     /**

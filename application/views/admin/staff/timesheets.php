@@ -103,8 +103,10 @@
                            <?php } ?>
                            <th><?php echo _l('project_timesheet_task'); ?></th>
                            <th><?php echo _l('timesheet_tags'); ?></th>
-                           <th class="t-start-time"><?php echo _l('project_timesheet_start_time'); ?></th>
-                           <th class="t-end-time"><?php echo _l('project_timesheet_end_time'); ?></th>
+                           <?php if(get_option('round_off_task_timer_option') == 0){ ?>
+                             <th class="t-start-time"><?php echo _l('project_timesheet_start_time'); ?></th>
+                             <th class="t-end-time"><?php echo _l('project_timesheet_end_time'); ?></th>
+                           <?php } ?>
                            <th width="150px;"><?php echo _l('note'); ?></th>
                            <th><?php echo _l('task_relation'); ?></th>
                            <th><?php echo _l('time_h'); ?></th>
@@ -119,8 +121,10 @@
                            <?php } ?>
                            <td></td>
                            <td></td>
+                           <?php if(get_option('round_off_task_timer_option') == 0){ ?>
                            <td></td>
                            <td></td>
+                           <?php } ?>
                            <td></td>
                            <td></td>
                            <td class="total_logged_time_timesheets_staff_h"></td>
@@ -186,7 +190,24 @@
     });
 
     $('body').on('change','#group_by_task',function(){
-       timesheetsTable.DataTable().ajax.reload();
+      <?php if(get_option('round_off_task_timer_option') == 0){ ?>
+         var tApi = timesheetsTable.DataTable();
+         var visible = $(this).prop('checked') == false;
+         var tEndTimeIndex = $('.t-end-time').index();
+         var tStartTimeIndex = $('.t-start-time').index();
+         if(tEndTimeIndex == -1 && tStartTimeIndex == -1) {
+          tStartTimeIndex = $(this).attr('data-start-time-index');
+          tEndTimeIndex = $(this).attr('data-end-time-index');
+        } else {
+          $(this).attr('data-start-time-index',tStartTimeIndex);
+          $(this).attr('data-end-time-index',tEndTimeIndex);
+        }
+        tApi.column(tEndTimeIndex).visible(visible, false).columns.adjust();
+        tApi.column(tStartTimeIndex).visible(visible, false).columns.adjust();
+        tApi.ajax.reload();
+      <?php } else { ?>
+        timesheetsTable.DataTable().ajax.reload();
+       <?php } ?>
     });
 
     var timesheetsChart;

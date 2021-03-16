@@ -2,20 +2,14 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-
 $dimensions    = $pdf->getPageDimensions();
 $custom_fields = get_custom_fields('projects');
-
-$divide_document_overview = 3;
-// If custom fields found divide the overview in 4 parts not in 3 to include the custom fields too
-if (count($custom_fields) > 0) {
-    $divide_document_overview = 4;
-}
 
 // Like heading project name
 $html = '<h1>' . _l('project_name') . ': ' . $project->name . '</h1>';
 // project overview heading
 $html .= '<h3>' . ucwords(_l('project_overview')) . '</h3>';
+
 if (!empty($project->description)) {
     // Project description
     $html .= '<p><b style="background-color:#f0f0f0;">' . _l('project_description') . '</b><br /><br /> ' . $project->description . '</p>';
@@ -23,9 +17,13 @@ if (!empty($project->description)) {
 
 $pdf->writeHTML($html, true, false, false, false, '');
 $pdf->Ln(10);
+
 $html = '';
-// Project overview
-// Billing type
+$html .= '<table>';
+$html .= '<thead>';
+$html .= '<tr>';
+$html .= '<th>';
+
 if ($project->billing_type == 1) {
     $type_name = 'project_billing_type_fixed_cost';
 } elseif ($project->billing_type == 2) {
@@ -33,7 +31,35 @@ if ($project->billing_type == 1) {
 } else {
     $type_name = 'project_billing_type_project_task_hours';
 }
-$html .= '<b style="background-color:#f0f0f0;">' . _l('project_overview') . '</b><br /><br />';
+
+$html .= '<b style="background-color:#f0f0f0;">' . _l('project_overview') . '</b>';
+
+$html .= '</th>';
+
+$html .= '<th>';
+
+$html .= '<b style="background-color:#f0f0f0;">' . ucwords(_l('finance_overview')) . '</b>';
+
+$html .= '</th>';
+
+if (count($custom_fields) > 0) {
+    $html .= '<th>';
+    $html .= '<b style="background-color:#f0f0f0;">' . ucwords(_l('project_custom_fields')) . '</b>';
+    $html .= '</th>';
+}
+
+$html .= '<th>';
+$html .= '<b style="background-color:#f0f0f0;">' . ucwords(_l('project_customer')) . '</b>';
+$html .= '</th>';
+
+$html .= '</tr>';
+
+$html .= '</thead>';
+$html .= '<tbody>';
+
+$html .= '<tr>';
+
+$html .= '<td><br /><br />';
 
 $html .= '<b>' . _l('project_billing_type') . ': </b>' . _l($type_name) . '<br />';
 
@@ -68,18 +94,16 @@ $html .= '<b>' . _l('total_project_discussions_created') . ': </b>' . $total_fil
 $html .= '<b>' . _l('total_milestones') . ': </b>' . $total_milestones . '<br />';
 // Total Tickets
 $html .= '<b>' . _l('total_tickets_related_to_project') . ': </b>' . $total_tickets . '<br />';
-// Write project overview data
-$pdf->MultiCell(($dimensions['wk'] / $divide_document_overview) - $dimensions['lm'], 0, $html, 0, 'L', 0, 0, '', '', true, 0, true);
+$html .= '</td>';
 
-$html = '';
-$html .= '<b style="background-color:#f0f0f0;">' . ucwords(_l('finance_overview')) . '</b><br /><br />';
+$html .= '<td><br /><br />';
 $html .= '<b>' . _l('projects_total_invoices_created') . ' </b>' . $total_invoices . '<br />';
 // Not paid invoices total
 $html .= '<b>' . _l('outstanding_invoices') . ' </b>' . app_format_money($invoices_total_data['due'], $project->currency_data) . '<br />';
 // Due invoices total
 $html .= '<b>' . _l('past_due_invoices') . ' </b>' . app_format_money($invoices_total_data['overdue'], $project->currency_data) . '<br />';
 // Paid invoices
-$html .= '<b>' . _l('paid_invoices') . ' </b>' . app_format_money($invoices_total_data['paid'], $project->currency_data) . '<br /><br />';
+$html .= '<b>' . _l('paid_invoices') . ' </b>' . app_format_money($invoices_total_data['paid'], $project->currency_data) . '';
 
 // Finance Overview
 if ($project->billing_type == 2 || $project->billing_type == 3) {
@@ -98,63 +122,69 @@ if ($project->billing_type == 2 || $project->billing_type == 3) {
 }
 
 // Total expenses + money
-$html .= '<b>' . _l('project_overview_expenses') . ': </b>' . app_format_money(sum_from_table(db_prefix().'expenses', ['where' => ['project_id' => $project->id], 'field' => 'amount']), $project->currency_data) . '<br />';
+$html .= '<b>' . _l('project_overview_expenses') . ': </b>' . app_format_money(sum_from_table(db_prefix() . 'expenses', ['where' => ['project_id' => $project->id], 'field' => 'amount']), $project->currency_data) . '<br />';
 // Billable expenses + money
-$html .= '<b>' . _l('project_overview_expenses_billable') . ': </b>' . app_format_money(sum_from_table(db_prefix().'expenses', ['where' => ['project_id' => $project->id, 'billable' => 1], 'field' => 'amount']), $project->currency_data) . '<br />';
+$html .= '<b>' . _l('project_overview_expenses_billable') . ': </b>' . app_format_money(sum_from_table(db_prefix() . 'expenses', ['where' => ['project_id' => $project->id, 'billable' => 1], 'field' => 'amount']), $project->currency_data) . '<br />';
 // Billed expenses + money
-$html .= '<b>' . _l('project_overview_expenses_billed') . ': </b>' . app_format_money(sum_from_table(db_prefix().'expenses', ['where' => ['project_id' => $project->id, 'invoiceid !=' => 'NULL', 'billable' => 1], 'field' => 'amount']), $project->currency_data) . '<br />';
+$html .= '<b>' . _l('project_overview_expenses_billed') . ': </b>' . app_format_money(sum_from_table(db_prefix() . 'expenses', ['where' => ['project_id' => $project->id, 'invoiceid !=' => 'NULL', 'billable' => 1], 'field' => 'amount']), $project->currency_data) . '<br />';
 // Unbilled expenses + money
-$html .= '<b>' . _l('project_overview_expenses_unbilled') . ': </b>' . app_format_money(sum_from_table(db_prefix().'expenses', ['where' => ['project_id' => $project->id, 'invoiceid IS NULL', 'billable' => 1], 'field' => 'amount']), $project->currency_data) . '<br />';
-// Write finance overview
-$pdf->MultiCell(($dimensions['wk'] / $divide_document_overview) - $dimensions['lm'], 0, $html, 0, 'L', 0, 0, '', '', true, 0, true);
+$html .= '<b>' . _l('project_overview_expenses_unbilled') . ': </b>' . app_format_money(sum_from_table(db_prefix() . 'expenses', ['where' => ['project_id' => $project->id, 'invoiceid IS NULL', 'billable' => 1], 'field' => 'amount']), $project->currency_data);
+$html .= '</td>';
 
 // Custom fields
-// Check for custom fields
 if (count($custom_fields) > 0) {
-    $html = '';
-    $html .= '<b style="background-color:#f0f0f0;">' . ucwords(_l('project_custom_fields')) . '</b><br /><br />';
-
+    $html .= '<td><br /><br />';
     foreach ($custom_fields as $field) {
         $value = get_custom_field_value($project->id, $field['id'], 'projects');
         $value = $value === '' ? '/' : $value;
         $html .= '<b>' . ucfirst($field['name']) . ': </b>' . $value . '<br />';
     }
 
-    // Write custom fields
-    $pdf->MultiCell(($dimensions['wk'] / $divide_document_overview) - $dimensions['lm'], 0, $html, 0, 'L', 0, 0, '', '', true, 0, true);
+    $html .= '</td>';
 }
 
-$html = '';
 // Customer Info
-$html .= '<b style="background-color:#f0f0f0;">' . ucwords(_l('project_customer')) . '</b><br /><br /><b>' . $project->client_data->company . '</b><br />';
+$html .= '<td><br /><br />';
+
+$html .= '<b>' . $project->client_data->company . '</b><br />';
 $html .= $project->client_data->address . '<br />';
 
 if (!empty($project->client_data->city)) {
     $html .= $project->client_data->city;
 }
+
 if (!empty($project->client_data->state)) {
     $html .= ', ' . $project->client_data->state;
 }
+
 $country = get_country_short_name($project->client_data->country);
+
 if (!empty($country)) {
     $html .= '<br />' . $country;
 }
+
 if (!empty($project->client_data->zip)) {
     $html .= ', ' . $project->client_data->zip;
 }
+
 if (!empty($project->client_data->phonenumber)) {
     $html .= '<br />' . $project->client_data->phonenumber;
 }
+
 if (!empty($project->client_data->vat)) {
     $html .= '<br />' . _l('client_vat_number') . ': ' . $project->client_data->vat;
 }
 
-// Write custom info
-$pdf->MultiCell(($dimensions['wk'] / $divide_document_overview) - $dimensions['lm'], 0, $html, 0, 'L', 0, 0, '', '', true, 0, true);
+$html .= '</td>';
+$html .= '</tr>';
 
-// Set new lines to prevent overlaping the content
-$pdf->Ln(80);
-// $pdf->setY(140);
+$html .= '</tbody>';
+$html .= '</table>';
+
+$pdf->writeHTML($html, true, false, false, false, '');
+
+$pdf->ln(5);
+
 // Project members overview
 $html = '';
 // Heading
@@ -176,11 +206,11 @@ $html .= '<tbody>';
 foreach ($members as $member) {
     $html .= '<tr style="color:#4a4a4a;">';
     $html .= '<td>' . get_staff_full_name($member['staff_id']) . '</td>';
-    $html .= '<td>' . total_rows(db_prefix().'tasks', 'rel_type="project" AND rel_id="' . $project->id . '" AND id IN (SELECT taskid FROM '.db_prefix().'task_assigned WHERE staffid="' . $member['staff_id'] . '")') . '</td>';
-    $html .= '<td>' . total_rows(db_prefix().'task_comments', 'staffid = ' . $member['staff_id'] . ' AND taskid IN (SELECT id FROM '.db_prefix().'tasks WHERE rel_type="project" AND rel_id="' . $project->id . '")') . '</td>';
-    $html .= '<td>' . total_rows(db_prefix().'projectdiscussions', ['staff_id' => $member['staff_id'], 'project_id' => $project->id]) . '</td>';
-    $html .= '<td>' . total_rows(db_prefix().'projectdiscussioncomments', 'staff_id=' . $member['staff_id'] . ' AND discussion_id IN (SELECT id FROM '.db_prefix().'projectdiscussions WHERE project_id=' . $project->id . ')') . '</td>';
-    $html .= '<td>' . total_rows(db_prefix().'project_files', ['staffid' => $member['staff_id'], 'project_id' => $project->id]) . '</td>';
+    $html .= '<td>' . total_rows(db_prefix() . 'tasks', 'rel_type="project" AND rel_id="' . $project->id . '" AND id IN (SELECT taskid FROM ' . db_prefix() . 'task_assigned WHERE staffid="' . $member['staff_id'] . '")') . '</td>';
+    $html .= '<td>' . total_rows(db_prefix() . 'task_comments', 'staffid = ' . $member['staff_id'] . ' AND taskid IN (SELECT id FROM ' . db_prefix() . 'tasks WHERE rel_type="project" AND rel_id="' . $project->id . '")') . '</td>';
+    $html .= '<td>' . total_rows(db_prefix() . 'projectdiscussions', ['staff_id' => $member['staff_id'], 'project_id' => $project->id]) . '</td>';
+    $html .= '<td>' . total_rows(db_prefix() . 'projectdiscussioncomments', 'staff_id=' . $member['staff_id'] . ' AND discussion_id IN (SELECT id FROM ' . db_prefix() . 'projectdiscussions WHERE project_id=' . $project->id . ')') . '</td>';
+    $html .= '<td>' . total_rows(db_prefix() . 'project_files', ['staffid' => $member['staff_id'], 'project_id' => $project->id]) . '</td>';
     $member_tasks_assigned = $this->ci->tasks_model->get_tasks_by_staff_id($member['staff_id'], ['rel_id' => $project->id, 'rel_type' => 'project']);
     $seconds               = 0;
     foreach ($member_tasks_assigned as $member_task) {
@@ -216,8 +246,8 @@ $html .= '<tbody>';
 foreach ($tasks as $task) {
     $html .= '<tr style="color:#4a4a4a;">';
     $html .= '<td width="26.12%">' . $task['name'] . '</td>';
-    $html .= '<td width="12%">' . total_rows(db_prefix().'task_assigned', ['taskid' => $task['id']]) . '</td>';
-    $html .= '<td width="12%">' . total_rows(db_prefix().'task_followers', ['taskid' => $task['id']]) . '</td>';
+    $html .= '<td width="12%">' . total_rows(db_prefix() . 'task_assigned', ['taskid' => $task['id']]) . '</td>';
+    $html .= '<td width="12%">' . total_rows(db_prefix() . 'task_followers', ['taskid' => $task['id']]) . '</td>';
     $html .= '<td width="9.28%">' . _d($task['startdate']) . '</td>';
     $html .= '<td width="9.28%">' . (is_date($task['duedate']) ? _d($task['duedate']): '') . '</td>';
     $html .= '<td width="7%">' . format_task_status($task['status'], true, true) . '</td>';
@@ -283,7 +313,7 @@ foreach ($milestones as $milestone) {
     $html .= '<td width="20%">' . $milestone['name'] . '</td>';
     $html .= '<td width="30%">' . $milestone['description'] . '</td>';
     $html .= '<td width="15%">' . _d($milestone['due_date']) . '</td>';
-    $html .= '<td width="15%">' . total_rows(db_prefix().'tasks', ['milestone' => $milestone['id'], 'rel_id' => $project->id, 'rel_type' => 'project']) . '</td>';
+    $html .= '<td width="15%">' . total_rows(db_prefix() . 'tasks', ['milestone' => $milestone['id'], 'rel_id' => $project->id, 'rel_type' => 'project']) . '</td>';
     $html .= '<td width="20%">' . seconds_to_time_format($milestone['total_logged_time']) . '</td>';
     $html .= '</tr>';
 }
