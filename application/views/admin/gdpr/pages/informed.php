@@ -13,9 +13,11 @@
 <?php render_yes_no_option('gdpr_enable_terms_and_conditions_ticket_form','Enable Terms & Conditions for ticket form'); ?>
 <hr />
 <?php render_yes_no_option('gdpr_show_terms_and_conditions_in_footer','Show Terms & Conditions in customers area footer'); ?>
+<hr />
+<?php render_yes_no_option('gdpr_enable_terms_and_conditions_estimate_request_form','Enable Terms & Conditions for estimate request forms'); ?>
 <hr class="hr-panel-heading" />
 <p class="">
-    Terms and Conditions
+    <?php echo _l('terms_and_conditions') ?>
     <br />
     <a href="<?php echo terms_url(); ?>" target="_blank"><?php echo terms_url(); ?></a>
 </p>

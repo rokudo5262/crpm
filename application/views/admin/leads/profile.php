@@ -46,7 +46,7 @@
          </li>
          <?php } ?>
          <?php } ?>
-         <?php if(((is_lead_creator($lead->id) || has_permission('leads','','delete')) && $lead_locked == false) || is_admin()){ ?>
+         <?php if((has_permission('leads','','delete') && $lead_locked == false) || is_admin()){ ?>
          <li>
             <a href="<?php echo admin_url('leads/delete/'.$lead->id); ?>" class="text-danger delete-text _delete" data-toggle="tooltip" title="">
               <i class="fa fa-remove"></i>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "401a10d316eac11e6d915bd1759fb085",
+    "content-hash": "787bc0d661bc702f8d7107f801c74fb3",
     "packages": [
         {
             "name": "authorizenet/authorizenet",
@@ -1267,54 +1267,6 @@
             "time": "2020-11-28T14:25:28+00:00"
         },
         {
-            "name": "nuovo/spreadsheet-reader",
-            "version": "0.5.11",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nuovo/spreadsheet-reader.git",
-                "reference": "f6bd49d101042eaa71b0fbd82e7a57e5a276dc3d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nuovo/spreadsheet-reader/zipball/f6bd49d101042eaa71b0fbd82e7a57e5a276dc3d",
-                "reference": "f6bd49d101042eaa71b0fbd82e7a57e5a276dc3d",
-                "shasum": ""
-            },
-            "require": {
-                "ext-zip": "*",
-                "php": ">= 5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "classmap": [
-                    "./"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Martins Pilsetnieks",
-                    "email": "pilsetnieks@gmail.com",
-                    "homepage": "http://www.nuovo.lv/"
-                }
-            ],
-            "description": "Spreadsheet reader library for Excel, OpenOffice and structured text files",
-            "homepage": "https://github.com/nuovo/spreadsheet-reader",
-            "keywords": [
-                "OpenOffice",
-                "csv",
-                "excel",
-                "ods",
-                "spreadsheet",
-                "xls",
-                "xlsx"
-            ],
-            "time": "2015-04-30T00:00:00+00:00"
-        },
-        {
             "name": "omnipay/braintree",
             "version": "dev-master",
             "source": {
@@ -1795,6 +1747,7 @@
                     "homepage": "https://github.com/paypal/paypalhttp_php/contributors"
                 }
             ],
+            "abandoned": true,
             "time": "2019-11-06T21:27:12+00:00"
         },
         {
@@ -3050,16 +3003,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.20.0",
+            "version": "v1.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "39d483bdf39be819deabf04ec872eb0b2410b531"
+                "reference": "f377a3dd1fde44d37b9831d68dc8dea3ffd28e13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/39d483bdf39be819deabf04ec872eb0b2410b531",
-                "reference": "39d483bdf39be819deabf04ec872eb0b2410b531",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/f377a3dd1fde44d37b9831d68dc8dea3ffd28e13",
+                "reference": "f377a3dd1fde44d37b9831d68dc8dea3ffd28e13",
                 "shasum": ""
             },
             "require": {
@@ -3071,7 +3024,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "1.20-dev"
+                    "dev-main": "1.22-dev"
                 },
                 "thanks": {
                     "name": "symfony/polyfill",
@@ -3109,7 +3062,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2020-10-23T14:02:19+00:00"
+            "time": "2021-01-07T16:49:33+00:00"
         },
         {
             "name": "symfony/polyfill-php72",

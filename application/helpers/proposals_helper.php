@@ -10,7 +10,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 function get_proposal_shortlink($proposal)
 {
-    $long_url = site_url("invoice/{$proposal->id}/{$proposal->hash}");
+    $long_url = site_url("proposal/{$proposal->id}/{$proposal->hash}");
     if (!get_option('bitly_access_token')) {
         return $long_url;
     }

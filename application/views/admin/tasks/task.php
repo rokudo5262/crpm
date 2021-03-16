@@ -249,6 +249,9 @@
                            <option value="proposal" <?php if(isset($task) || $this->input->get('rel_type')){if($rel_type == 'proposal'){echo 'selected';}} ?>>
                               <?php echo _l('proposal'); ?>
                            </option>
+                            <?php
+                                hooks()->do_action('task_modal_rel_type_select', ['task' => (isset($task) ? $task : 0), 'rel_type' => $rel_type]);
+                            ?>
                         </select>
                      </div>
                   </div>

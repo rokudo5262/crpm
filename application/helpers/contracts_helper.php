@@ -13,7 +13,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 function get_contract_shortlink($contract)
 {
-    $long_url = site_url("invoice/{$contract->id}/{$contract->hash}");
+    $long_url = site_url("contract/{$contract->id}/{$contract->hash}");
     if (!get_option('bitly_access_token')) {
         return $long_url;
     }

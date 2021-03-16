@@ -209,8 +209,10 @@ function render_custom_fields($belongs_to, $rel_id = false, $where = [], $items_
 
                 foreach ($options as $option) {
                     $checked = '';
+
                     // Replace double quotes with single.
-                    $option = htmlentities($option);
+                    $option = str_replace('"', '\'', $option);
+
                     $option = trim($option);
                     foreach ($value as $v) {
                         $v = trim($v);

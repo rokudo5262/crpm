@@ -32,6 +32,8 @@
     <hr />
     <?php render_yes_no_option('ticket_replies_order','ticket_replies_order','ticket_replies_order_notice',_l('order_ascending'),_l('order_descending'),'asc','desc'); ?>
     <hr />
+    <?php render_yes_no_option('enable_support_menu_badges','enable_support_menu_badges'); ?>
+    <hr />
     <?php
       $this->load->model('tickets_model');
       $statuses = $this->tickets_model->get_ticket_status();

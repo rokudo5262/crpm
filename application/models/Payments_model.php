@@ -250,6 +250,13 @@ class Payments_model extends App_Model
                         }
                     }
                     // Is from settings: Send Payment Receipt
+                } else {
+                    if (get_option('attach_invoice_to_payment_receipt_email') == 1) {
+                        $invoice_number = format_invoice_number($payment->invoiceid);
+                        set_mailing_constant();
+                        $pdfInvoice           = invoice_pdf($payment->invoice_data);
+                        $pdfInvoiceAttachment = $pdfInvoice->Output($invoice_number . '.pdf', 'S');
+                    }
                 }
 
                 $contacts = $this->clients_model->get_contacts($invoice->clientid, $where);
@@ -274,7 +281,7 @@ class Payments_model extends App_Model
                     if ($pdfInvoiceAttachment) {
                         $template->add_attachment([
                             'attachment' => $pdfInvoiceAttachment,
-                            'filename'   => $invoice_number . '.pdf',
+                            'filename'   => str_replace('/', '-', $invoice_number) . '.pdf',
                             'type'       => 'application/pdf',
                         ]);
                     }

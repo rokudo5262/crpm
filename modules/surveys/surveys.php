@@ -9,6 +9,8 @@ Version: 2.3.0
 Requires at least: 2.3.*
 */
 
+require(__DIR__ . '/vendor/autoload.php');
+
 define('SURVEYS_MODULE_NAME', 'surveys');
 
 hooks()->add_action('after_cron_run', 'surveys_send');

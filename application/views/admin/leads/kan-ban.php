@@ -2,7 +2,7 @@
 $is_admin = is_admin();
 $i = 0;
 foreach ($statuses as $status) {
-  $total_pages = ceil($this->leads_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,array(),true)/get_option('leads_kanban_limit'));
+  $total_pages = ceil($this->leads_model->do_kanban_query($status['id'],$this->input->get('search'),1,array(),true)/get_option('leads_kanban_limit'));
 
   $settings = '';
   foreach(get_system_favourite_colors() as $color){
@@ -26,7 +26,11 @@ foreach ($statuses as $status) {
           <div class="kan-ban-step-indicator<?php if($status['isdefault'] == 1){ echo ' kan-ban-step-indicator-full'; } ?>"></div>
           <i class="fa fa-reorder pointer"></i>
           <span class="heading pointer" <?php if($is_admin){ ?> data-order="<?php echo $status['statusorder']; ?>" data-color="<?php echo $status['color']; ?>" data-name="<?php echo $status['name']; ?>" onclick="edit_status(this,<?php echo $status['id']; ?>); return false;" <?php } ?>><?php echo $status['name']; ?>
-          </span>
+         </span> -
+          <?php echo app_format_money(
+            $summary[$statusSummaryIndex = array_search($status['id'], array_column($summary, 'id'))]['value'],
+            $base_currency
+          ); ?> - <?php echo $summary[$statusSummaryIndex]['total'] . ' ' . _l('leads') ?>
           <a href="#" onclick="return false;" class="pull-right color-white kanban-color-picker kanban-stage-color-picker<?php if($status['isdefault'] == 1){ echo ' kanban-stage-color-picker-last'; } ?>" data-placement="bottom" data-toggle="popover" data-content="
             <div class='text-center'>
               <button type='button' return false;' class='btn btn-success btn-block mtop10 new-lead-from-status'>
@@ -45,10 +49,10 @@ foreach ($statuses as $status) {
           <div class="kan-ban-content">
             <ul class="status leads-status sortable" data-lead-status-id="<?php echo $status['id']; ?>">
               <?php
-              $leads = $this->leads_model->do_kanban_advance_query($status['id'],$this->input->get('search'),1,array('sort_by'=>$this->input->get('sort_by'),'sort'=>$this->input->get('sort')));
+              $leads = $this->leads_model->do_kanban_query($status['id'],$this->input->get('search'),1,array('sort_by'=>$this->input->get('sort_by'),'sort'=>$this->input->get('sort')));
               $total_leads = count($leads);
               foreach ($leads as $lead) {
-                $this->load->view('admin/leads/_kan_ban_card_advance',array('lead'=>$lead,'status'=>$status,'base_currency'=>$base_currency));
+                $this->load->view('admin/leads/_kan_ban_card',array('lead'=>$lead,'status'=>$status,'base_currency'=>$base_currency));
               } ?>
               <?php if($total_leads > 0 ){ ?>
               <li class="text-center not-sortable kanban-load-more" data-load-status="<?php echo $status['id']; ?>">
@@ -67,4 +71,4 @@ foreach ($statuses as $status) {
         </div>
       </li>
     </ul>
-    <?php $i++; } ?> 
+    <?php $i++; } ?>

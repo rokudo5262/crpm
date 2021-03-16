@@ -6125,7 +6125,7 @@ body.rtl .hr-panel-heading.project-area-separation {
     list-style: none !important;
 }
 
-.jquery-comments.tc-content ul.main ul {
+.jquery-comments.tc-content ul.main ul:not(.child-comments) {
     list-style: initial !important;
 }
 
@@ -7517,28 +7517,27 @@ div.dataTables_wrapper div.dataTables_paginate {
     float: right;
 }
 
-.frmb .prev-holder .checkbox label::before,
-.frmb .prev-holder .radio label::before {
+.web-to-lead-form .frmb .prev-holder .checkbox label::before,
+.web-to-lead-form .frmb .prev-holder .radio label::before {
     display: none;
 }
 
-.frmb .checkbox input[type="checkbox"],
-.frmb .checkbox input[type="radio"] {
+.web-to-lead-form .frmb .checkbox input[type="checkbox"],
+.web-to-lead-form .frmb .checkbox input[type="radio"] {
     opacity: 1 !important;
 }
 
 .frm-holder .access-wrap,
 .frm-holder .toggle-wrap,
-.frm-holder .multiple-wrap,
-.other-wrap,
-.maxlength-wrap,
-.copy-button,
-.frmb-control .fb-separator,
+.web-to-lead-form .other-wrap,
+.web-to-lead-form .maxlength-wrap,
+.web-to-lead-form .copy-button,
+.web-to-lead-form .frmb-control .fb-separator,
 .subtype-wrap,
-.option-actions,
-.field-options a.remove,
-li[type="datetime-local"] .value-wrap,
-li[type="datetime"] .value-wrap {
+.web-to-lead-form .option-actions,
+.web-to-lead-form .field-options a.remove,
+.web-to-lead-form li[type="datetime-local"] .value-wrap,
+.web-to-lead-form li[type="datetime"] .value-wrap {
     display: none !important;
 }
 
@@ -7576,7 +7575,7 @@ li[type="datetime"] .value-wrap {
 .stage-wrap .form-field input[type="file"],
 .stage-wrap .form-field input[type="datetime-local"],
 .stage-wrap .form-field select[multiple="true"],
-[id^=frmb-][id$='-form-wrap'] .frmb .form-field .form-group.field-options input[type="text"] {
+.web-to-lead-form [id^=frmb-][id$='-form-wrap'] .frmb .form-field .form-group.field-options input[type="text"] {
     cursor: not-allowed;
     pointer-events: none;
     background-color: #EEE !important;
@@ -7589,8 +7588,8 @@ li[type="datetime"] .value-wrap {
     background: #eef1f6;
 }
 
-.stage-wrap .checkbox input[type="checkbox"]:checked+label::after,
-.stage-wrap .checkbox input[type="radio"]:checked+label::after {
+.web-to-lead-form .stage-wrap .checkbox input[type="checkbox"]:checked+label::after,
+.web-to-lead-form .stage-wrap .checkbox input[type="radio"]:checked+label::after {
     content: " ";
 }
 
@@ -9230,4 +9229,18 @@ body.kan-ban-body .dt-loader {
 body.kan-ban-body .row._buttons {
     margin-top: 10px;
     margin-bottom: -10px;
+}
+
+#side-menu li .nav-second-level li >.badge,
+#setup-menu li .nav-second-level li >.badge {
+        position: absolute;
+    right: 11px;
+    top: 8px;
+}
+
+#side-menu li .nav-second-level li.active >.badge,
+#setup-menu li .nav-second-level li.active >.badge {
+    position: absolute;
+    right: 11px;
+    top: 15px;
 }

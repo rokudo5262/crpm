@@ -34,18 +34,42 @@
 
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="set_invoice">
-    <?php if(!is_invoices_overdue_reminders_enabled()){ ?>
-    <div class="alert alert-warning">
-      The system was not able to find sources to send overdue notices, if you want overdue notices to be sent, make sure that in <a href="<?php echo admin_url('emails'); ?>">email templates</a> the overdue notice email for invoices is enabled or at least you have configured <a href="<?php echo admin_url('settings?group=sms'); ?>">SMS</a> overdue notice. If you don't need to send overdue notices for invoices, simply ignore this message.
-    </div>
-    <?php } ?>
+
     <i class="fa fa-question-circle pull-left" data-toggle="tooltip" data-title="<?php echo _l('inv_hour_of_day_perform_auto_operations_help'); ?>"></i>
     <?php echo render_input('settings[invoice_auto_operations_hour]','hour_of_day_perform_auto_operations',get_option('invoice_auto_operations_hour'),'number',array('data-toggle'=>'tooltip','data-title'=>_l('hour_of_day_perform_auto_operations_format'),'max'=>23)); ?>
     <hr />
-
-    <?php echo render_input('settings[automatically_send_invoice_overdue_reminder_after]','automatically_send_invoice_overdue_reminder_after',get_option('automatically_send_invoice_overdue_reminder_after'),'number'); ?>
-    <hr />
-    <?php echo render_input('settings[automatically_resend_invoice_overdue_reminder_after]','automatically_resend_invoice_overdue_reminder_after',get_option('automatically_resend_invoice_overdue_reminder_after'),'number'); ?>
+    <div class="row">
+      <div class="col-md-12">
+        <?php if(!is_invoices_overdue_reminders_enabled()){ ?>
+        <div class="alert alert-warning">
+          The system was not able to find sources to send overdue notices, if you want overdue notices to be sent, make sure that in <a href="<?php echo admin_url('emails'); ?>">email templates</a> the <b>Invoice Overdue Notice</b> template for invoices is enabled or at least you have configured <a href="<?php echo admin_url('settings?group=sms'); ?>">SMS</a> overdue notice. If you don't need to send overdue notices for invoices, simply ignore this message.
+        </div>
+        <?php } ?>
+        <h4 class="no-mbot font-medium"><?php echo _l('overdue_notices'); ?></h4>
+        <p><?php echo _l('invoice_overdue_notices_info'); ?></p>
+      </div>
+      <div class="col-md-6">
+          <?php echo render_input('settings[automatically_send_invoice_overdue_reminder_after]','automatically_send_invoice_overdue_reminder_after',get_option('automatically_send_invoice_overdue_reminder_after'),'number'); ?>
+      </div>
+      <div class="col-md-6">
+           <?php echo render_input('settings[automatically_resend_invoice_overdue_reminder_after]','automatically_resend_invoice_overdue_reminder_after',get_option('automatically_resend_invoice_overdue_reminder_after'),'number'); ?>
+      </div>
+      <div class="col-md-12">
+        <?php if(!is_invoices_due_reminders_enabled()){ ?>
+        <div class="alert alert-warning">
+          The system was not able to find sources to send invoices becoming due notices, if you want due notices to be sent, make sure that in <a href="<?php echo admin_url('emails'); ?>">email templates</a> the <b>Invoice Due Notice</b> template for invoices is enabled or at least you have configured <a href="<?php echo admin_url('settings?group=sms'); ?>">SMS</a> due notice. If you don't need to send due notices for invoices, simply ignore this message.
+        </div>
+        <?php } ?>
+        <h4 class="no-mbot font-medium"><?php echo _l('due_reminders'); ?></h4>
+        <p><?php echo _l('due_reminders_for_invoices_info'); ?></p>
+      </div>
+      <div class="col-md-6">
+          <?php echo render_input('settings[invoice_due_notice_before]','invoice_due_notice_before',get_option('invoice_due_notice_before'),'number'); ?>
+      </div>
+      <div class="col-md-6">
+           <?php echo render_input('settings[invoice_due_notice_resend_after]','automatically_resend_invoice_overdue_reminder_after',get_option('invoice_due_notice_resend_after'),'number'); ?>
+      </div>
+    </div>
     <hr />
     <h4 class="mbot20 font-medium"><?php echo _l('invoices_list_recurring'); ?></h4>
     <div class="radio radio-info">

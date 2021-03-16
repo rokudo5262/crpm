@@ -120,6 +120,8 @@
       <hr />
       <?php render_yes_no_option('show_amount_due_on_invoice','show_amount_due_on_invoice'); ?>
       <hr />
+      <?php render_yes_no_option('attach_invoice_to_payment_receipt_email', 'attach_invoice_to_payment_receipt_email'); ?>
+      <hr />
       <div class="form-group">
          <label for="invoice_number_format" class="control-label clearfix"><?php echo _l('settings_sales_invoice_number_format'); ?></label>
          <div class="radio radio-primary radio-inline">

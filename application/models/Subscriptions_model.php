@@ -141,15 +141,19 @@ class Subscriptions_model extends App_Model
             if (isset($data[$key]) && !empty($data[$key])) {
                 $stripe_tax = $this->stripe_core->retrieve_tax_rate($data[$key]);
 
-                $this->db->where('name', $stripe_tax->display_name);
+                $displayName =  $stripe_tax->display_name;
+                // Region label when using Stripe Region Label field.
+                $displayName .= !empty($stripe_tax->jurisdiction) ? ' - ' . $stripe_tax->jurisdiction : '';
+
+                $this->db->where('name', $displayName);
                 $this->db->where('taxrate', $percentage = number_format($stripe_tax->percentage, get_decimal_places()));
                 $dbTax = $this->db->get('taxes')->row();
                 if (!$dbTax) {
-                    $insert_id = $this->db->insert('taxes', [
-                    'name'    => $stripe_tax->display_name,
-                    'taxrate' => $percentage,
-                ]);
-                    $data[$localKey] = $insert_id;
+                    $this->db->insert('taxes', [
+                        'name'    => $displayName,
+                        'taxrate' => $percentage,
+                    ]);
+                    $data[$localKey] = $this->db->insert_id();
                 } else {
                     $data[$localKey] = $dbTax->id;
                 }

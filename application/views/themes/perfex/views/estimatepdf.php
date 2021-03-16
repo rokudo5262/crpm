@@ -147,7 +147,7 @@ if (!empty($estimate->clientnote)) {
 if (!empty($estimate->terms)) {
     $pdf->Ln(4);
     $pdf->SetFont($font_name, 'B', $font_size);
-    $pdf->Cell(0, 0, _l('terms_and_conditions'), 0, 1, 'L', 0, '', 0);
+    $pdf->Cell(0, 0, _l('terms_and_conditions') . ":", 0, 1, 'L', 0, '', 0);
     $pdf->SetFont($font_name, '', $font_size);
     $pdf->Ln(2);
     $pdf->writeHTMLCell('', '', '', '', $estimate->terms, 0, 1, false, true, 'L', true);

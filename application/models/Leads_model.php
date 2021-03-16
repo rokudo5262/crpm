@@ -40,6 +40,23 @@ class Leads_model extends App_Model
         return $this->db->get(db_prefix() . 'leads')->result_array();
     }
 
+    /**
+     * Get lead by given email
+     *
+     * @since 2.8.0
+     *
+     * @param  string $email
+     *
+     * @return \strClass|null
+     */
+    public function get_lead_by_email($email)
+    {
+        $this->db->where('email', $email);
+        $this->db->limit(1);
+
+        return $this->db->get('leads')->row();
+    }
+
     public function do_kanban_query($status, $search = '', $page = 1, $sort = [], $count = false)
     {
         $limit                          = get_option('leads_kanban_limit');

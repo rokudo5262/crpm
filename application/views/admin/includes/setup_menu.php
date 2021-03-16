@@ -23,6 +23,14 @@
              <?php if(count($item['children']) > 0){ ?>
                  <span class="fa arrow"></span>
              <?php } ?>
+             <?php if (isset($item['badge'], $item['badge']['value']) && !empty($item['badge'])) {?>
+               <span class="badge pull-right 
+               <?=isset($item['badge']['type']) &&  $item['badge']['type'] != '' ? "bg-{$item['badge']['type']}" : 'bg-info' ?>"
+               <?=(isset($item['badge']['type']) &&  $item['badge']['type'] == '') ||
+                        isset($item['badge']['color']) ? "style='background-color: {$item['badge']['color']}'" : '' ?>>
+               <?= $item['badge']['value'] ?>
+            </span>
+            <?php } ?>
          </a>
          <?php if(count($item['children']) > 0){ ?>
              <ul class="nav nav-second-level collapse" aria-expanded="false">
@@ -35,7 +43,15 @@
                        <span class="sub-menu-text">
                           <?php echo _l($submenu['name'],'',false); ?>
                       </span>
-                  </a>
+                      </a>
+                    <?php if (isset($submenu['badge'], $submenu['badge']['value']) && !empty($submenu['badge'])) {?>
+                    <span class="badge pull-right mright5
+                    <?=isset($submenu['badge']['type']) &&  $submenu['badge']['type'] != '' ? "bg-{$submenu['badge']['type']}" : 'bg-info' ?>"
+                    <?=(isset($submenu['badge']['type']) &&  $submenu['badge']['type'] == '') ||
+                        isset($submenu['badge']['color']) ? "style='background-color: {$submenu['badge']['color']}'" : '' ?>>
+                    <?= $submenu['badge']['value'] ?>
+                    </span>
+                    <?php } ?>
               </li>
           <?php } ?>
       </ul>
