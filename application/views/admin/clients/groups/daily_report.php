@@ -7,7 +7,7 @@ if(isset($client)){ ?>
             width: 650px !important;
             height:900px !important;
         }
-        .footer {
+        .footer { 
             width:650px !important;
         }      
     }
