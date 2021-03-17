@@ -204,6 +204,26 @@ class Download extends App_Controller
             if (has_permission('customers', '', 'view') || is_customer_admin($attachment->rel_id) || is_client_logged_in()) {
                 $path = get_upload_path_by_type('customer') . $attachment->rel_id . '/' . $attachment->file_name;
             }
+        }  elseif ($folder_indicator == 'estimate_request_attachment') {
+            if (!is_staff_logged_in() && strpos($_SERVER['HTTP_REFERER'], 'forms/l/') === false) {
+                show_404();
+            }
+
+            // admin area
+            if ($folder_indicator == 'estimate_request_attachment') {
+                $this->db->where('id', $attachmentid);
+            } else {
+                // Lead public form
+                $this->db->where('attachment_key', $attachmentid);
+            }
+
+            $attachment = $this->db->get(db_prefix() . 'files')->row();
+
+            if (!$attachment) {
+                show_404();
+            }
+
+            $path = get_upload_path_by_type('estimate_request') . $attachment->rel_id . '/' . $attachment->file_name;
         } else {
             die('folder not specified');
         }

@@ -355,6 +355,14 @@ class Utilities extends AdminController
             ];
         }
 
+        if (has_permission('expenses', '', 'view')
+            || has_permission('expenses', '', 'view_own')) {
+            $features[] = [
+                'feature' => 'expenses',
+                'name'    => _l('expenses'),
+            ];
+        }
+
         $data['bulk_pdf_export_available_features'] = hooks()->apply_filters(
             'bulk_pdf_export_available_features',
             $features

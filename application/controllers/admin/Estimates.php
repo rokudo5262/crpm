@@ -126,9 +126,15 @@ class Estimates extends AdminController
             $data['edit']     = true;
             $title            = _l('edit', _l('estimate_lowercase'));
         }
+
         if ($this->input->get('customer_id')) {
             $data['customer_id'] = $this->input->get('customer_id');
         }
+
+        if ($this->input->get('estimate_request_id')) {
+            $data['estimate_request_id'] = $this->input->get('estimate_request_id');
+        }
+
         $this->load->model('taxes_model');
         $data['taxes'] = $this->taxes_model->get();
         $this->load->model('currencies_model');

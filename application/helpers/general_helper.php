@@ -823,6 +823,11 @@ function csrf_jquery_token()
  */
 function app_happy_text($text)
 {
+    // We won't do this on texts with URL's
+    if(strpos($text, 'http') !== false) {
+        return $text;
+    }
+
     $regex = hooks()->apply_filters('app_happy_text_regex', '\b(congratulations!?|congrats!?|happy!?|feel happy!?|awesome!?|yay!?)\b');
     $re    = '/' . $regex . '/i';
 

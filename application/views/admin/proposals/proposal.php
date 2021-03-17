@@ -4,10 +4,10 @@
    <div class="content accounting-template proposal">
       <div class="row">
          <?php
-            if(isset($proposal)){
+         if(isset($proposal)){
              echo form_hidden('isedit',$proposal->id);
             }
-            $rel_type = '';
+         $rel_type = '';
             $rel_id = '';
             if(isset($proposal) || ($this->input->get('rel_id') && $this->input->get('rel_type'))){
              if($this->input->get('rel_id')){
@@ -19,8 +19,15 @@
              }
             }
             ?>
-         <?php echo form_open($this->uri->uri_string(),array('id'=>'proposal-form','class'=>'_transaction_form proposal-form')); ?>
-         <div class="col-md-12">
+         <?php
+         echo form_open($this->uri->uri_string(),array('id'=>'proposal-form','class'=>'_transaction_form proposal-form'));
+
+         if($this->input->get('estimate_request_id')) {
+             echo form_hidden('estimate_request_id', $this->input->get('estimate_request_id'));
+         }
+         ?>
+
+          <div class="col-md-12">
             <div class="panel_s">
                <div class="panel-body">
                   <div class="row">

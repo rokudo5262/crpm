@@ -63,7 +63,7 @@ class Dashboard_model extends App_Model
         }
 
         if (!$has_permission_payments_view) {
-            $this->db->where('invoiceid IN (SELECT id FROM ' . db_prefix() . 'invoices WHERE addedfrom=' . get_staff_user_id() . ')');
+            $this->db->where('invoiceid IN (SELECT id FROM ' . db_prefix() . 'invoices WHERE addedfrom=' . get_staff_user_id() . ' and addedfrom IN (SELECT staff_id FROM ' . db_prefix() . 'staff_permissions WHERE feature="invoices" AND capability="view_own"))');
         }
 
         // Current week
@@ -77,6 +77,11 @@ class Dashboard_model extends App_Model
         if ($currency != 'undefined') {
             $this->db->where('currency', $currency);
         }
+
+        if (!$has_permission_payments_view) {
+            $this->db->where('invoiceid IN (SELECT id FROM ' . db_prefix() . 'invoices WHERE addedfrom=' . get_staff_user_id() . ' and addedfrom IN (SELECT staff_id FROM ' . db_prefix() . 'staff_permissions WHERE feature="invoices" AND capability="view_own"))');
+        }
+
         // Last Week
         $all_payments[] = $this->db->get()->result_array();
 

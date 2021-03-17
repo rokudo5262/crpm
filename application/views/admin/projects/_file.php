@@ -8,7 +8,7 @@
          </div>
          <div class="modal-body">
             <div class="row">
-               <div class="col-md-8 border-right project_file_area">
+               <div class="col-md-6 border-right project_file_area">
                   <?php
                      if ($file->staffid == get_staff_user_id() || has_permission('projects', '', 'create')) {
                          ?>
@@ -75,7 +75,7 @@
                          echo '<p class="text-muted">' . _l('no_preview_available_for_file') . '</p>';
                      } ?>
                </div>
-               <div class="col-md-4 project_file_discusssions_area">
+               <div class="col-md-6 project_file_discusssions_area">
                   <div id="project-file-discussion" class="tc-content"></div>
                </div>
             </div>

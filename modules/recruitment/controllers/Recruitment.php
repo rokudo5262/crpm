@@ -86,7 +86,7 @@ class recruitment extends AdminController {
 			$lastest_file_download_url = base_url() . 'modules/recruitment/uploads/hr_jd/' . $position_id . '/' . $lastest_file_name;
 			return ['name' => $lastest_file_name, 'url' => $lastest_file_download_url];
 		} else {
-			return ['name' => '', 'url' => ''];
+			return null;
 		}
 	}
 
@@ -491,7 +491,8 @@ class recruitment extends AdminController {
 		$this->load->model('departments_model');
 		$data['id'] = $id;
 		$data['campaigns'] = $this->recruitment_model->get_rec_campaign($id);
-		$data['position_jd'] = $this->get_lastest_job_position_jd_file($id);
+		$position_id = $data['campaigns']->cp_position;
+		$data['position_jd'] = $this->get_lastest_job_position_jd_file($position_id);
 		$data['campaign_file'] = $this->recruitment_model->get_campaign_file($id);
 		$data['departments'] = $this->departments_model->get();
 		$data['rec_channel_form'] = $this->recruitment_model->get_recruitment_channel($data['campaigns']->rec_channel_form_id);

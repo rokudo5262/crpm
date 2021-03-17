@@ -3,6 +3,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 define('SMS_TRIGGER_INVOICE_OVERDUE', 'invoice_overdue_notice');
+define('SMS_TRIGGER_INVOICE_DUE', 'invoice_due_notice');
 define('SMS_TRIGGER_PAYMENT_RECORDED', 'invoice_payment_recorded');
 define('SMS_TRIGGER_ESTIMATE_EXP_REMINDER', 'estimate_expiration_reminder');
 define('SMS_TRIGGER_PROPOSAL_EXP_REMINDER', 'proposal_expiration_reminder');
@@ -301,6 +302,12 @@ class App_sms
                 'merge_fields' => array_merge($customer_merge_fields, $invoice_merge_fields, ['{total_days_overdue}']),
                 'label'        => 'Invoice Overdue Notice',
                 'info'         => 'Trigger when invoice overdue notice is sent to customer contacts.',
+            ],
+
+            SMS_TRIGGER_INVOICE_DUE => [
+                'merge_fields' => array_merge($customer_merge_fields, $invoice_merge_fields),
+                'label'        => 'Invoice Due Notice',
+                'info'         => 'Trigger when invoice due notice is sent to customer contacts.',
             ],
 
             SMS_TRIGGER_PAYMENT_RECORDED => [

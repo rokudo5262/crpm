@@ -778,7 +778,10 @@ class Tasks extends AdminController
     /* Add new task follower / ajax */
     public function add_task_followers()
     {
-        if (has_permission('tasks', '', 'edit') || has_permission('tasks', '', 'create')) {
+        $task = $this->tasks_model->get($this->input->post('taskid'));
+
+        if (staff_can('edit', 'tasks') ||
+                ($task->current_user_is_creator && staff_can('create', 'tasks'))) {
             echo json_encode([
                 'success'  => $this->tasks_model->add_task_followers($this->input->post()),
                 'taskHtml' => $this->get_task_data($this->input->post('taskid'), true),
@@ -789,7 +792,10 @@ class Tasks extends AdminController
     /* Add task assignees / ajax */
     public function add_task_assignees()
     {
-        if (has_permission('tasks', '', 'edit') || has_permission('tasks', '', 'create')) {
+        $task = $this->tasks_model->get($this->input->post('taskid'));
+
+        if (staff_can('edit', 'tasks') ||
+                ($task->current_user_is_creator && staff_can('create', 'tasks'))) {
             echo json_encode([
                 'success'  => $this->tasks_model->add_task_assignees($this->input->post()),
                 'taskHtml' => $this->get_task_data($this->input->post('taskid'), true),
@@ -830,7 +836,10 @@ class Tasks extends AdminController
     /* Remove assignee / ajax */
     public function remove_assignee($id, $taskid)
     {
-        if (has_permission('tasks', '', 'edit') && has_permission('tasks', '', 'create')) {
+        $task = $this->tasks_model->get($taskid);
+
+        if (staff_can('edit', 'tasks') ||
+                ($task->current_user_is_creator && staff_can('create', 'tasks'))) {
             $success = $this->tasks_model->remove_assignee($id, $taskid);
             $message = '';
             if ($success) {
@@ -847,7 +856,10 @@ class Tasks extends AdminController
     /* Remove task follower / ajax */
     public function remove_follower($id, $taskid)
     {
-        if (has_permission('tasks', '', 'edit') && has_permission('tasks', '', 'create')) {
+        $task = $this->tasks_model->get($taskid);
+
+        if (staff_can('edit', 'tasks') ||
+                ($task->current_user_is_creator && staff_can('create', 'tasks'))) {
             $success = $this->tasks_model->remove_follower($id, $taskid);
             $message = '';
             if ($success) {
@@ -1146,6 +1158,7 @@ class Tasks extends AdminController
             $assignees = $this->input->post('assignees');
             $milestone = $this->input->post('milestone');
             $priority  = $this->input->post('priority');
+            $billable  = $this->input->post('billable');
             $is_admin  = is_admin();
             if (is_array($ids)) {
                 foreach ($ids as $id) {
@@ -1165,14 +1178,21 @@ class Tasks extends AdminController
                                 $this->tasks_model->mark_as($status, $id);
                             }
                         }
-                        if ($priority || $milestone) {
+                        if ($priority || $milestone || ($billable === 'billable' || $billable === 'not_billable')) {
                             $update = [];
+
                             if ($priority) {
                                 $update['priority'] = $priority;
                             }
+
                             if ($milestone) {
                                 $update['milestone'] = $milestone;
                             }
+
+                            if($billable) {
+                                $update['billable'] = $billable === 'billable' ? 1 : 0;
+                            }
+
                             $this->db->where('id', $id);
                             $this->db->update(db_prefix() . 'tasks', $update);
                         }

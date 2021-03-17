@@ -12,6 +12,8 @@ class Estimate_pdf extends App_pdf
 
     public function __construct($estimate, $tag = '')
     {
+        $this->load_language($estimate->clientid);
+
         $estimate                = hooks()->apply_filters('estimate_html_pdf_data', $estimate);
         $GLOBALS['estimate_pdf'] = $estimate;
 
@@ -20,7 +22,7 @@ class Estimate_pdf extends App_pdf
         $this->tag             = $tag;
         $this->estimate        = $estimate;
         $this->estimate_number = format_estimate_number($this->estimate->id);
-        $this->load_language($this->estimate->clientid);
+
         $this->SetTitle($this->estimate_number);
     }
 

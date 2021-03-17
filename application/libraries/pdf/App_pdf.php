@@ -208,7 +208,7 @@ abstract class App_pdf extends TCPDF
         $content = preg_replace('/data:image\/jpeg;base64/m', '@', $content);
 
         // Replace <img src="" width="100%" height="auto">
-        $content = preg_replace('/(width=\"[0-9a-z%]*\"|height=\"[0-9a-z%]*\")/mi', '', $content);
+        $content = preg_replace('/width="(([0-9]*%)|auto)"|height="(([0-9]*%)|auto)"/mi', '', $content);
 
         // Add cellpadding to all tables inside the html
         $content = preg_replace('/(<table\b[^><]*)>/i', '$1 cellpadding="4">', $content);

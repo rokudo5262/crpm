@@ -81,12 +81,31 @@ class Clients_model extends App_Model
     }
 
     /**
+     * Get contact by given email
+     *
+     * @since 2.8.0
+     *
+     * @param  string $email
+     *
+     * @return \strClass|null
+     */
+    public function get_contact_by_email($email)
+    {
+        $this->db->where('email', $email);
+        $this->db->limit(1);
+
+        return $this->db->get('contacts')->row();
+    }
+
+    /**
      * @param array $_POST data
-     * @param client_request is this request from the customer area
+     * @param withContact
+     *
      * @return integer Insert ID
+     *
      * Add new client to database
      */
-    public function add($data, $client_or_lead_convert_request = false)
+    public function add($data, $withContact = false)
     {
         $contact_data = [];
         foreach ($this->contact_columns as $field) {
@@ -145,12 +164,14 @@ class Clients_model extends App_Model
                 }
                 handle_custom_fields_post($userid, $custom_fields);
             }
+
             /**
              * Used in Import, Lead Convert, Register
              */
-            if ($client_or_lead_convert_request == true) {
-                $contact_id = $this->add_contact($contact_data, $userid, $client_or_lead_convert_request);
+            if ($withContact == true) {
+                $contact_id = $this->add_contact($contact_data, $userid, $withContact);
             }
+
             if (isset($groups_in)) {
                 foreach ($groups_in as $group) {
                     $this->db->insert(db_prefix() . 'customer_groups', [
@@ -167,6 +188,7 @@ class Clients_model extends App_Model
             }
 
             $isStaff = null;
+
             if (!is_client_logged_in() && is_staff_logged_in()) {
                 $log .= ', From Staff: ' . get_staff_user_id();
                 $isStaff = get_staff_user_id();
@@ -602,6 +624,10 @@ class Clients_model extends App_Model
 
         if (!is_email_verification_enabled()) {
             $data['email_verified_at'] = date('Y-m-d H:i:s');
+        } elseif (is_email_verification_enabled() && !empty($data['email'])) {
+            // Verification is required on register
+            $data['email_verified_at']      = null;
+            $data['email_verification_key'] = app_generate_hash();
         }
 
         $password_before_hash = $data['password'];
@@ -883,6 +909,7 @@ class Clients_model extends App_Model
                 'subscription_id'          => 0,
                 'cancel_overdue_reminders' => 1,
                 'last_overdue_reminder'    => null,
+                'last_due_reminder'        => null,
             ]);
 
             if (is_gdpr() && get_option('gdpr_on_forgotten_remove_estimates') == '1') {

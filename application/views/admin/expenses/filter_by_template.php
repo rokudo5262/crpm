@@ -18,6 +18,10 @@ for ($m = 1; $m <= 12; $m++) {
 foreach($categories as $category){
  echo form_hidden('expenses_by_category_'.$category['id']);
 }
+
+foreach($payment_modes as $mode){
+   echo form_hidden('expense_payments_by_'.$mode['id']);
+}
 ?>
 </div>
 <div class="btn-group pull-right mleft4 btn-with-tooltip-group _filter_data" data-toggle="tooltip" data-title="<?php echo _l('filter_by'); ?>">
@@ -89,5 +93,18 @@ foreach($categories as $category){
                           <?php } ?>
                       </ul>
                   </li>
+                <div class="clearfix"></div>
+                <?php if(count($payment_modes) > 0){ ?>
+                    <li class="divider"></li>
+                <?php } ?>
+                <?php foreach($payment_modes as $mode){
+                    if(total_rows(db_prefix().'expenses',array('paymentmode'=>$mode['id'])) == 0){continue;}
+                    ?>
+                    <li>
+                        <a href="#" data-cview="expense_payments_by_<?php echo $mode['id']; ?>" onclick="dt_custom_view('<?php echo $mode['id']; ?>','<?php echo $filter_table_name; ?>','expense_payments_by_<?php echo $mode['id']; ?>'); return false;">
+                            <?php echo _l('expenses_list_made_payment_by',$mode['name']); ?>
+                        </a>
+                    </li>
+                <?php } ?>
               </ul>
           </div>

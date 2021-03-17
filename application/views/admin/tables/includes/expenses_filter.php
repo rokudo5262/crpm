@@ -28,6 +28,18 @@ if (count($_categories) > 0) {
     array_push($filter, 'AND category IN (' . implode(', ', $_categories) . ')');
 }
 
+
+$modesIds = [];
+foreach ($data['payment_modes'] as $mode) {
+    if ($this->ci->input->post('expense_payments_by_' . $mode['id'])) {
+        array_push($modesIds, $mode['id']);
+    }
+}
+if (count($modesIds) > 0) {
+    array_push($filter, 'AND paymentmode IN ("' . implode('", "', $modesIds) . '")');
+}
+
+
 $_months = [];
 for ($m = 1; $m <= 12; $m++) {
     if ($this->ci->input->post('expenses_by_month_' . $m)) {

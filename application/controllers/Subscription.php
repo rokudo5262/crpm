@@ -302,7 +302,7 @@ class Subscription extends ClientsController
             if ($plan->interval === $stripeInterval && $plan->interval_count === 1) {
                 $interval = _l($stripeInterval);
             } elseif ($plan->interval === $stripeInterval && $plan->interval_count > 1) {
-                $interval = _l('frequency_every', $plan->interval_count . ' ' . _($stripeInterval . 's'));
+                $interval = _l('frequency_every', $plan->interval_count . ' ' . _l($stripeInterval . 's'));
             }
         }
 

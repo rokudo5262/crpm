@@ -12,6 +12,8 @@ class Payment_pdf extends App_pdf
     {
         $GLOBALS['payment_pdf'] = $payment;
 
+        $this->load_language($payment->invoice_data->clientid);
+
         parent::__construct();
 
         if (!class_exists('Invoices_model', false)) {
@@ -21,7 +23,6 @@ class Payment_pdf extends App_pdf
         $this->payment = $payment;
         $this->tag     = $tag;
 
-        $this->load_language($this->payment->invoice_data->clientid);
         $this->SetTitle(_l('payment') . ' #' . $this->payment->paymentid);
     }
 

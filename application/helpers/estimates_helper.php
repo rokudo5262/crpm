@@ -10,7 +10,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  */
 function get_estimate_shortlink($estimate)
 {
-    $long_url = site_url("invoice/{$estimate->id}/{$estimate->hash}");
+    $long_url = site_url("estimate/{$estimate->id}/{$estimate->hash}");
     if (!get_option('bitly_access_token')) {
         return $long_url;
     }

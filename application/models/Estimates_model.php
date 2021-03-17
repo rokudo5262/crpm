@@ -32,8 +32,8 @@ class Estimates_model extends App_Model
 
     /**
      * Get estimate/s
-     * @param  mixed $id    estimate id
-     * @param  array  $where perform where
+     * @param mixed $id estimate id
+     * @param array $where perform where
      * @return mixed
      */
     public function get($id = '', $where = [])
@@ -46,7 +46,7 @@ class Estimates_model extends App_Model
             $this->db->where(db_prefix() . 'estimates.id', $id);
             $estimate = $this->db->get()->row();
             if ($estimate) {
-                $estimate->attachments                           = $this->get_attachments($id);
+                $estimate->attachments = $this->get_attachments($id);
                 $estimate->visible_attachments_to_customer_found = false;
 
                 foreach ($estimate->attachments as $attachment) {
@@ -67,7 +67,7 @@ class Estimates_model extends App_Model
                 $estimate->client = $this->clients_model->get($estimate->clientid);
 
                 if (!$estimate->client) {
-                    $estimate->client          = new stdClass();
+                    $estimate->client = new stdClass();
                     $estimate->client->company = $estimate->deleted_customer_name;
                 }
 
@@ -113,24 +113,24 @@ class Estimates_model extends App_Model
 
     /**
      * Function that will perform estimates pipeline query
-     * @param  mixed  $status
-     * @param  string  $search
-     * @param  integer $page
-     * @param  array   $sort
-     * @param  boolean $count
+     * @param mixed $status
+     * @param string $search
+     * @param integer $page
+     * @param array $sort
+     * @param boolean $count
      * @return array
      */
     public function do_kanban_query($status, $search = '', $page = 1, $sort = [], $count = false)
     {
-        $default_pipeline_order      = get_option('default_estimates_pipeline_sort');
+        $default_pipeline_order = get_option('default_estimates_pipeline_sort');
         $default_pipeline_order_type = get_option('default_estimates_pipeline_sort_type');
-        $limit                       = get_option('estimates_pipeline_limit');
+        $limit = get_option('estimates_pipeline_limit');
 
-        $fields_client    = $this->db->list_fields(db_prefix() . 'clients');
+        $fields_client = $this->db->list_fields(db_prefix() . 'clients');
         $fields_estimates = $this->db->list_fields(db_prefix() . 'estimates');
 
         $has_permission_view = has_permission('estimates', '', 'view');
-        $noPermissionQuery   = get_estimates_where_sql_for_staff(get_staff_user_id());
+        $noPermissionQuery = get_estimates_where_sql_for_staff(get_staff_user_id());
 
         $this->db->select(db_prefix() . 'estimates.id,status,invoiceid,' . get_sql_select_client_company() . ',total,currency,symbol,' . db_prefix() . 'currencies.name as currency_name,date,expirydate,clientid');
         $this->db->from(db_prefix() . 'estimates');
@@ -145,7 +145,7 @@ class Estimates_model extends App_Model
         if ($search != '') {
             if (!startsWith($search, '#')) {
                 $where = '(';
-                $i     = 0;
+                $i = 0;
                 foreach ($fields_client as $f) {
                     $where .= db_prefix() . 'clients.' . $f . ' LIKE "%' . $this->db->escape_like_str($search) . '%" ESCAPE \'!\'';
                     $where .= ' OR ';
@@ -195,7 +195,7 @@ class Estimates_model extends App_Model
 
     /**
      * Convert estimate to invoice
-     * @param  mixed $id estimate id
+     * @param mixed $id estimate id
      * @return mixed     New invoice ID
      */
     public function convert_to_invoice($id, $client = false, $draft_invoice = false)
@@ -207,33 +207,33 @@ class Estimates_model extends App_Model
         if ($draft_invoice == true) {
             $new_invoice_data['save_as_draft'] = true;
         }
-        $new_invoice_data['clientid']   = $_estimate->clientid;
+        $new_invoice_data['clientid'] = $_estimate->clientid;
         $new_invoice_data['project_id'] = $_estimate->project_id;
-        $new_invoice_data['number']     = get_option('next_invoice_number');
-        $new_invoice_data['date']       = _d(date('Y-m-d'));
-        $new_invoice_data['duedate']    = _d(date('Y-m-d'));
+        $new_invoice_data['number'] = get_option('next_invoice_number');
+        $new_invoice_data['date'] = _d(date('Y-m-d'));
+        $new_invoice_data['duedate'] = _d(date('Y-m-d'));
         if (get_option('invoice_due_after') != 0) {
             $new_invoice_data['duedate'] = _d(date('Y-m-d', strtotime('+' . get_option('invoice_due_after') . ' DAY', strtotime(date('Y-m-d')))));
         }
         $new_invoice_data['show_quantity_as'] = $_estimate->show_quantity_as;
-        $new_invoice_data['currency']         = $_estimate->currency;
-        $new_invoice_data['subtotal']         = $_estimate->subtotal;
-        $new_invoice_data['total']            = $_estimate->total;
-        $new_invoice_data['adjustment']       = $_estimate->adjustment;
+        $new_invoice_data['currency'] = $_estimate->currency;
+        $new_invoice_data['subtotal'] = $_estimate->subtotal;
+        $new_invoice_data['total'] = $_estimate->total;
+        $new_invoice_data['adjustment'] = $_estimate->adjustment;
         $new_invoice_data['discount_percent'] = $_estimate->discount_percent;
-        $new_invoice_data['discount_total']   = $_estimate->discount_total;
-        $new_invoice_data['discount_type']    = $_estimate->discount_type;
-        $new_invoice_data['sale_agent']       = $_estimate->sale_agent;
+        $new_invoice_data['discount_total'] = $_estimate->discount_total;
+        $new_invoice_data['discount_type'] = $_estimate->discount_type;
+        $new_invoice_data['sale_agent'] = $_estimate->sale_agent;
         // Since version 1.0.6
-        $new_invoice_data['billing_street']   = clear_textarea_breaks($_estimate->billing_street);
-        $new_invoice_data['billing_city']     = $_estimate->billing_city;
-        $new_invoice_data['billing_state']    = $_estimate->billing_state;
-        $new_invoice_data['billing_zip']      = $_estimate->billing_zip;
-        $new_invoice_data['billing_country']  = $_estimate->billing_country;
-        $new_invoice_data['shipping_street']  = clear_textarea_breaks($_estimate->shipping_street);
-        $new_invoice_data['shipping_city']    = $_estimate->shipping_city;
-        $new_invoice_data['shipping_state']   = $_estimate->shipping_state;
-        $new_invoice_data['shipping_zip']     = $_estimate->shipping_zip;
+        $new_invoice_data['billing_street'] = clear_textarea_breaks($_estimate->billing_street);
+        $new_invoice_data['billing_city'] = $_estimate->billing_city;
+        $new_invoice_data['billing_state'] = $_estimate->billing_state;
+        $new_invoice_data['billing_zip'] = $_estimate->billing_zip;
+        $new_invoice_data['billing_country'] = $_estimate->billing_country;
+        $new_invoice_data['shipping_street'] = clear_textarea_breaks($_estimate->shipping_street);
+        $new_invoice_data['shipping_city'] = $_estimate->shipping_city;
+        $new_invoice_data['shipping_state'] = $_estimate->shipping_state;
+        $new_invoice_data['shipping_zip'] = $_estimate->shipping_zip;
         $new_invoice_data['shipping_country'] = $_estimate->shipping_country;
 
         if ($_estimate->include_shipping == 1) {
@@ -241,10 +241,10 @@ class Estimates_model extends App_Model
         }
 
         $new_invoice_data['show_shipping_on_invoice'] = $_estimate->show_shipping_on_estimate;
-        $new_invoice_data['terms']                    = get_option('predefined_terms_invoice');
-        $new_invoice_data['clientnote']               = get_option('predefined_clientnote_invoice');
+        $new_invoice_data['terms'] = get_option('predefined_terms_invoice');
+        $new_invoice_data['clientnote'] = get_option('predefined_clientnote_invoice');
         // Set to unpaid status automatically
-        $new_invoice_data['status']    = 1;
+        $new_invoice_data['status'] = 1;
         $new_invoice_data['adminnote'] = '';
 
         $this->load->model('payment_modes_model');
@@ -259,21 +259,21 @@ class Estimates_model extends App_Model
             $temp_modes[] = $mode['id'];
         }
         $new_invoice_data['allowed_payment_modes'] = $temp_modes;
-        $new_invoice_data['newitems']              = [];
-        $custom_fields_items                       = get_custom_fields('items');
-        $key                                       = 1;
+        $new_invoice_data['newitems'] = [];
+        $custom_fields_items = get_custom_fields('items');
+        $key = 1;
         foreach ($_estimate->items as $item) {
-            $new_invoice_data['newitems'][$key]['description']      = $item['description'];
+            $new_invoice_data['newitems'][$key]['description'] = $item['description'];
             $new_invoice_data['newitems'][$key]['long_description'] = clear_textarea_breaks($item['long_description']);
-            $new_invoice_data['newitems'][$key]['qty']              = $item['qty'];
-            $new_invoice_data['newitems'][$key]['unit']             = $item['unit'];
-            $new_invoice_data['newitems'][$key]['taxname']          = [];
-            $taxes                                                  = get_estimate_item_taxes($item['id']);
+            $new_invoice_data['newitems'][$key]['qty'] = $item['qty'];
+            $new_invoice_data['newitems'][$key]['unit'] = $item['unit'];
+            $new_invoice_data['newitems'][$key]['taxname'] = [];
+            $taxes = get_estimate_item_taxes($item['id']);
             foreach ($taxes as $tax) {
                 // tax name is in format TAX1|10.00
                 array_push($new_invoice_data['newitems'][$key]['taxname'], $tax['taxname']);
             }
-            $new_invoice_data['newitems'][$key]['rate']  = $item['rate'];
+            $new_invoice_data['newitems'][$key]['rate'] = $item['rate'];
             $new_invoice_data['newitems'][$key]['order'] = $item['item_order'];
             foreach ($custom_fields_items as $cf) {
                 $new_invoice_data['newitems'][$key]['custom_fields']['items'][$cf['id']] = get_custom_field_value($item['id'], $cf['id'], 'items', false);
@@ -300,7 +300,7 @@ class Estimates_model extends App_Model
             // May happen staff is not logged in and these values to be 0
             $this->db->where('id', $id);
             $this->db->update(db_prefix() . 'invoices', [
-                'addedfrom'  => $_estimate->addedfrom,
+                'addedfrom' => $_estimate->addedfrom,
                 'sale_agent' => $_estimate->sale_agent,
             ]);
 
@@ -308,8 +308,8 @@ class Estimates_model extends App_Model
             $this->db->where('id', $_estimate->id);
             $this->db->update(db_prefix() . 'estimates', [
                 'invoiced_date' => date('Y-m-d H:i:s'),
-                'invoiceid'     => $id,
-                'status'        => 4,
+                'invoiceid' => $id,
+                'status' => 4,
             ]);
 
 
@@ -343,10 +343,10 @@ class Estimates_model extends App_Model
                             }
 
                             $this->db->insert(db_prefix() . 'customfieldsvalues', [
-                                'relid'   => $id,
+                                'relid' => $id,
                                 'fieldid' => $cfTransfer[0]['id'],
                                 'fieldto' => 'invoice',
-                                'value'   => $value,
+                                'value' => $value,
                             ]);
                         }
                     }
@@ -367,17 +367,17 @@ class Estimates_model extends App_Model
 
     /**
      * Copy estimate
-     * @param  mixed $id estimate id to copy
+     * @param mixed $id estimate id to copy
      * @return mixed
      */
     public function copy($id)
     {
-        $_estimate                       = $this->get($id);
-        $new_estimate_data               = [];
-        $new_estimate_data['clientid']   = $_estimate->clientid;
+        $_estimate = $this->get($id);
+        $new_estimate_data = [];
+        $new_estimate_data['clientid'] = $_estimate->clientid;
         $new_estimate_data['project_id'] = $_estimate->project_id;
-        $new_estimate_data['number']     = get_option('next_estimate_number');
-        $new_estimate_data['date']       = _d(date('Y-m-d'));
+        $new_estimate_data['number'] = get_option('next_estimate_number');
+        $new_estimate_data['date'] = _d(date('Y-m-d'));
         $new_estimate_data['expirydate'] = null;
 
         if ($_estimate->expirydate && get_option('estimate_due_after') != 0) {
@@ -385,51 +385,51 @@ class Estimates_model extends App_Model
         }
 
         $new_estimate_data['show_quantity_as'] = $_estimate->show_quantity_as;
-        $new_estimate_data['currency']         = $_estimate->currency;
-        $new_estimate_data['subtotal']         = $_estimate->subtotal;
-        $new_estimate_data['total']            = $_estimate->total;
-        $new_estimate_data['adminnote']        = $_estimate->adminnote;
-        $new_estimate_data['adjustment']       = $_estimate->adjustment;
+        $new_estimate_data['currency'] = $_estimate->currency;
+        $new_estimate_data['subtotal'] = $_estimate->subtotal;
+        $new_estimate_data['total'] = $_estimate->total;
+        $new_estimate_data['adminnote'] = $_estimate->adminnote;
+        $new_estimate_data['adjustment'] = $_estimate->adjustment;
         $new_estimate_data['discount_percent'] = $_estimate->discount_percent;
-        $new_estimate_data['discount_total']   = $_estimate->discount_total;
-        $new_estimate_data['discount_type']    = $_estimate->discount_type;
-        $new_estimate_data['terms']            = $_estimate->terms;
-        $new_estimate_data['sale_agent']       = $_estimate->sale_agent;
-        $new_estimate_data['reference_no']     = $_estimate->reference_no;
+        $new_estimate_data['discount_total'] = $_estimate->discount_total;
+        $new_estimate_data['discount_type'] = $_estimate->discount_type;
+        $new_estimate_data['terms'] = $_estimate->terms;
+        $new_estimate_data['sale_agent'] = $_estimate->sale_agent;
+        $new_estimate_data['reference_no'] = $_estimate->reference_no;
         // Since version 1.0.6
-        $new_estimate_data['billing_street']   = clear_textarea_breaks($_estimate->billing_street);
-        $new_estimate_data['billing_city']     = $_estimate->billing_city;
-        $new_estimate_data['billing_state']    = $_estimate->billing_state;
-        $new_estimate_data['billing_zip']      = $_estimate->billing_zip;
-        $new_estimate_data['billing_country']  = $_estimate->billing_country;
-        $new_estimate_data['shipping_street']  = clear_textarea_breaks($_estimate->shipping_street);
-        $new_estimate_data['shipping_city']    = $_estimate->shipping_city;
-        $new_estimate_data['shipping_state']   = $_estimate->shipping_state;
-        $new_estimate_data['shipping_zip']     = $_estimate->shipping_zip;
+        $new_estimate_data['billing_street'] = clear_textarea_breaks($_estimate->billing_street);
+        $new_estimate_data['billing_city'] = $_estimate->billing_city;
+        $new_estimate_data['billing_state'] = $_estimate->billing_state;
+        $new_estimate_data['billing_zip'] = $_estimate->billing_zip;
+        $new_estimate_data['billing_country'] = $_estimate->billing_country;
+        $new_estimate_data['shipping_street'] = clear_textarea_breaks($_estimate->shipping_street);
+        $new_estimate_data['shipping_city'] = $_estimate->shipping_city;
+        $new_estimate_data['shipping_state'] = $_estimate->shipping_state;
+        $new_estimate_data['shipping_zip'] = $_estimate->shipping_zip;
         $new_estimate_data['shipping_country'] = $_estimate->shipping_country;
         if ($_estimate->include_shipping == 1) {
             $new_estimate_data['include_shipping'] = $_estimate->include_shipping;
         }
         $new_estimate_data['show_shipping_on_estimate'] = $_estimate->show_shipping_on_estimate;
         // Set to unpaid status automatically
-        $new_estimate_data['status']     = 1;
+        $new_estimate_data['status'] = 1;
         $new_estimate_data['clientnote'] = $_estimate->clientnote;
-        $new_estimate_data['adminnote']  = '';
-        $new_estimate_data['newitems']   = [];
-        $custom_fields_items             = get_custom_fields('items');
-        $key                             = 1;
+        $new_estimate_data['adminnote'] = '';
+        $new_estimate_data['newitems'] = [];
+        $custom_fields_items = get_custom_fields('items');
+        $key = 1;
         foreach ($_estimate->items as $item) {
-            $new_estimate_data['newitems'][$key]['description']      = $item['description'];
+            $new_estimate_data['newitems'][$key]['description'] = $item['description'];
             $new_estimate_data['newitems'][$key]['long_description'] = clear_textarea_breaks($item['long_description']);
-            $new_estimate_data['newitems'][$key]['qty']              = $item['qty'];
-            $new_estimate_data['newitems'][$key]['unit']             = $item['unit'];
-            $new_estimate_data['newitems'][$key]['taxname']          = [];
-            $taxes                                                   = get_estimate_item_taxes($item['id']);
+            $new_estimate_data['newitems'][$key]['qty'] = $item['qty'];
+            $new_estimate_data['newitems'][$key]['unit'] = $item['unit'];
+            $new_estimate_data['newitems'][$key]['taxname'] = [];
+            $taxes = get_estimate_item_taxes($item['id']);
             foreach ($taxes as $tax) {
                 // tax name is in format TAX1|10.00
                 array_push($new_estimate_data['newitems'][$key]['taxname'], $tax['taxname']);
             }
-            $new_estimate_data['newitems'][$key]['rate']  = $item['rate'];
+            $new_estimate_data['newitems'][$key]['rate'] = $item['rate'];
             $new_estimate_data['newitems'][$key]['order'] = $item['item_order'];
             foreach ($custom_fields_items as $cf) {
                 $new_estimate_data['newitems'][$key]['custom_fields']['items'][$cf['id']] = get_custom_field_value($item['id'], $cf['id'], 'items', false);
@@ -450,10 +450,10 @@ class Estimates_model extends App_Model
                 }
 
                 $this->db->insert(db_prefix() . 'customfieldsvalues', [
-                    'relid'   => $id,
+                    'relid' => $id,
                     'fieldid' => $field['id'],
                     'fieldto' => 'estimate',
-                    'value'   => $value,
+                    'value' => $value,
                 ]);
             }
 
@@ -470,12 +470,12 @@ class Estimates_model extends App_Model
 
     /**
      * Performs estimates totals status
-     * @param  array $data
+     * @param array $data
      * @return array
      */
     public function get_estimates_total($data)
     {
-        $statuses            = $this->get_statuses();
+        $statuses = $this->get_statuses();
         $has_permission_view = has_permission('estimates', '', 'view');
         $this->load->model('currencies_model');
         if (isset($data['currency'])) {
@@ -493,7 +493,7 @@ class Estimates_model extends App_Model
         }
 
         $currency = get_currency($currencyid);
-        $where    = '';
+        $where = '';
         if (isset($data['customer_id']) && $data['customer_id'] != '') {
             $where = ' AND clientid=' . $data['customer_id'];
         }
@@ -512,8 +512,8 @@ class Estimates_model extends App_Model
             $sql .= ' AND currency =' . $this->db->escape_str($currencyid);
             if (isset($data['years']) && count($data['years']) > 0) {
                 $sql .= ' AND YEAR(date) IN (' . implode(', ', array_map(function ($year) {
-                    return get_instance()->db->escape_str($year);
-                }, $data['years'])) . ')';
+                        return get_instance()->db->escape_str($year);
+                    }, $data['years'])) . ')';
             } else {
                 $sql .= ' AND YEAR(date) = ' . date('Y');
             }
@@ -521,16 +521,16 @@ class Estimates_model extends App_Model
             $sql .= ') as "' . $estimate_status . '",';
         }
 
-        $sql     = substr($sql, 0, -1);
-        $result  = $this->db->query($sql)->result_array();
+        $sql = substr($sql, 0, -1);
+        $result = $this->db->query($sql)->result_array();
         $_result = [];
-        $i       = 1;
+        $i = 1;
         foreach ($result as $key => $val) {
             foreach ($val as $status => $total) {
-                $_result[$i]['total']         = $total;
-                $_result[$i]['symbol']        = $currency->symbol;
+                $_result[$i]['total'] = $total;
+                $_result[$i]['symbol'] = $currency->symbol;
                 $_result[$i]['currency_name'] = $currency->name;
-                $_result[$i]['status']        = $status;
+                $_result[$i]['status'] = $status;
                 $i++;
             }
         }
@@ -556,13 +556,19 @@ class Estimates_model extends App_Model
 
         $save_and_send = isset($data['save_and_send']);
 
+        $estimateRequestID = false;
+        if (isset($data['estimate_request_id'])) {
+            $estimateRequestID = $data['estimate_request_id'];
+            unset($data['estimate_request_id']);
+        }
+
         if (isset($data['custom_fields'])) {
             $custom_fields = $data['custom_fields'];
             unset($data['custom_fields']);
         }
 
         $data['hash'] = app_generate_hash();
-        $tags         = isset($data['tags']) ? $data['tags'] : '';
+        $tags = isset($data['tags']) ? $data['tags'] : '';
 
         $items = [];
         if (isset($data['newitems'])) {
@@ -581,11 +587,11 @@ class Estimates_model extends App_Model
         }
 
         $hook = hooks()->apply_filters('before_estimate_added', [
-            'data'  => $data,
+            'data' => $data,
             'items' => $items,
         ]);
 
-        $data  = $hook['data'];
+        $data = $hook['data'];
         $items = $hook['items'];
 
         $this->db->insert(db_prefix() . 'estimates', $data);
@@ -596,6 +602,15 @@ class Estimates_model extends App_Model
             $this->db->where('name', 'next_estimate_number');
             $this->db->set('value', 'value+1', false);
             $this->db->update(db_prefix() . 'options');
+
+            if ($estimateRequestID !== false && $estimateRequestID != '') {
+                $this->load->model('estimate_request_model');
+                $completedStatus = $this->estimate_request_model->get_status_by_flag('completed');
+                $this->estimate_request_model->update_request_status([
+                    'requestid' => $estimateRequestID,
+                    'status' => $completedStatus->id,
+                ]);
+            }
 
             if (isset($custom_fields)) {
                 handle_custom_fields_post($insert_id, $custom_fields);
@@ -626,7 +641,7 @@ class Estimates_model extends App_Model
 
     /**
      * Get item by id
-     * @param  mixed $id item id
+     * @param mixed $id item id
      * @return object
      */
     public function get_estimate_item($id)
@@ -638,8 +653,8 @@ class Estimates_model extends App_Model
 
     /**
      * Update estimate data
-     * @param  array $data estimate data
-     * @param  mixed $id   estimateid
+     * @param array $data estimate data
+     * @param mixed $id estimateid
      * @return boolean
      */
     public function update($data, $id)
@@ -693,15 +708,15 @@ class Estimates_model extends App_Model
         $data = $this->map_shipping_columns($data);
 
         $hook = hooks()->apply_filters('before_estimate_updated', [
-            'data'          => $data,
-            'items'         => $items,
-            'newitems'      => $newitems,
+            'data' => $data,
+            'items' => $items,
+            'newitems' => $newitems,
             'removed_items' => isset($data['removed_items']) ? $data['removed_items'] : [],
         ], $id);
 
-        $data                  = $hook['data'];
-        $items                 = $hook['items'];
-        $newitems              = $hook['newitems'];
+        $data = $hook['data'];
+        $items = $hook['items'];
+        $newitems = $hook['newitems'];
         $data['removed_items'] = $hook['removed_items'];
 
         // Delete items checked to be removed from database
@@ -710,8 +725,8 @@ class Estimates_model extends App_Model
             if (handle_removed_sales_item_post($remove_item_id, 'estimate')) {
                 $affectedRows++;
                 $this->log_estimate_activity($id, 'invoice_estimate_activity_removed_item', false, serialize([
-                        $original_item->description,
-                    ]));
+                    $original_item->description,
+                ]));
             }
         }
 
@@ -754,34 +769,34 @@ class Estimates_model extends App_Model
 
             if (update_sales_item_post($item['itemid'], $item, 'rate')) {
                 $this->log_estimate_activity($id, 'invoice_estimate_activity_updated_item_rate', false, serialize([
-                        $original_item->rate,
-                        $item['rate'],
-                    ]));
+                    $original_item->rate,
+                    $item['rate'],
+                ]));
                 $affectedRows++;
             }
 
             if (update_sales_item_post($item['itemid'], $item, 'qty')) {
                 $this->log_estimate_activity($id, 'invoice_estimate_activity_updated_qty_item', false, serialize([
-                        $item['description'],
-                        $original_item->qty,
-                        $item['qty'],
-                    ]));
+                    $item['description'],
+                    $original_item->qty,
+                    $item['qty'],
+                ]));
                 $affectedRows++;
             }
 
             if (update_sales_item_post($item['itemid'], $item, 'description')) {
                 $this->log_estimate_activity($id, 'invoice_estimate_activity_updated_item_short_description', false, serialize([
-                        $original_item->description,
-                        $item['description'],
-                    ]));
+                    $original_item->description,
+                    $item['description'],
+                ]));
                 $affectedRows++;
             }
 
             if (update_sales_item_post($item['itemid'], $item, 'long_description')) {
                 $this->log_estimate_activity($id, 'invoice_estimate_activity_updated_item_long_description', false, serialize([
-                        $original_item->long_description,
-                        $item['long_description'],
-                    ]));
+                    $original_item->long_description,
+                    $item['long_description'],
+                ]));
                 $affectedRows++;
             }
 
@@ -796,7 +811,7 @@ class Estimates_model extends App_Model
                     $affectedRows++;
                 }
             } else {
-                $item_taxes        = get_estimate_item_taxes($item['itemid']);
+                $item_taxes = get_estimate_item_taxes($item['itemid']);
                 $_item_taxes_names = [];
                 foreach ($item_taxes as $_item_tax) {
                     array_push($_item_taxes_names, $_item_tax['taxname']);
@@ -863,7 +878,7 @@ class Estimates_model extends App_Model
                 $staff_estimate = $this->db->get(db_prefix() . 'staff')->result_array();
 
                 $invoiceid = false;
-                $invoiced  = false;
+                $invoiced = false;
 
                 $contact_id = !is_client_logged_in()
                     ? get_primary_contact_user_id($estimate->clientid)
@@ -875,7 +890,7 @@ class Estimates_model extends App_Model
                         $this->load->model('invoices_model');
                         if ($invoiceid) {
                             $invoiced = true;
-                            $invoice  = $this->invoices_model->get($invoiceid);
+                            $invoice = $this->invoices_model->get($invoiceid);
                             $this->log_estimate_activity($id, 'estimate_activity_client_accepted_and_converted', true, serialize([
                                 '<a href="' . admin_url('invoices/list_invoices/' . $invoiceid) . '">' . format_invoice_number($invoice->id) . '</a>',
                             ]));
@@ -893,10 +908,10 @@ class Estimates_model extends App_Model
 
                     foreach ($staff_estimate as $member) {
                         $notified = add_notification([
-                            'fromcompany'     => true,
-                            'touserid'        => $member['staffid'],
-                            'description'     => 'not_estimate_customer_accepted',
-                            'link'            => 'estimates/list_estimates/' . $id,
+                            'fromcompany' => true,
+                            'touserid' => $member['staffid'],
+                            'description' => 'not_estimate_customer_accepted',
+                            'link' => 'estimates/list_estimates/' . $id,
                             'additional_data' => serialize([
                                 format_estimate_number($estimate->id),
                             ]),
@@ -913,16 +928,16 @@ class Estimates_model extends App_Model
                     hooks()->do_action('estimate_accepted', $id);
 
                     return [
-                        'invoiced'  => $invoiced,
+                        'invoiced' => $invoiced,
                         'invoiceid' => $invoiceid,
                     ];
                 } elseif ($action == 3) {
                     foreach ($staff_estimate as $member) {
                         $notified = add_notification([
-                            'fromcompany'     => true,
-                            'touserid'        => $member['staffid'],
-                            'description'     => 'not_estimate_customer_declined',
-                            'link'            => 'estimates/list_estimates/' . $id,
+                            'fromcompany' => true,
+                            'touserid' => $member['staffid'],
+                            'description' => 'not_estimate_customer_declined',
+                            'link' => 'estimates/list_estimates/' . $id,
                             'additional_data' => serialize([
                                 format_estimate_number($estimate->id),
                             ]),
@@ -940,7 +955,7 @@ class Estimates_model extends App_Model
                     hooks()->do_action('estimate_declined', $id);
 
                     return [
-                        'invoiced'  => $invoiced,
+                        'invoiced' => $invoiced,
                         'invoiceid' => $invoiceid,
                     ];
                 }
@@ -963,8 +978,8 @@ class Estimates_model extends App_Model
 
     /**
      * Get estimate attachments
-     * @param  mixed $estimate_id
-     * @param  string $id          attachment id
+     * @param mixed $estimate_id
+     * @param string $id attachment id
      * @return mixed
      */
     public function get_attachments($estimate_id, $id = '')
@@ -986,13 +1001,13 @@ class Estimates_model extends App_Model
 
     /**
      *  Delete estimate attachment
-     * @param   mixed $id  attachmentid
+     * @param mixed $id attachmentid
      * @return  boolean
      */
     public function delete_attachment($id)
     {
         $attachment = $this->get_attachments('', $id);
-        $deleted    = false;
+        $deleted = false;
         if ($attachment) {
             if (empty($attachment->external)) {
                 unlink(get_upload_path_by_type('estimate') . $attachment->rel_id . '/' . $attachment->file_name);
@@ -1019,7 +1034,7 @@ class Estimates_model extends App_Model
 
     /**
      * Delete estimate items and all connections
-     * @param  mixed $id estimateid
+     * @param mixed $id estimateid
      * @return boolean
      */
     public function delete($id, $simpleDelete = false)
@@ -1044,7 +1059,7 @@ class Estimates_model extends App_Model
         $this->db->where('id', $id);
         $this->db->delete(db_prefix() . 'estimates');
 
-        if ($this->db->affected_rows() > 0) {          
+        if ($this->db->affected_rows() > 0) {
             if (!is_null($estimate->short_link)) {
                 app_archive_short_link($estimate->short_link);
             }
@@ -1060,13 +1075,13 @@ class Estimates_model extends App_Model
             }
 
             if (total_rows(db_prefix() . 'proposals', [
-                'estimate_id' => $id,
-            ]) > 0) {
+                    'estimate_id' => $id,
+                ]) > 0) {
                 $this->db->where('estimate_id', $id);
                 $estimate = $this->db->get(db_prefix() . 'proposals')->row();
                 $this->db->where('id', $estimate->id);
                 $this->db->update(db_prefix() . 'proposals', [
-                    'estimate_id'    => null,
+                    'estimate_id' => null,
                     'date_converted' => null,
                 ]);
             }
@@ -1144,7 +1159,7 @@ class Estimates_model extends App_Model
     {
         $this->db->where('id', $id);
         $this->db->update(db_prefix() . 'estimates', [
-            'sent'     => 1,
+            'sent' => 1,
             'datesend' => date('Y-m-d H:i:s'),
         ]);
 
@@ -1165,18 +1180,18 @@ class Estimates_model extends App_Model
 
     /**
      * Send expiration reminder to customer
-     * @param  mixed $id estimate id
+     * @param mixed $id estimate id
      * @return boolean
      */
     public function send_expiry_reminder($id)
     {
-        $estimate        = $this->get($id);
+        $estimate = $this->get($id);
         $estimate_number = format_estimate_number($estimate->id);
         set_mailing_constant();
-        $pdf              = estimate_pdf($estimate);
-        $attach           = $pdf->Output($estimate_number . '.pdf', 'S');
-        $emails_sent      = [];
-        $sms_sent         = false;
+        $pdf = estimate_pdf($estimate);
+        $attach = $pdf->Output($estimate_number . '.pdf', 'S');
+        $emails_sent = [];
+        $sms_sent = false;
         $sms_reminder_log = [];
 
         // For all cases update this to prevent sending multiple reminders eq on fail
@@ -1193,10 +1208,10 @@ class Estimates_model extends App_Model
             $merge_fields = $template->get_merge_fields();
 
             $template->add_attachment([
-                    'attachment' => $attach,
-                    'filename'   => str_replace('/', '-', $estimate_number . '.pdf'),
-                    'type'       => 'application/pdf',
-                ]);
+                'attachment' => $attach,
+                'filename' => str_replace('/', '-', $estimate_number . '.pdf'),
+                'type' => 'application/pdf',
+            ]);
 
             if ($template->send()) {
                 array_push($emails_sent, $contact['email']);
@@ -1218,7 +1233,7 @@ class Estimates_model extends App_Model
 
             if ($sms_sent) {
                 $this->log_estimate_activity($id, 'sms_reminder_sent_to', false, serialize([
-                   implode(', ', $sms_reminder_log),
+                    implode(', ', $sms_reminder_log),
                 ]));
             }
 
@@ -1230,9 +1245,9 @@ class Estimates_model extends App_Model
 
     /**
      * Send estimate to client
-     * @param  mixed  $id        estimateid
-     * @param  string  $template  email template to sent
-     * @param  boolean $attachpdf attach estimate pdf or not
+     * @param mixed $id estimateid
+     * @param string $template email template to sent
+     * @param boolean $attachpdf attach estimate pdf or not
      * @return boolean
      */
     public function send_estimate_to_client($id, $template_name = '', $attachpdf = true, $cc = '', $manually = false)
@@ -1241,14 +1256,14 @@ class Estimates_model extends App_Model
 
         if ($template_name == '') {
             $template_name = $estimate->sent == 0 ?
-            'estimate_send_to_customer' :
-            'estimate_send_to_customer_already_sent';
+                'estimate_send_to_customer' :
+                'estimate_send_to_customer_already_sent';
         }
 
         $estimate_number = format_estimate_number($estimate->id);
 
         $emails_sent = [];
-        $send_to     = [];
+        $send_to = [];
 
         // Manually is used when sending the estimate via add/edit area button Save & Send
         if (!DEFINED('CRON') && $manually === false) {
@@ -1267,7 +1282,7 @@ class Estimates_model extends App_Model
         }
 
         $status_auto_updated = false;
-        $status_now          = $estimate->status;
+        $status_now = $estimate->status;
 
         if (is_array($send_to) && count($send_to) > 0) {
             $i = 0;
@@ -1307,13 +1322,13 @@ class Estimates_model extends App_Model
                     if ($attachpdf) {
                         $hook = hooks()->apply_filters('send_estimate_to_customer_file_name', [
                             'file_name' => str_replace('/', '-', $estimate_number . '.pdf'),
-                            'estimate'  => $_pdf_estimate,
+                            'estimate' => $_pdf_estimate,
                         ]);
 
                         $template->add_attachment([
                             'attachment' => $attach,
-                            'filename'   => $hook['file_name'],
-                            'type'       => 'application/pdf',
+                            'filename' => $hook['file_name'],
+                            'type' => 'application/pdf',
                         ]);
                     }
 
@@ -1338,8 +1353,8 @@ class Estimates_model extends App_Model
             // Estimate not send to customer but the status was previously updated to sent now we need to revert back to draft
             $this->db->where('id', $estimate->id);
             $this->db->update(db_prefix() . 'estimates', [
-                    'status' => 1,
-                ]);
+                'status' => 1,
+            ]);
         }
 
         return false;
@@ -1347,7 +1362,7 @@ class Estimates_model extends App_Model
 
     /**
      * All estimate activity
-     * @param  mixed $id estimateid
+     * @param mixed $id estimateid
      * @return array
      */
     public function get_estimate_activity($id)
@@ -1361,35 +1376,35 @@ class Estimates_model extends App_Model
 
     /**
      * Log estimate activity to database
-     * @param  mixed $id   estimateid
-     * @param  string $description activity description
+     * @param mixed $id estimateid
+     * @param string $description activity description
      */
     public function log_estimate_activity($id, $description = '', $client = false, $additional_data = '')
     {
-        $staffid   = get_staff_user_id();
+        $staffid = get_staff_user_id();
         $full_name = get_staff_full_name(get_staff_user_id());
         if (DEFINED('CRON')) {
-            $staffid   = '[CRON]';
+            $staffid = '[CRON]';
             $full_name = '[CRON]';
         } elseif ($client == true) {
-            $staffid   = null;
+            $staffid = null;
             $full_name = '';
         }
 
         $this->db->insert(db_prefix() . 'sales_activity', [
-            'description'     => $description,
-            'date'            => date('Y-m-d H:i:s'),
-            'rel_id'          => $id,
-            'rel_type'        => 'estimate',
-            'staffid'         => $staffid,
-            'full_name'       => $full_name,
+            'description' => $description,
+            'date' => date('Y-m-d H:i:s'),
+            'rel_id' => $id,
+            'rel_type' => 'estimate',
+            'staffid' => $staffid,
+            'full_name' => $full_name,
             'additional_data' => $additional_data,
         ]);
     }
 
     /**
      * Updates pipeline order when drag and drop
-     * @param  mixe $data $_POST data
+     * @param mixe $data $_POST data
      * @return void
      */
     public function update_pipeline($data)
@@ -1421,7 +1436,7 @@ class Estimates_model extends App_Model
                 }
             }
             $data['show_shipping_on_estimate'] = 1;
-            $data['include_shipping']          = 0;
+            $data['include_shipping'] = 0;
         } else {
             $data['include_shipping'] = 1;
             // set by default for the next time to be checked

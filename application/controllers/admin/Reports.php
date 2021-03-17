@@ -1105,6 +1105,9 @@ class Reports extends AdminController
             $data['categories'] = $this->expenses_model->get_category();
             $data['years']      = $this->expenses_model->get_expenses_years();
 
+            $this->load->model('payment_modes_model');
+            $data['payment_modes']  = $this->payment_modes_model->get('', [], true);
+
             if ($this->input->is_ajax_request()) {
                 $aColumns = [
                     db_prefix().'expenses.category',

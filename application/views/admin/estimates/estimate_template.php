@@ -6,6 +6,10 @@
       <hr class="hr-panel-heading" />
       <?php } ?>
       <div class="row">
+          <?php if (isset($estimate_request_id) && $estimate_request_id != '') {
+              echo form_hidden('estimate_request_id',$estimate_request_id);
+          }
+          ?>
          <div class="col-md-6">
             <div class="f_client_id">
              <div class="form-group select-placeholder">
