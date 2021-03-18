@@ -408,6 +408,7 @@ class recruitment extends AdminController {
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
+			$data = $this->input->post();
 			$data['cp_job_description'] = $this->input->post('cp_job_description', false);
 			if ($this->input->post('no_editor')) {
 				$data['cp_job_description'] = nl2br(clear_textarea_breaks($this->input->post('cp_job_description')));
@@ -2259,24 +2260,7 @@ class recruitment extends AdminController {
             die;
         }
     }
-	public function default_approver(){
-        $data = $this->input->post();
-        if($data != 'null') {
-            $value = $this->recruitment_model->default_approver($data);
-            if($value) {
-                $success = true;
-                $message = _l('updated_successfully');
-            } else {
-                $success = false;
-                $message = _l('updated_false');
-            }
-            echo json_encode([
-                'message' => $message,
-                'success' => $success,
-            ]);
-            die;
-        }
-    }
+
 
     /**
      * company add edit

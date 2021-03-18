@@ -6,3 +6,4 @@
       <?php }?>
     </select>
 </div>
+<div class="clearfix"></div>
