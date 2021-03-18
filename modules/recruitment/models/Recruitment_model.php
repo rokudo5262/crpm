@@ -310,6 +310,7 @@ class Recruitment_model extends App_Model {
 		$data['cp_status'] = 1;
 		$this->db->insert(db_prefix() . 'rec_campaign', $data);
 		$insert_id = $this->db->insert_id();
+		$this->_send_recruitment_campaign_responsible_users_notification($description,$data['taskid'], false,'new_recruitment_campaign', $additional_data,$insert_id );
 		return $insert_id;
 	}
 
@@ -351,6 +352,8 @@ class Recruitment_model extends App_Model {
 		$data['cp_to_date'] = to_sql_date($data['cp_to_date']);
 		$this->db->where('cp_id', $id);
 		$this->db->update(db_prefix() . 'rec_campaign', $data);
+		$recruitment_campagin = $this->staff_model->get($data['cp_approver']);
+		send_mail_template('Campaign_status_changed', $recruitment_campagin);
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
@@ -3497,21 +3500,53 @@ class Recruitment_model extends App_Model {
 					         }
 
 						$rec_campaign->job_in_company = $job_in_company;
-
-
 	        		}
 	        	}
-
-
 	        }
 	        return $rec_campaign;
-	        
-
 	}
-
-
-
-
-
-
+ /**
+     * Send notification on task activity to creator,follower/s,assignee/s
+     * @param  string  $description notification description
+     * @param  mixed  $taskid      task id
+     * @param  boolean $excludeid   excluded staff id to not send the notifications
+     * @return boolean
+     */
+    private function _send_recruitment_campaign_responsible_users_notification($description, $taskid, $excludeid = false, $email_template = '', $additional_notification_data = '', $comment_id = false)
+    {
+        $this->load->model('staff_model');
+        $staff = $this->staff_model->get('', ['active' => 1]);
+        $notifiedUsers = [];
+        foreach ($staff as $member) {
+            if (is_numeric($excludeid)) {
+                if ($excludeid == $member['staffid']) {
+                    continue;
+                }
+            }
+            if (!is_client_logged_in()) {
+                if ($member['staffid'] == get_staff_user_id()) {
+                    continue;
+                }
+            }
+            if ($this->should_staff_receive_notification($member['staffid'], $taskid)) {
+                $link = '#taskid=' . $taskid;
+                if ($comment_id) {
+                    $link .= '#comment_' . $comment_id;
+                }
+                $notified = add_notification([
+                    'description'     => $description,
+                    'touserid'        => $member['staffid'],
+                    'link'            => $link,
+                    'additional_data' => $additional_notification_data,
+                ]);
+                if ($notified) {
+                    array_push($notifiedUsers, $member['staffid']);
+                }
+                if ($email_template != '') {
+                    send_mail_template($email_template, $member['email'], $member['staffid'], $taskid);
+                }
+            }
+        }
+        pusher_trigger_notification($notifiedUsers);
+    }
 }
