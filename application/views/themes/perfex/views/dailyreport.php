@@ -1,39 +1,31 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed'); ?>
 <style type="text/css">
-    @media screen and (min-device-width: 1024px)  and (max-device-width: 1600px) and (-webkit-min-device-pixel-ratio: 1) { 
-        .responsive iframe {
-            height:1600px !important;
-        }        
+    .daily-report-preview iframe {
+        width: 100%;
+        height: 1700px;
     }
-    @media only screen and (min-device-width: 320px) and (max-device-width: 667px) { 
-        .responsive iframe {
-            height:500px !important;
-        } 
+    .daily-report-preview .footer {
+        position: absolute;
+        z-index: 1;
+        height: 35px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #fff;
     }
-    @media only screen and (min-device-width: 411px) and (max-device-width: 665px) { 
-        .responsive iframe {
-            height:500px !important;
-        } 
-    }
-    @media only screen and (min-device-width: 375px) and (max-device-width: 667px) { 
-        .responsive iframe {
-            height:550px !important;
-        } 
-    }
-    @media only screen and (min-device-width: 768px) and (max-device-width: 1024px){
-        .responsive iframe {
-            height:1300px !important;
-        }
-    }
-    
 </style>
-<div class="panel_s">
-    <!-- <div class="panel-body"> -->
-    <h4 class="no-margin section-text"> Daily Report</h4><br/>
-    <!-- </div> -->
-    <div class="responsive">
-        <iframe width= "100%" src="<?php echo $client->daily_report_embed; ?>" frameborder="0" style="border:0" allowfullscreen> </iframe>
+<div class="panel_s section-heading">
+    <div class="panel-body">
+        <h4 class="no-margin section-text"><?php echo _l('Daily Report'); ?></h4>
     </div>
 </div>
-
-
+<div class="panel_s">
+ <div class="panel-body">
+    <div class="row daily-report-preview">
+        <div class="col-md-12">
+            <iframe src="<?php echo $client->daily_report_embed; ?>" frameborder="0" allowfullscreen></iframe>
+            <div class="footer"></div>
+        <div>
+    </div>
+</div>
+</div>

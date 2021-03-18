@@ -442,9 +442,9 @@ function save_ifame_report(clientid) {
     var data = {};
     data.ifame_report = $('#ifame_report').val();
     $.post(admin_url + 'clients/save_ifame_report/'+clientid, data).done(function(response) {
-       if(response == 'success') {
+        if(response == 'success') {
             alert_float('success', "<?php echo _l('updated_successfully', _l('client')); ?>");
-       }
+        }
         setTimeout(function(){
             window.location.reload();
         },1200);
