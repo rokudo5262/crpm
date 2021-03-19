@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-
+hooks()->add_action('after_recruitment_email_templates', 'add_recruitment_email_templates');
 /**
  * Check whether column exists in a table
  * Custom function because Codeigniter is caching the tables and this is causing issues in migrations
@@ -959,5 +959,18 @@ function check_approver($data,$id) {
         return true;
     } else {
         return false;
+    }
+}
+if (!function_exists('add_recruitment_email_templates')) {
+    /**
+     * Init appointly email templates and assign languages
+     * @return void
+     */
+    function add_recruitment_email_templates() {
+        $CI = &get_instance();
+
+        $data['recruitment_templates'] = $CI->emails_model->get(['type' => 'recruitment', 'language' => 'english']);
+
+        $CI->load->view('recruitment/email_templates', $data);
     }
 }

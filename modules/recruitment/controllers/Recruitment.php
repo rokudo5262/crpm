@@ -28,6 +28,7 @@ class recruitment extends AdminController {
 		$data['tab'][] = 'company_list';
 		$data['tab'][] = 'industry_list';
 		$data['tab'][] = 'recruitment_campaign_setting';
+		$data['tab'][] = 'default_approver';
 
 
 		if ($data['group'] == '') {
@@ -50,6 +51,10 @@ class recruitment extends AdminController {
 		$data['company_list'] = $this->recruitment_model->get_company();
 
 		$data['industry_list'] = $this->recruitment_model->get_industry();
+
+		$data['default_approver'] = $this->recruitment_model->get_default_approver();
+
+		$data['staffs'] = $this->staff_model->get();
 
 		foreach($data['positions'] as $position) {
 			$jd_file_data = $this->get_lastest_job_position_jd_file($position['position_id']);
@@ -86,7 +91,7 @@ class recruitment extends AdminController {
 			$lastest_file_download_url = base_url() . 'modules/recruitment/uploads/hr_jd/' . $position_id . '/' . $lastest_file_name;
 			return ['name' => $lastest_file_name, 'url' => $lastest_file_download_url];
 		} else {
-			return '';
+			return ['name' => '', 'url' => ''];
 		}
 	}
 
@@ -391,7 +396,7 @@ class recruitment extends AdminController {
 		$data['campaign_id'] = $id;
 		$data['rec_channel_form']	= $this->recruitment_model->get_recruitment_channel();
 		$data['company_list'] = $this->recruitment_model->get_company();
-		
+		$data['default_approver'] = $this->recruitment_model->get_default_approver();
 		$data['title'] = _l('recruitment_campaign');
 		$this->load->view('recruitment_campaign/recruitment_campaign', $data);
 	}
@@ -404,12 +409,12 @@ class recruitment extends AdminController {
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
-			$data = $this->input->post();
 			$data['cp_job_description'] = $this->input->post('cp_job_description', false);
 			if ($this->input->post('no_editor')) {
 				$data['cp_job_description'] = nl2br(clear_textarea_breaks($this->input->post('cp_job_description')));
 			}
 			if (!$this->input->post('cp_id')) {
+				$data['cp_created_by'] = get_staff_user_id();
 				$id = $this->recruitment_model->add_recruitment_campaign($data);
 				if ($id) {
 					handle_rec_campaign_file($id);
@@ -2254,7 +2259,24 @@ class recruitment extends AdminController {
             die;
         }
     }
-
+	public function default_approver(){
+        $data = $this->input->post();
+        if($data != 'null') {
+            $value = $this->recruitment_model->default_approver($data);
+            if($value) {
+                $success = true;
+                $message = _l('updated_successfully');
+            } else {
+                $success = false;
+                $message = _l('updated_false');
+            }
+            echo json_encode([
+                'message' => $message,
+                'success' => $success,
+            ]);
+            die;
+        }
+    }
 
     /**
      * company add edit
@@ -2458,11 +2480,8 @@ class recruitment extends AdminController {
 		}
 		redirect(admin_url('recruitment/setting?group=industry_list'));
 	}
-
-
-
-
-
-
-
+    /**
+     * Sends a mail.
+     * @return json
+     */
 }

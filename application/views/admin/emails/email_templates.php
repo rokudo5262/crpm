@@ -473,6 +473,8 @@
                             </div>
                             <?php hooks()->do_action('after_email_templates'); ?>
                             <div class="clearfix"></div>
+                            <?php hooks()->do_action('after_recruitment_email_templates'); ?>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
                 </div>

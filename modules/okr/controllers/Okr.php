@@ -1146,7 +1146,7 @@ public function send_mail()
   if ($this->input->is_ajax_request()) {
     $data = $this->input->post();
     if((isset($data)) && $data != ''){
-      $this->accounting_model->send_mail($data);
+      $this->accounting_model->($data);
 
       $success = 'success';
       echo json_encode([
