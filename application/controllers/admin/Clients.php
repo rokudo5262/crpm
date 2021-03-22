@@ -312,7 +312,7 @@ class Clients extends AdminController
 
         $this->db->where('userid', $client_id);
         $this->db->update(db_prefix() . 'clients', [
-            'daily_report_embed' => $this->input->post('ifame_report'),
+            'daily_report_embed' => $this->input->post('ifame_report'), 
         ]);
         if ($this->db->affected_rows() > 0) {
             echo 'success';
