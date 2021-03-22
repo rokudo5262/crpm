@@ -22,6 +22,31 @@ class Recruitment_merge_fields extends App_merge_fields
                 'key'       => '{campaign_name}',
                 'available' => ['recruitment'],
             ],
+            [
+                'name'      => 'position',
+                'key'       => '{position}',
+                'available' => ['recruitment'],
+            ],
+            [
+                'name'      => 'department',
+                'key'       => '{department}',
+                'available' => ['recruitment'],
+            ],
+            [
+                'name'      => 'Reason Recruitment',
+                'key'       => '{reason_recruitment}',
+                'available' => ['recruitment'],
+            ],
+            [
+                'name'      => 'Campaign Status',
+                'key'       => '{campaign_status}',
+                'available' => ['recruitment'],
+            ],
+            [
+                'name'      => 'Recruitment Campaign Link',
+                'key'       => '{recruitment_campaign_link}',
+                'available' => ['recruitment'],
+            ],
         ];
     }
 
@@ -42,6 +67,11 @@ class Recruitment_merge_fields extends App_merge_fields
         $fields['{cp_id}'] = $campaign->cp_id;
         $fields['{campaign_code}'] = $campaign->campaign_code;
         $fields['{campaign_name}'] = $campaign->campaign_name; 
+        $fields['{position}'] = $campaign->cp_position;
+        $fields['{department}'] = $campaign->cp_department; 
+        $fields['{reason_recruitment}'] = $campaign->cp_reason_recruitment;
+        $fields['{campaign_status}'] = $campaign->cp_status;
+        $fields['{recruitment_campaign_link}'] = admin_url('recruitment/recruitment_campaign#'.$campaign->cp_id);
         return $fields;
     }
 }

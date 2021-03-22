@@ -310,7 +310,6 @@ class Recruitment_model extends App_Model {
 		$data['cp_status'] = 1;
 		$this->db->insert(db_prefix() . 'rec_campaign', $data);
 		$insert_id = $this->db->insert_id();
-		$this->_send_recruitment_campaign_responsible_users_notification($description,$data['taskid'], false,'new_recruitment_campaign', $additional_data,$insert_id );
 		return $insert_id;
 	}
 
@@ -352,8 +351,6 @@ class Recruitment_model extends App_Model {
 		$data['cp_to_date'] = to_sql_date($data['cp_to_date']);
 		$this->db->where('cp_id', $id);
 		$this->db->update(db_prefix() . 'rec_campaign', $data);
-		$recruitment_campagin = $this->staff_model->get($data['cp_approver']);
-		send_mail_template('Campaign_status_changed', $recruitment_campagin);
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
@@ -394,11 +391,42 @@ class Recruitment_model extends App_Model {
 			return $this->db->get(db_prefix() . 'rec_campaign')->result_array();
 		}
 	}
+	public function get_newest_rec_campaign() {
+		$this->db->select('*');
+			$this->db->from(db_prefix() . 'rec_campaign');
+			$this->db->order_by('cp_id','DESC');
+			$this->db->limit(1);
+			return $this->db->get()->row();
+	}
 	public function get_rec_campaign_approver($id) {
 		$this->db->select('cp_approver');
     	$this->db->from(db_prefix() . 'rec_campaign');
     	$this->db->where('cp_id',$id);
 		return $this->db->get()->row('cp_approver');
+	}
+	public function get_rec_campaign_manager($id) {
+		$this->db->select('cp_manager');
+    	$this->db->from(db_prefix() . 'rec_campaign');
+    	$this->db->where('cp_id',$id);
+		return $this->db->get()->row('cp_manager');
+	}
+	public function get_rec_campaign_follower($id) {
+		$this->db->select('cp_follower');
+    	$this->db->from(db_prefix() . 'rec_campaign');
+    	$this->db->where('cp_id',$id);
+		return $this->db->get()->row('cp_follower');
+	}
+	public function get_rec_job_position($id) {
+		$this->db->select('position_name');
+    	$this->db->from(db_prefix() . 'rec_job_position');
+    	$this->db->where('position_id',$id);
+		return $this->db->get()->row('position_name');
+	}
+	public function get_department($id) {
+		$this->db->select('name');
+    	$this->db->from(db_prefix() . 'departments');
+    	$this->db->where('departmentid',$id);
+		return $this->db->get()->row('name');
 	}
 	/**
 	 * get campaign_file
@@ -696,10 +724,8 @@ class Recruitment_model extends App_Model {
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
-
 		return false;
 	}
-
 	/**
 	 * get candidates
 	 * @param  string $id
@@ -3505,48 +3531,227 @@ class Recruitment_model extends App_Model {
 	        }
 	        return $rec_campaign;
 	}
- /**
-     * Send notification on task activity to creator,follower/s,assignee/s
-     * @param  string  $description notification description
-     * @param  mixed  $taskid      task id
-     * @param  boolean $excludeid   excluded staff id to not send the notifications
-     * @return boolean
-     */
-    private function _send_recruitment_campaign_responsible_users_notification($description, $taskid, $excludeid = false, $email_template = '', $additional_notification_data = '', $comment_id = false)
+	public function send_email_template($template_slug, $email, $merge_fields, $ticketid = '', $cc = '')
     {
-        $this->load->model('staff_model');
-        $staff = $this->staff_model->get('', ['active' => 1]);
-        $notifiedUsers = [];
-        foreach ($staff as $member) {
-            if (is_numeric($excludeid)) {
-                if ($excludeid == $member['staffid']) {
-                    continue;
-                }
+        $email = hooks()->apply_filters('send_email_template_to', $email);
+
+        $template                     = get_email_template_for_sending($template_slug, $email);
+        $staff_email_templates_slugs  = get_staff_email_templates_slugs();
+        $client_email_templates_slugs = get_client_email_templates_slugs();
+
+        $inactive_user_table_check = '';
+
+        /**
+         * Dont send email templates for non active contacts/staff
+         * Do checking here
+         */
+        if (in_array($template_slug, $staff_email_templates_slugs)) {
+            $inactive_user_table_check = db_prefix() . 'staff';
+        } elseif (in_array($template_slug, $client_email_templates_slugs)) {
+            $inactive_user_table_check = db_prefix() . 'contacts';
+        }
+
+        /**
+         * Is really inactive?
+         */
+        if ($inactive_user_table_check != '') {
+            $this->db->select('active')->where('email', $email);
+            $user = $this->db->get($inactive_user_table_check)->row();
+            if ($user && $user->active == 0) {
+                $this->clear_attachments();
+                $this->set_staff_id(null);
+
+                return false;
             }
-            if (!is_client_logged_in()) {
-                if ($member['staffid'] == get_staff_user_id()) {
-                    continue;
-                }
+        }
+
+        /**
+         * Template not found?
+         */
+        if (!$template) {
+            log_activity('Failed to send email template [Template not found]');
+            $this->clear_attachments();
+            $this->set_staff_id(null);
+
+            return false;
+        }
+
+        /**
+         * Template is disabled or invalid email?
+         * Log activity
+         */
+        if ($template->active == 0 || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $this->clear_attachments();
+
+            $this->db->where('language', 'english');
+            $this->db->where('slug', $template->slug);
+            $tmpTemplate = $this->db->get(db_prefix() . 'emailtemplates')->row();
+
+            if (!$tmpTemplate) {
+                log_activity('Failed to send email template [<a href="' . admin_url('emails/email_template/' . $tmpTemplate->emailtemplateid) . '">' . $template->name . '</a>] [Reason: Email template is disabled.]');
             }
-            if ($this->should_staff_receive_notification($member['staffid'], $taskid)) {
-                $link = '#taskid=' . $taskid;
-                if ($comment_id) {
-                    $link .= '#comment_' . $comment_id;
-                }
-                $notified = add_notification([
-                    'description'     => $description,
-                    'touserid'        => $member['staffid'],
-                    'link'            => $link,
-                    'additional_data' => $additional_notification_data,
-                ]);
-                if ($notified) {
-                    array_push($notifiedUsers, $member['staffid']);
-                }
-                if ($email_template != '') {
-                    send_mail_template($email_template, $member['email'], $member['staffid'], $taskid);
+
+            return false;
+        }
+
+        $template = hooks()->apply_filters('before_parse_email_template_message', $template);
+
+        $template = parse_email_template($template, $merge_fields);
+
+        $template = hooks()->apply_filters('after_parse_email_template_message', $template);
+
+        $template->message = get_option('email_header') . $template->message . get_option('email_footer');
+
+        // Parse merge fields again in case there is merge fields found in email_header and email_footer option.
+        // We cant parse this in parse_email_template function because in case the template content is send via $_POST wont work
+        $template = parse_email_template_merge_fields($template, $merge_fields);
+
+        /**
+         * Template is plain text?
+         */
+        if ($template->plaintext == 1) {
+            $this->config->set_item('mailtype', 'text');
+            $template->message = strip_html_tags($template->message, '<br/>, <br>, <br />');
+        }
+
+        $fromemail = $template->fromemail;
+        $fromname  = $template->fromname;
+
+        if ($fromemail == '') {
+            $fromemail = get_option('smtp_email');
+        }
+
+        if ($fromname == '') {
+            $fromname = get_option('companyname');
+        }
+
+        /**
+         * Ticket variables
+        */
+        $reply_to               = false;
+        $from_header_dept_email = false;
+        /**
+         * Tickets template
+         * For tickets there is different config
+         */
+        if (is_numeric($ticketid) && $template->type == 'ticket') {
+            if (!class_exists('tickets_model')) {
+                $this->load->model('tickets_model');
+            }
+
+            $this->db->select(db_prefix() . 'departments.email as department_email, email_from_header as dept_email_from_header')
+            ->where('ticketid', $ticketid)
+            ->join(db_prefix() . 'departments', db_prefix() . 'departments.departmentid=' . db_prefix() . 'tickets.department', 'left');
+
+            $ticket = $this->db->get(db_prefix() . 'tickets')->row();
+
+            if (!empty($ticket->department_email) && filter_var($ticket->department_email, FILTER_VALIDATE_EMAIL)) {
+                $reply_to               = $ticket->department_email;
+                $from_header_dept_email = $ticket->dept_email_from_header == 1;
+            }
+            /**
+             * IMPORTANT
+             * Do not change/remove this line, this is used for email piping so the software can recognize the ticket id.
+             */
+            if (substr($template->subject, 0, 10) != '[Ticket ID') {
+                $template->subject = '[Ticket ID: ' . $ticketid . '] ' . $template->subject;
+            }
+        }
+
+        $hook_data['template']    = $template;
+        $hook_data['email']       = $email;
+        $hook_data['attachments'] = $this->attachment;
+
+        $hook_data['template']->message = check_for_links($hook_data['template']->message);
+
+        $hook_data = hooks()->apply_filters('before_email_template_send', $hook_data);
+
+        $template    = $hook_data['template'];
+        $email       = $hook_data['email'];
+        $attachments = $hook_data['attachments'];
+
+        if (isset($template->prevent_sending) && $template->prevent_sending == true) {
+            $this->clear_attachments();
+            $this->set_staff_id(null);
+
+            return false;
+        }
+
+        $this->load->config('email');
+        $this->email->clear(true);
+        $this->email->set_newline(config_item('newline'));
+        $this->email->from(($from_header_dept_email ? $ticket->department_email : $fromemail), $fromname);
+        $this->email->subject($template->subject);
+
+        $this->email->message($template->message);
+        $this->email->to($email);
+
+        $bcc = '';
+        // Used for action hooks
+        if (isset($template->bcc)) {
+            $bcc = $template->bcc;
+            if (is_array($bcc)) {
+                $bcc = implode(', ', $bcc);
+            }
+        }
+
+        $systemBCC = get_option('bcc_emails');
+        if ($systemBCC != '') {
+            if ($bcc != '') {
+                $bcc .= ', ' . $systemBCC;
+            } else {
+                $bcc .= $systemBCC;
+            }
+        }
+
+        if ($bcc != '') {
+            $bcc = array_map('trim', explode(',', $bcc));
+            $bcc = array_unique($bcc);
+            $bcc = implode(', ', $bcc);
+            $this->email->bcc($bcc);
+        }
+
+        if ($reply_to != false) {
+            $this->email->reply_to($reply_to);
+        } elseif (isset($template->reply_to)) {
+            $this->email->reply_to($template->reply_to);
+        }
+
+        if ($template->plaintext == 0) {
+            $alt_message = strip_html_tags($template->message, '<br/>, <br>, <br />');
+            // Replace <br /> with \n
+            $alt_message = clear_textarea_breaks($alt_message, "\r\n");
+            $this->email->set_alt_message($alt_message);
+        }
+
+        if (is_array($cc) || !empty($cc)) {
+            $this->email->cc($cc);
+        }
+
+        if (count($attachments) > 0) {
+            foreach ($attachments as $attach) {
+                if (!isset($attach['read'])) {
+                    $this->email->attach($attach['attachment'], 'attachment', $attach['filename'], $attach['type']);
+                } else {
+                    $this->email->attach($attach['attachment'], '', $attach['filename']);
                 }
             }
         }
-        pusher_trigger_notification($notifiedUsers);
+
+        $this->clear_attachments();
+        $this->set_staff_id(null);
+
+        if ($this->email->send()) {
+            log_activity('Email Send To [Email: ' . $email . ', Template: ' . $template->name . ']');
+            hooks()->do_action('email_template_sent', ['template' => $template, 'email' => $email]);
+
+            return true;
+        }
+
+        if (ENVIRONMENT !== 'production') {
+            log_activity('Failed to send email template - ' . $this->email->print_debugger());
+        }
+
+        return false;
     }
 }

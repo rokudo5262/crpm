@@ -2,7 +2,7 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class New_recruitment_campaign extends App_mail_template
+class Recruitment_new_recruitment_campaign extends App_mail_template
 {
     protected $for = 'recruitment';
 

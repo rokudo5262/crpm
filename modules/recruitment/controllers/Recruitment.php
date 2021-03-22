@@ -8,6 +8,8 @@ class recruitment extends AdminController {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model('recruitment_model');
+		$this->load->library('email');
+		$this->load->config('email');
 	}
 
 	/**
@@ -417,6 +419,7 @@ class recruitment extends AdminController {
 				$data['cp_created_by'] = get_staff_user_id();
 				$id = $this->recruitment_model->add_recruitment_campaign($data);
 				if ($id) {
+					$this->send_mail_new_recruitment_campaign();
 					handle_rec_campaign_file($id);
 					$success = true;
 					$message = _l('added_successfully', _l('recruitment_campaign'));
@@ -625,6 +628,129 @@ class recruitment extends AdminController {
 		}
 	}
 
+	public function send_mail_campaign_status_changed($cp_id) {
+		$rec_campaign=$this->recruitment_model->get_rec_campaign($cp_id);
+		$rec_job_position=$this->recruitment_model->get_rec_job_position($rec_campaign->cp_position);
+		$department=$this->recruitment_model->get_department($rec_campaign->cp_department);
+		$followers=explode(',',$this->recruitment_model->get_rec_campaign_follower($cp_id));
+		$managers=explode(',',$this->recruitment_model->get_rec_campaign_manager($cp_id));
+		$approvers=explode(',',$this->recruitment_model->get_rec_campaign_approver($cp_id));
+		$staffs=array_unique(array_merge($followers,$managers,$approvers));
+		$status='';
+		switch($rec_campaign->cp_status) {
+			case 1:
+				$status="Planning";
+				break;
+			case 2:
+				$status="Overdue";
+				break;
+			case 3:
+				$status="Processing";
+				break;
+			case 4:
+				$status="Finish";
+				break;
+			case 5:
+				$status="Cancel";
+				break;
+			default:
+				break;
+		}
+		foreach($staffs as $key => $value) {
+			$staff=$this->staff_model->get($value);
+			if(!empty($staff->email)) {
+				$template = new StdClass();
+				$template->message = 
+				'<br/>Hi '.$staff->full_name.'<br />
+				<br/>Approver marked campaign as "'.$status.'"<br/>
+				<br/><strong>Campaign code</strong>: '.$rec_campaign->campaign_code.'<br/>
+				<br/><strong>Campaign name</strong>: '.$rec_campaign->campaign_name.'<br/>
+				<br/><strong>Position</strong>: '.$rec_job_position.'<br/>
+				<br/><strong>Department</strong>: '.$department.'<br/>
+				<br/>You can view the campaign on the following link : <a href='.admin_url('recruitment/recruitment_campaign#'.$cp_id).'>link<a/><br/>
+				<br/>Kind Regards,<br/>
+				<br/>'. get_option('email_signature').'<br/>';
+				$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
+				$template->subject  = 'Campaign Status Changed - '.$rec_campaign->campaign_code.' - '.$rec_campaign->campaign_name;
+				$template = parse_email_template($template);
+				hooks()->do_action('before_send_test_smtp_email');
+				$this->email->initialize();
+				$this->email->set_newline(config_item('newline'));
+				$this->email->set_crlf(config_item('crlf'));
+				$this->email->from(get_option('smtp_email'), $template->fromname);
+				$this->email->to($staff->email);
+				$systemBCC = get_option('bcc_emails');
+				if ($systemBCC != '') {
+				    $this->email->bcc($systemBCC);
+				}
+				$this->email->subject($template->subject);		
+				$this->email->message($template->message);
+				$this->email->send(true);
+			}	
+		}
+	}
+	public function send_mail_new_recruitment_campaign() {
+		$rec_campaign=$this->recruitment_model->get_newest_rec_campaign();
+		$rec_job_position=$this->recruitment_model->get_rec_job_position($rec_campaign->cp_position);
+		$department=$this->recruitment_model->get_department($rec_campaign->cp_department);
+		$id=4;
+		$followers=explode(',',$this->recruitment_model->get_rec_campaign_follower($id));
+		$managers=explode(',',$this->recruitment_model->get_rec_campaign_manager($id));
+		$approvers=explode(',',$this->recruitment_model->get_rec_campaign_approver($id));
+		$notified_staffs=[];
+		foreach($followers as $follower) {
+			$notified_staffs[$follower]="Follower";
+		}
+		foreach($managers as $manager) {
+				if(array_key_exists($manager,$notified_staffs)) {		
+					$notified_staffs[$manager]= $notified_staffs[$manager].", Manager";
+				} else {
+					$notified_staffs[$manager] = "Manager";
+				}
+			}	
+		foreach($approvers as $approver) {
+			if(array_key_exists($approver,$notified_staffs)) {
+				$notified_staffs[$approver] = $notified_staffs[$approver].", Approver";
+			}
+			else {
+				$notified_staffs[$approver] = "Approver";
+			}			
+		}
+		foreach($notified_staffs as $key => $value){		
+			$staff=$this->staff_model->get($key);
+			if(!empty($staff->email)) {
+				// Simulate fake template to be parsed
+				$template  = new StdClass();
+				$template->message  = 
+				'<br/>Hi '.$staff->full_name.'<br/>
+				<br/>You are added as '.$value.' on campaign<br/>
+				<br/><strong>Campaign code</strong>: '.$rec_campaign->campaign_code.'<br/>
+				<br/><strong>Campaign name</strong>: '.$rec_campaign->campaign_name.'<br/>
+				<br/><strong>Position</strong>: '.$rec_job_position.'<br/>
+				<br/><strong>Department</strong>: '.$department.'<br/>
+				<br/><strong>Reason Recruitment</strong>: '.$rec_campaign->cp_reason_recruitment.'<br />
+				<br/>You can view the campaign on the following link : <a href='.admin_url('recruitment/recruitment_campaign#'.$rec_campaign->cp_id).'>link<a/><br/>
+				<br/>Kind Regards,<br/>
+				<br/>'.get_option('email_signature').'<br/>' ;
+				$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
+				$template->subject  = 'New Recruitment Campaign - '.$rec_campaign->campaign_code.' - '.$rec_campaign->campaign_name;
+				$template = parse_email_template($template);
+				hooks()->do_action('before_send_test_smtp_email');
+				$this->email->initialize();
+				$this->email->set_newline(config_item('newline'));
+				$this->email->set_crlf(config_item('crlf'));
+				$this->email->from(get_option('smtp_email'), $template->fromname);
+				$this->email->to($staff->email);
+				$systemBCC = get_option('bcc_emails');
+				if ($systemBCC != '') {
+					$this->email->bcc($systemBCC);
+				}
+				$this->email->subject($template->subject);
+				$this->email->message($template->message);
+				$this->email->send(true);
+			}
+		}
+	}
 	/**
 	 * change status campaign
 	 * @param  int $status
@@ -633,6 +759,7 @@ class recruitment extends AdminController {
 	 */
 	public function change_status_campaign($status, $cp_id) {
 		$change = $this->recruitment_model->change_status_campaign($status, $cp_id);
+		$this->send_mail_campaign_status_changed($cp_id);
 		if ($change == true) {
 
 			$message = _l('change_status_campaign') . ' ' . _l('successfully');
@@ -1513,7 +1640,6 @@ class recruitment extends AdminController {
 		$data['rec_channel_id'] = $id;
 		$data['candidates'] = $this->recruitment_model->get_candidates();
 		$data['title'] = _l('_recruitment_channel');
-
 		$this->load->view('recruitment_channel/manage_recruitment_channel', $data);
 	}
 
@@ -1522,7 +1648,6 @@ class recruitment extends AdminController {
 	 * @param string $id [description]
 	 */
 	public function add_edit_recruitment_channel($id = '') {
-
 		if ($this->input->post()) {
 			$data = $this->input->post();
 
@@ -1533,7 +1658,8 @@ class recruitment extends AdminController {
 				}
 
 				$ids = $this->recruitment_model->add_recruitment_channel($data);
-				if ($ids) {
+				
+				if ($ids) {					
 					$message = _l('added_successfully');
 					set_alert('success', $message);
 				}
@@ -2484,4 +2610,22 @@ class recruitment extends AdminController {
      * Sends a mail.
      * @return json
      */
+	public function send_mail() {
+		$this->email->from('troy@reputable.asia', 'Your Name');
+		$this->email->to('trump@reputable.asia');
+		$this->email->subject('Email Test');
+		$this->email->message('Testing the email class.');
+		$this->email->send();
+		if($this->email->send()) {
+			$success = "true";
+			echo json_encode([
+				'success' => $success,
+			]);
+		} else {
+			$success = "false";
+			echo json_encode([
+				'success' => $success,
+			]);
+		}
+	}
 }
