@@ -15,7 +15,7 @@ if (isset($client) && has_permission('customers', '', 'edit')) { ?>
         background-color: #fff;
     }
 </style>
-<h4 class="customer-profile-group-heading"><?php echo _l('Daily Report'); ?></h4>
+<h4 class="customer-profile-group-heading"><?php echo _l('Social Media Intelligent'); ?></h4>
 <div class="row">
     <div class="col-md-12">
         <div class="form-group">

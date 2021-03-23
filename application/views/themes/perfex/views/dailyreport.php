@@ -16,7 +16,7 @@
 </style>
 <div class="panel_s section-heading">
     <div class="panel-body">
-        <h4 class="no-margin section-text"><?php echo _l('Daily Report'); ?></h4>
+        <h4 class="no-margin section-text"><?php echo _l('Social Media Intelligent'); ?></h4>
     </div>
 </div>
 <div class="panel_s">
