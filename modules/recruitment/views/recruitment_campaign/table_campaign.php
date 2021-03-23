@@ -107,6 +107,8 @@ foreach ($rResult as $aRow) {
 		} elseif ($aColumns[$i] == 'cp_status') {
 			if ($aRow['cp_status'] == 1) {
 				$_data = ' <span class="label label inline-block project-status-' . $aRow['cp_status'] . ' campaign-planning-style"> ' . _l('planning') . ' </span>';
+			} elseif ($aRow['cp_status'] == 2) {
+				$_data = ' <span class="label label inline-block project-status-' . $aRow['cp_status'] . ' campaign-overdue-style"> ' . _l('overdue') . ' </span>';
 			} elseif ($aRow['cp_status'] == 3) {
 				$_data = ' <span class="label label inline-block project-status-' . $aRow['cp_status'] . ' campaign-progress-style"> ' . _l('in_progress') . ' </span>';
 			} elseif ($aRow['cp_status'] == 4) {

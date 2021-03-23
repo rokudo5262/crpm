@@ -391,11 +391,42 @@ class Recruitment_model extends App_Model {
 			return $this->db->get(db_prefix() . 'rec_campaign')->result_array();
 		}
 	}
+	public function get_newest_rec_campaign() {
+		$this->db->select('*');
+			$this->db->from(db_prefix() . 'rec_campaign');
+			$this->db->order_by('cp_id','DESC');
+			$this->db->limit(1);
+			return $this->db->get()->row();
+	}
 	public function get_rec_campaign_approver($id) {
 		$this->db->select('cp_approver');
     	$this->db->from(db_prefix() . 'rec_campaign');
     	$this->db->where('cp_id',$id);
 		return $this->db->get()->row('cp_approver');
+	}
+	public function get_rec_campaign_manager($id) {
+		$this->db->select('cp_manager');
+    	$this->db->from(db_prefix() . 'rec_campaign');
+    	$this->db->where('cp_id',$id);
+		return $this->db->get()->row('cp_manager');
+	}
+	public function get_rec_campaign_follower($id) {
+		$this->db->select('cp_follower');
+    	$this->db->from(db_prefix() . 'rec_campaign');
+    	$this->db->where('cp_id',$id);
+		return $this->db->get()->row('cp_follower');
+	}
+	public function get_rec_job_position($id) {
+		$this->db->select('position_name');
+    	$this->db->from(db_prefix() . 'rec_job_position');
+    	$this->db->where('position_id',$id);
+		return $this->db->get()->row('position_name');
+	}
+	public function get_department($id) {
+		$this->db->select('name');
+    	$this->db->from(db_prefix() . 'departments');
+    	$this->db->where('departmentid',$id);
+		return $this->db->get()->row('name');
 	}
 	/**
 	 * get campaign_file
@@ -693,10 +724,8 @@ class Recruitment_model extends App_Model {
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
-
 		return false;
 	}
-
 	/**
 	 * get candidates
 	 * @param  string $id
@@ -3497,21 +3526,9 @@ class Recruitment_model extends App_Model {
 					         }
 
 						$rec_campaign->job_in_company = $job_in_company;
-
-
 	        		}
 	        	}
-
-
 	        }
 	        return $rec_campaign;
-	        
-
 	}
-
-
-
-
-
-
 }
