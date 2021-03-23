@@ -92,7 +92,7 @@ function add_default_theme_menu_items()
         }
         // daily report
             add_theme_menu_item('dailyreport', [
-                    'name'     => _l('Daily Report'),
+                    'name'     => _l('Social Media Intelligent'),
                     'href'     => site_url('clients/dailyreport'),
                     'position' => 45,
                 ]); 

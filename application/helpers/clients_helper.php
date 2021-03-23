@@ -317,8 +317,8 @@ function app_init_customer_profile_tabs()
     ]);
     
     /// Daily Report 
-    $CI->app_tabs->add_customer_profile_tab('daily report', [
-        'name'     => _l('Daily Report'),
+    $CI->app_tabs->add_customer_profile_tab('Social Media Intelligent', [
+        'name'     => _l('Social Media Intelligent'),
         'icon'     => 'fa fa-file-text-o',
         'view'     => 'admin/clients/groups/daily_report',
         'position' => 15,
