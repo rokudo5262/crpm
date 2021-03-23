@@ -4,7 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /*
 Module Name: Recruitment
 Description: Recruitment Management module
-Version: 1.1.5
+Version: 1.1.6
 Requires at least: 2.3.*
 Author: GreenTech_Solutions
 Author URI: https://codecanyon.net/user/greentech_solutions
@@ -27,6 +27,9 @@ hooks()->add_action('app_customers_portal_footer', 'recruitment_portal_add_foote
 hooks()->add_action('forms_head', 'forms_add_head_components');
 hooks()->add_action('forms_footer', 'forms_add_footer_components');
 
+//Purchase mail template
+register_merge_fields('recruitment/merge_fields/recruitment_merge_fields');
+hooks()->add_filter('other_merge_fields_available_for', 'recruitment_register_other_merge_fields');
 /**
  * Register activation module hook
  */
@@ -250,11 +253,13 @@ function recruitment_add_footer_components() {
 	if (!(strpos($viewuri, '/admin/recruitment/setting?group=recruitment_campaign_setting') === false)) {	
 		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/recruitment_campaign_setting.js') . '"></script>';
 	}
+	if (!(strpos($viewuri, '/admin/recruitment/setting?group=default_approver') === false)) {	
+		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/default_approver.js') . '"></script>';
+	}
 
 	if (!(strpos($viewuri, '/admin/recruitment/setting?group=industry_list') === false)) {	
 		echo '<script src="' . module_dir_url(RECRUITMENT_MODULE_NAME, 'assets/js/industry.js') . '"></script>';
 	}
-	
 
 }
 
@@ -329,4 +334,14 @@ function forms_add_footer_components(){
     $viewuri = $_SERVER['REQUEST_URI'];
 
 	
+}
+/**
+ * Register other merge fields for purchase
+ *
+ * @param [array] $for
+ * @return void
+ */
+function recruitment_register_other_merge_fields($for) {
+    $for[] = 'recruitment';
+    return $for;
 }

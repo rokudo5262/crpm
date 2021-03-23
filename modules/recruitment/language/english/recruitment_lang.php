@@ -326,4 +326,6 @@ $lang['apply_before'] = 'Apply Before';
 $lang['skill_recquired'] = 'Skill Recquired';
 $lang['related_jobs'] = 'Related Jobs';
 $lang['position_in_the_old_company'] = 'Position in the old company';
-
+$lang['default_approver'] = 'Default Approver';
+$lang['approver'] = 'Approver';
+$lang['created_by'] = 'Created By';
