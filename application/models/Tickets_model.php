@@ -18,7 +18,7 @@ class Tickets_model extends App_Model
             $this->load->model('departments_model');
             $staff_deparments_ids = $this->departments_model->get_staff_departments(get_staff_user_id(), true);
             if (get_option('staff_access_only_assigned_departments') == 1) {
-                $departments_ids = array();
+                $departments_ids = [];
                 if (count($staff_deparments_ids) == 0) {
                     $departments = $this->departments_model->get();
                     foreach ($departments as $department) {
@@ -252,7 +252,6 @@ class Tickets_model extends App_Model
                 $extension     = end($filenameparts);
                 $extension     = strtolower($extension);
                 if (in_array('.' . $extension, $allowed_extensions)) {
-
                     $filename = implode(array_slice($filenameparts, 0, 0 - 1));
                     $filename = trim(preg_replace('/[^a-zA-Z0-9-_ ]/', '', $filename));
 
@@ -318,32 +317,28 @@ class Tickets_model extends App_Model
         $this->db->join(db_prefix() . 'staff', db_prefix() . 'staff.staffid = ' . db_prefix() . 'tickets.admin', 'left');
         $this->db->join(db_prefix() . 'contacts', db_prefix() . 'contacts.id = ' . db_prefix() . 'tickets.contactid', 'left');
         $this->db->join(db_prefix() . 'tickets_priorities', db_prefix() . 'tickets_priorities.priorityid = ' . db_prefix() . 'tickets.priority', 'left');
+
         if (strlen($id) === 32) {
-            $this->db->or_where(db_prefix() . 'tickets.ticketkey', $id);
+            $this->db->where(db_prefix() . 'tickets.ticketkey', $id);
         } else {
             $this->db->where(db_prefix() . 'tickets.ticketid', $id);
         }
+
         if (is_numeric($userid)) {
             $this->db->where(db_prefix() . 'tickets.userid', $userid);
         }
+
         $ticket = $this->db->get()->row();
         if ($ticket) {
-            if ($ticket->admin == null || $ticket->admin == 0) {
-                if ($ticket->contactid != 0) {
-                    $ticket->submitter = $ticket->user_firstname . ' ' . $ticket->user_lastname;
-                } else {
-                    $ticket->submitter = $ticket->from_name;
-                }
-            } else {
-                if ($ticket->contactid != 0) {
-                    $ticket->submitter = $ticket->user_firstname . ' ' . $ticket->user_lastname;
-                } else {
-                    $ticket->submitter = $ticket->from_name;
-                }
+            $ticket->submitter = $ticket->contactid != 0 ?
+            ($ticket->user_firstname . ' ' . $ticket->user_lastname) :
+            $ticket->from_name;
+
+            if (!($ticket->admin == null || $ticket->admin == 0)) {
                 $ticket->opened_by = $ticket->staff_firstname . ' ' . $ticket->staff_lastname;
             }
 
-            $ticket->attachments = $this->get_ticket_attachments($id);
+            $ticket->attachments = $this->get_ticket_attachments($ticket->ticketid);
         }
 
 
@@ -377,12 +372,7 @@ class Tickets_model extends App_Model
     public function get_ticket_attachments($id, $replyid = '')
     {
         $this->db->where('ticketid', $id);
-        if (is_numeric($replyid)) {
-            $this->db->where('replyid', $replyid);
-        } else {
-            $this->db->where('replyid', null);
-        }
-        $this->db->where('ticketid', $id);
+        $this->db->where('replyid', is_numeric($replyid) ? $replyid : null);
 
         return $this->db->get(db_prefix() . 'ticket_attachments')->result_array();
     }
@@ -1367,7 +1357,7 @@ class Tickets_model extends App_Model
             return [
                 'default' => true,
             ];
-            // Not default check if if used in table
+        // Not default check if if used in table
         } elseif (is_reference_in_table('status', db_prefix() . 'tickets', $id)) {
             return [
                 'referenced' => true,

@@ -30,7 +30,7 @@ if ($v && strpos($v->version, '5.7') !== false) {
         }
     }
 
-    $aColumns = array_filter([
+    $aColumns = array_values(array_filter([
         'ANY_VALUE(name) as name',
         'ANY_VALUE((SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'taskstimers.id and rel_type="timesheet" ORDER by tag_order ASC)) as tags',
         !$roundTimesheets ? 'ANY_VALUE(start_time) as start_time' : '',
@@ -39,11 +39,11 @@ if ($v && strpos($v->version, '5.7') !== false) {
         'ANY_VALUE(' . tasks_rel_name_select_query() . ') as rel_name',
         'ANY_VALUE(end_time - start_time) as time_h',
         'ANY_VALUE(end_time - start_time) as time_d',
-    ]);
+    ]));
 } else {
     $staffIdSelect = 'staff_id';
 
-    $aColumns = [
+    $aColumns = array_values(array_filter([
         'name as name',
         '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'taskstimers.id and rel_type="timesheet" ORDER by tag_order ASC) as tags',
         !$roundTimesheets ? 'start_time' : '',
@@ -52,17 +52,16 @@ if ($v && strpos($v->version, '5.7') !== false) {
         tasks_rel_name_select_query() . ' as rel_name',
         'end_time - start_time as time_h',
         'end_time - start_time as time_d',
-    ];
+    ]));
 }
 
-$time_h_column = 7;
-$time_d_column = 8;
+$time_h_column = 6;
+$time_d_column = 7;
 
 if ($view_all == true) {
     array_unshift($aColumns, $staffIdSelect);
-} else {
-    $time_h_column--;
-    $time_d_column--;
+    $time_h_column++;
+    $time_d_column++;
 }
 
 if ($roundTimesheets) {

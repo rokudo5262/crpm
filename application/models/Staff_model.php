@@ -97,6 +97,11 @@ class Staff_model extends App_Model
             'addedfrom' => $transfer_data_to,
         ]);
 
+        $this->db->where('addedfrom', $id);
+        $this->db->update(db_prefix() . 'templates', [
+            'addedfrom' => $transfer_data_to,
+        ]);
+
         $this->db->where('staffid', $id);
         $this->db->update(db_prefix() . 'task_comments', [
             'staffid' => $transfer_data_to,
@@ -121,6 +126,11 @@ class Staff_model extends App_Model
         $this->db->where('addedfrom', $id);
         $this->db->update(db_prefix() . 'task_checklist_items', [
             'addedfrom' => $transfer_data_to,
+        ]);
+
+        $this->db->where('assigned', $id);
+        $this->db->update(db_prefix() . 'task_checklist_items', [
+            'assigned' => $transfer_data_to,
         ]);
 
         $this->db->where('finished_from', $id);
@@ -174,6 +184,16 @@ class Staff_model extends App_Model
             'responsible' => $transfer_data_to,
         ]);
 
+        $this->db->where('responsible', $id);
+        $this->db->update(db_prefix() . 'estimate_request_forms', [
+            'responsible' => $transfer_data_to,
+        ]);
+
+        $this->db->where('assigned', $id);
+        $this->db->update(db_prefix() . 'estimate_requests', [
+            'assigned' => $transfer_data_to,
+        ]);
+
         $this->db->where('created_from', $id);
         $this->db->update(db_prefix() . 'subscriptions', [
             'created_from' => $transfer_data_to,
@@ -185,20 +205,34 @@ class Staff_model extends App_Model
         foreach ($web_to_lead as $form) {
             if (!empty($form['notify_ids'])) {
                 $staff = unserialize($form['notify_ids']);
-                if (is_array($staff)) {
-                    if (in_array($id, $staff)) {
-                        if (($key = array_search($id, $staff)) !== false) {
-                            unset($staff[$key]);
-                            $staff = serialize(array_values($staff));
-                            $this->db->where('id', $form['id']);
-                            $this->db->update(db_prefix() . 'web_to_lead', [
-                                'notify_ids' => $staff,
-                            ]);
-                        }
-                    }
+                if (is_array($staff) && in_array($id, $staff) && ($key = array_search($id, $staff)) !== false) {
+                    unset($staff[$key]);
+                    $staff = serialize(array_values($staff));
+                    $this->db->where('id', $form['id']);
+                    $this->db->update(db_prefix() . 'web_to_lead', [
+                        'notify_ids' => $staff,
+                    ]);
                 }
             }
         }
+
+        $this->db->where('notify_type', 'specific_staff');
+        $estimate_requests = $this->db->get(db_prefix() . 'estimate_request_forms')->result_array();
+
+        foreach ($estimate_requests as $form) {
+            if (!empty($form['notify_ids'])) {
+                $staff = unserialize($form['notify_ids']);
+                if (is_array($staff) && in_array($id, $staff) && ($key = array_search($id, $staff)) !== false) {
+                    unset($staff[$key]);
+                    $staff = serialize(array_values($staff));
+                    $this->db->where('id', $form['id']);
+                    $this->db->update(db_prefix() . 'estimate_request_forms', [
+                        'notify_ids' => $staff,
+                    ]);
+                }
+            }
+        }
+
 
         $this->db->where('id', 1);
         $leads_email_integration = $this->db->get(db_prefix() . 'leads_email_integration')->row();
@@ -206,17 +240,13 @@ class Staff_model extends App_Model
         if ($leads_email_integration->notify_type == 'specific_staff') {
             if (!empty($leads_email_integration->notify_ids)) {
                 $staff = unserialize($leads_email_integration->notify_ids);
-                if (is_array($staff)) {
-                    if (in_array($id, $staff)) {
-                        if (($key = array_search($id, $staff)) !== false) {
-                            unset($staff[$key]);
-                            $staff = serialize(array_values($staff));
-                            $this->db->where('id', 1);
-                            $this->db->update(db_prefix() . 'leads_email_integration', [
-                                'notify_ids' => $staff,
-                            ]);
-                        }
-                    }
+                if (is_array($staff) && in_array($id, $staff) && ($key = array_search($id, $staff)) !== false) {
+                    unset($staff[$key]);
+                    $staff = serialize(array_values($staff));
+                    $this->db->where('id', 1);
+                    $this->db->update(db_prefix() . 'leads_email_integration', [
+                        'notify_ids' => $staff,
+                    ]);
                 }
             }
         }
@@ -387,8 +417,8 @@ class Staff_model extends App_Model
             unset($data['send_welcome_email']);
         }
 
-        $data['password']        = app_hash_password($data['password']);
-        $data['datecreated']     = date('Y-m-d H:i:s');
+        $data['password']    = app_hash_password($data['password']);
+        $data['datecreated'] = date('Y-m-d H:i:s');
         if (isset($data['departments'])) {
             $departments = $data['departments'];
             unset($data['departments']);

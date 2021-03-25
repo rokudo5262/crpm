@@ -10,7 +10,6 @@ class Tasks extends AdminController
     {
         parent::__construct();
         $this->load->model('projects_model');
-        $this->load->model('misc_model');
     }
 
     /* Open also all taks if user access this /tasks url */
@@ -450,7 +449,11 @@ class Tasks extends AdminController
         $data['staff']              = $this->staff_model->get('', ['active' => 1]);
         $data['reminders']          = $this->tasks_model->get_reminders($taskid);
 
-        $data['staff_reminders'] = $this->tasks_model->get_staff_members_that_can_access_task($taskid);
+        $data['task_staff_members']   = $this->tasks_model->get_staff_members_that_can_access_task($taskid);
+        // For backward compatibilities
+        $data['staff_reminders'] = $data['task_staff_members'];
+
+        $data['hide_completed_items'] = get_staff_meta(get_staff_user_id(), 'task-hide-completed-items-' . $taskid);
 
         $data['project_deadline'] = null;
         if ($task->rel_type == 'project') {
@@ -545,9 +548,12 @@ class Tasks extends AdminController
     {
         if ($this->input->is_ajax_request()) {
             if ($this->input->post()) {
-                $post_data          = $this->input->post();
-                $data['task_id']    = $post_data['taskid'];
-                $data['checklists'] = $this->tasks_model->get_checklist_items($post_data['taskid']);
+                $post_data                    = $this->input->post();
+                $data['task_id']              = $post_data['taskid'];
+                $data['checklists']           = $this->tasks_model->get_checklist_items($post_data['taskid']);
+                $data['task_staff_members']   = $this->tasks_model->get_staff_members_that_can_access_task($data['task_id']);
+                $data['hide_completed_items'] = get_staff_meta(get_staff_user_id(), 'task-hide-completed-items-' . $data['task_id']);
+
                 $this->load->view('admin/tasks/checklist_items_template', $data);
             }
         }
@@ -1189,7 +1195,7 @@ class Tasks extends AdminController
                                 $update['milestone'] = $milestone;
                             }
 
-                            if($billable) {
+                            if ($billable) {
                                 $update['billable'] = $billable === 'billable' ? 1 : 0;
                             }
 
@@ -1308,6 +1314,20 @@ class Tasks extends AdminController
             $query = "SELECT DISTINCT " . db_prefix() . "staff.staffid AS assigneeid, CONCAT(" . db_prefix() . "staff.firstname, ' ', " . db_prefix() . "staff.lastname) as full_name FROM " . db_prefix() . "staff JOIN " . db_prefix() . "staff_departments ON " . db_prefix() . "staff.staffid = " . db_prefix() . "staff_departments.staffid " . $where_condition . " ORDER BY tblstaff.firstname ASC";
             $department_staffs = $this->db->query($query)->result_array();
             $this->load->view('admin/tasks/assigned_member_list', ['tasks_filter_assignees' => $department_staffs, 'query' => $query]);
+        }
+    }
+
+    public function save_checklist_assigned_staff()
+    {
+        if ($this->input->post() && $this->input->is_ajax_request()) {
+            $payload = $this->input->post();
+            $item    = $this->tasks_model->get_checklist_item($payload['checklistId']);
+            if ($item->addedfrom == get_staff_user_id() || is_admin()) {
+                $this->tasks_model->update_checklist_assigned_staff($payload);
+                die;
+            }
+
+            ajax_access_denied();
         }
     }
 }
