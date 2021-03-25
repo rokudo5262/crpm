@@ -763,6 +763,9 @@ $(function () {
     $("body").on('change', 'input[name="checklist-box"]', function () {
         requestGet(admin_url + 'tasks/checkbox_action/' + ($(this).parents('.checklist').data('checklist-id')) + '/' + ($(this).prop('checked') === true ? 1 : 0));
         recalculate_checklist_items_progress();
+        if ($(this).prop('checked') && $('button[data-hide="1"]').hasClass('hide')) {
+            $(this).closest('.checklist ').addClass('hide');
+        }
     });
 
     // Fix task checklist content textarea height
@@ -4846,6 +4849,7 @@ function recalculate_checklist_items_progress() {
     var total_checklist_items = $('input[name="checklist-box"]').length;
     var percent = 0,
         task_progress_bar = $('.task-progress-bar');
+    $('.task-total-checklist-completed').text(total_finished);
     if (total_checklist_items == 0) {
         // remove the heading for checklist items
         $("body").find('.chk-heading').remove();
@@ -4858,10 +4862,27 @@ function recalculate_checklist_items_progress() {
         percent = (total_finished * 100) / total_checklist_items;
     } else {
         task_progress_bar.parents('.progress').addClass('hide');
+        if (total_finished > 0) {
+            $('.chk-toggle-buttons').removeClass('hide')
+        } else {
+            $('.chk-toggle-buttons').addClass('hide')
+        }
         return false;
     }
     task_progress_bar.css('width', percent.toFixed(2) + '%');
     task_progress_bar.text(percent.toFixed(2) + '%');
+
+    if (total_finished > 0) {
+        $('.chk-toggle-buttons').removeClass('hide')
+    } else {
+        $('.chk-toggle-buttons').addClass('hide')
+    }
+
+    if (percent == 100) {
+        task_progress_bar.removeClass('progress-bar-default').addClass('progress-bar-success')
+    } else {
+        task_progress_bar.removeClass('progress-bar-success').addClass('progress-bar-default')
+    }
 }
 
 // Remove task checklist items template

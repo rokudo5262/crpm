@@ -457,6 +457,7 @@ class Tasks_model extends App_Model
                 'dateadded'   => date('Y-m-d H:i:s'),
                 'addedfrom'   => $list['addedfrom'],
                 'list_order'  => $list['list_order'],
+                'assigned'  => $list['assigned'],
             ]);
         }
     }
@@ -2126,6 +2127,9 @@ class Tasks_model extends App_Model
                 delete_dir(get_upload_path_by_type('task') . $id);
             }
 
+            $this->db->where('meta_key', 'task-hide-completed-items-'. $id);
+            $this->db->delete(db_prefix() . 'user_meta');
+
             hooks()->do_action('task_deleted', $id);
 
             return true;
@@ -2783,5 +2787,17 @@ class Tasks_model extends App_Model
         }
 
         pusher_trigger_notification($notifiedUsers);
+    }
+
+    public function update_checklist_assigned_staff($data)
+    {
+        $assigned = $this->db->escape_str($data['assigned']);
+        if (!is_numeric($assigned) || $assigned == 0) {
+            $assigned = null;
+        }
+        $this->db->where('id', $data['checklistId']);
+        $this->db->update(db_prefix() . 'task_checklist_items', [
+            'assigned' =>  $assigned,
+        ]);
     }
 }
