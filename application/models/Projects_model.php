@@ -1866,7 +1866,7 @@ class Projects_model extends App_Model
 
         $_data['created'] = date('Y-m-d H:i:s');
 
-        $_data = hooks()->apply_filters('before_add_project_discussion_comment', $data, $discussion_id);
+        $_data = hooks()->apply_filters('before_add_project_discussion_comment', $_data, $discussion_id);
 
         $this->db->insert(db_prefix() . 'projectdiscussioncomments', $_data);
         $insert_id = $this->db->insert_id();

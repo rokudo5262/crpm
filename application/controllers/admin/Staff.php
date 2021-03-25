@@ -436,4 +436,14 @@ class Staff extends AdminController
             die;
         }
     }
+
+    public function save_completed_checklist_visibility()
+    {
+        hooks()->do_action('before_save_completed_checklist_visibility');
+
+        $post_data = $this->input->post();
+        if (is_numeric($post_data['task_id'])) {
+            update_staff_meta(get_staff_user_id(), 'task-hide-completed-items-'. $post_data['task_id'], $post_data['hideCompleted']);
+        }
+    }
 }
