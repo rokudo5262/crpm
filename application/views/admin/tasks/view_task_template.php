@@ -127,14 +127,6 @@
             <div class="table-responsive">
                <table class="table">
                   <thead>
-                     <tr>
-                        <th><?php echo _l('timesheet_user'); ?></th>
-                        <th><?php echo _l('timesheet_start_time'); ?></th>
-                        <th><?php echo _l('timesheet_end_time'); ?></th>
-                        <th><?php echo _l('timesheet_time_spend'); ?></th>
-                     </tr>
-                  </thead>
-                  <tbody>
                      <tr class="odd">
                         <td colspan="5">
                            <div class="timesheet-start-end-time">
@@ -200,6 +192,14 @@
                            </div>
                         </td>
                      </tr>
+                     <tr>
+                        <th><?php echo _l('timesheet_user'); ?></th>
+                        <th><?php echo _l('timesheet_start_time'); ?></th>
+                        <th><?php echo _l('timesheet_end_time'); ?></th>
+                        <th><?php echo _l('timesheet_time_spend'); ?></th>
+                     </tr>
+                  </thead>
+                  <tbody>
                      <?php
                         $timers_found = false;
                         foreach($task->timesheets as $timesheet){ ?>
