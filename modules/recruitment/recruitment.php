@@ -27,9 +27,6 @@ hooks()->add_action('app_customers_portal_footer', 'recruitment_portal_add_foote
 hooks()->add_action('forms_head', 'forms_add_head_components');
 hooks()->add_action('forms_footer', 'forms_add_footer_components');
 
-//Purchase mail template
-register_merge_fields('recruitment/merge_fields/recruitment_merge_fields');
-hooks()->add_filter('other_merge_fields_available_for', 'recruitment_register_other_merge_fields');
 /**
  * Register activation module hook
  */
@@ -334,14 +331,4 @@ function forms_add_footer_components(){
     $viewuri = $_SERVER['REQUEST_URI'];
 
 	
-}
-/**
- * Register other merge fields for purchase
- *
- * @param [array] $for
- * @return void
- */
-function recruitment_register_other_merge_fields($for) {
-    $for[] = 'recruitment';
-    return $for;
 }

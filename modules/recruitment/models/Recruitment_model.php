@@ -1873,7 +1873,6 @@ class Recruitment_model extends App_Model {
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
-
 		return false;
 	}
 
@@ -3526,8 +3525,12 @@ class Recruitment_model extends App_Model {
 					         }
 
 						$rec_campaign->job_in_company = $job_in_company;
+
+
 	        		}
 	        	}
+
+
 	        }
 	        return $rec_campaign;
 	}

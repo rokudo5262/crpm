@@ -16,8 +16,8 @@
                   <a href="<?php echo admin_url('recruitment/candidates'); ?>" class="btn btn-info pull-left display-block"><?php echo _l('new_candidate'); ?></a>
                   <a href="#" onclick="send_mail_candidate(); return false;" class="btn btn-success pull-left display-block mleft5" ><i class="fa fa-envelope"></i><?php echo ' ' . _l('send_mail'); ?></a>
 
-                  <a href="<?php if(!$this->input->get('project_id')){ echo admin_url('recruitment/switch_kanban/'.$switch_kanban); } else { echo admin_url('projects/view/'.$this->input->get('project_id').'?group=project_tasks'); }; ?>" class="btn btn-default mleft10 pull-left hidden-xs">
-                           <?php if($switch_kanban == 1){ echo _l('switch_to_list_view');}else{echo _l('leads_switch_to_kanban');}; ?>
+                  <a href="<?php if(!$this->input->get('project_id')){ echo admin_url('recruitment/switch_kanban_candidate/'.$switch_kanban_candidate); } else { echo admin_url('projects/view/'.$this->input->get('project_id').'?group=project_tasks'); }; ?>" class="btn btn-default mleft10 pull-left hidden-xs">
+                           <?php if($switch_kanban_candidate == 1){ echo _l('switch_to_list_view');}else{echo _l('leads_switch_to_kanban');}; ?>
                   </a>
                   </div>
                   </div>
@@ -35,7 +35,7 @@
                            <?php echo form_hidden('project_id',$this->input->get('project_id')); ?>
                         </div>
                         <div class="container-fluid">
-                           <div id="kan-ban"></div>
+                           <div id="kan-ban-candidate"></div>
                         </div>
                      </div>
                   </div>

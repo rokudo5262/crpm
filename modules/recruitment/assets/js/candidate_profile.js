@@ -26,35 +26,34 @@ function send_mail_candidate(){
            content: 'required', subject:'required',email:'required'});
 }
 
-// Updates task when action performed form kan ban area eq status changed.
+// Updates candidate when action performed form kan ban area eq status changed.
 function candidate_profile_kanban_update(ui, object) {
     if (object === ui.item.parent()[0]) {
-        var status = $(ui.item.parent()[0]).data('task-status-id');
-        var tasks = $(ui.item.parent()[0]).find('[data-task-id]');
+        var status = $(ui.item.parent()[0]).data('candidate-status-id');
+        var candidates = $(ui.item.parent()[0]).find('[data-candidate-id]');
 
         var data = {};
         data.order = [];
         var i = 0;
-        $.each(tasks, function() {
-            data.order.push([$(this).data('task-id'), i]);
+        $.each(candidates, function() {
+            data.order.push([$(this).data('candidate-id'), i]);
             i++;
         });
-
-        candidate_change_status(status, $(ui.item).data('task-id'));
-        check_kanban_empty_col_candidate('[data-task-id]');
+        candidate_change_status(status, $(ui.item).data('candidate-id'));
+        check_kanban_empty_col_candidate('[data-candidate-id]');
     }
 }
 
-// Init tasks kan ban
+// Init candidates kan ban
 function candidate_profile_kanban() {
     "use strict";
-    recruitment_init_kanban('recruitment/kanban', candidate_profile_kanban_update, '.tasks-status', 265, 360);
+    recruitment_init_kanban('recruitment/kanban_candidate', candidate_profile_kanban_update, '.tasks-status', 265, 360);
 }
 
 // General function to init kan ban based on settings
 function recruitment_init_kanban(url, callbackUpdate, connect_with, column_px, container_px, callback_after_load) {
     "use strict";
-    if ($('#kan-ban').length === 0) { return; }
+    if ($('#kan-ban-candidate').length === 0) { return; }
     var parameters = [];
     var _kanban_param_val;
 
@@ -84,7 +83,7 @@ function recruitment_init_kanban(url, callbackUpdate, connect_with, column_px, c
     url = buildUrl(url, parameters);
     delay(function() {
         $("body").append('<div class="dt-loader"></div>');
-        $('#kan-ban').load(url, function() {
+        $('#kan-ban-candidate').load(url, function() {
 
             fix_kanban_height(column_px, container_px);
             var scrollingSensitivity = 20,
@@ -95,7 +94,7 @@ function recruitment_init_kanban(url, callbackUpdate, connect_with, column_px, c
             $(".status").sortable({
                 connectWith: connect_with,
                 helper: 'clone',
-                appendTo: '#kan-ban',
+                appendTo: '#kan-ban-candidate',
                 placeholder: "ui-state-highlight-card",
                 revert: 'invalid',
                 scrollingSensitivity: 50,
@@ -213,9 +212,9 @@ function candidate_kanban_load_more(status_id, e, url, column_px, container_px) 
 }
 
 
-function candidate_change_status(status, task_id, url) {
+function candidate_change_status(status, candidate_id, url) {
     "use-strict"
-    url = typeof(url) == 'undefined' ? 'recruitment/candidate_change_status/' + status + '/' + task_id : url;
+    url = typeof(url) == 'undefined' ? 'recruitment/candidate_change_status/' + status + '/' + candidate_id : url;
     var taskModalVisible = $('#task-modal').is(':visible');
     url += '?single_task=' + taskModalVisible;
     $("body").append('<div class="dt-loader"></div>');

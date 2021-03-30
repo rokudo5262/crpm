@@ -90,12 +90,6 @@ function new_campaign(){
   $('#recruitment_campaign input[id="display_salary"]').prop("checked", true);
 
   $('.selectpicker').selectpicker('refresh');
-	$('#reject_btn').on('click',function(){
-	  $('#approved_div').addClass('hide');
-	});
-	$('#approved_btn').on('click',function(){
-	  $('#reject_div').addClass('hide');
-	});
 }
 
 function edit_campaign(invoker,id){
@@ -205,11 +199,7 @@ function edit_campaign(invoker,id){
     }else{
       $('#recruitment_campaign input[id="display_salary"]').removeAttr("checked");
     }
-    var data_send_mail = {};
-    data_send_mail.rel_id = '47';
-    data_send_mail.rel_type = 'recruitment';
-    $.post(admin_url+'recruitment/send_mail', data_send_mail).done(function(response){
-    });
+
   $('.selectpicker').selectpicker('refresh');
 }
 function init_recruitment_campaign(id) {

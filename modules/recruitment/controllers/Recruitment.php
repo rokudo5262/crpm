@@ -54,10 +54,6 @@ class recruitment extends AdminController {
 
 		$data['industry_list'] = $this->recruitment_model->get_industry();
 
-		$data['default_approver'] = $this->recruitment_model->get_default_approver();
-
-		$data['staffs'] = $this->staff_model->get();
-
 		foreach($data['positions'] as $position) {
 			$jd_file_data = $this->get_lastest_job_position_jd_file($position['position_id']);
 			if($jd_file_data == '') {
@@ -66,6 +62,9 @@ class recruitment extends AdminController {
 			}
 			$data['positions_files'][$position['position_id']] = $jd_file_data;
 		}
+		$data['default_approver'] = $this->recruitment_model->get_default_approver();
+
+		$data['staffs'] = $this->staff_model->get();
 
 		$this->load->view('manage_setting', $data);
 	}
@@ -411,6 +410,7 @@ class recruitment extends AdminController {
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
+			$data = $this->input->post();
 			$data['cp_job_description'] = $this->input->post('cp_job_description', false);
 			if ($this->input->post('no_editor')) {
 				$data['cp_job_description'] = nl2br(clear_textarea_breaks($this->input->post('cp_job_description')));
@@ -547,15 +547,13 @@ class recruitment extends AdminController {
 	 */
 	public function candidate_profile() {
 		if ($this->input->get('kanban')) {
-            $this->switch_kanban(0, true);
+            $this->switch_kanban_candidate(0, true);
         }
-
-        $data['switch_kanban'] = false;
-        $data['bodyclass']     = 'tasks-page';
-
+        $data['switch_kanban_candidate'] = false;
+        $data['bodyclass']     = 'recruitment-page';
         if ($this->session->userdata('candidate_profile_kanban_view') == 'true') {
-            $data['switch_kanban'] = true;
-            $data['bodyclass']     = 'tasks-page kan-ban-body';
+            $data['switch_kanban_candidate'] = true;
+            $data['bodyclass']     = 'recruitment-page kan-ban-body';
         }
         $data['rec_campaigns'] = $this->recruitment_model->get_rec_campaign();
         
@@ -2222,21 +2220,20 @@ class recruitment extends AdminController {
      * @param  boolean $manual 
      * @return redirect         
      */
-    public function switch_kanban($set = 0, $manual = false)
+    public function switch_kanban_candidate($set = 0, $manual = false)
     {
         if ($set == 1) {
             $set = 'false';
         } else {
             $set = 'true';
         }
-
         $this->session->set_userdata([
             'candidate_profile_kanban_view' => $set,
         ]);
         if ($manual == false) {
             // clicked on VIEW KANBAN from projects area and will redirect again to the same view
             if (strpos($_SERVER['HTTP_REFERER'], 'project_id') !== false) {
-                redirect(admin_url('tasks'));
+                redirect(admin_url('recruitment'));
             } else {
                 redirect($_SERVER['HTTP_REFERER']);
             }
@@ -2247,9 +2244,9 @@ class recruitment extends AdminController {
      * kanban
      * @return [type] 
      */
-    public function kanban()
+    public function kanban_candidate()
     {	
-        echo html_entity_decode($this->load->view('candidate_profile/kan_ban', [], true));
+        echo html_entity_decode($this->load->view('candidate_profile/kan_ban_candidate', [], true));
     }
 
     /**
@@ -2264,7 +2261,7 @@ class recruitment extends AdminController {
         $candidates = $this->recruitment_model->do_kanban_query($status, $this->input->get('search'), $page, false, []);
 
         foreach ($candidates as $candidate) {
-            $this->load->view('candidate_profile/_kan_ban_card_advance', [
+            $this->load->view('candidate_profile/_kan_ban_card_candidate', [
                 'candidate'   => $candidate,
                 'status' => $status,
             ]);
@@ -2282,15 +2279,14 @@ class recruitment extends AdminController {
 	{
 		$change = $this->recruitment_model->change_status_candidate($status, $id);
 		if ($change == true) {
-
-			$message = _l('change_status_campaign') . ' ' . _l('successfully');
+			$message = _l('change_recruitment_candidate_status') . ' ' . _l('successfully');
 			echo json_encode([
 				'success'=> 'true',
 				'message' => $message,
 			]);
 
 		} else {
-			$message = _l('change_status_campaign') . ' ' . _l('fail');
+			$message = _l('change_recruitment_candidate_status') . ' ' . _l('fail');
 			echo json_encode([
 				'success'=>'false',
 				'message' => $message,
@@ -2607,26 +2603,5 @@ class recruitment extends AdminController {
 		}
 		redirect(admin_url('recruitment/setting?group=industry_list'));
 	}
-    /**
-     * Sends a mail.
-     * @return json
-     */
-	public function send_mail() {
-		$this->email->from('troy@reputable.asia', 'Your Name');
-		$this->email->to('trump@reputable.asia');
-		$this->email->subject('Email Test');
-		$this->email->message('Testing the email class.');
-		$this->email->send();
-		if($this->email->send()) {
-			$success = "true";
-			echo json_encode([
-				'success' => $success,
-			]);
-		} else {
-			$success = "false";
-			echo json_encode([
-				'success' => $success,
-			]);
-		}
-	}
+
 }
