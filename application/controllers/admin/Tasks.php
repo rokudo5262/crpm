@@ -105,7 +105,6 @@ class Tasks extends AdminController
         } else {
             $set = 'true';
         }
-
         $this->session->set_userdata([
             'tasks_kanban_view' => $set,
         ]);
