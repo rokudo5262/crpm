@@ -27,7 +27,6 @@ if(isset($word_shift)){
   $to_date = _d($word_shift->to_date);
   $type_shiftwork = $word_shift->type_shiftwork;
 }
-
 ?>
 <div id="wrapper">
   <div class="content">
@@ -37,65 +36,60 @@ if(isset($word_shift)){
         <div class="clearfix"></div>
         <hr class="hr-panel-heading" />
         <div class="clearfix"></div>      
-
-
-        <div id="shift_setting">
-          <?php echo form_open(admin_url('timesheets/shifts'),array('id'=>'shift_f-form')); ?>
-          <h4 class="modal-title">
-            <?php echo html_entity_decode($title); ?>
-          </h4>
-          <hr>
-          <div class="row">
+          <div id="shift_setting">
+            <?php echo form_open(admin_url('timesheets/shifts'),array('id'=>'shift_f-form')); ?>
+            <h4 class="modal-title">
+              <?php echo html_entity_decode($title); ?>
+            </h4>
+            <hr>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row mbot15">
+                <div class="col-md-6">
+                  <label for="department"><?php echo _l('department'); ?></label>
+                  <select name="department[]" id="department" onchange="dpm_change(this); return false;" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('all'); ?>" data-hide-disabled="true" data-live-search="true" multiple="true">  
+                  <?php foreach($departments as $dpm){
+                    $selected = '';
+                    if(in_array($dpm['departmentid'], $department)){
+                      $selected = 'selected';
+                    }
+                    ?>
+                    <option <?php echo html_entity_decode($selected); ?> value="<?php echo html_entity_decode($dpm['departmentid']); ?>"><?php echo html_entity_decode($dpm['name']); ?></option>
+                  <?php } ?>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="role"><?php echo _l('role'); ?></label>
+                <select name="role[]" id="role" onchange="role_change(this); return false;" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('all'); ?>" data-hide-disabled="true" data-live-search="true" multiple="true">
+                  <?php foreach($roles as $dpm){
+                    $selected = '';
+                    if(in_array($dpm['roleid'], $position)){
+                      $selected = 'selected';
+                    }
+                    ?>
+                    <option <?php echo html_entity_decode($selected); ?> value="<?php echo html_entity_decode($dpm['roleid']); ?>"><?php echo html_entity_decode($dpm['name']); ?></option>
+                  <?php } ?>   
+                </select>
+              </div>
+            </div>
+            <div class="row">
             <div class="col-md-12">
-              <div class="row mbot15">
-               <div class="col-md-6">
-                <label for="department"><?php echo _l('department'); ?></label>
-                <select name="department[]" id="department" onchange="dpm_change(this); return false;" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('all'); ?>" data-hide-disabled="true" data-live-search="true" multiple="true">  
-                 <?php foreach($departments as $dpm){
-                  $selected = '';
-                  if(in_array($dpm['departmentid'], $department)){
-                    $selected = 'selected';
-                  }
-                  ?>
-                  <option <?php echo html_entity_decode($selected); ?> value="<?php echo html_entity_decode($dpm['departmentid']); ?>"><?php echo html_entity_decode($dpm['name']); ?></option>
-                <?php } ?>
-              </select>
-            </div>
+              <label for="position"><?php echo _l('staff'); ?></label>
+              <select name="staff[]" id="staff" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('all'); ?>" data-hide-disabled="true" data-live-search="true" multiple="true">
 
-            <div class="col-md-6">
-              <label for="role"><?php echo _l('role'); ?></label>
-              <select name="role[]" id="role" onchange="role_change(this); return false;" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('all'); ?>" data-hide-disabled="true" data-live-search="true" multiple="true">
-                <?php foreach($roles as $dpm){
-                  $selected = '';
-                  if(in_array($dpm['roleid'], $position)){
-                    $selected = 'selected';
-                  }
-                  ?>
-                  <option <?php echo html_entity_decode($selected); ?> value="<?php echo html_entity_decode($dpm['roleid']); ?>"><?php echo html_entity_decode($dpm['name']); ?></option>
-                <?php } ?>   
-              </select>
-            </div>
+              <?php foreach($staffs as $dpm){
+                $selected = '';
+                if(in_array($dpm['staffid'], $staff)){
+                  $selected = 'selected';
+                }
+                ?>
+                <option <?php echo html_entity_decode($selected); ?>  value="<?php echo html_entity_decode($dpm['staffid']); ?>"><?php echo html_entity_decode($dpm['firstname']) . ' '.$dpm['lastname']; ?></option>
+              <?php } ?>   
+            </select>
           </div>
-
-          <div class="row">
-           <div class="col-md-12">
-            <label for="position"><?php echo _l('staff'); ?></label>
-            <select name="staff[]" id="staff" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('all'); ?>" data-hide-disabled="true" data-live-search="true" multiple="true">
-
-             <?php foreach($staffs as $dpm){
-              $selected = '';
-              if(in_array($dpm['staffid'], $staff)){
-                $selected = 'selected';
-              }
-              ?>
-              <option <?php echo html_entity_decode($selected); ?>  value="<?php echo html_entity_decode($dpm['staffid']); ?>"><?php echo html_entity_decode($dpm['firstname']) . ' '.$dpm['lastname']; ?></option>
-            <?php } ?>   
-          </select>
-        </div>
         <div class="clearfix"></div>
         <br>
         <div class="clearfix"></div>
-
         <div class="col-md-6"> 								                    	  
           <?php echo render_date_input('from_date','from_date',$from_date); ?>           
         </div>
@@ -103,7 +97,6 @@ if(isset($word_shift)){
           <?php echo render_date_input('to_date','to_date',$to_date); ?>                                                   
         </div>
       </div>
-
       <div class="col-md-12">
         <input type="radio" id="repeat_periodically" class="type_shift" <?php if($type_shiftwork == 'repeat_periodically' || !isset($word_shift)){ echo 'checked'; } ?> name="type_shiftwork" value="repeat_periodically">
         <label for="repeat_periodically"><?php echo _l('repeat_weekly'); ?></label><br>
@@ -121,16 +114,12 @@ if(isset($word_shift)){
 
    </div>
    <br>
-   <button class="btn btn-info pull-right save_detail_shift"><?php echo _l('submit'); ?></button>
+   <div class="button">
+    <button class="btn btn-info pull-right save_detail_shift"><?php echo _l('submit'); ?></button>
+   </div>
  </div>
  <input type="hidden" name="id" value="<?php echo html_entity_decode($id); ?>" >
  <?php echo form_close(); ?>
-</div>
-
-</div>
-</div>
-</div>
-</div>
 </div>
 <?php init_tail(); ?>
 <?php require 'modules/timesheets/assets/js/add_edit_allocation_shiftwork_js.php'; ?>
