@@ -31,11 +31,9 @@
 													<i class="fa fa-address-card-o"></i>&nbsp;<?php echo _l('redeemp_calculation'); ?>
 												</a>
 											</li>
-
 										</ul>
 									</div>
 								</div>
-
 								<div class="tab-content">
 									<div role="tabpanel" class="tab-pane active" id="general_infor">
 										<div class="col-md-10">
@@ -43,7 +41,6 @@
 											<?php $subject = (isset($loyalty_rule) ? $loyalty_rule->subject : '');
 											echo render_input('subject','',$subject,'text',array('required' => 'true')); ?>
 										</div>
-
 										<div class="col-md-2 padtop25">
 											<div class="form-group">
 												<div class="checkbox checkbox-primary">
@@ -53,7 +50,6 @@
 											</div>
 										</div>
 									</div>
-
 									<div class="col-md-6 form-group">
 								        <label for="client_group"><?php echo _l('client_group'); ?></label>
 								        <select name="client_group" id="client_group" onchange="client_group_change(this); return false;" class="selectpicker"  data-live-search="true" data-width="100%" data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" >
@@ -63,7 +59,6 @@
 								           <?php } ?>
 								        </select>
 								    </div> 
-
 								    <div class="col-md-6 form-group">
 								    	<?php $clients_ed = (isset($loyalty_rule) ? explode(',',$loyalty_rule->client) : []); ?>
 								        <label for="client"><?php echo _l('client'); ?></label>
@@ -73,13 +68,11 @@
 								         <?php } ?>
 								       </select>
 								    </div>
-
 									<div class="col-md-6">
 										<label for="start_date"><span class="text-danger">* </span><?php echo _l('start_date'); ?></label>
 										<?php $start_date = (isset($loyalty_rule) ? _d($loyalty_rule->start_date) : '');
 										echo render_date_input('start_date','',$start_date,array('required' => 'true')); ?>
 									</div>
-
 									<div class="col-md-6">
 										<label for="end_date"><span class="text-danger">* </span><?php echo _l('end_date'); ?></label>
 										<?php $end_date = (isset($loyalty_rule) ? _d($loyalty_rule->end_date) : '');
@@ -90,9 +83,7 @@
 										echo render_textarea('note','module_description',$note); ?>
 									</div>
 								</div>
-
 								<div role="tabpanel" class="tab-pane" id="poin_calculation">
-
 									<div class="col-md-6">
 										<label for="rule_base"><span class="text-danger">* </span><?php echo _l('rule_base'); ?></label>
 										<select name="rule_base" id="rule_base" onchange="rule_base_change(this); return false;" class="selectpicker" data-width="100%" required data-none-selected-text="<?php echo _l('ticket_settings_none_assigned'); ?>" >
@@ -103,7 +94,6 @@
 										</select> 
 										<br>  
 									</div>
-
 									<div class="col-md-6">
 										<?php $minium_purchase = (isset($loyalty_rule) ? $loyalty_rule->minium_purchase : ''); ?>
 										<label for="minium_purchase"><span class="text-danger">* </span><?php echo _l('minium_purchase') ?></label>
@@ -119,21 +109,20 @@
 										</div>
 										<br>
 									</div>
-
 									<div id="product_category_rule_div" class="hide">
 										<div class="col-md-12 new-kpi-al">
-											<div class="col-md-7 padright0 padleft0">
+											<!-- <div class="col-md-7 padright0 padleft0">
 												<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('product_category'); ?></label>
 											</div>
 											<div class="col-md-4 padright0">
 												<label class="control-label"><span class="text-danger">* </span><?php echo _l('loyalty_point') ?></label>
-											</div>
+											</div> -->
 											<?php if(isset($loyalty_rule)) { ?>
 												<?php if($loyalty_rule->rule_base == 'product_category' && count($loyalty_rule->rule_detail) > 0) { ?>
-													<?php 
-													foreach($loyalty_rule->rule_detail as $key => $rule_dt){ ?>
+													<?php foreach($loyalty_rule->rule_detail as $key => $rule_dt){ ?>
 														<div id ="new_kpi" class="row padbot5" >
 															<div class="col-md-7 padright0">
+															<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('product_category'); ?></label>
 																<select name="product_category[<?php echo html_entity_decode($key); ?>]" class="selectpicker" data-live-search="true" id="product_category[<?php echo html_entity_decode($key); ?>]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
 																	<option value=""></option>
 																	<?php foreach ($item_groups as $jp){ ?>
@@ -141,21 +130,18 @@
 																	<?php } ?>
 																</select>
 															</div>
-
 															<div class="col-md-4 padright0">
-
+															<label class="control-label"><span class="text-danger">* </span><?php echo _l('loyalty_point') ?></label>
 																<input type="number" id="point[<?php echo html_entity_decode($key); ?>]" name="point[<?php echo html_entity_decode($key); ?>]" class="form-control" value="<?php echo html_entity_decode($rule_dt['loyalty_point']) ?>" aria-invalid="false" >
 															</div>
 															<div class="col-md-1" name="button_add_kpi addbtn_style" >
 																<button name="add" class="btn <?php if($key == 0){ echo 'new_kpi btn-success'; }else{ echo 'remove_kpi btn-danger';} ?> pull-right" data-ticket="true" type="button"><i class="fa fa-<?php if($key == 0){ echo 'plus'; }else{ echo 'remove';} ?>"></i></button>
 															</div>
 														</div>
-														<?php 
-
-													} }else{
-														?>
+														<?php } } else { ?>
 														<div id ="new_kpi" class="row padbot5">
 															<div class="col-md-7 padright0">
+															<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('product_category'); ?></label>
 																<select name="product_category[0]" class="selectpicker" data-live-search="true" id="product_category[0]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
 																	<option value=""></option>
 																	<?php foreach ($item_groups as $jp){ ?>
@@ -163,19 +149,18 @@
 																	<?php } ?>
 																</select>
 															</div>
-
 															<div class="col-md-4 padright0" >
+																<label class="control-label"><span class="text-danger">* </span><?php echo _l('loyalty_point') ?></label>
 																<input type="number" id="point[0]" name="point[0]" class="form-control" value="" aria-invalid="false" >
 															</div>
 															<div class="col-md-1" name="button_add_kpi addbtn_style" >
 																<button name="add" class="btn new_kpi btn-success pull-right" data-ticket="true" type="button"><i class="fa fa-plus"></i></button>
 															</div>
 														</div>
-													<?php } ?>
-												<?php }else{ ?>
-
+													<?php } } else { ?>
 													<div id ="new_kpi" class="row padbot5">
 														<div class="col-md-7 padright0">
+														<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('product_category'); ?></label>
 															<select name="product_category[0]" class="selectpicker" data-live-search="true" id="product_category[0]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
 																<option value=""></option>
 																<?php foreach ($item_groups as $jp){ ?>
@@ -183,20 +168,17 @@
 																<?php } ?>
 															</select>
 														</div>
-
 														<div class="col-md-4 padright0">
+														<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('product_category'); ?></label>
 															<input type="number" id="point[0]" name="point[0]" class="form-control" value="" aria-invalid="false" >
 														</div>
 														<div class="col-md-1" name="button_add_kpi addbtn_style">
 															<button name="add" class="btn new_kpi btn-success pull-right"  data-ticket="true" type="button"><i class="fa fa-plus"></i></button>
 														</div>
 													</div>
-
 												<?php } ?>
-
 											</div>
 										</div>
-
 										<div id="product_rule_div" class="hide">
 											<div class="col-md-12 new-product-rule">
 												<div class="col-md-7 padleft0 padright0">
@@ -205,12 +187,10 @@
 												<div class="col-md-4 padright0" >
 													<label class="control-label"><span class="text-danger">* </span><?php echo _l('loyalty_point') ?></label>
 												</div>
-
 												<?php if(isset($loyalty_rule)) { ?>
 													<?php if($loyalty_rule->rule_base == 'product' && count($loyalty_rule->rule_detail) > 0) { ?>
 														<?php 
 														foreach($loyalty_rule->rule_detail as $key1 => $rule_pd){ ?>	
-
 															<div id ="new_rule" class="row padbot5">
 																<div class="col-md-7 padright0" >
 																	<select name="product[<?php echo html_entity_decode($key1); ?>]" class="selectpicker" data-live-search="true" id="product[<?php echo html_entity_decode($key1); ?>]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
@@ -220,17 +200,14 @@
 																		<?php } ?>
 																	</select>
 																</div>
-
 																<div class="col-md-4 padright0" >
-
 																	<input type="number" id="point_product[<?php echo html_entity_decode($key1); ?>]" name="point_product[<?php echo html_entity_decode($key1); ?>]" class="form-control" value="<?php echo html_entity_decode($rule_pd['loyalty_point']); ?>" aria-invalid="false" >
 																</div>
 																<div class="col-md-1" name="button_add_kpi addbtn_style" >
 																	<button name="add" class="btn <?php if($key1 == 0){ echo 'new_rule btn-success';}else{ echo 'remove_rule btn-danger'; } ?> pull-right" data-ticket="true" type="button"><i class="fa fa-<?php if($key1 == 0){ echo 'plus';}else{ echo 'remove'; } ?>"></i></button>
 																</div>
 															</div>
-
-														<?php } ?> <?php }else{ ?>
+														<?php } } else { ?>
 															<div id ="new_rule" class="row padbot5" >
 																<div class="col-md-7 padright0">
 																	<select name="product[0]" class="selectpicker" data-live-search="true" id="product[0]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
@@ -240,9 +217,7 @@
 																		<?php } ?>
 																	</select>
 																</div>
-
 																<div class="col-md-4 padright0" >
-
 																	<input type="number" id="point_product[0]" name="point_product[0]" class="form-control" value="" aria-invalid="false" >
 																</div>
 																<div class="col-md-1" name="button_add_kpi addbtn_style" >
@@ -250,7 +225,6 @@
 																</div>
 															</div>
 														<?php } }else{ ?>
-
 															<div id ="new_rule" class="row padbot5" >
 																<div class="col-md-7 padright0" >
 																	<select name="product[0]" class="selectpicker" data-live-search="true" id="product[0]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
@@ -260,7 +234,6 @@
 																		<?php } ?>
 																	</select>
 																</div>
-
 																<div class="col-md-4 padright0" >
 
 																	<input type="number" id="point_product[0]" name="point_product[0]" class="form-control" value="" aria-invalid="false" >
@@ -272,14 +245,11 @@
 														<?php } ?>
 													</div>
 												</div>
-
-
 												<div id="card_total_rule_div">
 													<div class="col-md-6">
 														<?php $poin_awarded = (isset($loyalty_rule) ? $loyalty_rule->poin_awarded : '');
 														echo render_input('poin_awarded','poin_awarded_text_label',$poin_awarded,'number'); ?>
 													</div>
-
 													<div class="col-md-6">
 														<?php $purchase_value = (isset($loyalty_rule) ? $loyalty_rule->purchase_value : ''); ?>
 														<label for="purchase_value"><?php echo _l('purchase_value_text_label') ?></label>
@@ -294,11 +264,8 @@
 															</div>
 														</div>
 													</div>
-
 												</div>
-
 											</div>
-
 											<div role="tabpanel" class="tab-pane" id="redeemp_calculation">
 												<div class="col-md-2 padleft0 form-group">
 													<label for="redeemp_type"><span class="text-danger">* </span><?php echo _l('redeemp_type'); ?></label>
@@ -312,7 +279,6 @@
 													<?php $min_poin_to_redeem = (isset($loyalty_rule) ? $loyalty_rule->min_poin_to_redeem : 0);
 													echo render_input('min_poin_to_redeem','min_poin_to_redeem',$min_poin_to_redeem,'number'); ?>
 												</div>
-
 												<div class="col-md-2">
 													<?php $max_amount_received = (isset($loyalty_rule) ? $loyalty_rule->max_amount_received : 100); ?>
 													<label for="max_amount_received"><span class="text-danger">* </span><?php echo _l('max_amount_received').' '; ?><i class="fa fa-question-circle" data-toggle="tooltip" title="<?php echo _l('tooltip_max_amount_received'); ?>" ></i></label>
@@ -328,7 +294,6 @@
 													</div>
 													<br>
 												</div>
-
 												<div class="col-md-3 padtop25">
 													<div class="form-group">
 														<div class="checkbox checkbox-primary">
@@ -348,93 +313,88 @@
 												</div>
 											</div>
 											<div class="col-md-12 new-redemp-calcu">
-												<div class="row">
-												<div class="col-md-3 padleft0">
-													<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('rule_name'); ?></label>
-												</div>
-												<div class="col-md-2 padright0">
-													<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_from') ?></label>
-												</div>
-												<div class="col-md-2 padright0" >
-													<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_to') ?></label>
-												</div>
-												<div class="col-md-2 padright0" >
-													<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_weight') ?></label>
-												</div>
-												<div class="col-md-2 padright0">
-													<label class="control-label"><span class="text-danger">* </span><?php echo _l('loy_status') ?></label>
-												</div>
-											    </div>
-
+											<!--<div class="row">
+													<div class="col-md-3 padleft0">
+														<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php //echo _l('rule_name'); ?></label>
+													</div>
+													<div class="col-md-2 padright0">
+														<label class="control-label"><span class="text-danger">* </span><?php //echo _l('point_from') ?></label>
+													</div>
+													<div class="col-md-2 padright0" >
+														<label class="control-label"><span class="text-danger">* </span><?php //echo _l('point_to') ?></label>
+													</div>
+													<div class="col-md-2 padright0" >
+														<label class="control-label"><span class="text-danger">* </span><?php //echo _l('point_weight') ?></label>
+													</div>
+													<div class="col-md-2 padright0">
+														<label class="control-label"><span class="text-danger">* </span><?php //echo _l('loy_status') ?></label>
+													</div>
+											    </div> -->
 												<?php if(isset($loyalty_rule) && count($loyalty_rule->redemp_detail) > 0) { ?>
-
 													<?php 
-													foreach($loyalty_rule->redemp_detail as $key2 => $rd){ ?>
-														<div id ="new_redemp" class="row padbot5">
-															<div class="col-md-3 padleft0 padright0">
+													foreach($loyalty_rule->redemp_detail as $key2 => $rd) { ?>
+														<div id ="new_redemp" class="row">
+															<div class="col-md-2 padright0">
+															<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('rule_name'); ?></label>
 																<input type="text" id="rule_name[<?php echo html_entity_decode($key2); ?>]" name="rule_name[<?php echo html_entity_decode($key2); ?>]" class="form-control" value="<?php echo html_entity_decode($rd['rule_name']); ?>" aria-invalid="false" >
 															</div>
-
 															<div class="col-md-2 padright0">
+															<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_from') ?></label>
 																<input type="number" id="point_from[<?php echo html_entity_decode($key2); ?>]" name="point_from[<?php echo html_entity_decode($key2); ?>]" class="form-control" value="<?php echo html_entity_decode($rd['point_from']); ?>" aria-invalid="false" >
 															</div>
-
 															<div class="col-md-2 padright0" >
+															<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_to') ?></label>
 																<input type="number" id="point_to[<?php echo html_entity_decode($key2); ?>]" name="point_to[<?php echo html_entity_decode($key2); ?>]" class="form-control" value="<?php echo html_entity_decode($rd['point_to']); ?>" aria-invalid="false" >
 															</div>
-
 															<div class="col-md-2 padright0">
+															<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_weight') ?></label>
 																<input type="number" id="point_weight[<?php echo html_entity_decode($key2); ?>]" name="point_weight[<?php echo html_entity_decode($key2); ?>]" class="form-control" value="<?php echo html_entity_decode($rd['point_weight']); ?>" step="0.01" >
 															</div>
-
 															<div class="col-md-2 padright0">
+															<label class="control-label"><span class="text-danger">* </span><?php echo _l('loy_status') ?></label>
 																<select name="status[<?php echo html_entity_decode($key2); ?>]" class="selectpicker" data-live-search="true" id="status[<?php echo html_entity_decode($key2); ?>]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
 																	<option value=""></option>
 																	<option value="enable" <?php if($rd['status'] == 'enable'){ echo 'selected'; } ?>><?php echo _l('loy_enable'); ?></option>
 																	<option value="disable" <?php if($rd['status'] == 'disable'){ echo 'selected'; } ?> ><?php echo _l('loy_disable'); ?></option>
 																</select>
 															</div>
-
-															<div class="col-md-1 addbtn_style" name="button_add_kpi" >
+															<div class="col-md-2 addbtn_style" name="button_add_kpi" >
 																<button name="add" class="btn <?php if($key2 == 0){ echo 'new_redemp btn-success';}else{ echo 'remove_redemp btn-danger'; } ?> pull-right"  data-ticket="true" type="button"><i class="fa fa-<?php if($key2 == 0){ echo 'plus';}else{ echo 'remove'; } ?>"></i></button>
 															</div>
 														</div>
-													<?php  } ?>
-												<?php }else{ ?>
-
-													<div id ="new_redemp" class="row padbot5">
-														<div class="col-md-3 padleft0 padright0">
+													<?php  } } else { ?>
+													<div id ="new_redemp" class="row">
+														<div class="col-md-2 padleft0 padright0">
+														<label class="control-label get_id_row" value ="0" ><span class="text-danger">* </span><?php echo _l('rule_name'); ?></label>
 															<input type="text" id="rule_name[0]" name="rule_name[0]" class="form-control" value="" aria-invalid="false" >
 														</div>
-
 														<div class="col-md-2 padright0">
+														<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_from') ?></label>
 															<input type="number" id="point_from[0]" name="point_from[0]" class="form-control" value="" aria-invalid="false" >
 														</div>
-
 														<div class="col-md-2 padright0">
+														<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_to') ?></label>
 															<input type="number" id="point_to[0]" name="point_to[0]" class="form-control" value="" aria-invalid="false" >
 														</div>
-
 														<div class="col-md-2 padright0">
+														<label class="control-label"><span class="text-danger">* </span><?php echo _l('point_weight') ?></label>
 															<input type="number" id="point_weight[0]" name="point_weight[0]" class="form-control" value="" step="0.01">
 														</div>
-
 														<div class="col-md-2 padright0">
+														<label class="control-label"><span class="text-danger">* </span><?php echo _l('loy_status') ?></label>
 															<select name="status[0]" class="selectpicker" data-live-search="true" id="status[0]" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" > 
 																<option value=""></option>
 																<option value="enable"><?php echo _l('loy_enable'); ?></option>
 																<option value="disable"><?php echo _l('loy_disable'); ?></option>
 															</select>
 														</div>
-
-														<div class="col-md-1 addbtn_style" name="button_add_kpi">
+														<div class="col-md-2 addbtn_style" name="button_add_kpi">
 															<button name="add" class="btn new_redemp btn-success pull-right" data-ticket="true" type="button"><i class="fa fa-plus"></i></button>
 														</div>
 													</div>
 												<?php } ?>
 											</div>
 										</div>
-
 									</div>
 									<div class="col-md-12 padleft0 padright0">
 										<hr>
@@ -442,9 +402,6 @@
 										<?php echo form_close(); ?>
 									</div>
 								</div>
-
-
-
 							</div>
 						</div>
 					</div>
