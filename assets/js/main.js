@@ -3226,9 +3226,9 @@ function init_editor(selector, settings) {
                 if (e && e.element.nodeName.toLowerCase() == 'img') {
                     width = e.element.width;
                     height = e.element.height;
-                    if (width > 100) {
-                        height = height / (width / 100);
-                        width = 100;
+                    if (width > 430) {
+                        height = height / (width / 430);
+                        width = 430;
                     }
                 tinyMCE.DOM.setAttribs(e.element, {'width': width, 'height': height});
                 }
@@ -7275,9 +7275,9 @@ function init_new_task_comment(manual) {
             if (e && e.element.nodeName.toLowerCase() == 'img') {
                 width = e.element.width;
                 height = e.element.height;
-                if (width > 100) {
-                    height = height / (width / 100);
-                    width = 100;
+                if (width > 430) {
+                    height = height / (width / 430);
+                    width = 430;
                 }
             tinyMCE.DOM.setAttribs(e.element, {'width': width, 'height': height});
             }

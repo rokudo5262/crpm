@@ -674,7 +674,7 @@ class Tasks extends AdminController
                 file_put_contents($save, base64_decode($base64));
                 // replace
                 $link = base_url().'media/'.$folder.'/'.$file_name.'.png';
-                $img = '<img width="100" src="'.$link.'">';
+                $img = '<img width="430" src="'.$link.'">';
                 $data = substr_replace($data, $img, $position, strlen($value));
             }
         }
@@ -683,13 +683,13 @@ class Tasks extends AdminController
         return $data;
     } 
     public function remove_a_tag($data) {
-        $image_tag='/<a[^>]+><img width="100" src="http[^>]+><\/a>/i';
+        $image_tag='/<a[^>]+><img width="430" src="http[^>]+><\/a>/i';
         if(preg_match_all($image_tag,$data)) { 
             while(preg_match_all($image_tag, $data, $matchs, PREG_OFFSET_CAPTURE)) {
                 list($values,$position) = $matchs[0][0];
                 list(,$url) = explode('src="', $values);
                 list($url,) = explode('"', $url);
-                $image = '<img width="100" src="'.$url.'">';
+                $image = '<img width="430" src="'.$url.'">';
                 $data = substr_replace($data, $image, $position, strlen($values));
             }
         }
@@ -704,13 +704,13 @@ class Tasks extends AdminController
         return $data;
     }
     public function add_a_tag($data) {
-        $image_tag='/<img width="100" src="[^>]+>/i';
+        $image_tag='/<img width="430" src="[^>]+>/i';
         if(preg_match_all($image_tag,$data)) { 
             while(preg_match_all($image_tag, $data,$matchs,PREG_OFFSET_CAPTURE)) {
                 list($values,$position) = $matchs[0][0];
                 list(,$url)= explode('src="', $values);
                 list($url,)= explode('"', $url);
-                $image = '<a href='.$url.' data-lightbox=kb-attachment><img width="100" src='.$url.'></a>';
+                $image = '<a href='.$url.' data-lightbox=kb-attachment><img width="430" src='.$url.'></a>';
                 $data = substr_replace($data, $image, $position, strlen($values));
             }
         }
