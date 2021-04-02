@@ -625,8 +625,7 @@ class Tasks extends AdminController
         }
     }
 
-    public function update_checklist_item()
-    {
+    public function update_checklist_item() {
         if ($this->input->is_ajax_request()) {
             if ($this->input->post()) {
                 $desc = $this->input->post('description');
@@ -636,9 +635,7 @@ class Tasks extends AdminController
             }
         }
     }
-
-    public function make_public($task_id)
-    {
+    public function make_public($task_id) {
         if (!has_permission('tasks', '', 'edit')) {
             json_encode([
                 'success' => false,
@@ -650,9 +647,7 @@ class Tasks extends AdminController
             'taskHtml' => $this->get_task_data($task_id, true),
         ]);
     }
-
-    public function add_external_attachment()
-    {
+    public function add_external_attachment() {
         if ($this->input->post()) {
             $this->tasks_model->add_attachment_to_database(
                 $this->input->post('task_id'),
@@ -661,9 +656,7 @@ class Tasks extends AdminController
             );
         }
     }
-    
-    public function save_image_and_replace_base64($data)
-    {
+    public function save_image_and_replace_base64($data) {
         $image_tag='/<img src="data:image[^>]+>/i';
         if(preg_match_all($image_tag,$data)) {  
             while(preg_match_all($image_tag, $data, $matchs, PREG_OFFSET_CAPTURE)) {
@@ -681,7 +674,7 @@ class Tasks extends AdminController
                 file_put_contents($save, base64_decode($base64));
                 // replace
                 $link = base_url().'media/'.$folder.'/'.$file_name.'.png';
-                $img = '<img src="'.$link.'">';
+                $img = '<img width="100" src="'.$link.'">';
                 $data = substr_replace($data, $img, $position, strlen($value));
             }
         }
@@ -689,37 +682,42 @@ class Tasks extends AdminController
         $data = $this->add_a_tag($data);
         return $data;
     } 
-
     public function remove_a_tag($data) {
-        $image_tag='/<a[^>]+><img src="http[^>]+><\/a>/i';
+        $image_tag='/<a[^>]+><img width="100" src="http[^>]+><\/a>/i';
         if(preg_match_all($image_tag,$data)) { 
-            while(preg_match_all($image_tag, $data,$matchs,PREG_OFFSET_CAPTURE)) {
+            while(preg_match_all($image_tag, $data, $matchs, PREG_OFFSET_CAPTURE)) {
                 list($values,$position) = $matchs[0][0];
-                list(,$url)= explode('src="', $values);
-                list($url,)= explode('"', $url);
-                $image = '<img src="'.$url.'">';
+                list(,$url) = explode('src="', $values);
+                list($url,) = explode('"', $url);
+                $image = '<img width="100" src="'.$url.'">';
                 $data = substr_replace($data, $image, $position, strlen($values));
+            }
+        }
+        $a_tag='/<a[^>]+><\/a>/i';
+        if(preg_match_all($a_tag,$data)) { 
+            while(preg_match_all($a_tag, $data, $matchs, PREG_OFFSET_CAPTURE)) {
+                list($values,$position) = $matchs[0][0];
+                $blank = '';
+                $data = substr_replace($data, $blank, $position, strlen($values));
             }
         }
         return $data;
     }
     public function add_a_tag($data) {
-        $image_tag='/<img src="[^>]+>/i';
+        $image_tag='/<img width="100" src="[^>]+>/i';
         if(preg_match_all($image_tag,$data)) { 
             while(preg_match_all($image_tag, $data,$matchs,PREG_OFFSET_CAPTURE)) {
                 list($values,$position) = $matchs[0][0];
                 list(,$url)= explode('src="', $values);
                 list($url,)= explode('"', $url);
-                $image = '<a href='.$url.' data-lightbox=kb-attachment><img src='.$url.'></a>';
+                $image = '<a href='.$url.' data-lightbox=kb-attachment><img width="100" src='.$url.'></a>';
                 $data = substr_replace($data, $image, $position, strlen($values));
             }
         }
         return $data;
     }
-
     /* Add new task comment / ajax */
-    public function add_task_comment()
-    {
+    public function add_task_comment() {
         $data            = $this->input->post();
         $data['content'] = $this->input->post('content', false);
         if ($this->input->post('no_editor')) {

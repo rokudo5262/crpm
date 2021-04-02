@@ -3181,26 +3181,23 @@ function elFinderBrowser(field_name, url, type, win) {
 
 // Function to init the tinymce editor
 function init_editor(selector, settings) {
-
     selector = typeof (selector) == 'undefined' ? '.tinymce' : selector;
     var _editor_selector_check = $(selector);
-
     if (_editor_selector_check.length === 0) {
         return;
     }
-
     $.each(_editor_selector_check, function () {
         if ($(this).hasClass('tinymce-manual')) {
             $(this).removeClass('tinymce');
         }
     });
-
     // Original settings
     var _settings = {
         branding: false,
         selector: selector,
         paste_data_images: true,
         browser_spellcheck: true,
+        image_dimensions: true,
         height: 400,
         theme: 'modern',
         skin: 'perfex',
@@ -3218,10 +3215,24 @@ function init_editor(selector, settings) {
         forced_root_block: false,
         autosave_restore_when_empty: false,
         fontsize_formats: '8pt 10pt 12pt 14pt 18pt 24pt 36pt',
-        setup: function (ed) {
+        setup: function (editor) {
             // Default fontsize is 12
-            ed.on('init', function () {
+            editor.on('init', function () {
                 this.getDoc().body.style.fontSize = '12pt';
+            });
+            editor.on('init', function(args) {
+                editor = args.target;
+                editor.on('NodeChange', function(e) {
+                if (e && e.element.nodeName.toLowerCase() == 'img') {
+                    width = e.element.width;
+                    height = e.element.height;
+                    if (width > 100) {
+                        height = height / (width / 100);
+                        width = 100;
+                    }
+                tinyMCE.DOM.setAttribs(e.element, {'width': width, 'height': height});
+                }
+                });
             });
         },
         table_default_styles: {
@@ -7202,6 +7213,7 @@ function init_new_task_comment(manual) {
         parallelUploads: 20,
         maxFiles: 20,
         paramName: 'file',
+
         sending: function (file, xhr, formData) {
             formData.append("taskid", $('#addTaskCommentBtn').attr('data-comment-task-id'));
             if (tinyMCE.activeEditor) {
@@ -7256,6 +7268,20 @@ function init_new_task_comment(manual) {
                     href: site_url + 'assets/plugins/tinymce/plugins/mention/rte-content.css'
                 });
             }
+        });
+        editor.on('init', function(args) {
+            editor = args.target;
+            editor.on('NodeChange', function(e) {
+            if (e && e.element.nodeName.toLowerCase() == 'img') {
+                width = e.element.width;
+                height = e.element.height;
+                if (width > 100) {
+                    height = height / (width / 100);
+                    width = 100;
+                }
+            tinyMCE.DOM.setAttribs(e.element, {'width': width, 'height': height});
+            }
+            });
         });
     }
 
