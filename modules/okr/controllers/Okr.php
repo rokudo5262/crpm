@@ -1212,17 +1212,15 @@ public function approve_request(){
   ]);
   die();      
 }
-public function approver_setting(){
+public function approver_setting() {
   if ($this->input->post()) {
-    $data                = $this->input->post();
-
     $id = $data['approval_setting_id'];
     unset($data['approval_setting_id']);
     if ($id == '') {
       $id = $this->okr_model->add_approval_process($data);
       if ($id) {
-        $message = _l('added_successfully');
-        set_alert('success', $message);
+          $message = _l('added_successfully');
+          set_alert('success', $message);
       }
     } else {
       $success = $this->okr_model->update_approval_process($id, $data);
