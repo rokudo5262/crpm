@@ -146,14 +146,18 @@ class recruitment extends AdminController {
 			$message = '';
 			$data = $this->input->post();
 			if(!is_dir('uploads/hr_jd')) {
-				mkdir('uploads/hr_jd', 775, TRUE);
+				umask(0);
+				mkdir('uploads/hr_jd', 0755, TRUE);
+				chmod('uploads/hr_jd', 0755);
 			}
 			
 			if (!$this->input->post('id')) {
 				$id = $this->recruitment_model->add_job_position($data);
 				if ($id) {
 					if(!is_dir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id)) {
-						mkdir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 775, TRUE);
+						umask(0);
+						mkdir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 0755, TRUE);
+						chmod(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 0755);
 					}
 					if(isset($_FILES)) {
 						$original_file_name = $_FILES['job_jd_file']['name'];
@@ -175,7 +179,9 @@ class recruitment extends AdminController {
 				unset($data['id']);
 
 				if(!is_dir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id)) {
-					mkdir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 775, TRUE);
+					umask(0);
+					mkdir(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 0755, TRUE);
+					chmod(RECRUITMENT_MODULE_UPLOAD_FOLDER . '/hr_jd/' . $id, 0755);
 				}
 
 				if(isset($_FILES)) {
