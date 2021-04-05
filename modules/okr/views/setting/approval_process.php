@@ -5,25 +5,19 @@
  <div class="clearfix"></div>
  <hr class="hr-panel-heading" />
  <div class="clearfix"></div>
-
- <table class="table table-approve scroll-responsive">
- 	<thead>
- 		<th>ID#</th>
- 		<th><?php echo _l('name'); ?></th>
- 		<th><?php echo _l('department'); ?></th>
- 		<th><?php echo _l('okrs'); ?></th>
- 		<th><?php echo _l('options'); ?></th>      
- 	</thead>
- 	<tbody></tbody>
- 	<tfoot>
- 		<td></td>
- 		<td></td>
- 		<td></td>
- 		<td></td>
- 		<td></td>                        
- 	</tfoot>
- </table>
-
+ 
+ <div class="col-md-12 padding-with-table">
+	<?php
+	    $table_data = array(
+			_l('id'),
+	        _l('name'),
+			_l('department'),
+			_l('okrs'),
+			_l('options'),
+	        );
+	    render_datatable($table_data,'approve table-approve');
+	?>
+</div>
  <div class="modal" id="approve_modal" tabindex="-1" role="dialog">
  	<div class="modal-dialog" role="document">
  		<div class="modal-content">

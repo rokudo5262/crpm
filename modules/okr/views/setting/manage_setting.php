@@ -128,12 +128,4 @@
 
     }
   });
-
-
-  var fnServerParams = {  
-
-  }
-   initDataTable('.table-approve', admin_url + 'okr/approval_table', false, false, fnServerParams, [0, 'desc']);
-
-  
 </script>
