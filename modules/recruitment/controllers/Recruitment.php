@@ -689,29 +689,28 @@ class recruitment extends AdminController {
 		}
 	}
 	public function send_mail_new_recruitment_campaign() {
-		$rec_campaign=$this->recruitment_model->get_newest_rec_campaign();
-		$rec_job_position=$this->recruitment_model->get_rec_job_position($rec_campaign->cp_position);
-		$department=$this->recruitment_model->get_department($rec_campaign->cp_department);
-		$id=4;
+		$rec_campaign     = $this->recruitment_model->get_newest_rec_campaign();
+		$rec_job_position = $this->recruitment_model->get_rec_job_position($rec_campaign->cp_position);
+		$department       = $this->recruitment_model->get_department($rec_campaign->cp_department);
+		$id               = $rec_campaign->cp_id;
 		$followers=explode(',',$this->recruitment_model->get_rec_campaign_follower($id));
 		$managers=explode(',',$this->recruitment_model->get_rec_campaign_manager($id));
 		$approvers=explode(',',$this->recruitment_model->get_rec_campaign_approver($id));
 		$notified_staffs=[];
 		foreach($followers as $follower) {
-			$notified_staffs[$follower]="Follower";
+			$notified_staffs[$follower] = "Follower";
 		}
 		foreach($managers as $manager) {
-				if(array_key_exists($manager,$notified_staffs)) {		
-					$notified_staffs[$manager]= $notified_staffs[$manager].", Manager";
-				} else {
-					$notified_staffs[$manager] = "Manager";
-				}
-			}	
+			if(array_key_exists($manager,$notified_staffs)) {		
+				$notified_staffs[$manager] = $notified_staffs[$manager].", Manager";
+			} else {
+				$notified_staffs[$manager] = "Manager";
+			}
+		}	
 		foreach($approvers as $approver) {
 			if(array_key_exists($approver,$notified_staffs)) {
 				$notified_staffs[$approver] = $notified_staffs[$approver].", Approver";
-			}
-			else {
+			} else {
 				$notified_staffs[$approver] = "Approver";
 			}			
 		}
