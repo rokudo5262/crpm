@@ -2137,15 +2137,12 @@ class Okr_model extends App_Model
         if(isset($data['notification_recipient'])){
             $data['notification_recipient'] = implode(",", $data['notification_recipient']);
         }
-
         if(isset($data['department'])){
             $data['department'] = implode(",", $data['department']);
         }
-
         if(isset($data['okrs'])){
             $data['okrs'] = implode(",", $data['okrs']);
         }
-        
         $this->db->insert(db_prefix() .'okr_approval_setting', $data);
         $insert_id = $this->db->insert_id();
         if($insert_id){

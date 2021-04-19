@@ -25,7 +25,6 @@
  				<h4 class="modal-title"><?php echo _l('add_approval'); ?></h4>
  				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
  			</div>
-
  			<?php $setting = []; ?>
  			<?php echo form_open(admin_url('okr/approver_setting'),array('id'=>'approval-setting-form')); ?>
  			<?php $value = (isset($approval_setting)) ? $approval_setting->id : ''; ?>
@@ -48,22 +47,19 @@
  						$value = (isset($approval_setting)) ? $approval_setting->related : '';
  						$value_okrs = (isset($approval_setting)) ? $approval_setting->value_okrs : '';
  						?>
- 						<?php echo render_select('department[]',$department,array('departmentid','name'),'department',$value,array('multiple'=>'true')); ?>
- 						<?php echo render_select('okrs[]',$okrs,array('id','your_target'),'okrs',$value_okrs,array('multiple'=>'true')); ?>
- 						<?php $choose_when_approving = 0;
- 						if(isset($approval_setting)){
+ 						<?php echo render_select('department[]',$department,array('departmentid','name'),'department',$value,array('multiple'=>'true','required'=>'required'),[],'','',false); ?>
+ 						<?php echo render_select('okrs[]',$okrs,array('id','your_target'),'okrs',$value_okrs,array('multiple'=>'true','required'=>'required'),[],'','',false); ?>
+						 <?php $choose_when_approving = 0;
+ 						if(isset($approval_setting)) {
  							$choose_when_approving = $approval_setting->choose_when_approving;
  						} 
  						?>
  						<!-- use for only Leave  start-->
-
  						<div id="notification_recipient" class="notification_recipient">
  							<div class="select-placeholder form-group">
  								<label for="notification_recipient[]"><?php echo _l('notification_recipient'); ?></label>
- 								<select name="notification_recipient[]" id="notification_recipient[]" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" multiple="true" data-action-box="true" data-hide-disabled="true" data-live-search="true">
- 									<?php foreach($staffs as $val){
- 										$selected = '';
- 										?>
+ 								<select name="notification_recipient[]" id="notification_recipient[]" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" multiple="true" data-action-box="true" data-hide-disabled="true" data-live-search="true" required="required">
+ 									<?php foreach($staffs as $val) { $selected = ''; ?>
  										<option value="<?php echo $val['staffid']; ?>">
  											<?php echo get_staff_full_name($val['staffid']); ?>
  										</option>
@@ -71,26 +67,22 @@
  								</select>
  							</div> 
  						</div>
-
  						<?php echo render_input('number_day_approval','maximum_number_of_days_to_sign','','number'); ?>
-
  						<div >
  							<label style="font-weight: 500;"><?php echo _l('approval_process'); ?></label>
  							<div class="checkbox checkbox-inline checkbox-primary pull-right">
  								<input type="checkbox" name="choose_when_approving" id="choose_when_approving" value="1" <?php if($choose_when_approving == 1){echo 'checked';} ?>>
-                <label for="choose_when_approving"><?php echo _l('choose_specific_senders_for_approval'); ?></label>
+               					<label for="choose_when_approving"><?php echo _l('choose_specific_senders_for_approval'); ?></label>
  							</div>
  						</div>
  						<div class="list_approvest">
- 							<hr/>                        
-
+ 							<hr/>                       
  							<div id="item_approve" style="padding-left: 0">
  								<div class="col-md-11" style="padding-left: 0">
  									<div class="col-md-6" style="padding-left: 0;padding-right: 0">
  										<div class="select-placeholder form-group">
  											<label for="approver[0]"><?php echo _l('approver'); ?></label>
  											<select name="approver[0]" id="approver[0]" data-id="0" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-hide-disabled="true">
- 												<option value="" class="hide"></option>
  												<option value="head_of_department" class="hide"><?php echo _l('head_of_department'); ?></option>
  												<option value="direct_manager" class="hide"><?php echo _l('direct_manager'); ?></option>
  												<option value="specific_personnel"><?php echo _l('specific_personnel'); ?></option>
@@ -100,8 +92,7 @@
  									<div class="col-md-6" id="is_staff_0">
  										<div class="select-placeholder form-group">
  											<label for="staff[0]"><?php echo _l('staff'); ?></label>
- 											<select name="staff[0]" id="staff[0]" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-hide-disabled="true" data-live-search="true">
- 												<option value=""></option>
+ 											<select name="staff[0]" id="staff[0]" class="selectpicker" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>" data-hide-disabled="true" data-live-search="true" >
  												<?php foreach($staffs as $val){ ?>
  													<option value="<?php echo $val['staffid']; ?>" <?php echo $selected; ?>>
  														<?php echo get_staff_full_name($val['staffid']); ?>
@@ -117,7 +108,6 @@
  									</span>
  								</div>
  							</div>
-
  						</div>
  					</div>
  				</div>
