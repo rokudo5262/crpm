@@ -96,7 +96,7 @@ class recruitment extends AdminController {
 		}
 	}
 
-	public function get_lastest_job_position_jd_file_ajax($position_id) {
+	public function get_lastest_job_position_jd_file_ajax($position_id = '') {
 		if(empty($position_id))
 			return;
 		date_default_timezone_set('Asia/Ho_Chi_Minh');
