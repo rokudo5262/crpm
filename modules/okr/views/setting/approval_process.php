@@ -5,19 +5,23 @@
  <div class="clearfix"></div>
  <hr class="hr-panel-heading" />
  <div class="clearfix"></div>
- 
- <div class="col-md-12 padding-with-table">
-	<?php
-	    $table_data = array(
-			_l('id'),
-	        _l('name'),
-			_l('department'),
-			_l('okrs'),
-			_l('options'),
-	        );
-	    render_datatable($table_data,'approve table-approve');
-	?>
-</div>
+ <table class="table table-approve scroll-responsive">
+ 	<thead>
+ 		<th>ID#</th>
+ 		<th><?php echo _l('name'); ?></th>
+ 		<th><?php echo _l('department'); ?></th>
+ 		<th><?php echo _l('okrs'); ?></th>
+ 		<th><?php echo _l('options'); ?></th>      
+ 	</thead>
+ 	<tbody></tbody>
+ 	<tfoot>
+ 		<td></td>
+ 		<td></td>
+ 		<td></td>
+ 		<td></td>
+ 		<td></td>                        
+ 	</tfoot>
+ </table>
  <div class="modal" id="approve_modal" tabindex="-1" role="dialog">
  	<div class="modal-dialog" role="document">
  		<div class="modal-content">
@@ -121,66 +125,53 @@
  </div>
 
  <script>
- 	function add(){
+ 	function add() {
  		$('.modal-title').text('<?php echo _l('add_approval'); ?>');
-    $('input[name="approval_setting_id"]').val('');
-    $('input[name="name"]').val('');
-    $('select[name="department[]"]').val('').change();
-    $('select[name="okrs[]"]').val('').change();
-    $('select[name="notification_recipient[]"]').val('').change();
- 		$('input[name="number_day_approval"]').val('');
-    $('.remove_vendor_requests').click();
-    $('select[name="approver[0]"]').val('').change();
-    $('select[name="staff[0]"]').val('').change();
-    $('input[name="choose_when_approving"]').prop('checked', false);
+		$('input[name="approval_setting_id"]').val('');
+		$('input[name="name"]').val('');
+		$('select[name="department[]"]').val('').change();
+		$('select[name="okrs[]"]').val('').change();
+		$('select[name="notification_recipient[]"]').val('').change();
+		$('input[name="number_day_approval"]').val('');
+		$('.remove_vendor_requests').click();
+		$('select[name="approver[0]"]').val('').change();
+		$('select[name="staff[0]"]').val('').change();
+		$('input[name="choose_when_approving"]').prop('checked', false);
  		$('#approve_modal').modal();
  	}
-
- 	function update_approve(el){
+ 	function update_approve(el) {
  		var id = $(el).data('id');
  		$('input[name="approval_setting_id"]').val(id);
  		$('.modal-title').text('<?php echo _l('update_approval'); ?>');
  		$.post(admin_url+'okr/get_approve_setting/'+id).done(function(response){
-      response = JSON.parse(response);
-
- 			if(response.success == true) {
-
- 				var item_approve = jQuery.parseJSON(response.data_setting.setting);
- 				$('.remove_vendor_requests').click();
-
- 				for (var i = 0;i < item_approve.length; i++) {
- 					if(i>0){
- 						$('.new_vendor_requests').click();
- 					}
- 					$('select[name="approver['+i+']"]').val(item_approve[i].approver).change();
- 					if(item_approve[i].approver == 'specific_personnel'){
- 						$('select[name="staff['+i+']"]').val(item_approve[i].staff).change();
- 					}
-               //console.log(item_approve[i].approver);
-           }
-           if(response.data_setting.choose_when_approving == 1){
-           	$('#choose_when_approving').prop("checked", true);
-           	$('.list_approvest').addClass('hide');
-           }
-           else{
-           	$('#choose_when_approving').prop("checked", false);
-           	$('.list_approvest').removeClass('hide');  
-           }
-
-
-           $('input[name="name"]').val(response.data_setting.name);
-
-           $('select[name="department[]"]').val(response.data_setting.department).change();
-           $('select[name="okrs[]"]').val(response.data_setting.okrs).change();
-
-
-           $('select[name="notification_recipient[]"]').val(response.data_setting.notification_recipient).change();
-           $('input[name="number_day_approval"]').val(response.data_setting.number_day_approval);
-
-
-           $('#approve_modal').modal();
-       }
-       $('#savePredefinedReplyFromMessageModal').modal('hide');
+      	response = JSON.parse(response);
+		if(response.success == true) {
+			var item_approve = jQuery.parseJSON(response.data_setting.setting);
+			$('.remove_vendor_requests').click();
+			for (var i = 0;i < item_approve.length; i++) {
+				if(i>0) {
+					$('.new_vendor_requests').click();
+				}
+				$('select[name="approver['+i+']"]').val(item_approve[i].approver).change();
+				if(item_approve[i].approver == 'specific_personnel'){
+					$('select[name="staff['+i+']"]').val(item_approve[i].staff).change();
+				}
+			}
+			if(response.data_setting.choose_when_approving == 1) {
+				$('#choose_when_approving').prop("checked", true);
+				$('.list_approvest').addClass('hide');
+			} else {
+				$('#choose_when_approving').prop("checked", false);
+				$('.list_approvest').removeClass('hide');
+			}
+			$('input[name="name"]').val(response.data_setting.name);
+			$('select[name="department[]"]').val(response.data_setting.department).change();
+			$('select[name="okrs[]"]').val(response.data_setting.okrs).change();
+			$('select[name="notification_recipient[]"]').val(response.data_setting.notification_recipient).change();
+			$('input[name="number_day_approval"]').val(response.data_setting.number_day_approval);
+			$('#approve_modal').modal();
+		}
+//        $('#savePredefinedReplyFromMessageModal').modal('hide');
    });
  	}
  </script>
