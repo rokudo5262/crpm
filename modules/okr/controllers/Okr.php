@@ -957,7 +957,7 @@ class Okr extends AdminController
               }
             }
             $option = '';
-            $option .= '<a href="#" onclick="update_approve(this)" class="btn btn-default btn-icon" data-id="'.$aRow['id'].'" >';
+            $option .= '<a href="#" onclick="update_approve(this); return false;" class="btn btn-default btn-icon" data-id="'.$aRow['id'].'" >';
             $option .= '<i class="fa fa-pencil-square-o"></i>';
             $option .= '</a>';
             $option .= '<a href="' . admin_url('okr/delete_approval_settings/' . $aRow['id']) . '" class="btn btn-danger btn-icon _delete">';
@@ -1213,6 +1213,7 @@ public function approve_request(){
   die();      
 }
 public function approver_setting() {
+  $data = $this->input->post();
   if ($this->input->post()) {
     $id = $data['approval_setting_id'];
     unset($data['approval_setting_id']);

@@ -2113,8 +2113,6 @@ class Okr_model extends App_Model
         }
         return $sup;
     }
-
-
     public function add_approval_process($data)
     {
         unset($data['approval_setting_id']);
@@ -2124,7 +2122,6 @@ class Okr_model extends App_Model
                 $node = [];
                 $node['approver'] = $data['approver'][$key];
                 $node['staff'] = $data['staff'][$key];
-
                 $setting[] = $node;
             }
             unset($data['approver']);
