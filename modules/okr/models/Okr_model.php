@@ -2113,10 +2113,7 @@ class Okr_model extends App_Model
         }
         return $sup;
     }
-
-
-    public function add_approval_process($data)
-    {
+    public function add_approval_process($data) {
         unset($data['approval_setting_id']);
         if(isset($data['approver'])){
             $setting = [];
@@ -2124,56 +2121,60 @@ class Okr_model extends App_Model
                 $node = [];
                 $node['approver'] = $data['approver'][$key];
                 $node['staff'] = $data['staff'][$key];
-
                 $setting[] = $node;
             }
             unset($data['approver']);
             unset($data['staff']);
+        } else {
+            $node = [];
+            $node['approver'] = "";
+            $node['staff'] = "";
+            $setting[] = $node;
+            unset($data['approver']);
+            unset($data['staff']);
         }
-        if(!isset($data['choose_when_approving'])){
+        if(!isset($data['choose_when_approving'])) {
             $data['choose_when_approving'] = 0;
         }
         $data['setting'] = json_encode($setting);
-        if(isset($data['notification_recipient'])){
+        if(isset($data['notification_recipient'])) {
             $data['notification_recipient'] = implode(",", $data['notification_recipient']);
         }
-
-        if(isset($data['department'])){
+        if(isset($data['department'])) {
             $data['department'] = implode(",", $data['department']);
         }
-
-        if(isset($data['okrs'])){
+        if(isset($data['okrs'])) {
             $data['okrs'] = implode(",", $data['okrs']);
         }
-        
         $this->db->insert(db_prefix() .'okr_approval_setting', $data);
         $insert_id = $this->db->insert_id();
-        if($insert_id){
+        if($insert_id) {
             return true;
         }
         return false;
     }
-
-    public function update_approval_process($id, $data)
-    {
-
-        if(isset($data['approver'])){
+    public function update_approval_process($id, $data) {
+        if(isset($data['approver'])) {
             $setting = [];
             foreach ($data['approver'] as $key => $value) {
                 $node = [];
                 $node['approver'] = $data['approver'][$key];
                 $node['staff'] = $data['staff'][$key];
-
                 $setting[] = $node;
             }
-            unset($data['approver']);
-            unset($data['staff']);
+        } else {
+            $node = [];
+            $node['approver'] = "";
+            $node['staff'] = "";
+            $setting[] = $node;
+
         }
+        $data['setting'] = json_encode($setting);
+        unset($data['approver']);
+        unset($data['staff']);
         if(!isset($data['choose_when_approving'])){
             $data['choose_when_approving'] = 0;
         }
-        $data['setting'] = json_encode($setting);
-
         if(isset($data['notification_recipient'])){
             $data['notification_recipient'] = implode(",", $data['notification_recipient']);
         }

@@ -2,12 +2,13 @@
   "use strict";
   var fnServerParams = {
   }
-  initDataTable('.table-circulation', admin_url + 'okr/table_circulation', false, false, fnServerParams, [0, 'desc']);
-  initDataTable('.table-question', admin_url + 'okr/table_question', false, false, fnServerParams, [0, 'desc']);
-  initDataTable('.table-evaluation-criteria', admin_url + 'okr/table_evaluation_criteria', false, false, fnServerParams, [0, 'desc']);
-  initDataTable('.table-unit', admin_url + 'okr/table_unit', false, false, fnServerParams, [0, 'desc']);
-  initDataTable('.table-category', admin_url + 'okr/table_category', false, false, fnServerParams, [0, 'desc']);
-
+     initDataTable('.table-circulation'           , admin_url + 'okr/table_circulation'        , false, false, fnServerParams, [0, 'desc']);
+     initDataTable('.table-question'              , admin_url + 'okr/table_question'           , false, false, fnServerParams, [0, 'desc']);
+     initDataTable('.table-evaluation-criteria'   , admin_url + 'okr/table_evaluation_criteria', false, false, fnServerParams, [0, 'desc']);
+     initDataTable('.table-unit'                  , admin_url + 'okr/table_unit'               , false, false, fnServerParams, [0, 'desc']);
+     initDataTable('.table-category'              , admin_url + 'okr/table_category'           , false, false, fnServerParams, [0, 'desc']);
+     initDataTable('.table-approve'               , admin_url + 'okr/approval_table'           , false, false, fnServerParams, [0, 'desc']);
+  
   appValidateForm($('#form_setting_circulation'), {
            'name_circulation': 'required',
            'from_date': 'required',

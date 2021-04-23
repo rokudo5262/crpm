@@ -20,11 +20,10 @@ class Okr extends AdminController
      * dashboard
      * @return view
      */
-    public function dashboard(){
+    public function dashboard() {
       if(!has_permission('okr','','view') && !has_permission('okr','','view_own') && !is_admin()){
         access_denied('okr');
       }
-
       $data['title'] = _l('dashboard');
       $data['okrs'] = $this->okr_model->get_okrs();
       $data['progress_good'] = $this->okr_model->get_progress_dashboard(1)->count;
@@ -651,12 +650,11 @@ class Okr extends AdminController
      * @param  integer $id
      * @return redirect
      */ 
-    public function delete_okrs($id){
+    public function delete_okrs($id) {
       $response = $this->okr_model->delete_okrs($id);
-      if($response == true){
+      if($response == true) {
         set_alert('success', _l('deleted', _l('okr')));
-      }
-      else{
+      } else {
         set_alert('warning', _l('problem_deleting'));            
       }
       redirect(admin_url('okr/okrs'));
@@ -919,80 +917,60 @@ class Okr extends AdminController
       }
       echo json_encode($html);
     }
-
-    public function approval_table(){
-      $department_name = [];
-      $okrs_name = [];
-     if ($this->input->is_ajax_request()) {
-       if ($this->input->post()) {
-
-        $select = [
-          'id',
-          'id',
-          'id'
-
-        ];
-
-        $where              = [];
-
-        $aColumns     = $select;
-        $sIndexColumn = 'id';
-        $sTable       = db_prefix() . 'okr_approval_setting';
-        $join         = [];
-
-        $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, [
-         'id',
-         'name',         
-         'department',         
-         'okrs'         
-       ]);
-
-
-        $output  = $result['output'];
-        $rResult = $result['rResult'];
-        foreach ($rResult as $aRow) {
-         $row = [];
-         $row[] = $aRow['id']; 
-         $row[] = $aRow['name']; 
-
-         if($aRow['department'] != '' || $aRow['department'] != null){
-          $department = explode(',', $aRow['department']);
-          
-          if(count($department) > 0){
-            foreach ($department as $key_department => $value_department) {
-             $department_name[] =  get_department_name_of_okrs($value_department)->name;
-           }
-         }
-       }
-       $row[] = count($department_name) > 0 ? implode(',', $department_name) : ''; 
-
-       if($aRow['okrs'] != '' || $aRow['okrs'] != null){
-        $okrs = explode(',', $aRow['okrs']);
-        
-        if(count($okrs) > 0){
-          foreach ($okrs as $key_okrs => $value_okr) {
-           $okrs_name[] =  okr_name($value_okr);
-         }
-       }
-     }
-     $row[] = count($okrs_name) > 0 ? implode(',', $okrs_name) : ''; 
-
-     $option = '';
-
-     $option .= '<a href="#" onclick="update_approve(this)" class="btn btn-default btn-icon" data-id="'.$aRow['id'].'" >';
-     $option .= '<i class="fa fa-pencil-square-o"></i>';
-     $option .= '</a>';
-     $option .= '<a href="' . admin_url('okr/delete_approval_settings/' . $aRow['id']) . '" class="btn btn-danger btn-icon _delete">';
-     $option .= '<i class="fa fa-remove"></i>';
-     $option .= '</a>';
-     $row[] = $option; 
-     $output['aaData'][] = $row;                                      
-   }
-   echo json_encode($output);
-   die();
- }
-}
-}
+    public function approval_table() {
+      if ($this->input->is_ajax_request()) {
+        if ($this->input->post()) {
+          $where        = [];
+          $aColumns     = ['id','name','department','okrs',];
+          $sIndexColumn = 'id';
+          $sTable       = db_prefix() . 'okr_approval_setting';
+          $join         = [];
+          $result = data_tables_init($aColumns, $sIndexColumn, $sTable, $join, $where, ['id','name','department','okrs',]);
+          $output  = $result['output'];
+          $rResult = $result['rResult'];
+          foreach ($rResult as $aRow) {
+            $row = [];
+            $row[] = $aRow['id']; 
+            $row[] = $aRow['name']; 
+            if($aRow['department'] != '' || $aRow['department'] != null) {
+              $department = explode(',', $aRow['department']);
+              $department_name=[];
+              if(count($department) > 0) {
+                foreach ($department as $key_department => $value_department) {
+                  if (!empty($value_department)) {
+                    $department_name[] = get_department_name_of_okrs($value_department)->name;
+                  }
+                }
+                $row[] = count($department_name) > 0 ? implode(', ', $department_name) : ''; 
+              }
+            }
+            if($aRow['okrs'] != '' || $aRow['okrs'] != null) {
+              $okrs = explode(',', $aRow['okrs']);
+              $okrs_name=[];
+              if(count($okrs) > 0) {
+                foreach ($okrs as $key_okrs => $value_okr) {
+                  if (!empty($value_okr)) {
+                    $okrs_name[] =  okr_name($value_okr);
+                  }
+                }
+                $row[] = count($okrs_name) > 0 ? implode(', ', $okrs_name) : ''; 
+              }
+            }
+            $option = '';
+            $option .= '<a href="#" onclick="update_approve(this); return false;" class="btn btn-default btn-icon" data-id="'.$aRow['id'].'" >';
+            $option .= '<i class="fa fa-pencil-square-o"></i>';
+            $option .= '</a>';
+            $option .= '<a href="' . admin_url('okr/delete_approval_settings/' . $aRow['id']) . '" class="btn btn-danger btn-icon _delete">';
+            $option .= '<i class="fa fa-remove"></i>';
+            $option .= '</a>';
+            $row[] = $option; 
+            $output['aaData'][] = $row;                                      
+          }
+          echo json_encode($output);
+          die();
+        }
+      }
+    }
 
 public function approval_setting()
 {
@@ -1234,17 +1212,16 @@ public function approve_request(){
   ]);
   die();      
 }
-public function approver_setting(){
+public function approver_setting() {
+  $data = $this->input->post();
   if ($this->input->post()) {
-    $data                = $this->input->post();
-
     $id = $data['approval_setting_id'];
     unset($data['approval_setting_id']);
     if ($id == '') {
       $id = $this->okr_model->add_approval_process($data);
       if ($id) {
-        $message = _l('added_successfully');
-        set_alert('success', $message);
+          $message = _l('added_successfully');
+          set_alert('success', $message);
       }
     } else {
       $success = $this->okr_model->update_approval_process($id, $data);
