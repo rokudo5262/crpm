@@ -18,8 +18,8 @@ if (is_gdpr() && $consentLeads == '1') {
     $aColumns[] = '1';
 }
 $aColumns = array_merge($aColumns, ['company',
-    db_prefix() . 'leads.email as email',
-    db_prefix() . 'leads.phonenumber as phonenumber',
+    // db_prefix() . 'leads.email as email',
+    // db_prefix() . 'leads.phonenumber as phonenumber',
     'lead_value',
     '(SELECT GROUP_CONCAT(name SEPARATOR ",") FROM ' . db_prefix() . 'taggables JOIN ' . db_prefix() . 'tags ON ' . db_prefix() . 'taggables.tag_id = ' . db_prefix() . 'tags.id WHERE rel_id = ' . db_prefix() . 'leads.id and rel_type="lead" ORDER by tag_order ASC LIMIT 1) as tags',
     'firstname as assigned_firstname',
@@ -155,9 +155,9 @@ foreach ($rResult as $aRow) {
     }
     $row[] = $aRow['company'];
 
-    $row[] = ($aRow['email'] != '' ? '<a href="mailto:' . $aRow['email'] . '">' . $aRow['email'] . '</a>' : '');
+    // $row[] = ($aRow['email'] != '' ? '<a href="mailto:' . $aRow['email'] . '">' . $aRow['email'] . '</a>' : '');
 
-    $row[] = ($aRow['phonenumber'] != '' ? '<a href="tel:' . $aRow['phonenumber'] . '">' . $aRow['phonenumber'] . '</a>' : '');
+    // $row[] = ($aRow['phonenumber'] != '' ? '<a href="tel:' . $aRow['phonenumber'] . '">' . $aRow['phonenumber'] . '</a>' : '');
 
     $base_currency = get_base_currency();
     $row[] = ($aRow['lead_value'] != 0 ? app_format_money($aRow['lead_value'],$base_currency->symbol) : '');

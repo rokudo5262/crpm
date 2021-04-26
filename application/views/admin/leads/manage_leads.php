@@ -234,14 +234,14 @@
                                'name'=>_l('lead_company'),
                                'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-company')
                               );
-                              $_table_data[] =   array(
-                               'name'=>_l('leads_dt_email'),
-                               'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-email')
-                              );
-                              $_table_data[] =  array(
-                               'name'=>_l('leads_dt_phonenumber'),
-                               'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-phone')
-                              );
+                              // $_table_data[] =   array(
+                              //  'name'=>_l('leads_dt_email'),
+                              //  'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-email')
+                              // );
+                              // $_table_data[] =  array(
+                              //  'name'=>_l('leads_dt_phonenumber'),
+                              //  'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-phone')
+                              // );
                               $_table_data[] =  array(
                                  'name'=>_l('leads_dt_lead_value'),
                                  'th_attrs'=>array('class'=>'toggleable', 'id'=>'th-lead-value')
