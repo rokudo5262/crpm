@@ -2,46 +2,34 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Projects extends AdminController
-{
-    public function __construct()
-    {
+class Projects extends AdminController {
+    public function __construct() {
         parent::__construct();
         $this->load->model('projects_model');
         $this->load->model('currencies_model');
         $this->load->helper('date');
     }
-
-    public function index()
-    {
+    public function index() {
         close_setup_menu();
         $data['statuses'] = $this->projects_model->get_project_statuses();
         $data['title']    = _l('projects');
         $this->load->view('admin/projects/manage', $data);
     }
-
-    public function table($clientid = '')
-    {
+    public function table($clientid = '') {
         $this->app->get_table_data('projects', [
             'clientid' => $clientid,
         ]);
     }
-
-    public function staff_projects()
-    {
+    public function staff_projects() {
         $this->app->get_table_data('staff_projects');
     }
-
-    public function expenses($id)
-    {
+    public function expenses($id) {
         $this->load->model('expenses_model');
         $this->app->get_table_data('project_expenses', [
             'project_id' => $id,
         ]);
     }
-
-    public function add_expense()
-    {
+    public function add_expense() {
         if ($this->input->post()) {
             $this->load->model('expenses_model');
             $id = $this->expenses_model->add($this->input->post());
@@ -59,13 +47,10 @@ class Projects extends AdminController
             die;
         }
     }
-
-    public function project($id = '')
-    {
+    public function project($id = '') {
         if (!has_permission('projects', '', 'edit') && !has_permission('projects', '', 'create')) {
             access_denied('Projects');
         }
-
         if ($this->input->post()) {
             $data                = $this->input->post();
             $data['description'] = html_purify($this->input->post('description', false));
@@ -95,41 +80,31 @@ class Projects extends AdminController
         } else {
             $data['project']                               = $this->projects_model->get($id);
             $data['project']->settings->available_features = unserialize($data['project']->settings->available_features);
-
             $data['project_members'] = $this->projects_model->get_project_members($id);
             $title                   = _l('edit', _l('project_lowercase'));
         }
-
         if ($this->input->get('customer_id')) {
             $data['customer_id'] = $this->input->get('customer_id');
         }
-
         $data['last_project_settings'] = $this->projects_model->get_last_project_settings();
-
         if (count($data['last_project_settings'])) {
             $key                                          = array_search('available_features', array_column($data['last_project_settings'], 'name'));
             $data['last_project_settings'][$key]['value'] = unserialize($data['last_project_settings'][$key]['value']);
         }
-
-        $data['settings'] = $this->projects_model->get_settings();
+        $ata['settings'] = $this->projects_model->get_settings();
         $data['statuses'] = $this->projects_model->get_project_statuses();
         $data['staff']    = $this->staff_model->get('', ['active' => 1]);
 
         $data['title'] = $title;
         $this->load->view('admin/projects/project', $data);
     }
-
-    public function gantt()
-    {
+    public function gantt() {
         $data['title'] = _l('project_gant');
-
         $selected_statuses = [];
         $selectedMember    = null;
         $data['statuses']  = $this->projects_model->get_project_statuses();
-
         $appliedStatuses = $this->input->get('status');
         $appliedMember   = $this->input->get('member');
-
         $allStatusesIds = [];
         foreach ($data['statuses'] as $status) {
             if (
@@ -147,12 +122,9 @@ class Projects extends AdminController
                 $allStatusesIds[] = $status['id'];
             }
         }
-
         if (count($selected_statuses) == 0) {
             $selected_statuses = $allStatusesIds;
         }
-
-
         $data['selected_statuses'] = $selected_statuses;
 
         if (has_permission('projects', '', 'view')) {
@@ -160,72 +132,54 @@ class Projects extends AdminController
             $data['selectedMember']  = $selectedMember;
             $data['project_members'] = $this->projects_model->get_distinct_projects_members();
         }
-
         $data['gantt_data'] = $this->projects_model->get_all_projects_gantt_data([
             'status' => $selected_statuses,
             'member' => $selectedMember,
         ]);
-
         $this->load->view('admin/projects/gantt', $data);
     }
-
-    public function view($id)
-    {
+    public function view($id) {
         if (has_permission('projects', '', 'view') || $this->projects_model->is_member($id)) {
             close_setup_menu();
             $project = $this->projects_model->get($id);
-
             if (!$project) {
                 blank_page(_l('project_not_found'));
             }
-
             $project->settings->available_features = unserialize($project->settings->available_features);
             $data['statuses']                      = $this->projects_model->get_project_statuses();
-
             $group = !$this->input->get('group') ? 'project_overview' : $this->input->get('group');
-
             // Unable to load the requested file: admin/projects/project_tasks#.php - FIX
             if (strpos($group, '#') !== false) {
                 $group = str_replace('#', '', $group);
             }
-
             $data['tabs'] = get_project_tabs_admin();
             $data['tab']  = $this->app_tabs->filter_tab($data['tabs'], $group);
-
             if (!$data['tab']) {
                 show_404();
             }
-
             $this->load->model('payment_modes_model');
             $data['payment_modes'] = $this->payment_modes_model->get('', [], true);
-
             $data['project']  = $project;
             $data['currency'] = $this->projects_model->get_currency($id);
-
             $data['project_total_logged_time'] = $this->projects_model->total_logged_time($id);
-
             $data['staff']     = $this->staff_model->get('', ['active' => 1]);
             $percent           = $this->projects_model->calc_progress($id);
             $data['bodyclass'] = '';
-
             $this->app_scripts->add(
                 'projects-js',
                 base_url($this->app_scripts->core_file('assets/js', 'projects.js')) . '?v=' . $this->app_scripts->core_version(),
                 'admin',
                 ['app-js', 'jquery-comments-js', 'frappe-gantt-js', 'circle-progress-js']
             );
-
             if ($group == 'project_overview') {
                 $data['members'] = $this->projects_model->get_project_members($id);
                 foreach ($data['members'] as $key => $member) {
                     $data['members'][$key]['total_logged_time'] = 0;
                     $member_timesheets                          = $this->tasks_model->get_unique_member_logged_task_ids($member['staff_id'], ' AND task_id IN (SELECT id FROM ' . db_prefix() . 'tasks WHERE rel_type="project" AND rel_id="' . $this->db->escape_str($id) . '")');
-
                     foreach ($member_timesheets as $member_task) {
                         $data['members'][$key]['total_logged_time'] += $this->tasks_model->calc_task_total_time($member_task->task_id, ' AND staff_id=' . $member['staff_id']);
                     }
                 }
-
                 $data['project_total_days']        = round((human_to_unix($data['project']->deadline . ' 00:00') - human_to_unix($data['project']->start_date . ' 00:00')) / 3600 / 24);
                 $data['project_days_left']         = $data['project_total_days'];
                 $data['project_time_left_percent'] = 100;
@@ -240,7 +194,6 @@ class Projects extends AdminController
                         $data['project_time_left_percent'] = 0;
                     }
                 }
-
                 $__total_where_tasks = 'rel_type = "project" AND rel_id=' . $this->db->escape_str($id);
                 if (!has_permission('tasks', '', 'view')) {
                     $__total_where_tasks .= ' AND ' . db_prefix() . 'tasks.id IN (SELECT taskid FROM ' . db_prefix() . 'task_assigned WHERE staffid = ' . get_staff_user_id() . ')';
@@ -249,22 +202,15 @@ class Projects extends AdminController
                         $__total_where_tasks .= ' AND (rel_type="project" AND rel_id IN (SELECT project_id FROM ' . db_prefix() . 'project_members WHERE staff_id=' . get_staff_user_id() . '))';
                     }
                 }
-
                 $__total_where_tasks = hooks()->apply_filters('admin_total_project_tasks_where', $__total_where_tasks, $id);
-
                 $where = ($__total_where_tasks == '' ? '' : $__total_where_tasks . ' AND ') . 'status != ' . Tasks_model::STATUS_COMPLETE;
-
                 $data['tasks_not_completed'] = total_rows(db_prefix() . 'tasks', $where);
                 $total_tasks                 = total_rows(db_prefix() . 'tasks', $__total_where_tasks);
                 $data['total_tasks']         = $total_tasks;
-
                 $where = ($__total_where_tasks == '' ? '' : $__total_where_tasks . ' AND ') . 'status = ' . Tasks_model::STATUS_COMPLETE . ' AND rel_type="project" AND rel_id="' . $id . '"';
-
                 $data['tasks_completed'] = total_rows(db_prefix() . 'tasks', $where);
-
                 $data['tasks_not_completed_progress'] = ($total_tasks > 0 ? number_format(($data['tasks_completed'] * 100) / $total_tasks, 2) : 0);
                 $data['tasks_not_completed_progress'] = round($data['tasks_not_completed_progress'], 2);
-
                 @$percent_circle        = $percent / 100;
                 $data['percent_circle'] = $percent_circle;
 

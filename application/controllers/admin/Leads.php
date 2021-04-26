@@ -45,16 +45,13 @@ class Leads extends AdminController
         $this->load->view('admin/leads/manage_leads', $data);
     }
 
-    public function table()
-    {
+    public function table() {
         if (!is_staff_member()) {
             ajax_access_denied();
         }
         $this->app->get_table_data('leads');
     }
-
-    public function kanban()
-    {
+    public function kanban() {
         if (!is_staff_member()) {
             ajax_access_denied();
         }
@@ -65,8 +62,7 @@ class Leads extends AdminController
     }
 
     /* Add or update lead */
-    public function lead($id = '')
-    {
+    public function lead($id = '') {
         if (!is_staff_member() || ($id != '' && !$this->leads_model->staff_can_access_lead($id))) {
             ajax_access_denied();
         }
@@ -168,8 +164,7 @@ class Leads extends AdminController
         ];
     }
 
-    public function leads_kanban_load_more()
-    {
+    public function leads_kanban_load_more() {
         if (!is_staff_member()) {
             ajax_access_denied();
         }
@@ -193,8 +188,7 @@ class Leads extends AdminController
         }
     }
 
-    public function switch_kanban($set = 0)
-    {
+    public function switch_kanban($set = 0) {
         if ($set == 1) {
             $set = 'true';
         } else {
@@ -206,8 +200,7 @@ class Leads extends AdminController
         redirect($_SERVER['HTTP_REFERER']);
     }
 
-    public function export($id)
-    {
+    public function export($id) {
         if (is_admin()) {
             $this->load->library('gdpr/gdpr_lead');
             $this->gdpr_lead->export($id);
@@ -215,8 +208,7 @@ class Leads extends AdminController
     }
 
     /* Delete lead from database */
-    public function delete($id)
-    {
+    public function delete($id) {
         if (!$id) {
             redirect(admin_url('leads'));
         }
@@ -244,8 +236,7 @@ class Leads extends AdminController
         redirect($ref);
     }
 
-    public function mark_as_lost($id)
-    {
+    public function mark_as_lost($id) {
         if (!is_staff_member() || !$this->leads_model->staff_can_access_lead($id)) {
             ajax_access_denied();
         }
@@ -262,8 +253,7 @@ class Leads extends AdminController
         ]);
     }
 
-    public function unmark_as_lost($id)
-    {
+    public function unmark_as_lost($id) {
         if (!is_staff_member() || !$this->leads_model->staff_can_access_lead($id)) {
             ajax_access_denied();
         }
