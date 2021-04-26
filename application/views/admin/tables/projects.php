@@ -117,6 +117,7 @@ foreach ($rResult as $aRow) {
 
     $members       = explode(',', $aRow['members']);
     $exportMembers = '';
+    $membersOutput .= '<div style="width:160px;">';
     foreach ($members as $key => $member) {
         if ($member != '') {
             $members_ids = explode(',', $aRow['members_ids']);
@@ -132,8 +133,9 @@ foreach ($rResult as $aRow) {
             $exportMembers .= $member . ', ';
         }
     }
-
+    $membersOutput .= '</div>';
     $membersOutput .= '<span class="hide">' . trim($exportMembers, ', ') . '</span>';
+    
     $row[] = $membersOutput;
 
     $status = get_project_status_by_id($aRow['status']);
