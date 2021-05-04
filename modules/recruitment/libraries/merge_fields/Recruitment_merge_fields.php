@@ -2,10 +2,8 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Recruitment_merge_fields extends App_merge_fields
-{
-    public function build()
-    {
+class Recruitment_merge_fields extends App_merge_fields {
+    public function build() {
         return [
             [
                 'name'      => 'id',
@@ -23,12 +21,12 @@ class Recruitment_merge_fields extends App_merge_fields
                 'available' => ['recruitment'],
             ],
             [
-                'name'      => 'position',
+                'name'      => 'Position',
                 'key'       => '{position}',
                 'available' => ['recruitment'],
             ],
             [
-                'name'      => 'department',
+                'name'      => 'Department',
                 'key'       => '{department}',
                 'available' => ['recruitment'],
             ],
@@ -55,8 +53,7 @@ class Recruitment_merge_fields extends App_merge_fields
      * @param  mixed $teampassword 
      * @return array
      */
-    public function format($id)
-    {
+    public function format($id) {
         $this->ci->load->model('recruitment/recruitment_model');
         $fields = [];
         $this->ci->db->where('cp_id', $id);

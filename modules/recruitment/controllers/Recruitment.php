@@ -715,10 +715,10 @@ class recruitment extends AdminController {
 			}			
 		}
 		foreach($notified_staffs as $key => $value){		
-			$staff=$this->staff_model->get($key);
+			$staff = $this->staff_model->get($key);
 			if(!empty($staff->email)) {
 				// Simulate fake template to be parsed
-				$template  = new StdClass();
+				$template = new StdClass();
 				$template->message  = 
 				'<br/>Hi '.$staff->full_name.'<br/>
 				<br/>You are added as '.$value.' on campaign<br/>
@@ -727,7 +727,7 @@ class recruitment extends AdminController {
 				<br/><strong>Position</strong>: '.$rec_job_position.'<br/>
 				<br/><strong>Department</strong>: '.$department.'<br/>
 				<br/><strong>Reason Recruitment</strong>: '.$rec_campaign->cp_reason_recruitment.'<br />
-				<br/>You can view the campaign on the following link : <a href='.admin_url('recruitment/recruitment_campaign#'.$rec_campaign->cp_id).'>link<a/><br/>
+				<br/>You can view the campaign on the following link : <a href='.admin_url('recruitment/recruitment_campaign#'.$rec_campaign->cp_id).'>"link"<a/><br/>
 				<br/>Kind Regards,<br/>
 				<br/>'.get_option('email_signature').'<br/>' ;
 				$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
@@ -749,6 +749,39 @@ class recruitment extends AdminController {
 			}
 		}
 	}
+	public function send_mail_new_interview_schedule($id,$cp_id) {
+		$staff = $this->staff_model->get($id);
+		$rec_campaign = $this->recruitment_model->get_rec_campaign($cp_id);
+		$interview = $this->recruitment_model->get_newest_interview_schedule();
+		$template = new StdClass();
+		$template->message = 
+		'<br/>Hi '.$staff->full_name.'.<br/>
+		<br/>A new interview has been created.<br/>
+		<br/>You are added as Interviewer on interview<br/>
+		<br/><strong>Interview Name:</strong> '.$interview->is_name.'<br/>
+		<br/><strong>Time:</strong> from '.$interview->from_time.' to '.$interview->to_time.'<br/>
+		<br/><strong>Interview Day:</strong> '.$interview->interview_day.'<br/>
+		<br/><strong>Recruitment Campaign:</strong> '.$rec_campaign->campaign_name.'<br/>
+		<br/>You can view the campaign on the following link: <a href='.admin_url('recruitment/interview_schedule#'.$interview->id).'>"link"<a/><br/>
+		<br/>Kind Regards,<br/>
+		<br/>'.get_option('email_signature').'<br/>' ;
+		$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
+		$template->subject  = _l('interview_letter');
+		$template = parse_email_template($template);
+		hooks()->do_action('before_send_test_smtp_email');
+		$this->email->initialize();
+		$this->email->set_newline(config_item('newline'));
+		$this->email->set_crlf(config_item('crlf'));
+		$this->email->from(get_option('smtp_email'), $template->fromname);
+		$this->email->to($staff->email);
+		$systemBCC = get_option('bcc_emails');
+		if ($systemBCC != '') {
+			$this->email->bcc($systemBCC);
+		}
+		$this->email->subject($template->subject);		
+		$this->email->message($template->message);
+		$this->email->send(true);
+	}
 	/**
 	 * change status campaign
 	 * @param  int $status
@@ -759,7 +792,6 @@ class recruitment extends AdminController {
 		$change = $this->recruitment_model->change_status_campaign($status, $cp_id);
 		$this->send_mail_campaign_status_changed($cp_id);
 		if ($change == true) {
-
 			$message = _l('change_status_campaign') . ' ' . _l('successfully');
 			echo json_encode([
 				'result' => $message,
@@ -770,9 +802,7 @@ class recruitment extends AdminController {
 				'result' => $message,
 			]);
 		}
-
 	}
-
 	/**
 	 * candidate code exists
 	 * @return
@@ -801,7 +831,6 @@ class recruitment extends AdminController {
 			}
 		}
 	}
-
 	/**
 	 * candidate email exists
 	 * @return
@@ -830,7 +859,6 @@ class recruitment extends AdminController {
 			}
 		}
 	}
-
 	/**
 	 * interview schedule
 	 * @param  int $id
@@ -846,7 +874,6 @@ class recruitment extends AdminController {
 		$data['title'] = _l('interview_schedule');
 		$this->load->view('interview_schedule/interview_schedule', $data);
 	}
-
 	/**
 	 * get candidate infor change
 	 * @param  object $candidate
@@ -857,10 +884,8 @@ class recruitment extends AdminController {
 		echo json_encode([
 			'email' => $infor->email,
 			'phonenumber' => $infor->phonenumber,
-
 		]);
 	}
-
 	/**
 	 * interview schedules
 	 * @return redirect
@@ -869,11 +894,12 @@ class recruitment extends AdminController {
 		if ($this->input->post()) {
 			$message = '';
 			$data = $this->input->post();
-
 			if (!$this->input->post('id')) {
-
 				$id = $this->recruitment_model->add_interview_schedules($data);
 				if ($id) {
+					foreach($data['interviewer'] as $key => $value) {
+						$this->send_mail_new_interview_schedule( $value,$data['campaign']);
+					}
 					$message = _l('added_successfully', _l('interview_schedule'));
 					set_alert('success', $message);
 				}
@@ -882,7 +908,6 @@ class recruitment extends AdminController {
 				$id = $data['id'];
 				unset($data['id']);
 				$success = $this->recruitment_model->update_interview_schedules($data, $id);
-
 				if ($success) {
 					$message = _l('updated_successfully', _l('interview_schedule'));
 					set_alert('success', $message);
@@ -892,7 +917,6 @@ class recruitment extends AdminController {
 			die;
 		}
 	}
-
 	/**
 	 * deletecandidate
 	 * @param  int $id
@@ -912,7 +936,6 @@ class recruitment extends AdminController {
 		}
 		redirect(admin_url('recruitment/candidate_profile'));
 	}
-
 	/**
 	 * table interview
 	 * @return
@@ -922,7 +945,6 @@ class recruitment extends AdminController {
 			$this->app->get_table_data(module_views_path('recruitment', 'interview_schedule/table_interview'));
 		}
 	}
-
 	/**
 	 * candidate
 	 * @param  int $id
@@ -930,39 +952,31 @@ class recruitment extends AdminController {
 	 */
 	public function candidate($id) {
 		$data['title'] = _l('candidate_detail');
-
 		$data['candidate'] = $this->recruitment_model->get_candidates($id);
 		$data['skill_name'] ='';
-
-		if($data['candidate']){
-			if($data['candidate']->skill){
+		if($data['candidate']) {
+			if($data['candidate']->skill) {
 				$skill_array = explode(',', $data['candidate']->skill);
 				foreach ($skill_array as $value) {
-					if($value){
+					if($value) {
 					    $skill_value = $this->recruitment_model->get_skill($value);
-					    if($skill_value){
+					    if($skill_value) {
 					    	$data['skill_name'] .= $skill_value->skill_name.', ';
 					    }
 					}
-
 				}
 			}
 		}
-
-
-
 		if ($data['candidate']->rec_campaign > 0) {
 			$campaign = $this->recruitment_model->get_rec_campaign($data['candidate']->rec_campaign);
-			if($campaign){
+			if($campaign) {
 				$data['evaluation'] = $this->recruitment_model->get_evaluation_form_by_position($campaign->cp_position);
-			}else{
+			} else {
 				$data['evaluation'] = '';
 			}
-
 		} else {
 			$data['evaluation'] = '';
 		}
-
 		$data['list_interview'] = $this->recruitment_model->get_interview_by_candidate($id);
 		$data['cd_evaluation'] = $this->recruitment_model->get_cd_evaluation($id);
 		$data['assessor'] = '';
@@ -975,7 +989,6 @@ class recruitment extends AdminController {
 			$data['assessor'] = $data['cd_evaluation'][0]['assessor'];
 			$data['feedback'] = $data['cd_evaluation'][0]['feedback'];
 			$data['evaluation_date'] = $data['cd_evaluation'][0]['evaluation_date'];
-
 			foreach ($data['cd_evaluation'] as $eval) {
 				$data['avg_score'] += ($eval['rate_score'] * $eval['percent']) / 100;
 
@@ -986,14 +999,10 @@ class recruitment extends AdminController {
 				$rs_evaluation[$eval['group_criteria']]['toltal_percent'] += $eval['percent'];
 				$rs_evaluation[$eval['group_criteria']]['result'] += ($eval['rate_score'] * $eval['percent']) / 100;
 			}
-
 			$data['data_group'] = $rs_evaluation;
-
 		}
-
 		$this->load->view('candidate_profile/candidate_detail', $data);
 	}
-
 	/**
 	 * candidate file
 	 * @param  int $id
@@ -1010,7 +1019,6 @@ class recruitment extends AdminController {
 		}
 		$this->load->view('candidate_profile/_file', $data);
 	}
-
 	/**
 	 * deletec andidate attachment
 	 * @param  int $id
@@ -1027,7 +1035,6 @@ class recruitment extends AdminController {
 			die;
 		}
 	}
-
 	/**
 	 * care candidate
 	 * @return json
@@ -1035,7 +1042,6 @@ class recruitment extends AdminController {
 	public function care_candidate() {
 		if ($this->input->post()) {
 			$data = $this->input->post();
-
 			$id = $this->recruitment_model->add_care_candidate($data);
 			if ($id) {
 				$mess = _l('care_candidate_success');
@@ -1048,10 +1054,8 @@ class recruitment extends AdminController {
 					'mess' => $mess,
 				]);
 			}
-
 		}
 	}
-
 	/**
 	 * rating candidate
 	 * @return json
@@ -1059,7 +1063,6 @@ class recruitment extends AdminController {
 	public function rating_candidate() {
 		if ($this->input->post()) {
 			$data = $this->input->post();
-
 			$id = $this->recruitment_model->rating_candidate($data);
 			if ($id == true) {
 				$mess = _l('rating_candidate_success');
@@ -1076,7 +1079,6 @@ class recruitment extends AdminController {
 			}
 		}
 	}
-
 	/**
 	 * send mail candidate
 	 * @return redirect
@@ -1087,12 +1089,10 @@ class recruitment extends AdminController {
 			$rs = $this->recruitment_model->send_mail_candidate($data);
 			if ($rs == true) {
 				set_alert('success', _l('send_mail_successfully'));
-
 			}
 			redirect(admin_url('recruitment/candidate/' . $data['candidate']));
 		}
 	}
-
 	/**
 	 * send mail list candidate
 	 * @return redirect
@@ -1107,13 +1107,10 @@ class recruitment extends AdminController {
 			$rs = $this->recruitment_model->send_mail_list_candidate($data);
 			if ($rs == true) {
 				set_alert('success', _l('send_mail_successfully'));
-
 			}
 			redirect(admin_url('recruitment/candidate_profile'));
-
 		}
 	}
-
 	/**
 	 * check time interview
 	 * @return json
@@ -1129,9 +1126,7 @@ class recruitment extends AdminController {
 						'rs' => $rs,
 					]);
 				} elseif ($data['interview_day'] != '' && $data['from_time'] != '' && $data['to_time'] != '') {
-
 					$check = $this->recruitment_model->check_candidate_interview($data);
-
 					if (count($check) > 0) {
 						$rs = _l('check_candidate_interview_1');
 						echo json_encode([
@@ -1143,13 +1138,10 @@ class recruitment extends AdminController {
 							'return' => false,
 						]);
 					}
-
 				}
 			}
-
 		}
 	}
-
 	/**
 	 * [get_candidate_edit_interview description]
 	 * @param  [type] $id [description]
@@ -2085,7 +2077,6 @@ class recruitment extends AdminController {
 			if ($f == 'name') {
 				$field_array['required'] = true;
 			}
-
 			$_field_object->label = $label;
 			$_field_object->name = $f;
 			$_field_object->fields = [];
@@ -2095,15 +2086,11 @@ class recruitment extends AdminController {
 		$data['bodyclass'] = 'web-to-lead-form';
 		$data['db_fields'] = $db_fields;
 		$data['par_id'] = $id;
-
 		$data['list_rec_campaign'] = $this->recruitment_model->get_rec_campaign();
 		$this->load->model('roles_model');
-
 		$data['roles'] = $this->roles_model->get();
 		$this->load->view('recruitment_channel/recruitment_channel_detail', $data);
-
 	}
-
 	/**
 	 * table recruitment channel
 	 * @return
@@ -2113,7 +2100,6 @@ class recruitment extends AdminController {
 			$this->app->get_table_data(module_views_path('recruitment', 'recruitment_channel/table_recruitment_channel'));
 		}
 	}
-
 	/**
 	 * delete recruitment channel
 	 * @param  int $id
@@ -2123,38 +2109,28 @@ class recruitment extends AdminController {
 		if (!$id) {
 			redirect(admin_url('recruitment/recruitment_campaign'));
 		}
-
 		if (!has_permission('recruitment', '', 'delete()') && !is_admin()) {
 			access_denied('_recruitment_channel');
 		}
-
 		$response = $this->recruitment_model->delete_recruitment_channel($id);
-
 		if ($response == true) {
 			set_alert('success', _l('deleted'));
 		} else {
 			set_alert('warning', _l('problem_deleting'));
 		}
-
 		redirect(admin_url('recruitment/recruitment_channel'));
 	}
-
 	/**
 	 * get recruitment channel data ajax
 	 * @param  int $id
 	 * @return view
 	 */
 	public function get_recruitment_channel_data_ajax($id) {
-
 		$data['id'] = $id;
-
 		$data['total_cv_form'] = $this->recruitment_model->count_cv_from_recruitment_channel($id, 1);
-
 		$data['recruitment_channel'] = $this->recruitment_model->get_recruitment_channel($id);
-
 		$this->load->view('recruitment_channel/recruitment_channel_preview', $data);
 	}
-
 	/**
 	 * add candidate form recruitment channel
 	 * @param redirect
@@ -2173,33 +2149,26 @@ class recruitment extends AdminController {
 			}
 		}
 	}
-
-
 	/**
 	 * calendar interview schedule
 	 * @return view 
 	 */
-	public function calendar_interview_schedule(){
-
+	public function calendar_interview_schedule() {
        	$data['staffs'] = $this->staff_model->get();
 		$data['candidates'] = $this->recruitment_model->get_candidates();
 		$data['list_cd'] = $this->recruitment_model->get_list_cd();
 		$data['rec_campaigns'] = $this->recruitment_model->get_rec_campaign();
-
 		$data['title'] = _l('interview_schedule');
-
         $data['google_calendar_api']  = get_option('google_calendar_api_key');
         $data['title']                = _l('calendar');
         add_calendar_assets();
         $this->load->view('interview_schedule/calendar', $data);
     }
-
     /**
      * get calendar interview schedule data
      * @return json 
      */
-    public function get_calendar_interview_schedule_data()
-    {
+    public function get_calendar_interview_schedule_data() {
         if ($this->input->is_ajax_request()) {
             $data = $this->recruitment_model->get_calendar_interview_schedule_data(
                 $this->input->post('start'),
@@ -2212,15 +2181,13 @@ class recruitment extends AdminController {
             die();
         }
     }
-
     /**
      * switch kanban, recruitment switch kan ban
      * @param  integer $set    
      * @param  boolean $manual 
      * @return redirect         
      */
-    public function switch_kanban_candidate($set = 0, $manual = false)
-    {
+    public function switch_kanban_candidate($set = 0, $manual = false) {
         if ($set == 1) {
             $set = 'false';
         } else {
@@ -2238,27 +2205,21 @@ class recruitment extends AdminController {
             }
         }
     }
-
     /**
      * kanban
      * @return [type] 
      */
-    public function kanban_candidate()
-    {	
+    public function kanban_candidate() {	
         echo html_entity_decode($this->load->view('candidate_profile/kan_ban_candidate', [], true));
     }
-
     /**
      * recruitment tasks kanban load more
      * 
      */
-    public function recruitment_kanban_load_more()
-    {
+    public function recruitment_kanban_load_more() {
         $status = $this->input->get('status');
         $page   = $this->input->get('page');
-
         $candidates = $this->recruitment_model->do_kanban_query($status, $this->input->get('search'), $page, false, []);
-
         foreach ($candidates as $candidate) {
             $this->load->view('candidate_profile/_kan_ban_card_candidate', [
                 'candidate'   => $candidate,
@@ -2266,16 +2227,13 @@ class recruitment extends AdminController {
             ]);
         }
     }
-
-
     /**
      * candidate change status
      * @param  integer $status 
      * @param  integer $id     
      *          
      */
-    public function candidate_change_status($status, $id)
-	{
+    public function candidate_change_status($status, $id) {
 		$change = $this->recruitment_model->change_status_candidate($status, $id);
 		if ($change == true) {
 			$message = _l('change_recruitment_candidate_status') . ' ' . _l('successfully');
@@ -2283,7 +2241,6 @@ class recruitment extends AdminController {
 				'success'=> 'true',
 				'message' => $message,
 			]);
-
 		} else {
 			$message = _l('change_recruitment_candidate_status') . ' ' . _l('fail');
 			echo json_encode([
@@ -2292,7 +2249,6 @@ class recruitment extends AdminController {
 			]);
 		}
 	}
-
 	/**
 	 * skill
 	 * @return redirect
@@ -2322,7 +2278,6 @@ class recruitment extends AdminController {
 			die;
 		}
 	}
-
 	/**
 	 * delete job_position
 	 * @param  integer $id
@@ -2342,28 +2297,20 @@ class recruitment extends AdminController {
 		}
 		redirect(admin_url('recruitment/setting?group=skills'));
 	}
-
 	 /**
      * get position fill data
      * @return html 
      */
-    public function get_position_fill_data()
-    {
+    public function get_position_fill_data() {
         $data = $this->input->post();
-
         $position = $this->recruitment_model->list_position_by_campaign($data['campaign']);
-
-        echo json_encode([
-        'position' => $position
-        ]);
-
+        echo json_encode(['position' => $position]);
     }
-
      /**
      * recruitment campaign setting
      * @return  json
      */
-    public function recruitment_campaign_setting(){
+    public function recruitment_campaign_setting() {
         $data = $this->input->post();
         if($data != 'null'){
             $value = $this->recruitment_model->recruitment_campaign_setting($data);
@@ -2381,7 +2328,7 @@ class recruitment extends AdminController {
             die;
         }
     }
-	public function default_approver(){
+	public function default_approver() {
         $data = $this->input->post();
         if($data != 'null') {
             $value = $this->recruitment_model->default_approver($data);
@@ -2399,7 +2346,6 @@ class recruitment extends AdminController {
             die;
         }
     }
-
     /**
      * company add edit
      * @param  string $id 
@@ -2409,10 +2355,8 @@ class recruitment extends AdminController {
 		$data = $this->input->post();
 		if ($data) {
 			if (!isset($data['id'])) {
-
 				$ids = $this->recruitment_model->add_company($data);
 				if ($ids) {
-
 					// handle commodity list add edit file
 					$success = true;
 					$message = _l('added_successfully');
@@ -2429,47 +2373,33 @@ class recruitment extends AdminController {
 					'url' => admin_url('recruitment/commodity_list'),
 				]);
 				die;
-
 			} else {
-
 				$id = $data['id'];
 				unset($data['id']);
 				$success = $this->recruitment_model->update_company($data, $id);
-
 				/*update file*/
-
 				if ($success == true) {
-
 					$message = _l('updated_successfully');
 					set_alert('success', $message);
 				}
-
 				echo json_encode([
 					'url' => admin_url('recruitment/setting?group=company_list'),
 					'companyid' => $id,
 				]);
 				die;
-
 			}
 		}
-
 	}
-
-
 	/**
 	 * add company attachment
 	 * @param integer $id 
 	 */
 	public function add_company_attachment($id) {
-
 		handle_company_attachments($id);
 		echo json_encode([
-
 			'url' => admin_url('recruitment/setting?group=company_list'),
 		]);
 	}
-
-
 	/**
 	 * get company file url
 	 * @param  integer $company_id 
@@ -2479,42 +2409,29 @@ class recruitment extends AdminController {
 		$arr_company_file = $this->recruitment_model->get_company_attachments($company_id);
 		/*get images old*/
 		$images_old_value = '';
-
 		if (count($arr_company_file) > 0) {
 			foreach ($arr_company_file as $key => $value) {
 				$images_old_value .= '<div class="dz-preview dz-image-preview image_old' . $value["id"] . '">';
-
 				$images_old_value .= '<div class="dz-image">';
 				if (file_exists(RECRUITMENT_COMPANY_UPLOAD . $value["rel_id"] . '/' . $value["file_name"])) {
 					$images_old_value .= '<img class="image-w-h" data-dz-thumbnail alt="' . $value["file_name"] . '" src="' . site_url('modules/recruitment/uploads/company_images/' . $value["rel_id"] . '/' . $value["file_name"]) . '">';
 				} else {
 					$images_old_value .= '<img class="image-w-h" data-dz-thumbnail alt="' . $value["file_name"] . '" src="' . site_url('modules/purchase/uploads/company/company_images/' . $value["rel_id"] . '/' . $value["file_name"]) . '">';
 				}
-
 				$images_old_value .= '</div>';
-
 				$images_old_value .= '<div class="dz-error-mark">';
 				$images_old_value .= '<a class="dz-remove" data-dz-remove>Remove file';
 				$images_old_value .= '</a>';
 				$images_old_value .= '</div>';
-
 				$images_old_value .= '<div class="remove_file">';
-
 				$images_old_value .= '<a href="#" class="text-danger" onclick="delete_company_attachment(this,' . $value["id"] . '); return false;"><i class="fa fa fa-times"></i></a>';
-
 				$images_old_value .= '</div>';
-
 				$images_old_value .= '</div>';
 			}
 		}
-
-		echo json_encode([
-			'arr_images' => $images_old_value,
-		]);
+		echo json_encode(['arr_images' => $images_old_value,]);
 		die();
-
 	}
-
 	/**
 	 * delete company file
 	 * @param  integer $attachment_id 
@@ -2524,14 +2441,11 @@ class recruitment extends AdminController {
 		if (!has_permission('recruitment', '', 'delete') && !is_admin()) {
 			access_denied('recruitment');
 		}
-
 		$file = $this->misc_model->get_file($attachment_id);
 		echo json_encode([
 			'success' => $this->recruitment_model->delete_company_file($attachment_id),
 		]);
 	}
-
-
 	/**
 	 * delete company
 	 * @param  integer $id 
@@ -2551,8 +2465,6 @@ class recruitment extends AdminController {
 		}
 		redirect(admin_url('recruitment/setting?group=company_list'));
 	}
-
-
 	/**
 	 * industry
 	 * @return redirect 
@@ -2582,7 +2494,6 @@ class recruitment extends AdminController {
 			die;
 		}
 	}
-
 	/**
 	 * delete job_position
 	 * @param  integer $id
@@ -2601,27 +2512,5 @@ class recruitment extends AdminController {
 			set_alert('warning', _l('problem_deleting'));
 		}
 		redirect(admin_url('recruitment/setting?group=industry_list'));
-	}
-    /**
-     * Sends a mail.
-     * @return json
-     */
-	public function send_mail() {
-		$this->email->from('troy@reputable.asia', 'Your Name');
-		$this->email->to('trump@reputable.asia');
-		$this->email->subject('Email Test');
-		$this->email->message('Testing the email class.');
-		$this->email->send();
-		if($this->email->send()) {
-			$success = "true";
-			echo json_encode([
-				'success' => $success,
-			]);
-		} else {
-			$success = "false";
-			echo json_encode([
-				'success' => $success,
-			]);
-		}
 	}
 }

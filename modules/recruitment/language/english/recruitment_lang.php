@@ -329,3 +329,7 @@ $lang['position_in_the_old_company'] = 'Position in the old company';
 $lang['default_approver'] = 'Default Approver';
 $lang['approver'] = 'Approver';
 $lang['created_by'] = 'Created By';
+$lang['interview_letter'] = 'Interview Letter';
+$lang['campaign_status_changed'] = 'Campaign Status Changed';
+$lang['new_recruitment_campaign'] = 'New Recruitment Campaign';
+$lang['new_interview_schedule'] = 'New Interview Schedule';
