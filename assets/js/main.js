@@ -3485,8 +3485,8 @@ function fix_kanban_height(col_px, container_px) {
     // Set the width of the kanban container
     $("body").find('div.dt-loader').remove();
     var kanbanCol = $('.kan-ban-content-wrapper');
-    kanbanCol.css('max-height', (window.innerHeight - col_px + 20) + 'px');
-    $('.kan-ban-content').css('min-height', (window.innerHeight - col_px + 20) + 'px');
+    kanbanCol.css('max-height', (window.innerHeight - col_px + 45) + 'px');
+    $('.kan-ban-content').css('min-height', (window.innerHeight - col_px + 45) + 'px');
     var kanbanColCount = parseInt(kanbanCol.length);
     $('.container-fluid').css('min-width', (kanbanColCount * container_px) + 'px');
 }
