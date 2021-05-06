@@ -35,7 +35,7 @@
     ?>
 </div>
 
-<div class="project-filter-wrapper btn-group pull-left mleft10 mbot25">
+<div class="project-filter-wrapper btn-group pull-left mleft10 mbot10">
     <select id="project-filter" data-width="300px" multiple>
         <option class="none_project_related display-order-0" value="-1"><?php echo strtoupper(_l('task_none_project_related')) ?></option>
         <?php foreach($tasks_filter_projects as $index => $tf_project) {
@@ -45,7 +45,7 @@
     </select>
 </div>
 
-<div class="btn-group pull-left mleft10 mbot25 btn-with-tooltip-group _filter_data" data-toggle="tooltip"
+<div class="btn-group pull-left mleft10 mbot10 btn-with-tooltip-group _filter_data" data-toggle="tooltip"
      data-title="<?php echo _l('filter_by'); ?>">
 
     <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
@@ -126,7 +126,7 @@
     </ul>
 </div>
 
-<div class="pull-left mleft10 mbot25" data-toggle="tooltip" data-title="<?php echo _l('kanban_refresh'); ?>">
+<div class="pull-left mleft10 mbot10" data-toggle="tooltip" data-title="<?php echo _l('kanban_refresh'); ?>">
     <button class="btn btn-primary" onclick="tasks_kanban_advance();">
         <i class="fa fa-refresh"></i>
     </button>

@@ -42,36 +42,37 @@ module.exports = function(grunt) {
         },
         cssmin: {
             target: {
-                files: [{
-                        src: ['assets/themes/perfex/css/style.css'],
-                        dest: 'assets/themes/perfex/css/style.min.css',
-                        ext: '.min.css'
-                    },
-                    {
-                        src: ['assets/css/bs-overides.css'],
-                        dest: 'assets/css/bs-overides.min.css',
-                        ext: '.min.css'
-                    },
-                    {
-                        src: ['assets/css/forms.css'],
-                        dest: 'assets/css/forms.min.css',
-                        ext: '.min.css'
-                    },
+                files: [
+                    // {
+                    //     src: ['assets/themes/perfex/css/style.css'],
+                    //     dest: 'assets/themes/perfex/css/style.min.css',
+                    //     ext: '.min.css'
+                    // },
+                    // {
+                    //     src: ['assets/css/bs-overides.css'],
+                    //     dest: 'assets/css/bs-overides.min.css',
+                    //     ext: '.min.css'
+                    // },
+                    // {
+                    //     src: ['assets/css/forms.css'],
+                    //     dest: 'assets/css/forms.min.css',
+                    //     ext: '.min.css'
+                    // },
                     {
                         src: ['assets/css/style.css'],
                         dest: 'assets/css/style.min.css',
                         ext: '.min.css'
                     },
-                    {
-                        src: ['assets/css/reset.css'],
-                        dest: 'assets/css/reset.min.css',
-                        ext: '.min.css'
-                    },
-                    {
-                        src: ['assets/builds/vendor-admin.css'],
-                        dest: 'assets/builds/vendor-admin.css',
-                        ext: '.css'
-                    },
+                    // {
+                    //     src: ['assets/css/reset.css'],
+                    //     dest: 'assets/css/reset.min.css',
+                    //     ext: '.min.css'
+                    // },
+                    // {
+                    //     src: ['assets/builds/vendor-admin.css'],
+                    //     dest: 'assets/builds/vendor-admin.css',
+                    //     ext: '.css'
+                    // },
                 ]
             }
         },

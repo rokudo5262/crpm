@@ -1754,7 +1754,7 @@ li .nav-second-level li {
 }
 
 .content {
-    padding: 10px 25px 25px 25px;
+    padding: 10px 25px 10px 25px;
     min-width: 320px;
 }
 
@@ -2309,7 +2309,7 @@ input[type="radio"] .styled:checked+label::after {
     background: #fff;
     border: 1px solid #dce1ef;
     border-radius: 4px;
-    padding: 20px;
+    padding: 10px;
     position: relative;
 }
 
@@ -9227,8 +9227,7 @@ body.kan-ban-body .dt-loader {
 }
 
 body.kan-ban-body .row._buttons {
-    margin-top: 10px;
-    margin-bottom: -10px;
+    margin-bottom: -20px;
 }
 
 #side-menu li .nav-second-level li >.badge,

@@ -11,7 +11,7 @@ foreach ($task_statuses as $status) {
   <ul class="kan-ban-col tasks-kanban" data-col-status-id="<?php echo $status['id']; ?>" data-total-pages="<?php echo $total_pages; ?>">
     <li class="kan-ban-col-wrapper">
       <div class="border-right panel_s">
-        <div class="panel-heading-bg" style="background:<?php echo $status['color']; ?>;border-color:<?php echo $status['color']; ?>;color:#fff; ?>" data-status-id="<?php echo $status['id']; ?>">
+        <div class="panel-heading-bg" style="background:<?php echo $status['color']; ?>;border-color:<?php echo $status['color']; ?>;color:#fff;" data-status-id="<?php echo $status['id']; ?>">
           <div class="kan-ban-step-indicator<?php if($status['id'] == Tasks_model::STATUS_COMPLETE){ echo ' kan-ban-step-indicator-full'; } ?>"></div>
           <span class="heading"><?php echo format_task_status($status['id'],false,true); ?>
           </span>
