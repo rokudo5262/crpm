@@ -32,7 +32,7 @@
                         <?php } ?>
                      </div>
                   </div>
-                  <hr class="hr-panel-heading hr-10" />
+                  <!-- <hr class="hr-panel-heading hr-10" /> -->
                   <div class="clearfix"></div>
                   <?php
                   // if($this->session->has_userdata('tasks_kanban_view') && $this->session->userdata('tasks_kanban_view') == 'true') { ?>
