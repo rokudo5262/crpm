@@ -1273,31 +1273,31 @@ class Tasks_model extends App_Model
             $regex = "/data\-mention\-id\=\"(\d+)\"/";
             if (preg_match_all($regex, $data['content'], $mentionedStaff, PREG_PATTERN_ORDER)) {
                 $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id, true, $mentionedStaff[1], 'mention');
-                $this->_send_task_mentioned_users_notification($description,
-                    $data['taskid'],
-                    $mentionedStaff[1],
-                    'task_new_comment_to_staff',
-                    $additional_data,
-                    $insert_id
-                );
+                // $this->_send_task_mentioned_users_notification($description,
+                //     $data['taskid'],
+                //     $mentionedStaff[1],
+                //     'task_new_comment_to_staff',
+                //     $additional_data,
+                //     $insert_id
+                // );
             } else {
                 $this->_send_task_comment_notification_telegram($data['taskid'], _strip_tags($data['content']), $insert_id, false,$mentionedStaff =[],'add_comment');
 
-                $this->_send_task_responsible_users_notification($description,
-                    $data['taskid'],
-                    false,
-                    'task_new_comment_to_staff',
-                    $additional_data,
-                    $insert_id
-                );
+                // $this->_send_task_responsible_users_notification($description,
+                //     $data['taskid'],
+                //     false,
+                //     'task_new_comment_to_staff',
+                //     $additional_data,
+                //     $insert_id
+                // );
 
                 $this->db->where('project_id', $task->rel_id);
                 $this->db->where('name', 'view_task_comments');
                 $project_settings = $this->db->get(db_prefix() . 'project_settings')->row();
 
-                if ($project_settings && $project_settings->value == 1) {
-                    $this->_send_customer_contacts_notification($data['taskid'], 'task_new_comment_to_customer');
-                }
+                // if ($project_settings && $project_settings->value == 1) {
+                //     $this->_send_customer_contacts_notification($data['taskid'], 'task_new_comment_to_customer');
+                // }
             }
 
             hooks()->do_action('task_comment_added', ['task_id' => $data['taskid'], 'comment_id' => $insert_id]);
@@ -1338,7 +1338,7 @@ class Tasks_model extends App_Model
 
                 $member = $this->staff_model->get($data['follower']);
 
-                send_mail_template('task_added_as_follower_to_staff', $member->email, $data['follower'], $data['taskid']);
+                // send_mail_template('task_added_as_follower_to_staff', $member->email, $data['follower'], $data['taskid']);
             }
 
             $description = 'not_task_added_someone_as_follower';
@@ -1355,7 +1355,7 @@ class Tasks_model extends App_Model
                 $description = 'not_task_added_himself_as_follower';
             }
 
-            $this->_send_task_responsible_users_notification($description, $data['taskid'], $data['follower'], '', $additional_notification_data);
+            // $this->_send_task_responsible_users_notification($description, $data['taskid'], $data['follower'], '', $additional_notification_data);
 
             hooks()->do_action('task_follower_added', [
                 'staff_id' => $data['follower'],
@@ -1428,7 +1428,7 @@ class Tasks_model extends App_Model
 
                 $member = $this->staff_model->get($data['assignee']);
 
-                send_mail_template('task_assigned_to_staff', $member->email, $data['assignee'], $data['taskid']);
+                // send_mail_template('task_assigned_to_staff', $member->email, $data['assignee'], $data['taskid']);
             }
 
             $description                  = 'not_task_assigned_someone';
@@ -1447,7 +1447,7 @@ class Tasks_model extends App_Model
                 $this->projects_model->log_activity($task->rel_id, 'project_activity_new_task_assignee', $task->name . ' - ' . get_staff_full_name($data['assignee']), $task->visible_to_client);
             }
 
-            $this->_send_task_responsible_users_notification($description, $data['taskid'], $data['assignee'], '', $additional_notification_data);
+            // $this->_send_task_responsible_users_notification($description, $data['taskid'], $data['assignee'], '', $additional_notification_data);
 
             hooks()->do_action('task_assignee_added', [
                 'staff_id' => $assigneeId,
@@ -1936,9 +1936,9 @@ class Tasks_model extends App_Model
 
             $this->_send_task_responsible_staff_notification_telegram($task_id, $task_old_status);
 
-            $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
+            // $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
 
-            $this->_send_customer_contacts_notification($task_id, 'task_status_changed_to_customer');
+            // $this->_send_customer_contacts_notification($task_id, 'task_status_changed_to_customer');
             hooks()->do_action('task_status_changed', ['status' => $status, 'task_id' => $task_id]);
 
             return true;
@@ -2049,9 +2049,9 @@ class Tasks_model extends App_Model
 
             $this->_send_task_responsible_staff_notification_telegram($id, 5);
 
-            $this->_send_task_responsible_users_notification('not_task_unmarked_as_complete', $id, false, 'task_status_changed_to_staff', serialize([
-                $task->name,
-            ]));
+            // $this->_send_task_responsible_users_notification('not_task_unmarked_as_complete', $id, false, 'task_status_changed_to_staff', serialize([
+            //     $task->name,
+            // ]));
 
             hooks()->do_action('task_status_changed', ['status' => $status, 'task_id' => $id]);
 
