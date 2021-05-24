@@ -1277,7 +1277,8 @@ class Tasks_model extends App_Model
                 $this->_send_task_mentioned_users_notification($description,
                     $data['taskid'],
                     $mentionedStaff[1],
-                    'task_new_comment_to_staff',
+                    // 'task_new_comment_to_staff',
+                    '',
                     $additional_data,
                     $insert_id
                 );
@@ -1940,8 +1941,7 @@ class Tasks_model extends App_Model
             $this->_send_task_responsible_staff_notification_telegram($task_id, $task_old_status);
 
             // $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
-            // $this->_send_task_responsible_users_notification($description, $task_id, false, '', serialize($not_data));
-            $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
+            $this->_send_task_responsible_users_notification($description, $task_id, false, '', serialize($not_data));
 
             $this->_send_customer_contacts_notification($task_id, 'task_status_changed_to_customer');
             hooks()->do_action('task_status_changed', ['status' => $status, 'task_id' => $task_id]);
