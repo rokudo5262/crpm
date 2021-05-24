@@ -2183,7 +2183,7 @@ class Tasks_model extends App_Model
                 }
 
                 if ($email_template != '') {
-                    // send_mail_template($email_template, $member['email'], $member['staffid'], $taskid);
+                    send_mail_template($email_template, $member['email'], $member['staffid'], $taskid);
                 }
             }
         }
