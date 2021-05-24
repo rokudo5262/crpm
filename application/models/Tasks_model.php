@@ -1,3 +1,4 @@
+
 <?php
 
 defined('BASEPATH') or exit('No direct script access allowed');
@@ -1286,7 +1287,8 @@ class Tasks_model extends App_Model
                 $this->_send_task_responsible_users_notification($description,
                     $data['taskid'],
                     false,
-                    'task_new_comment_to_staff',
+                    // 'task_new_comment_to_staff',
+                    '',
                     $additional_data,
                     $insert_id
                 );
@@ -1625,7 +1627,8 @@ class Tasks_model extends App_Model
 
             if ($notification == true) {
                 $description = 'not_task_new_attachment';
-                $this->_send_task_responsible_users_notification($description, $rel_id, false, 'task_new_attachment_to_staff');
+                // $this->_send_task_responsible_users_notification($description, $rel_id, false, 'task_new_attachment_to_staff');
+                $this->_send_task_responsible_users_notification($description, $rel_id, false, '');
                 $this->_send_customer_contacts_notification($rel_id, 'task_new_attachment_to_customer');
             }
 
@@ -1936,6 +1939,8 @@ class Tasks_model extends App_Model
 
             $this->_send_task_responsible_staff_notification_telegram($task_id, $task_old_status);
 
+            // $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
+            // $this->_send_task_responsible_users_notification($description, $task_id, false, '', serialize($not_data));
             $this->_send_task_responsible_users_notification($description, $task_id, false, 'task_status_changed_to_staff', serialize($not_data));
 
             $this->_send_customer_contacts_notification($task_id, 'task_status_changed_to_customer');
@@ -2049,7 +2054,8 @@ class Tasks_model extends App_Model
 
             $this->_send_task_responsible_staff_notification_telegram($id, 5);
 
-            $this->_send_task_responsible_users_notification('not_task_unmarked_as_complete', $id, false, 'task_status_changed_to_staff', serialize([
+            // $this->_send_task_responsible_users_notification('not_task_unmarked_as_complete', $id, false, 'task_status_changed_to_staff', serialize([
+            $this->_send_task_responsible_users_notification('not_task_unmarked_as_complete', $id, false, '', serialize([
                 $task->name,
             ]));
 
@@ -2782,7 +2788,7 @@ class Tasks_model extends App_Model
             }
 
             if ($email_template != '') {
-                // send_mail_template($email_template, $member->email, $member->staffid, $taskid);
+                send_mail_template($email_template, $member->email, $member->staffid, $taskid);
             }
         }
 
