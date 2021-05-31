@@ -2897,3 +2897,6 @@ body[dir="rtl"].safari .table-responsive .table {
     margin:0 auto;
 }
 
+.customers-nav-item-client-feedback, .customers-nav-item-dailyreport {
+    display: none;
+} 
