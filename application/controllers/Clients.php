@@ -26,6 +26,36 @@ class Clients extends ClientsController
 
         $data['project_statuses'] = $this->projects_model->get_project_statuses();
         $data['title']            = get_company_name(get_client_user_id());
+
+        /** Add 'Ticket Summary' section on client home */
+
+        $status = '';
+        if (!has_contact_permission('support')) {
+            set_alert('warning', _l('access_denied'));
+            redirect(site_url());
+        }
+
+        $where = db_prefix() . 'tickets.userid=' . get_client_user_id();
+        if (!can_logged_in_contact_view_all_tickets()) {
+            $where .= ' AND ' . db_prefix() . 'tickets.contactid=' . get_contact_user_id();
+        }
+
+        $data['show_submitter_on_table'] = show_ticket_submitter_on_clients_area_table();
+
+        $defaultStatuses = hooks()->apply_filters('customers_area_list_default_ticket_statuses', [1, 2, 3, 4]);
+        // By default only open tickets
+        if (!is_numeric($status)) {
+            $where .= ' AND status IN (' . implode(', ', $defaultStatuses) . ')';
+        } else {
+            $where .= ' AND status=' . $this->db->escape_str($status);
+        }
+
+        $data['list_statuses'] = is_numeric($status) ? [$status] : $defaultStatuses;
+        $data['bodyclass']     = 'tickets';
+        $data['tickets']       = $this->tickets_model->get('', $where);
+        $data['title']         = _l('clients_tickets_heading');
+        /** End 'Ticket Summary' */
+
         $this->data($data);
         $this->view('home');
         $this->layout();
