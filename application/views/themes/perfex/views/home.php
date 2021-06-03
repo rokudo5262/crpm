@@ -11,6 +11,9 @@
 					</div>
 				</div>
 			</div>
+		<?php } ?>
+		<?php hooks()->do_action('client_area_after_project_overview'); ?>
+		<?php if(has_contact_permission('support')) { ?>
 			<div class="panel_s">
 				<div class="panel-body">
 					<div class="row">
@@ -38,7 +41,6 @@
 				</div>
 			</div>
 		<?php } ?>
-		<?php hooks()->do_action('client_area_after_project_overview'); ?>
 		<div class="panel_s">
 			<?php
 			if(has_contact_permission('invoices')){ ?>
