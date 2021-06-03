@@ -9,3 +9,4 @@ application/config/config.php
 *.iml
 /node_modules
 /package-lock.json
+/.phpintel
