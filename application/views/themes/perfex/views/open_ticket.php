@@ -71,7 +71,7 @@
                   </div>
                   <?php } ?>
                   <div class="custom-fields">
-                     <?php echo render_custom_fields('tickets','',array('show_on_client_portal'=>1)); ?>
+                     <?php echo render_custom_fields('tickets','',array('show_on_ticket_form'=>1)); ?>
                   </div>
                </div>
             </div>
