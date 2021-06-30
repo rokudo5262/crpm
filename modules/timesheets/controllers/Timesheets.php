@@ -695,7 +695,7 @@ public function add_requisition_ajax(){
 			}elseif($data['rel_type'] == '3'){
 				$rel_type = 'Go_out';
 			}elseif($data['rel_type'] == '4'){
-				$rel_type = 'Go_on_bussiness';
+				$rel_type = 'Go_on_bussiness_or_WFH';
 			}elseif($data['rel_type'] == '5'){
 				$rel_type = 'quit_job'; 
 			}elseif($data['rel_type'] == '6'){
@@ -810,7 +810,7 @@ public function add_requisition_ajax(){
 		}elseif($data['request_leave']->rel_type == '3'){
 			$rel_type = 'Go_out';
 		}elseif($data['request_leave']->rel_type == '4'){
-			$rel_type = 'Go_on_bussiness';
+			$rel_type = 'Go_on_bussiness_or_WFH';
 		}elseif($data['request_leave']->rel_type == '5'){
 			$rel_type = 'quit_job'; 
 		}elseif($data['request_leave']->rel_type == '6'){
@@ -4135,7 +4135,7 @@ function get_custom_type_shiftwork(){
 				}else if($aRow['rel_type'] == 3 ){
 					$row[] = '<p>'. _l('Go_out') .'</p>';
 				}else if($aRow['rel_type'] == 4 ){
-					$row[] = '<p>'. _l('Go_on_bussiness') .'</p>';
+					$row[] = '<p>'. _l('Go_on_bussiness_or_WFH') .'</p>';
 				}else if($aRow['rel_type'] == 5 ){
 					$row[] = '<p>'. _l('quit_job') .'</p>';
 				}else{
