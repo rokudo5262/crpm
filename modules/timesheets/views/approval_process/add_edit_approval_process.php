@@ -28,7 +28,7 @@
           5 => ['id' => 'late', 'name' => _l('late')],
           6 => ['id' => 'early', 'name' => _l('early')],
           7 => ['id' => 'Go_out', 'name' => _l('Go_out')],
-          8 => ['id' => 'Go_on_bussiness', 'name' => _l('Go_on_bussiness')],
+          8 => ['id' => 'Go_on_bussiness_or_WFH', 'name' => _l('Go_on_bussiness_or_WFH')],
         ]; 
         $value = (isset($approval_setting)) ? $approval_setting->related : '';
         ?>

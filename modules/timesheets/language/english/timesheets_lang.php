@@ -771,4 +771,4 @@ $lang['CD_timekeeping'] = 'Sick leave';
 $lang['allow_attendance_by_route']  = 'Allow attendance by route';
 $lang['route_point_is_unknown']  = 'Route point is unknown';
 $lang['table_workplace_management'] = 'Timesheet - Workplace management';
-
+$lang['Go_on_bussiness_or_WFH']        = 'Go on business or WFH';
