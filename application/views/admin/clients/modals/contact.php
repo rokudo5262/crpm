@@ -90,6 +90,14 @@
                         <?php echo _l( 'contact_primary'); ?>
                     </label>
                 </div>
+                <div class="checkbox checkbox-primary">
+                    <input type="checkbox" name="is_show_all_topics" id="is_show_all_topics" 
+                    <?php if((!isset($contact) && total_rows( db_prefix().'contacts',array('is_show_all_topics'=>1,'userid'=>$customer_id)) == 0) || (isset($contact) && $contact->is_show_all_topics == 1)){echo 'checked';}; ?> 
+                        <?php if((isset($contact) && total_rows( db_prefix().'contacts',array('is_show_all_topics'=>1,'userid'=>$customer_id)) == 1 && $contact->is_show_all_topics == 1)) ?>>
+                    <label for="is_show_all_topics">
+                        <?php echo _l( 'show_all_tickets'); ?>
+                    </label>
+                </div>
                 <?php if(!isset($contact) && is_email_template_active('new-client-created')){ ?>
                 <div class="checkbox checkbox-primary">
                     <input type="checkbox" name="donotsendwelcomeemail" id="donotsendwelcomeemail">
