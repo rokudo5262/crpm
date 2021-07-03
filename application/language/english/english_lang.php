@@ -2273,6 +2273,7 @@ $lang['new_contact']                             = 'New Contact';
 $lang['contact']                                 = 'Contact';
 $lang['contact_lowercase']                       = 'contact';
 $lang['contact_primary']                         = 'Primary Contact';
+$lang['show_all_tickets']                         = 'Show all tickets';
 $lang['contact_position']                        = 'Position';
 $lang['contact_active']                          = 'Active';
 $lang['client_company_info']                     = 'Company details';
