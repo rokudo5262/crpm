@@ -631,6 +631,8 @@ class Clients extends ClientsController
             $where .= ' AND ' . db_prefix() . 'tickets.contactid=' . get_contact_user_id();
         }
 
+        $where .= ' AND ' . db_prefix() . 'contacts.is_show_all_topics= 1';
+
         $data['show_submitter_on_table'] = show_ticket_submitter_on_clients_area_table();
 
         $defaultStatuses = hooks()->apply_filters('customers_area_list_default_ticket_statuses', [1, 2, 3, 4]);

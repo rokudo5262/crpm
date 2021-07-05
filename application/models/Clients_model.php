@@ -327,6 +327,7 @@ class Clients_model extends App_Model
 
         $permissions        = isset($data['permissions']) ? $data['permissions'] : [];
         $data['is_primary'] = isset($data['is_primary']) ? 1 : 0;
+        $data['is_show_all_topics'] = isset($data['is_show_all_topics']) ? 1 : 0;
 
         // Contact cant change if is primary or not
         if ($client_request == true) {
@@ -363,6 +364,14 @@ class Clients_model extends App_Model
                 $this->db->where('id !=', $id);
                 $this->db->update(db_prefix() . 'contacts', [
                     'is_primary' => 0,
+                ]);
+            }
+
+            if (isset($data['is_show_all_topics']) && $data['is_show_all_topics'] == 1) {
+                $this->db->where('userid', $contact->userid);
+                $this->db->where('id !=', $id);
+                $this->db->update(db_prefix() . 'contacts', [
+                    'is_show_all_topics' => 0,
                 ]);
             }
         }
