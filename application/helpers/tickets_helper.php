@@ -162,14 +162,10 @@ function get_clients_area_tickets_summary($statuses)
 {
     foreach ($statuses as $key => $status) {
         $where = ['userid' => get_client_user_id(), 'status' => $status['ticketstatusid']];
-        if (!can_logged_in_contact_view_all_tickets()) {
+        if (!can_logged_in_contact_view_all_tickets() && !can_view_all_tickets()) {
             $where[db_prefix() . 'tickets.contactid'] = get_contact_user_id();
         }
-        if(can_view_all_tickets()) {
-            if(array_key_exists('tbltickets.contactid', $where)) {
-                unset($where['tbltickets.contactid']);
-            }
-        }
+
         $statuses[$key]['total_tickets']   = total_rows(db_prefix() . 'tickets', $where);
         $statuses[$key]['translated_name'] = ticket_status_translate($status['ticketstatusid']);
         $statuses[$key]['url']             = site_url('clients/tickets/' . $status['ticketstatusid']);
