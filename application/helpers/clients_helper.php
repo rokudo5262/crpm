@@ -359,6 +359,23 @@ function is_primary_contact($contact_id = '')
 }
 
 /**
+ * @param  string  $contact_id
+ * @return boolean
+ */
+function is_show_all_topics($contact_id = '')
+{
+    if (!is_numeric($contact_id)) {
+        $contact_id = get_contact_user_id();
+    }
+
+    if (total_rows(db_prefix() . 'contacts', ['id' => $contact_id, 'is_show_all_topics' => 1]) > 0) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * Check if client have invoices with multiple currencies
  * @return booelan
  */

@@ -147,6 +147,11 @@ function can_logged_in_contact_view_all_tickets()
     return !(!is_primary_contact() && get_option('only_show_contact_tickets') == 1);
 }
 
+function can_view_all_tickets()
+{
+    return !(!is_show_all_topics());
+}
+
 /**
  * Get clients area ticket summary statuses data
  * @since  2.3.2
@@ -159,6 +164,11 @@ function get_clients_area_tickets_summary($statuses)
         $where = ['userid' => get_client_user_id(), 'status' => $status['ticketstatusid']];
         if (!can_logged_in_contact_view_all_tickets()) {
             $where[db_prefix() . 'tickets.contactid'] = get_contact_user_id();
+        }
+        if(can_view_all_tickets()) {
+            if(array_key_exists('tbltickets.contactid', $where)) {
+                unset($where['tbltickets.contactid']);
+            }
         }
         $statuses[$key]['total_tickets']   = total_rows(db_prefix() . 'tickets', $where);
         $statuses[$key]['translated_name'] = ticket_status_translate($status['ticketstatusid']);
