@@ -627,12 +627,8 @@ class Clients extends ClientsController
         }
 
         $where = db_prefix() . 'tickets.userid=' . get_client_user_id();
-        if (!can_logged_in_contact_view_all_tickets()) {
+        if (!can_logged_in_contact_view_all_tickets() && !can_view_all_tickets()) {
             $where .= ' AND ' . db_prefix() . 'tickets.contactid=' . get_contact_user_id();
-        }
-        if (can_view_all_tickets()) {
-            $where1 = explode("AND", $where);
-            $where = $where1[0];
         }
 
         $data['show_submitter_on_table'] = show_ticket_submitter_on_clients_area_table();
