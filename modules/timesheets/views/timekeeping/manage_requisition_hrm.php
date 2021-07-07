@@ -68,7 +68,7 @@
              <option value="2"><?php echo _l('late') ?></option>                  
              <option value="6"><?php echo _l('early') ?></option>                  
              <option value="3"><?php echo _l('Go_out') ?></option>                  
-             <option value="4"><?php echo _l('Go_on_bussiness') ?></option>                  
+             <option value="4"><?php echo _l('Go_on_bussiness_or_WFH') ?></option>                  
            </select>
          </div>
          <div class="col-md-3">
@@ -221,7 +221,7 @@ render_datatable($table_data,'table_registration_leave',
                    <option value="2"><?php echo _l('late') ?></option>                  
                    <option value="6"><?php echo _l('early') ?></option>                  
                    <option value="3"><?php echo _l('Go_out') ?></option>                  
-                   <option value="4"><?php echo _l('Go_on_bussiness') ?></option>                  
+                   <option value="4"><?php echo _l('Go_on_bussiness_or_WFH') ?></option>                  
                  </select>
                </div>
                <div class="col-md-6 pb-4" id="type_of_leave">

@@ -14,7 +14,7 @@ $aColumns = [
     db_prefix().'timesheets_requisition_leave.reason',
     db_prefix().'timesheets_requisition_leave.start_time',
     db_prefix().'timesheets_requisition_leave.end_time',
-    '(SELECT GROUP_CONCAT(staffid SEPARATOR ",") FROM '.db_prefix().'timesheets_approval_details WHERE rel_id = '.db_prefix().'timesheets_requisition_leave.id and '.db_prefix().'timesheets_approval_details.rel_type = IF('.db_prefix().'timesheets_requisition_leave.rel_type = 1,"Leave", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 2,"Late_early", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 3,"Go_out", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 4,"Go_on_bussiness", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 5,"quit_job", "")))))) as approver',
+    '(SELECT GROUP_CONCAT(staffid SEPARATOR ",") FROM '.db_prefix().'timesheets_approval_details WHERE rel_id = '.db_prefix().'timesheets_requisition_leave.id and '.db_prefix().'timesheets_approval_details.rel_type = IF('.db_prefix().'timesheets_requisition_leave.rel_type = 1,"Leave", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 2,"Late_early", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 3,"Go_out", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 4,"Go_on_bussiness_or_WFH", IF('.db_prefix().'timesheets_requisition_leave.rel_type = 5,"quit_job", "")))))) as approver',
     db_prefix().'timesheets_requisition_leave.status',
     db_prefix().'timesheets_requisition_leave.datecreated',
     db_prefix().'timesheets_requisition_leave.id',
@@ -97,9 +97,9 @@ if($this->ci->input->post('chose')){
     $sql_where = '';
     if($chose != 'all'){
         if($sql_where != ''){
-            $sql_where .= ' AND ('.get_staff_user_id().' IN (SELECT staffid FROM '.db_prefix().'timesheets_approval_details where '.db_prefix().'timesheets_approval_details.rel_type IN ("Leave","late","early","Go_out","Go_on_bussiness") AND '.db_prefix().'timesheets_approval_details.rel_id = '.db_prefix().'timesheets_requisition_leave.id ))';
+            $sql_where .= ' AND ('.get_staff_user_id().' IN (SELECT staffid FROM '.db_prefix().'timesheets_approval_details where '.db_prefix().'timesheets_approval_details.rel_type IN ("Leave","late","early","Go_out","Go_on_bussiness_or_WFH") AND '.db_prefix().'timesheets_approval_details.rel_id = '.db_prefix().'timesheets_requisition_leave.id ))';
         }else{
-            $sql_where .= '('.get_staff_user_id().' IN (SELECT staffid FROM '.db_prefix().'timesheets_approval_details where '.db_prefix().'timesheets_approval_details.rel_type IN ("Leave","late","early","Go_out","Go_on_bussiness") AND '.db_prefix().'timesheets_approval_details.rel_id = '.db_prefix().'timesheets_requisition_leave.id ))';
+            $sql_where .= '('.get_staff_user_id().' IN (SELECT staffid FROM '.db_prefix().'timesheets_approval_details where '.db_prefix().'timesheets_approval_details.rel_type IN ("Leave","late","early","Go_out","Go_on_bussiness_or_WFH") AND '.db_prefix().'timesheets_approval_details.rel_id = '.db_prefix().'timesheets_requisition_leave.id ))';
         }
     }else{
         $sql_where = '';
@@ -211,8 +211,8 @@ if($aRow['rel_type'] == 1){
    $rel_type = 'Go_out';
    $row[] = '<p>'. _l('Go_out') .'</p>';
 }else if($aRow['rel_type'] == 4 ){
-   $rel_type = 'Go_on_bussiness';
-   $row[] = '<p>'. _l('Go_on_bussiness') .'</p>';
+   $rel_type = 'Go_on_bussiness_or_WFH';
+   $row[] = '<p>'. _l('Go_on_bussiness_or_WFH') .'</p>';
 }
 else if($aRow['rel_type'] == 6){
    $rel_type = 'early';

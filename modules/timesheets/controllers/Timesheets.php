@@ -11,6 +11,7 @@ class timesheets extends AdminController
 		parent::__construct();
 		$this->load->model('timesheets_model');
 		$this->load->model('departments_model');
+		$this->load->model('Staff_model');
 		require_once module_dir_path(TIMESHEETS_MODULE_NAME) . '/third_party/excel/PHPExcel.php';
 	}
 
@@ -683,25 +684,28 @@ public function add_requisition_ajax(){
 		}
 		$result = $this->timesheets_model->add_requisition_ajax($data);
 		if ($result != '') {
+			$this->send_mail_to_follower();
+			$this->send_mail_to_handover();
+			$this->send_mail_to_approver();
+			$this->send_mail_to_notification_recipient();
 			echo json_encode([
 				'message' => 'success',
 				'success' => true,
 			]);
 			$rel_type = '';
-			if($data['rel_type'] == '1'){
+			if($data['rel_type'] == '1') {
 				$rel_type = 'Leave';
-			}elseif($data['rel_type'] == '2'){
+			} elseif($data['rel_type'] == '2') {
 				$rel_type = 'late';
-			}elseif($data['rel_type'] == '3'){
+			} elseif($data['rel_type'] == '3') {
 				$rel_type = 'Go_out';
-			}elseif($data['rel_type'] == '4'){
-				$rel_type = 'Go_on_bussiness';
-			}elseif($data['rel_type'] == '5'){
+			} elseif($data['rel_type'] == '4') {
+				$rel_type = 'Go_on_bussiness_or_WFH';
+			} elseif($data['rel_type'] == '5') {
 				$rel_type = 'quit_job'; 
-			}elseif($data['rel_type'] == '6'){
+			} elseif($data['rel_type'] == '6') {
 				$rel_type = 'early'; 
 			}
-
 			$data_app['rel_id'] = $result;
 			$data_app['rel_type'] = $rel_type;
 			$data_app['addedfrom'] = $data['staff_id'];
@@ -810,7 +814,7 @@ public function add_requisition_ajax(){
 		}elseif($data['request_leave']->rel_type == '3'){
 			$rel_type = 'Go_out';
 		}elseif($data['request_leave']->rel_type == '4'){
-			$rel_type = 'Go_on_bussiness';
+			$rel_type = 'Go_on_bussiness_or_WFH';
 		}elseif($data['request_leave']->rel_type == '5'){
 			$rel_type = 'quit_job'; 
 		}elseif($data['request_leave']->rel_type == '6'){
@@ -3644,16 +3648,15 @@ public function get_data_additional_timesheets($id){
 
 			));
 		}
-		if($id != ''){
+		if($id != '') {
 			$data['word_shift'] = $this->timesheets_model->get_workshiftms($id);
 			$month      = date('m');
 			$month_year = date('Y');
 			$department = $data['word_shift']->department;
 			$role = $data['word_shift']->position;
-			if($data['word_shift']->staff!=''){
+			if($data['word_shift']->staff!='') {
 				$staff = explode(',',$data['word_shift']->staff);
-			}
-			else{
+			} else {
 				$staff = '';
 			}
 			$from_date = $data['word_shift']->from_date;
@@ -3661,7 +3664,7 @@ public function get_data_additional_timesheets($id){
 
 			// $type_shiftwork = $this->input->post('type_shiftwork');
 			
-			if($data['word_shift']->type_shiftwork == 'repeat_periodically'){
+			if($data['word_shift']->type_shiftwork == 'repeat_periodically') {
 				$data_hs = $this->set_col_tk(1,8, $month, $month_year,false,$staff, $id);
 				$data['head_data'] = $data_hs->day_by_month;
 				$data['list_data'] = $data_hs->list_data;
@@ -3671,13 +3674,13 @@ public function get_data_additional_timesheets($id){
 			if($data['word_shift']->type_shiftwork == 'by_absolute_time'){
 				$start_month = 1;
 				$end_month = 31;
-				if($from_date){
+				if($from_date) {
 					$temp = explode('-', $from_date);
 					$start_month = $temp[2];
 					$month      = $temp[1];
 					$month_year = $temp[0];
 				}
-				if($to_date){
+				if($to_date) {
 					$temp = explode('-', $to_date);
 					$end_month = $temp[2];
 					$month      = $temp[1];
@@ -4135,7 +4138,7 @@ function get_custom_type_shiftwork(){
 				}else if($aRow['rel_type'] == 3 ){
 					$row[] = '<p>'. _l('Go_out') .'</p>';
 				}else if($aRow['rel_type'] == 4 ){
-					$row[] = '<p>'. _l('Go_on_bussiness') .'</p>';
+					$row[] = '<p>'. _l('Go_on_bussiness_or_WFH') .'</p>';
 				}else if($aRow['rel_type'] == 5 ){
 					$row[] = '<p>'. _l('quit_job') .'</p>';
 				}else{
@@ -5609,5 +5612,145 @@ public function get_check_in_out_history(){
 	]);
 }
 
+	public function send_mail_to_notification_recipient() {
+		$attendance_notice_recipient = $this->timesheets_model->get_timesheets_option('attendance_notice_recipient');
+		$requisition_leave = $this->timesheets_model->get_newest_requisition_leave();
+		$department = $this->timesheets_model->getdepartment_name($requisition_leave->staff_id)->name;
+		$notice_recipients = explode(',',$attendance_notice_recipient->option_val);
+		foreach($notice_recipients as $key => $value) {
+			$notification_recipient = $this->staff_model->get($value); 
+			$template  = new StdClass();
+			$template->message  = 
+			'<br/>Hi '.$notification_recipient->full_name.'<br/>
+			<br/>New leave request has been opened. <br/>
+			<br/><strong>Subject</strong>: '.$requisition_leave->subject.'<br/>
+			<br/><strong>Category for leave:</strong>:'.$requisition_leave->rel_type.' <br/>
+			<br/><strong>Department</strong>: '.$department.'<br/>
+			<br/><strong>Leave request reason</strong>: '.$requisition_leave->reason.'<br />
+			<br/>You can view the leave request on the following <a href='.admin_url('timesheets/requisition_detail/'.$requisition_leave->id).'>link<a/> .<br/>
+			<br/>Kind Regards,<br/>
+			<br/>'.get_option('email_signature').'<br/>' ;
+			$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
+			$template->subject  = 'New Leave Request';
+			$template = parse_email_template($template);
+			hooks()->do_action('before_send_test_smtp_email');
+			$this->email->initialize();
+			$this->email->set_newline(config_item('newline'));
+			$this->email->set_crlf(config_item('crlf'));
+			$this->email->from(get_option('smtp_email'), $template->fromname);
+			$this->email->to($notification_recipient->email);
+			$systemBCC = get_option('bcc_emails');
+			if ($systemBCC != '') {
+				$this->email->bcc($systemBCC);
+			}
+			$this->email->subject($template->subject);
+			$this->email->message($template->message);
+			$this->email->send(true);
+		}
+	}
 
+	public function send_mail_to_approver() {
+		$requisition_leave = $this->timesheets_model->get_newest_requisition_leave();
+		$approver = $this->staff_model->get($requisition_leave->approver_id);
+		if (!empty($approver)) {
+			$department = $this->timesheets_model->getdepartment_name($requisition_leave->approver_id)->name;
+			$template  = new StdClass();
+			$template->message  = 
+			'<br/>Hi '.$approver->full_name.'<br/>
+			<br/>You are added as Approver on new leave request.<br/>
+			<br/><strong>Subject</strong>:  '.$requisition_leave->subject.'<br/>
+			<br/><strong>Category for leave</strong>: '.$requisition_leave->rel_type.' <br/>
+			<br/><strong>Department</strong>:'.$department.' <br/>
+			<br/><strong>Leave request reason</strong>: '.$requisition_leave->reason.'<br />
+			<br/>You can view the leave request on the following <a href='.admin_url('timesheets/requisition_detail/'.$requisition_leave->id).'>link<a/> .<br/>
+			<br/>Kind Regards,<br/>
+			<br/>'.get_option('email_signature').'<br/>' ;
+			$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
+			$template->subject  = 'New Leave Request';
+			$template = parse_email_template($template);
+			hooks()->do_action('before_send_test_smtp_email');
+			$this->email->initialize();
+			$this->email->set_newline(config_item('newline'));
+			$this->email->set_crlf(config_item('crlf'));
+			$this->email->from(get_option('smtp_email'), $template->fromname);
+			$this->email->to($approver->email);
+			$systemBCC = get_option('bcc_emails');
+			if ($systemBCC != '') {
+				$this->email->bcc($systemBCC);
+			}
+			$this->email->subject($template->subject);
+			$this->email->message($template->message);
+			$this->email->send(true);
+		}
+	}
+
+	public function send_mail_to_follower() {
+		$requisition_leave = $this->timesheets_model->get_newest_requisition_leave();
+		$follower = $this->staff_model->get($requisition_leave->followers_id);
+		if (!empty($follower)) {
+			$department = $this->timesheets_model->getdepartment_name($requisition_leave->followers_id)->name;
+			$template  = new StdClass();
+			$template->message  = 
+			'<br/>Hi '.$follower->full_name.'<br/>
+			<br/>You are added as Follower on new leave request.<br/>
+			<br/><strong>Subject</strong>: '.$requisition_leave->subject.'<br/>
+			<br/><strong>Category For Leave</strong>: '.$requisition_leave->rel_type.' <br/>
+			<br/><strong>Department</strong>: '.$department.'<br/>
+			<br/><strong>Leave request reason</strong>: '.$requisition_leave->reason.'<br />
+			<br/>You can view the leave request on the following <a href='.admin_url('timesheets/requisition_detail/'.$requisition_leave->id).'>link<a/> .<br/>
+			<br/>Kind Regards,<br/>
+			<br/>'.get_option('email_signature').'<br/>' ;
+			$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
+			$template->subject  = 'New Leave Request';
+			$template = parse_email_template($template);
+			hooks()->do_action('before_send_test_smtp_email');
+			$this->email->initialize();
+			$this->email->set_newline(config_item('newline'));
+			$this->email->set_crlf(config_item('crlf'));
+			$this->email->from(get_option('smtp_email'), $template->fromname);
+			$this->email->to($follower->email);
+			$systemBCC = get_option('bcc_emails');
+			if ($systemBCC != '') {
+				$this->email->bcc($systemBCC);
+			}
+			$this->email->subject($template->subject);
+			$this->email->message($template->message);
+			$this->email->send(true);
+		}
+	}
+
+	public function send_mail_to_handover() {
+		$requisition_leave = $this->timesheets_model->get_newest_requisition_leave();
+		$handover = $this->staff_model->get($requisition_leave->handover_recipients);
+		if (!empty($handover)) {
+			$department = $this->timesheets_model->getdepartment_name($requisition_leave->handover_recipients)->name;
+			$template  = new StdClass();
+			$template->message  = 
+			'<br/>Hi '.$handover->full_name.'<br/>
+			<br/>You are added as Handover on new leave request.<br/>
+			<br/><strong>Subject</strong>: '.$requisition_leave->subject.'<br/>
+			<br/><strong>Category For Leave</strong>: '.$requisition_leave->rel_type.' <br/>
+			<br/><strong>Department</strong>: '.$department.' <br/>
+			<br/><strong>Leave request reason</strong>: '.$requisition_leave->reason.'<br />
+			<br/>You can view the leave request on the following <a href='.admin_url('timesheets/requisition_detail/'.$requisition_leave->id).'>link<a/> .<br/>
+			<br/>Kind Regards,<br/>
+			<br/>'.get_option('email_signature').'<br/>' ;
+			$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
+			$template->subject  = 'New Leave Request';
+			$template = parse_email_template($template);
+			hooks()->do_action('before_send_test_smtp_email');
+			$this->email->initialize();
+			$this->email->set_newline(config_item('newline'));
+			$this->email->set_crlf(config_item('crlf'));
+			$this->email->from(get_option('smtp_email'), $template->fromname);
+			$this->email->to($handover->email);
+			$systemBCC = get_option('bcc_emails');
+			if ($systemBCC != '') {
+				$this->email->bcc($systemBCC);
+			}
+			$this->email->subject($template->subject);
+			$this->email->message($template->message);
+			$this->email->send(true);
+		}
+	}
 }
