@@ -100,6 +100,21 @@ $(function() {
     /* Customer profile tickets table */
     $('.table-tickets-single').find('#th-submitter').removeClass('toggleable');
 
+    $('.table-tickets-single').on('draw.dt', function () {
+        var rows = $('.table-tickets-single').find('tbody tr');
+        $.each(rows, function() {
+            var index = 0;
+            $(this).find('td').each (function() {
+                if(index == 11 && !empty($(this).text())) {
+                    const price = $(this).text();
+                    let dollarUSLocale = Intl.NumberFormat('en-US');
+                    $(this).last().html(dollarUSLocale.format(price) );
+                }
+                index++;
+            });
+        });
+    });
+
     initDataTable('.table-tickets-single', admin_url + 'tickets/index/false/' + customer_id, undefined, undefined, 'undefined', [$('table thead .ticket_created_column').index(), 'desc']);
 
     /* Customer profile contracts table */
