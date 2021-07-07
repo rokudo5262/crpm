@@ -4146,6 +4146,12 @@ public function get_staff_info($staffid){
 		}
 		return $this->db->get(db_prefix().'timesheets_approval_setting')->result_array();
 	}
+	public function get_newest_requisition_leave() {
+		$this->db->order_by('datecreated','DESC');
+		$this->db->limit('1');
+		$result = $this->db->get(db_prefix().'timesheets_requisition_leave');
+		return $result->row();
+	}
 	
 /**
  * get_timesheet
