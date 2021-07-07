@@ -367,11 +367,10 @@ class Clients_model extends App_Model
                 ]);
             }
 
-            if (isset($data['is_show_all_topics']) && $data['is_show_all_topics'] == 1) {
-                $this->db->where('userid', $contact->userid);
-                $this->db->where('id !=', $id);
+            if (isset($data['is_show_all_topics'])) {
+                $this->db->where('id', $id);
                 $this->db->update(db_prefix() . 'contacts', [
-                    'is_show_all_topics' => 0,
+                    'is_show_all_topics' => $data['is_show_all_topics'],
                 ]);
             }
         }
@@ -520,6 +519,8 @@ class Clients_model extends App_Model
         }
 
         $data['email'] = trim($data['email']);
+
+        $data['is_show_all_topics'] = isset($data['is_show_all_topics']) ? 1 : 0;
 
         $data = hooks()->apply_filters('before_create_contact', $data);
 
