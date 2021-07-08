@@ -2813,4 +2813,17 @@ class Projects_model extends App_Model
         $this->db->where('status !=', 5); // Finished
         return $this->db->get(db_prefix() . 'projects')->result_array();
     }
+
+    public function get_undone_projects_of_current_user_loggin($id) {
+        $this->db->select('tblprojects.id, tblprojects.name, tblprojects.status');
+        $this->db->where('status !=', 1); // Not started
+        $this->db->where('status !=', 3); // On hold
+        $this->db->where('status !=', 4); // Cancelled
+        $this->db->where('status !=', 5); // Finished
+        $this->db->from(db_prefix() . 'project_members');
+        $this->db->join(db_prefix() . 'projects','tblproject_members.project_id = tblprojects.id');
+        $this->db->where('tblproject_members.staff_id =',$id );
+        $result = $this->db->get();
+        return $result->result_array();
+    }
 }
