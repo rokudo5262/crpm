@@ -3,9 +3,11 @@
     <?php
     $this->load->model('departments_model');
     $this->load->model('projects_model');
+    $this->load->helper('general_helper');
     $tasks_filter_assignees = $this->misc_model->get_tasks_distinct_assignees();
     $tasks_filter_departments = $this->departments_model->get();
     $tasks_filter_projects = $this->projects_model->get_undone_projects();
+    $tasks_filter_projects_of_current_user_loggin = $this->projects_model->get_undone_projects_of_current_user_loggin(get_staff_user_id());
     hooks()->do_action('tasks_filters_hidden_html');
     echo form_hidden('my_tasks', (!has_permission('tasks', '', 'view') ? 'true' : ''));
 
@@ -38,7 +40,7 @@
 <div class="project-filter-wrapper btn-group pull-left mleft10 mbot10">
     <select id="project-filter" data-width="300px" multiple>
         <option class="none_project_related display-order-0" value="-1"><?php echo strtoupper(_l('task_none_project_related')) ?></option>
-        <?php foreach($tasks_filter_projects as $index => $tf_project) {
+        <?php foreach($tasks_filter_projects_of_current_user_loggin as $index => $tf_project) {
         ?>
         <option class="display-order-<?php echo $index+1 ?>" value="<?php echo $tf_project['id'] ?>"><?php echo $tf_project['name'] ?></option>
         <?php } ?>
