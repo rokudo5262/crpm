@@ -34,4 +34,26 @@
   <?php get_template_part('tickets_table'); ?>
 </div>
 </div>
+<script>
+  $('.table-tickets').on('draw.dt', function () {
+        var rows = $('.table-tickets').find('tbody tr');
+        $.each(rows, function() {
+            var index = 0;
+            $(this).find('td').each (function() {
+                const estimate = $(this).text();
+                if(index == 10) {
+                  let style_format = Intl.NumberFormat('en-US');
+                  var estimate_format = style_format.format(estimate);
+                  $(this).last().html();
+                  if(estimate_format == 0) {
+                    $(this).last().html('');
+                  } else {
+                    $(this).last().html(estimate_format);
+                  }
+                }
+                index++;
+            });
+        });
+    });
+</script>
 </div>
