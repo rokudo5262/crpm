@@ -68,10 +68,13 @@
 		<hr />
 		<?php echo render_input('settings[main_domain]','settings_general_company_main_domain',get_option('main_domain')); ?>
 		<hr />
+		<?php echo render_input('settings[ip_address]','company_ip_address',get_option('ip_address')); ?>
+		<hr />
 		<?php render_yes_no_option('rtl_support_admin','settings_rtl_support_admin'); ?>
 		<hr />
 		<?php render_yes_no_option('rtl_support_client','settings_rtl_support_client'); ?>
 		<hr />
 		<?php echo render_input('settings[allowed_files]','settings_allowed_upload_file_types',get_option('allowed_files')); ?>
+		<hr />
 	</div>
 </div>

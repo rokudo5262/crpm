@@ -686,7 +686,6 @@ public function add_requisition_ajax(){
 		if ($result != '') {
 			$this->send_mail_to_follower();
 			$this->send_mail_to_handover();
-			$this->send_mail_to_approver();
 			$this->send_mail_to_notification_recipient();
 			echo json_encode([
 				'message' => 'success',
@@ -1502,24 +1501,22 @@ public function add_requisition_ajax(){
 	 * send request approve
 	 * @return json
 	 */
-	public function send_request_approve(){
+	public function send_request_approve() {
 		$data = $this->input->post();
 		$message = 'Send request approval fail';
 		$check = $this->timesheets_model->check_choose_when_approving($data['rel_type']);
-		if($check == 0){
+		if($check == 0) {
 			$success = $this->timesheets_model->send_request_approve($data);
-
-
-			if ($success === true) {                
+			if ($success === true) {     
+				// $this->send_mail_to_approver();          
 				$message = _l('send_request_approval_success');
 				$data_new = [];
 				$data_new['send_mail_approve'] = $data;
 				$this->session->set_userdata($data_new);
-			}elseif($success === false){
+			} elseif($success === false) {
 				$message = _l('no_matching_process_found');
 				$success = false;
-				
-			}else{
+			} else {
 				$message = _l('could_not_find_approver_with', _l($success));
 				$success = false;
 			}
@@ -1529,7 +1526,7 @@ public function add_requisition_ajax(){
 				'message' => $message,
 			]); 
 			die;
-		}else{
+		} else {
 			$this->load->model('staff_model');
 			$list_staff = $this->staff_model->get();
 
@@ -3901,39 +3898,38 @@ function get_custom_type_shiftwork(){
 	/**
 	 * check in timesheet
 	 */
-	public function check_in_ts(){
-		if($this->input->post()){
-			$data = $this->input->post();
-			$type = $data['type_check'];
-			$re = $this->timesheets_model->check_in($data);
-			if(is_numeric($re)){
-				if($re == 2){
-					set_alert('warning',_l('your_current_location_is_not_allowed_to_take_attendance'));            
-				}
-				if($re == 3){
-					set_alert('warning',_l('location_information_is_unknown'));            
-				}
-				if($re == 4){
-					set_alert('warning',_l('route_point_is_unknown'));            
-				}
-			}
-			else{
-				if($re == true){
-					if($type == 1){
-						set_alert('success',_l('check_in_successfull'));            
+	public function check_in_ts() {
+		if($this->input->post()) {
+			$ip_address = $this->input->ip_address(); 
+			if($ip_address == get_option('ip_address')) {
+				$data = $this->input->post();
+				$type = $data['type_check'];
+				$re = $this->timesheets_model->check_in($data);
+				if(is_numeric($re)) {
+					if($re == 2) {
+						set_alert('warning',_l('your_current_location_is_not_allowed_to_take_attendance'));            
+					} if($re == 3) {
+						set_alert('warning',_l('location_information_is_unknown'));            
+					} if($re == 4) {
+						set_alert('warning',_l('route_point_is_unknown'));            
 					}
-					else{
-						set_alert('success',_l('check_out_successfull'));            
-					}
+				} else {
+					if($re == true) {
+						if($type == 1) {
+							set_alert('success',_l('check_in_successfull'));            
+						} else {
+							set_alert('success',_l('check_out_successfull'));            
+						}
+					} else {
+						if($type == 1) {
+							set_alert('warning',_l('check_in_not_successfull'));            
+						} else {
+							set_alert('warning',_l('check_out_not_successfull'));            
+						}
+					}                
 				}
-				else{
-					if($type == 1){
-						set_alert('warning',_l('check_in_not_successfull'));            
-					}
-					else{
-						set_alert('warning',_l('check_out_not_successfull'));            
-					}
-				}                
+			} else {
+				set_alert('warning',_l('wrong_ip_address'));
 			}
 			redirect(admin_url('timesheets/timekeeping?group=timesheets'));
 		}
