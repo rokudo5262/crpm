@@ -3760,3 +3760,8 @@ $lang['hide_task_checklist_items_completed']          = 'Hide completed items';
 $lang['show_task_checklist_items_completed']          = 'Show completed items %s';
 $lang['task_checklist_assign']                        = 'Assign staff';
 $lang['task_checklist_assigned']                      = 'Assigned to %s';
+
+# Version 2.8.4
+$lang['ip_address']                             = 'Ip Adress';
+$lang['company_ip_address']                     = 'Company Ip Adress';
+$lang['wrong_ip_address']                     = 'Wrong Ip Adress';
