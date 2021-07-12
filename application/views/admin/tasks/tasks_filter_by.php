@@ -45,7 +45,7 @@
     </li>
     <li class="divider"></li>
     <?php foreach($task_statuses as $status){ ?>
-    <li class="clear-all-prevent<?php if($status['filter_default'] == true){echo ' active';} ?>">
+    <li data-id_status="<?php echo $status['id']; ?>" class="clear-all-prevent<?php if($status['filter_default'] == true){echo ' active';} ?>">
         <a href="#" data-cview="task_status_<?php echo $status['id']; ?>" onclick="dt_custom_view('task_status_<?php echo $status['id']; ?>','<?php echo $view_table_name; ?>','task_status_<?php echo $status['id']; ?>'); return false;">
             <?php echo $status['name']; ?>
         </a>
