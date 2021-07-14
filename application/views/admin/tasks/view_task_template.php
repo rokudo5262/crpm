@@ -709,6 +709,11 @@
                </span>
             </h5>
          </div>
+         <div class="task-info task-info-type">
+            <h5><i class="fa task-info-icon fa-fw fa-lg pull-left fa fa-align-justify"></i>
+               <?php echo _l('task_add_edit_type'); ?>: <?php echo $task->type; ?>
+            </h5>
+         </div>
          <?php } ?>
          <?php } ?>
          <?php if($task->current_user_is_assigned || total_rows(db_prefix().'taskstimers',array('task_id'=>$task->id,'staff_id'=>get_staff_user_id())) > 0){ ?>
