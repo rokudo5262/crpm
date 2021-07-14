@@ -661,6 +661,7 @@ $lang['task_single_followers']              = 'Followers';
 $lang['task_single_followers_select_title'] = 'Add Followers';
 $lang['task_single_add_new_comment']        = 'Add Comment';
 $lang['task_add_edit_subject']              = 'Subject';
+$lang['task_add_edit_type']                 = 'Type';
 $lang['task_add_edit_priority']             = 'Priority';
 $lang['task_priority_low']                  = 'Low';
 $lang['task_priority_medium']               = 'Medium';
