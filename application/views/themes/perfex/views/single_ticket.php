@@ -88,7 +88,7 @@
                                  ?>
                                 <hr class="hr-10" />
                                 <p><?php echo $field['name']; ?>: <span class="pull-right bold">
-                                <?php if($field['name'] == "Estimate (VND)") { echo number_format($cfValue); } else {echo $cfValue;} ?></span></p>
+                                <?php if($field['type'] == "number") { echo number_format($cfValue); } else {echo $cfValue;} ?></span></p>
                                 <?php } ?>
                             </div>
                         </div>
