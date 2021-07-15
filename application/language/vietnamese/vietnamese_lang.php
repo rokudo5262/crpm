@@ -2783,7 +2783,7 @@ $lang['last_month']                                      = 'Tháng trước';
 $lang['no_description_project']                          = 'Không có mô tả nào cho dự án này';
 $lang['sales_string']                                    = 'Doanh số';
 $lang['no_project_members']                              = 'Không có thành viên nào cho dự án này';
-$lang['search_by_tags']                                  = 'Sử dụng # + tên thẻ để tìm theo thẻ';
+$lang['search_by_tags']                                  = 'Sử dụng # + tên thẻ (hoặc tên task) để tìm theo thẻ (hoặc theo task)';
 $lang['project_status_5']                                = 'Đã hủy';
 # Version 1.7.0
 $lang['not_activity_new_reminder_created']        = 'đặt nhắc nhở mới cho %s với ngày %s';
