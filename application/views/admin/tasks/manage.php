@@ -66,6 +66,19 @@
    $(function(){
        tasks_kanban_advance();
    });
+
+   $( ".filter_by_each_status" ).click(function() {
+      var id_status = $(this).data('id_status');
+      
+      $("._filter_data li").each(function() {
+         if($(this).data('id_status') && $(this).data('id_status') != id_status) { 
+            $(this).removeClass('active');
+         }
+         if( $(this).data('id_status') == id_status ) {
+            $(this).addClass('active');
+         }
+      });
+   });
 </script>
 </body>
 </html>
