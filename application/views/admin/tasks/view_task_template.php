@@ -741,7 +741,7 @@
          <div class="task-info">
             <h5 class="task-info-custom-field task-info-custom-field-<?php echo $field['id']; ?>">
                <i class="fa task-info-icon fa-fw fa-lg fa-square-o"></i>
-               <?php echo $field['name']; ?>: <?php if($field['type'] == 'number') {echo number_format($value);} echo $value; ?>
+               <?php echo $field['name']; ?>: <?php if($field['type'] == "number") { echo number_format($value); } else{ echo $value;} ?>
             </h5>
          </div>
          <?php } ?>
