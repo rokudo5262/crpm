@@ -4,7 +4,7 @@
     <div class="row">
       <div class="col-md-12 task-name">
         <a href="<?php echo admin_url('tasks/view/' . $task['id']); ?>" onclick="init_task_modal(<?php echo $task['id']; ?>);return false;">
-          <span class="inline-block full-width mtop10"><?php echo $task['name']; ?></span>
+          <span class="inline-block full-width mtop10"><span style="color:#000;">#<?php echo $task['id']; ?></span> - <?php echo $task['name']; ?></span>
         </a>
         <?php
           if ($task['rel_name']) {
