@@ -2960,7 +2960,7 @@ $lang['last_month']                                      = 'Last Month';
 $lang['no_description_project']                          = 'No description for this project';
 $lang['sales_string']                                    = 'Sales';
 $lang['no_project_members']                              = 'No members for this project';
-$lang['search_by_tags']                                  = 'Use # + tagname to search by tags';
+$lang['search_by_tags']                                  = 'Use # + tagname (or task id) to search by tags (or task id)';
 $lang['project_status_5']                                = 'Cancelled';
 
 # Version 1.7.0

@@ -274,10 +274,12 @@ class Tasks_model extends App_Model
             if (!startsWith($search, '#')) {
                 $this->db->where('(' . db_prefix() . 'tasks.name LIKE "%' . $this->db->escape_like_str($search) . '%" ESCAPE \'!\'  OR ' . db_prefix() . 'tasks.description LIKE "%' . $this->db->escape_like_str($search) . '%" ESCAPE \'!\')');
             } else {
+                $tag_search_keyword = $this->db->escape_str(strafter($search, '#'));
                 $this->db->where(db_prefix() . 'tasks.id IN
                 (SELECT rel_id FROM ' . db_prefix() . 'taggables WHERE tag_id IN
-                (SELECT id FROM ' . db_prefix() . 'tags WHERE name="' . $this->db->escape_str(strafter($search, '#')) . '")
+                (SELECT id FROM ' . db_prefix() . 'tags WHERE name="' . $tag_search_keyword . '")
                 AND ' . db_prefix() . 'taggables.rel_type=\'task\' GROUP BY rel_id HAVING COUNT(tag_id) = 1)
+                OR ' . db_prefix() . 'tasks.id="' . $tag_search_keyword . '"
                 ');
             }
         }
