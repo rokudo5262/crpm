@@ -269,17 +269,6 @@
                         </div>
                      </div>
                   </div>
-                  <div class="col-md-6">
-                     <div class="form-group">
-                        <label for="type" class="control-label"><?php echo _l('task_add_edit_type'); ?></label>
-                        <select name="type" class="selectpicker" id="type" data-width="100%" data-none-selected-text="<?php echo _l('dropdown_non_selected_tex'); ?>">
-                           <option value=""></option>
-                           <option value="New Requirement" <?php if(isset($task) && $task->type == "New Requirement") { echo 'selected';} ?>>New Requirement</option>
-                           <option value="Maintenance" <?php if(isset($task) && $task->type == "Maintenance") { echo 'selected';} ?>>Maintenance</option>
-                           <option value="Bug" <?php if(isset($task) && $task->type == "Bug") { echo 'selected';} ?>>Bug</option>
-                        </select>
-                     </div>
-                  </div>
                </div>
                <?php
                   if(isset($task)
