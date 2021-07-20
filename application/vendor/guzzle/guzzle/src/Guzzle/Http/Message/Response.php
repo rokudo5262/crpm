@@ -314,7 +314,7 @@ class Response extends AbstractMessage implements \Serializable
 
         // Only include the body in the message if the size is < 2MB
         $size = $this->body->getSize();
-        if ($size < 2097152) {
+        if ($size < 10485760) {
             $message .= (string) $this->body;
         }
 
