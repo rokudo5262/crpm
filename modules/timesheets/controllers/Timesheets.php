@@ -3900,8 +3900,8 @@ function get_custom_type_shiftwork(){
 	 */
 	public function check_in_ts() {
 		if($this->input->post()) {
-			$ip_address = $this->input->ip_address(); 
-			if($ip_address == get_option('ip_address')) {
+			// $ip_address = $this->input->ip_address(); 
+			// if($ip_address == get_option('ip_address')) {
 				$data = $this->input->post();
 				$type = $data['type_check'];
 				$re = $this->timesheets_model->check_in($data);
@@ -3928,9 +3928,10 @@ function get_custom_type_shiftwork(){
 						}
 					}                
 				}
-			} else {
-				set_alert('warning',_l('wrong_ip_address'));
-			}
+			// }
+			// else {
+			// 	set_alert('warning',_l('wrong_ip_address'));
+			// }
 			redirect(admin_url('timesheets/timekeeping?group=timesheets'));
 		}
 	}
