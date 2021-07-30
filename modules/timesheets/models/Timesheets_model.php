@@ -1632,6 +1632,28 @@ public function delete_shift($id){
 		}
 		return false;
 	}
+	public function get_approve_details_by_date_send() {
+		$this->db->select();
+		$this->db->order_by('date_send','DESC');
+		$this->db->limit('1');
+		$result = $this->db->get(db_prefix().'timesheets_approval_details');
+		return $result->row_array();
+	}
+
+	public function get_approve_details_by_rel_id($id) {
+		$this->db->select();
+		$this->db->where('rel_id',$id);
+		$result = $this->db->get(db_prefix().'timesheets_approval_details');
+		return $result->result_array();
+	}
+
+	public function get_staff_by_id($id) {
+		$select_str = '*,concat(firstname," ",lastname) as full_name';
+		$this->db->select($select_str);
+		$this->db->where('staffid',$id);
+		$result = $this->db->get(db_prefix().'staff');
+		return $result->row_array();
+	}
 	/**
 	 * delete_approval_details
 	 * @param  integer $rel_id   
