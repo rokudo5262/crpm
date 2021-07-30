@@ -1600,7 +1600,7 @@ public function add_requisition_ajax(){
 			<br/>Kind Regards,<br/>
 			<br/>'.get_option('email_signature').'<br/>' ;
 			$template_1->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
-			$template_1->subject  = 'New Leave Request';
+			$template_1->subject  = 'New Leave Request - Notification Recipient';
 			$template_1 = parse_email_template($template_1);
 			hooks()->do_action('before_send_test_smtp_email');
 			$this->email->initialize();
@@ -1631,7 +1631,7 @@ public function add_requisition_ajax(){
 			<br/>Kind Regards,<br/>
 			<br/>'.get_option('email_signature').'<br/>' ;
 			$template_2->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
-			$template_2->subject  = 'New Leave Request';
+			$template_2->subject  = 'New Leave Request - Approver';
 			$template_2 = parse_email_template($template_2);
 			hooks()->do_action('before_send_test_smtp_email');
 			$this->email->initialize();
@@ -5695,7 +5695,7 @@ public function get_check_in_out_history(){
 			<br/>Kind Regards,<br/>
 			<br/>'.get_option('email_signature').'<br/>' ;
 			$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
-			$template->subject  = 'New Leave Request';
+			$template->subject  = 'New Leave Request - Follower';
 			$template = parse_email_template($template);
 			hooks()->do_action('before_send_test_smtp_email');
 			$this->email->initialize();
@@ -5730,7 +5730,7 @@ public function get_check_in_out_history(){
 			<br/>Kind Regards,<br/>
 			<br/>'.get_option('email_signature').'<br/>' ;
 			$template->fromname = get_option('companyname') != '' ? get_option('companyname') : 'TEST';
-			$template->subject  = 'New Leave Request';
+			$template->subject  = 'New Leave Request - Handover';
 			$template = parse_email_template($template);
 			hooks()->do_action('before_send_test_smtp_email');
 			$this->email->initialize();
