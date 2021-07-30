@@ -1614,6 +1614,7 @@ public function add_requisition_ajax(){
 			}
 			$this->email->subject($template_1->subject);
 			$this->email->message($template_1->message);
+			$this->email->send(true);
 		}
 		$approvers = $this->timesheets_model->get_approve_details_by_rel_id($approve_setting['rel_id']);
 		foreach($approvers as $value) {
@@ -1644,6 +1645,7 @@ public function add_requisition_ajax(){
 			}
 			$this->email->subject($template_2->subject);
 			$this->email->message($template_2->message);
+			$this->email->send(true);
 		}
 	}
 
