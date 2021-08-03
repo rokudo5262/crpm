@@ -377,7 +377,7 @@
                             <div class="attachment">
                               <div class="form-group">
                                 <label for="attachment" class="control-label"><small class="req text-danger">* </small><?php echo _l('asset_image'); ?></label>
-                                <input type="file" extension="png,jpg,jpeg,gif" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="asset_image" id="asset_image" required>
+                                <input type="file" extension="png,jpg,jpeg,gif" filesize="<?php echo file_upload_max_size(); ?>" class="form-control" name="asset_image" id="asset_image">
                               </div>
                             </div>
                           </div>
@@ -466,10 +466,9 @@
     $('.edit-title').addClass('hide');
     $('.add-title').removeClass('hide');
     $('#additional').html('');
-
     $('#assets #asset_existing_image').html('');
     $('#assets select#clientid').html('').change();
-    $("#assets #asset_image").prop('required','required');
+    // $("#assets #asset_image").prop('required','required');
     $("#assets .attachment .req").show();
     $('#assets input#visible_to_client').prop('checked', false);
     
