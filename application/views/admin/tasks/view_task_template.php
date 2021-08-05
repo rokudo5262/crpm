@@ -6,7 +6,7 @@
    </a>
    <?php } ?>
    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-   <h4 class="modal-title"><?php echo $task->name; ?></h4>
+   <h4 class="modal-title" style="margin-bottom:5px;"><span style="background-color:white;color:black;border:1px solid black;padding:1px;">#<?php echo $task->id; ?></span>&nbsp;<?php echo $task->name; ?></h4>
    <?php if($task->billed == 1){ ?>
    <?php  echo '<p class="no-margin">'._l('task_is_billed','<a href="'.admin_url('invoices/list_invoices/'.$task->invoice_id).'" target="_blank" class="color-white">'.format_invoice_number($task->invoice_id)). '</a></p>'; ?>
    <?php } ?>
