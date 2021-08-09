@@ -6,7 +6,7 @@
    </a>
    <?php } ?>
    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-   <h4 class="modal-title" style="margin-bottom:5px;"><span style="background-color:white;color:black;padding:1px 5px 1px 5px;">#<?php echo $task->id; ?></span>&nbsp;<?php echo $task->name; ?></h4>
+   <h4 class="modal-title" style="margin-bottom:5px;"><span style="background-color:white;color:black;padding:1px 5px 1px 5px;">#<?php echo $task->id; ?></span>&nbsp;<?php echo $task->name; ?> <a target="_blank" id="task_url_copy" onclick="copyURL(event)" href="<?php echo base_url() . 'admin/tasks/view/' . $task->id; ?>" data-toggle="tooltip" title="Click to copy URL"><i style="color:white;padding:3px;border-radius:5px;border:2px white solid;" class="fa fa-copy"></i></a></h4>
    <?php if($task->billed == 1){ ?>
    <?php  echo '<p class="no-margin">'._l('task_is_billed','<a href="'.admin_url('invoices/list_invoices/'.$task->invoice_id).'" target="_blank" class="color-white">'.format_invoice_number($task->invoice_id)). '</a></p>'; ?>
    <?php } ?>
@@ -25,7 +25,6 @@
    <input id="taskid" type="hidden" value="<?php echo $task->id?>">
    <div class="row">
       <div class="col-md-8 task-single-col-left">
-         <h4 class="bold font-medium mbot15">URL: <?php echo $task->name; ?></h4>
          <?php if(total_rows(db_prefix().'taskstimers',array('end_time'=>NULL,'staff_id !='=>get_staff_user_id(),'task_id'=>$task->id)) > 0){
             $startedTimers = $this->tasks_model->get_timers($task->id,array('staff_id !='=>get_staff_user_id(),'end_time'=>NULL));
 
@@ -1004,5 +1003,14 @@
    $('#task-modal').find('.gpicker').googleDrivePicker({ onPick: function(pickData) {
       taskExternalFileUpload(pickData, 'gdrive', <?php echo $task->id; ?>);
    }});
+
+   function copyURL(evt) {
+      evt.preventDefault();
+      navigator.clipboard.writeText($('#task_url_copy').attr('href')).then(() => {
+         console.log('URL Copied!');
+      }, () => {
+         console.log('Failed to copy URL!');
+      });
+   }
 
 </script>
