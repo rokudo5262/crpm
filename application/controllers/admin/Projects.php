@@ -229,7 +229,11 @@ class Projects extends AdminController {
             } elseif ($group == 'project_gantt') {
                 $gantt_type         = (!$this->input->get('gantt_type') ? 'milestones' : $this->input->get('gantt_type'));
                 $taskStatus         = (!$this->input->get('gantt_task_status') ? null : $this->input->get('gantt_task_status'));
-                $data['gantt_data'] = $this->projects_model->get_gantt_data($id, $gantt_type, $taskStatus);
+                $selectedtaskStatuses= explode(",", $taskStatus);
+                $data['gantt_data'] = [];
+                foreach($selectedtaskStatuses as $key => $value) {
+                    $data['gantt_data'] = $this->projects_model->get_gantt_data($id, $gantt_type, $value);
+                }
             } elseif ($group == 'project_milestones') {
                 $data['bodyclass'] .= 'project-milestones ';
                 $data['milestones_exclude_completed_tasks'] = $this->input->get('exclude_completed') && $this->input->get('exclude_completed') == 'yes' || !$this->input->get('exclude_completed');
@@ -309,7 +313,6 @@ class Projects extends AdminController {
             $data['title']          = $data['project']->name;
             $data['bodyclass'] .= 'project invoices-total-manual estimates-total-manual';
             $data['project_status'] = get_project_status_by_id($project->status);
-
             $this->load->view('admin/projects/view', $data);
         } else {
             access_denied('Project View');

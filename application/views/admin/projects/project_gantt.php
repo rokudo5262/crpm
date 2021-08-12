@@ -33,13 +33,24 @@
                                         } ?>><?php echo _l('task_status'); ?></option>
             </select>
         </div>
+        <?php foreach ($task_statuses as $status) { echo $status['id']; } ?>
+        <?php 
+        $selected = explode(",",$this->input->get('gantt_task_status'));
+        foreach($selected as $key => $value) {
+            echo $value;
+        }
+        print_r($selected);
+        ?>
         <div class="form-group pull-right mright10">
-            <select class="selectpicker" name="gantt_task_status" onchange="gantt_filter(this);" data-none-selected-text="<?php echo _l('task_status'); ?>">
+            <select class="selectpicker" name="gantt_task_status" onchange="gantt_filter(this);" data-none-selected-text="<?php echo _l('all'); ?>" multiple="true">
                 <option value=""><?php echo _l('task_list_all'); ?></option>
                 <?php foreach ($task_statuses as $status) { ?>
-                    <option value="<?php echo $status['id']; ?>" <?php if ($this->input->get('gantt_task_status') == $status['id']) {
-                                                                        echo ' selected';
-                                                                    } ?>>
+                    <option value="<?php echo $status['id']; ?>" <?php 
+                    foreach($selected as $key => $value) {
+                        if ($value == $status['id']) { 
+                            echo 'selected';
+                        } 
+                    } ?>>
                         <?php echo $status['name']; ?>
                     </option>
                 <?php } ?>

@@ -58,6 +58,7 @@
 										<option value="Week"><?php echo _l('gantt_view_week'); ?></option>
 										<option value="Month" selected><?php echo _l('gantt_view_month'); ?></option>
 										<option value="Year"><?php echo _l('gantt_view_year'); ?></option>
+										<option value="From"><?php echo _l('from'); ?></option>
 									</select>
 								</div>
 								<div id="gantt"></div>
