@@ -230,10 +230,12 @@ class Projects extends AdminController {
                 $gantt_type         = (!$this->input->get('gantt_type') ? 'milestones' : $this->input->get('gantt_type'));
                 $taskStatus         = (!$this->input->get('gantt_task_status') ? null : $this->input->get('gantt_task_status'));
                 $selectedtaskStatuses= explode(",", $taskStatus);
-                $data['gantt_data'] = [];
+                $result = [];
                 foreach($selectedtaskStatuses as $key => $value) {
-                    $data['gantt_data'] = $this->projects_model->get_gantt_data($id, $gantt_type, $value);
+                    $result[]= $this->projects_model->get_gantt_data($id, $gantt_type, $value);
                 }
+                $result = array_merge([], ...$result);
+                $data['gantt_data'] = $result;
             } elseif ($group == 'project_milestones') {
                 $data['bodyclass'] .= 'project-milestones ';
                 $data['milestones_exclude_completed_tasks'] = $this->input->get('exclude_completed') && $this->input->get('exclude_completed') == 'yes' || !$this->input->get('exclude_completed');
