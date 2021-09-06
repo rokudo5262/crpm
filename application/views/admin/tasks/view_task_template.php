@@ -1006,7 +1006,7 @@
 
    function copyURL(evt) {
       evt.preventDefault();
-      navigator.clipboard.writeText($('#task_url_copy').attr('href')).then(() => {
+      navigator.clipboard.writeText('(#<?php echo $task->id ?> - ' + '<?php echo $task->name; ?> - ' + $('#task_url_copy').attr('href') + ')').then(() => {
          console.log('URL Copied!');
       }, () => {
          console.log('Failed to copy URL!');
