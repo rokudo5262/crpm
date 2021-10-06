@@ -5715,7 +5715,9 @@ public function get_check_in_out_history(){
 
 	public function send_mail_to_handover() {
 		$requisition_leave = $this->timesheets_model->get_newest_requisition_leave();
-		$handover = $this->staff_model->get($requisition_leave->handover_recipients);
+		$handover = null;
+		if(!empty($requisition_leave->handover_recipients))
+			$handover = $this->staff_model->get($requisition_leave->handover_recipients);
 		if (!empty($handover)) {
 			$department = $this->timesheets_model->getdepartment_name($requisition_leave->handover_recipients)->name;
 			$template  = new StdClass();
