@@ -398,6 +398,13 @@ class Recruitment_model extends App_Model {
 			$this->db->limit(1);
 			return $this->db->get()->row();
 	}
+	public function get_newest_interview_schedule() {
+		$this->db->select('*');
+			$this->db->from(db_prefix() . 'rec_interview');
+			$this->db->order_by('added_date','DESC');
+			$this->db->limit(1);
+			return $this->db->get()->row();
+	}
 	public function get_rec_campaign_approver($id) {
 		$this->db->select('cp_approver');
     	$this->db->from(db_prefix() . 'rec_campaign');
@@ -1314,9 +1321,7 @@ class Recruitment_model extends App_Model {
 	 */
 	public function send_mail_candidate($data) {
 		$staff_id = get_staff_user_id();
-
 		$inbox = array();
-
 		$inbox['to'] = $data['email'];
 		$inbox['sender_name'] = get_staff_full_name($staff_id);
 		$inbox['subject'] = _strip_tags($data['subject']);
@@ -1324,22 +1329,17 @@ class Recruitment_model extends App_Model {
 		$inbox['body'] = nl2br_save_html($inbox['body']);
 		$inbox['date_received'] = date('Y-m-d H:i:s');
 		$inbox['from_email'] = get_staff_email_by_id_rec($staff_id);
-
 		if (strlen(get_option('smtp_host')) > 0 && strlen(get_option('smtp_password')) > 0 && strlen(get_option('smtp_username')) > 0) {
-
 			$ci = &get_instance();
 			$ci->email->initialize();
 			$ci->load->library('email');
 			$ci->email->clear(true);
 			$ci->email->from($inbox['from_email'], $inbox['sender_name']);
 			$ci->email->to($inbox['to']);
-
 			$ci->email->subject($inbox['subject']);
 			$ci->email->message($inbox['body']);
-
 			$ci->email->send(true);
 		}
-
 		$care = array();
 		$care['care_time'] = $inbox['date_received'];
 		$care['add_from'] = $staff_id;
@@ -1348,7 +1348,6 @@ class Recruitment_model extends App_Model {
 		$care['care_result'] = 'Sent';
 		$care['type'] = 'send_mail';
 		$this->db->insert(db_prefix() . 'cd_care', $care);
-
 		return true;
 	}
 
@@ -2980,12 +2979,9 @@ class Recruitment_model extends App_Model {
              }
          }
          return $data;
-         
         }
-
        return $this->db->count_all_results();
     }
-
     /**
      * [do_recruitment_portal_search
      * @param  [type]  $status 
@@ -2995,9 +2991,7 @@ class Recruitment_model extends App_Model {
      * @param  array   $where  
      * @return [type]          
      */
-    public function do_recruitment_show_more_job($status, $search = '', $page = 1, $count = false, $where = [])
-    {
-
+    public function do_recruitment_show_more_job($status, $search = '', $page = 1, $count = false, $where = []) {
     	$arr_job = $this->do_recruitment_portal_search($status, $search, $page, $count, $where = []);
 
     	$string_job ='';
@@ -3111,29 +3105,23 @@ class Recruitment_model extends App_Model {
 
                 $string_job .= '</div>';
     		}
-
     		$status = true;
     	}else{
 
     		$status = false;
     	}
-
     	$data=[];
     	$data['value'] = $string_job;
     	$data['status'] = $status;
     	$data['page'] = (int)$page+1;
-
-    	return $data;
-    	    	
+    	return $data;    	
     }
-
     /**
      * list position by campaign
      * @param  integer $campaingn_id 
      * @return string               
      */
-    public function list_position_by_campaign($campaingn_id)
-	{
+    public function list_position_by_campaign($campaingn_id) {
         $options = '';
         if($campaingn_id){
 			$this->db->where('cp_id', $campaingn_id);
@@ -3146,7 +3134,7 @@ class Recruitment_model extends App_Model {
 
 				}
 		    }
-        }else{
+        } else {
         	$position = $this->get_job_position();
         	if(count($position) > 0){
         		$options .= '<option value=""></option>';
@@ -3155,12 +3143,9 @@ class Recruitment_model extends App_Model {
         		    $options .= '<option value="' . $po_value['position_id'] . '">' . $po_value['position_name'] . '</option>';
         		}
         	}
-
         }
         return $options;
-
 	}
-
 	/**
      * { recruitment campaign setting }
      *
@@ -3168,9 +3153,7 @@ class Recruitment_model extends App_Model {
      *
      * @return     boolean 
      */
-    public function recruitment_campaign_setting($data)
-    {
-
+    public function recruitment_campaign_setting($data) {
             $val = $data['input_name_status'] == 'true' ? 1 : 0;
             $this->db->where('name',$data['input_name']);
             $this->db->update(db_prefix() . 'options', [
@@ -3185,9 +3168,7 @@ class Recruitment_model extends App_Model {
 	public function default_approver($data) {
 			$value = implode(",",$data['selected_value']);
             $this->db->where('name','default_approver');
-            $check=$this->db->update(db_prefix() . 'options', [
-                    'value' => $value,
-                ]);
+            $check=$this->db->update(db_prefix() . 'options', ['value' => $value,]);
             if ($check) {
                 return true;
             } else {
@@ -3206,20 +3187,14 @@ class Recruitment_model extends App_Model {
 	 * @return object      
 	 */
 	public function get_company($id = false) {
-
 		if (is_numeric($id)) {
 			$this->db->where('id', $id);
-
 			return $this->db->get(db_prefix() . 'rec_company')->row();
 		}
-
 		if ($id == false) {
 			return $this->db->query('select * from tblrec_company')->result_array();
 		}
-
 	}
-
-
 	/**
 	 * add skill
 	 * @param object $data 
@@ -3229,7 +3204,6 @@ class Recruitment_model extends App_Model {
 		$insert_id = $this->db->insert_id();
 		return $insert_id;
 	}
-
 	/**
 	 * update skill
 	 * @param  object $data
@@ -3244,25 +3218,21 @@ class Recruitment_model extends App_Model {
 		}
 		return false;
 	}
-
 	/**
 	 * delete skill
 	 * @param  int $id
 	 * @return bool
 	 */
 	public function delete_company($id) {
-
 		/*delete file*/
 		$this->db->where('rel_id', $id);
 		$this->db->where('rel_type', 'rec_company');
-
 		$array_file =  $this->db->get(db_prefix() . 'files')->result_array();
 		if(count($array_file) > 0 ){
 			foreach ($array_file as $key => $file_value) {
 			    $this->delete_company_file($file_value['id']);
 			}
 		}
-
 		$this->db->where('id', $id);
 		$this->db->delete(db_prefix() . 'rec_company');
 		if ($this->db->affected_rows() > 0) {
@@ -3271,14 +3241,12 @@ class Recruitment_model extends App_Model {
 
 		return false;
 	}
-
 	/**
 	 * get company attachments
 	 * @param  integer $company_id 
 	 * @return array             
 	 */
 	public function get_company_attachments($company_id) {
-
 		$this->db->order_by('dateadded', 'desc');
 		$this->db->where('rel_id', $company_id);
 		$this->db->where('rel_type', 'rec_company');
@@ -3286,7 +3254,6 @@ class Recruitment_model extends App_Model {
 		return $this->db->get(db_prefix() . 'files')->result_array();
 
 	}
-
 	/**
 	 * delete company file
 	 * @param  integer $attachment_id 
@@ -3295,7 +3262,6 @@ class Recruitment_model extends App_Model {
 	public function delete_company_file($attachment_id) {
 		$deleted = false;
 		$attachment = $this->get_company_attachments_delete($attachment_id);
-
 		if ($attachment) {
 			if (empty($attachment->external)) {
 				if (file_exists(RECRUITMENT_COMPANY_UPLOAD . $attachment->rel_id . '/' . $attachment->file_name)) {
@@ -3322,7 +3288,6 @@ class Recruitment_model extends App_Model {
 				}
 			} else {
 				if (is_dir('modules/recruitment/uploads/company_images/' . $attachment->rel_id)) {
-
 					// Check if no attachments left, so we can delete the folder also
 					$other_attachments = list_files('modules/recruitment/uploads/company_images/' . $attachment->rel_id);
 					if (count($other_attachments) == 0) {
@@ -3331,48 +3296,34 @@ class Recruitment_model extends App_Model {
 					}
 				}
 			}
-
 		}
-
 		return $deleted;
 	}
-
-
 	/**
 	 * get company attachments delete
 	 * @param  integer $id 
 	 * @return object     
 	 */
 	public function get_company_attachments_delete($id) {
-
 		if (is_numeric($id)) {
 			$this->db->where('id', $id);
-
 			return $this->db->get(db_prefix() . 'files')->row();
 		}
 	}
-
-
 	/**
 	 * get industry
 	 * @param  boolean $id 
 	 * @return array      
 	 */
 	public function get_industry($id = false) {
-
 		if (is_numeric($id)) {
 			$this->db->where('id', $id);
-
 			return $this->db->get(db_prefix() . 'job_industry')->row();
 		}
-
 		if ($id == false) {
 			return $this->db->query('select * from tbljob_industry')->result_array();
 		}
-
 	}
-
-
 	/**
 	 * add industry
 	 * @param array $data 
@@ -3382,7 +3333,6 @@ class Recruitment_model extends App_Model {
 		$insert_id = $this->db->insert_id();
 		return $insert_id;
 	}
-
 	/**
 	 * update industry
 	 * @param  array $data 
@@ -3397,120 +3347,89 @@ class Recruitment_model extends App_Model {
 		}
 		return false;
 	}
-
 	/**
 	 * delete industry
 	 * @param  integer $id 
 	 * @return boolean     
 	 */
 	public function delete_industry($id) {
-
 		$this->db->where('id', $id);
 		$this->db->delete(db_prefix() . 'job_industry');
 		if ($this->db->affected_rows() > 0) {
 			return true;
 		}
-
 		return false;
 	}
-
 	/**
 	 * get rec campaign detail
 	 * @param  integer $id 
 	 * @return  object     
 	 */
 	public function get_rec_campaign_detail($id) {
-		
 			$this->db->where('cp_id', $id);
 	        $rec_campaign = $this->db->get(db_prefix() . 'rec_campaign')->row();
-
 	        if($rec_campaign){
 	        	/*get rec job position*/
 	        	$this->db->where('position_id', $rec_campaign->cp_position);
 	        	$rec_job_position = $this->db->get(db_prefix() . 'rec_job_position')->row();
-
 	        	$rec_campaign->position_name = '';
 	        	$rec_campaign->position_description = '';
 	        	$rec_campaign->industry_name = '';
 	        	$rec_campaign->industry_description = '';
-
 	        	$rec_campaign->company_name = '';
     			$rec_campaign->company_description = '';
     			$rec_campaign->company_address = '';
     			$rec_campaign->company_industry = '';
-
     			$rec_campaign->company_logo = RECRUITMENT_PATH.'no_logo.jpg';
 			    $rec_campaign->alt_logo = 'no_logo.jpg';
-
 	        	if($rec_job_position){
 	        		$rec_campaign->position_name = $rec_job_position->position_name;
 	        		$rec_campaign->position_description = $rec_job_position->position_description;
-					
 					/*get job industry*/	        		
 					$this->db->where('id', $rec_job_position->industry_id);
 	        		$rec_job_industry = $this->db->get(db_prefix() . 'job_industry')->row();
-
 	        		if($rec_job_industry){
 						$rec_campaign->industry_name = $rec_job_industry->industry_name;
 	        			$rec_campaign->industry_description = $rec_job_industry->industry_description;
-					
 	        		}
-
 	        		/*get job company*/	        		
 					$this->db->where('id', $rec_campaign->company_id);
 	        		$rec_company = $this->db->get(db_prefix() . 'rec_company')->row();
-
 	        		if($rec_company){
 	        			$rec_campaign->company_name = $rec_company->company_name;
 	        			$rec_campaign->company_description = $rec_company->company_description;
 	        			$rec_campaign->company_address = $rec_company->company_address;
 	        			$rec_campaign->company_industry = $rec_company->company_industry;
-
 	        			/*get company logo*/
-	        			
 			             	 $this->db->where('rel_id', $rec_campaign->company_id);
 			             	 $this->db->where('rel_type', "rec_company");
 			             	$logo = $this->db->get(db_prefix().'files')->row();
 			             	if($logo){
 			         			$rec_campaign->company_logo = RECRUITMENT_PATH.'/company_images/'.$rec_campaign->company_id.'/'.$logo->file_name;
 			         			$rec_campaign->alt_logo = $logo->file_name;
-
 			             	}
-
 				        /*get job skill*/
 				        if($rec_job_position->job_skill){
-
 					        $this->db->where('id IN '. '('.$rec_job_position->job_skill.')');
 		        			$rec_job_skill = $this->db->get(db_prefix() . 'rec_skill')->result_array();
-
 		        			$rec_campaign->rec_job_skill = $rec_job_skill;
-
 				        }
-
 			            /*get job in company*/
 			            $this->db->select('*,'.db_prefix().'rec_campaign.company_id');
 				        $this->db->from(db_prefix() . 'rec_campaign');
-
 				        $this->db->join(db_prefix() . 'rec_job_position', '' . db_prefix() . 'rec_job_position.position_id = ' . db_prefix() . 'rec_campaign.cp_position', 'left');
-
 				        $this->db->join(db_prefix() . 'rec_company', '' . db_prefix() . 'rec_campaign.company_id = ' . db_prefix() . 'rec_company.id', 'left');
-
 				        $this->db->join(db_prefix() . 'job_industry', '' . db_prefix() . 'rec_job_position.industry_id = ' . db_prefix() . 'job_industry.id', 'left');
-
 				        $this->db->where(db_prefix().'rec_campaign.company_id',$rec_company->id);
 				        $this->db->where('cp_id !=', $id);
 				        $this->db->where('cp_status =', '3');
-
 						$this->db->order_by('cp_id', 'desc');
 						$this->db->limit(10);
-
 						$job_in_company =   $this->db->get()->result_array();
 						     /*get company logo*/
 					         foreach ($job_in_company as $key => $value) {
 					         	$job_in_company[$key]['company_logo'] = RECRUITMENT_PATH.'no_logo.jpg';
 					         	$job_in_company[$key]['alt_logo'] = 'no_logo.jpg';
-
-
 					             if( ($value['company_id'] != '') && ($value['company_id'] != 0) ){
 					             	 $this->db->where('rel_id', $value['company_id']);
 					             	 $this->db->where('rel_type', "rec_company");
@@ -3518,12 +3437,9 @@ class Recruitment_model extends App_Model {
 					             	if($logo){
 					         			$job_in_company[$key]['company_logo'] = RECRUITMENT_PATH.'/company_images/'.$value['company_id'].'/'.$logo->file_name;
 					         			$job_in_company[$key]['alt_logo'] = $logo->file_name;
-
 					             	}
-
 					             }
 					         }
-
 						$rec_campaign->job_in_company = $job_in_company;
 
 
